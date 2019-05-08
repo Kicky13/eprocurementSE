@@ -1794,7 +1794,7 @@
     if ($('#bid_bond_type').val() == 3) {
       $('#bid_bond').prop('readonly', false);
       $('#bid_bond_validity').prop('disabled', false);
-      $('#bid_bond').number(true, 2, bahasa.thousand_separator, bahasa.decimal_separator);
+      $('#bid_bond').number(true, 2, bahasa.decimal_separator, bahasa.thousand_separator);
     } else {
       $('#bid_bond').keyup(function() {
           if ($('#bid_bond_type').val() == 1) {
@@ -1815,7 +1815,7 @@
         $('#bid_bond').prop('readonly', false);
         $('#bid_bond_validity').prop('disabled', false);
         $('#bid_bond').val('');
-        $('#bid_bond').number(true, 2, bahasa.thousand_separator, bahasa.decimal_separator);
+        $('#bid_bond').number(true, 2, bahasa.decimal_separator, bahasa.thousand_separator);
       } else {
         $('#bid_bond').replaceWith('<input placeholder="Fill bid here" class="form-control" id="bid_bond"  name="bid_bond">');
         if ($('#bid_bond_type').val() == 1) {

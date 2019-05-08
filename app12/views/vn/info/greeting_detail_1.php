@@ -743,17 +743,18 @@ function sendBidProposal() {
                         cache: false,
                         timeout: 600000,
                         beforeSend:function(){
-                          //start($('#icon-tabs'));
+                          start($('#icon-tabs'));
                         },
                         success: function (data) {
                           var x = eval("("+data+")");
+                          stop($('#icon-tabs'));
                           window.open("<?=base_url('vn/info/greetings')?>","_self");
                         },
                         error: function (e) {
                           setTimeout(function() {
                             swal('<?= __('warning') ?>', 'Bid Submission Fail, Try Again', 'warning');
                           }, swalDelay);
-                          //stop($('#icon-tabs'));
+                          stop($('#icon-tabs'));
                         }
                     });
                   }
@@ -793,20 +794,20 @@ function send_bid_proposal() {
         cache: false,
         timeout: 600000,
         beforeSend:function(){
-          //start($('#icon-tabs'));
+          start($('#icon-tabs'));
         },
         success: function (data) {
           var x = eval("("+data+")");
           //swal('<?= __('warning') ?>', x.msg, 'warning');
           $("#bidsumbissionModal").modal('hide');
-          //stop($('#icon-tabs'));
+          stop($('#icon-tabs'));
           window.open("<?=base_url('vn/info/greetings')?>","_self");
         },
         error: function (e) {
           setTimeout(function() {
             swal('<?= __('warning') ?>', 'Bid Submission Fail, Try Again', 'warning');
           }, swalDelay);
-          //stop($('#icon-tabs'));
+          stop($('#icon-tabs'));
         }
     });
 }

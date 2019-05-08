@@ -3,7 +3,7 @@
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-6 col-12 mb-1">
-         <h3 class="content-header-title"><?= lang("ED to be Revision", "ED to be Revision") ?></h3>
+         <h3 class="content-header-title"><?= lang("ED Rejected by Approver", "ED Rejected by Approver") ?></h3>
       </div>
       <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
         <div class="breadcrumb-wrapper col-12">

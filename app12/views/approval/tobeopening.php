@@ -134,7 +134,21 @@
                                 foreach ($blDetails->result() as $blDetail) {
                                   $t_sop_bid = $this->db->where(['vendor_id'=>$blDetail->vendor_id,'msr_no'=>$msr_no])->get('t_sop_bid');
                                 $numSop = $t_sop_bid->num_rows();
-                                $statusMsg = $blDetail->confirmed == 1 ? "Confirmed" : "Decline";
+                                if($blDetail->confirmed == 0)
+                                {
+                                  if(strtotime(date('Y-m-d H:i:s')) <= strtotime($ed->closing_date))
+                                  {
+                                    $statusMsg = 'Unconfirmed';
+                                  }
+                                  else
+                                  {
+                                    $statusMsg = 'Decline';
+                                  }
+                                }
+                                else
+                                {
+                                  $statusMsg = "Confirmed";
+                                }
                                 if($numSop > 0)
                                 {
                                   $statusMsg = 'Bid Proposal Submitted';

@@ -9,7 +9,7 @@ class M_clarification extends M_base {
 
     public function view_clarification() {
         $this->db->select('
-            t_note.description AS description, t_note.path AS attachment, t_note.created_at,
+            t_note.description AS description, t_note.path AS attachment, t_note.created_at, author_type,
             CASE
                 WHEN author_type = \'m_user\' THEN (SELECT NAME FROM m_user WHERE ID_USER = t_note.created_by)
                 ELSE (SELECT NAMA FROM m_vendor WHERE ID = t_note.created_by)

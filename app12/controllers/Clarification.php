@@ -120,38 +120,40 @@ class Clarification extends CI_Controller {
             $uploaded = $this->upload->data();
             $post['attachment'] = $uploaded['file_name'];
         }
-        
-        $files = $_FILES['attachment_add'];
-        $uploaded = [];
-        for ($i=0; $i < count($_FILES['attachment_add']['name']) ; $i++) { 
-          $_FILES['images']['name']= $files['name'][$i];
-          $_FILES['images']['type']= $files['type'][$i];
-          $_FILES['images']['tmp_name']= $files['tmp_name'][$i];
-          $_FILES['images']['error']= $files['error'][$i];
-          $_FILES['images']['size']= $files['size'][$i];
-          if($_FILES['images']['name'])
-          {
-            $config = [];
-            $config['upload_path'] = './upload/clarifitaction_details';
-            $config['allowed_types'] = 'pdf|jpg|jpeg|doc|docx';
-            $config['max_size'] = '2048';
-            $config['encrypt_name'] = TRUE;
-            
-            $this->load->library('upload', $config);
+        if(isset($_FILES['attachment_add']))
+        {
+            $files = $_FILES['attachment_add'];
+            $uploaded = [];
+            for ($i=0; $i < count($_FILES['attachment_add']['name']) ; $i++) { 
+              $_FILES['images']['name']= $files['name'][$i];
+              $_FILES['images']['type']= $files['type'][$i];
+              $_FILES['images']['tmp_name']= $files['tmp_name'][$i];
+              $_FILES['images']['error']= $files['error'][$i];
+              $_FILES['images']['size']= $files['size'][$i];
+              if($_FILES['images']['name'])
+              {
+                $config = [];
+                $config['upload_path'] = './upload/clarifitaction_details';
+                $config['allowed_types'] = 'pdf|jpg|jpeg|doc|docx';
+                $config['max_size'] = '2048';
+                $config['encrypt_name'] = TRUE;
+                
+                $this->load->library('upload', $config);
 
-            if ($this->upload->do_upload('images')) {
-              $uploaded[] = $this->upload->data();
-              // print_r($uploaded);
-            } else {
-              $errorMsg = $this->upload->display_errors('', '');
-              $response = array(
-                'success' => false,
-                'message' => $errorMsg
-              );
-              echo json_encode($response);
-              return false;
+                if ($this->upload->do_upload('images')) {
+                  $uploaded[] = $this->upload->data();
+                  // print_r($uploaded);
+                } else {
+                  $errorMsg = $this->upload->display_errors('', '');
+                  $response = array(
+                    'success' => false,
+                    'message' => $errorMsg
+                  );
+                  echo json_encode($response);
+                  return false;
+                }
+              }
             }
-          }
         }
         // exit();
         $this->load->library('form_validation');
@@ -182,14 +184,14 @@ class Clarification extends CI_Controller {
                 'created_by' => $this->session->userdata('ID_USER'),
                 'author_type' => 'm_user'
             ));
-            $noteId = $this->db->insert_id();
+            /*$noteId = $this->db->insert_id();
             if(count($uploaded) > 0)
             {
               foreach ($uploaded as $key => $value) {
                 $fieldDetail = ['note_id' => $noteId, 'path' => $value['file_name']];
                 $this->db->insert('t_note_detail', $fieldDetail);
               }
-            }
+            }*/
         }
         $response = array(
             'success' => true,

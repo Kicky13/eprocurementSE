@@ -9,8 +9,10 @@
             <small><?= dateToIndo($r_clarification->created_at, false, true) ?></small>
         </h6>
         <p><?= nl2br($r_clarification->description) ?></p>
-        <?php if ($r_clarification->attachment) { ?>
-            <a href="<?= base_url('upload/CLARIFICATION/'.$r_clarification->attachment) ?>" target="_blank" class="btn btn-info btn-sm">Download</a>
+        <?php if ($r_clarification->attachment) { 
+            $full_path = $r_clarification->author_type == 'm_vendor' ? 'upload/CLARIFICATION_VENDOR/'.$r_clarification->attachment : 'upload/CLARIFICATION/'.$r_clarification->attachment;
+        ?>
+            <a href="<?= base_url($full_path) ?>" target="_blank" class="btn btn-info btn-sm">Download</a>
         <?php } ?>
         <hr>
     <?php } ?>

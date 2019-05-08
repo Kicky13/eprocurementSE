@@ -56,7 +56,7 @@
 </div>
 <script type="text/javascript">
 	function kirim() {
-    swalConfirm('BID Proposal', '<?= __('success_submit') ?>', function() {
+    swalConfirm('Clarification', '<?= __('confirm_submit') ?>', function() {
       var form = $("#frm-note-clarification")[0];
       var data = new FormData(form);
       $.ajax({

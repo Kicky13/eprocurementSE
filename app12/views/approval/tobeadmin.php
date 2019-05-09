@@ -363,7 +363,7 @@
     												<?php
     												  if($ed->commercial == 0 and $ed->administrative == 5 and $ed->technical == 5 and $this->session->userdata('ID_USER') == $t_assignment->user_id):
     												?>
-    												  <a href="#" data-toggle="modal" data-target="#modal-upload-commercial" class="btn btn-sm btn-primary <?=$disCom?>">Upload</a>
+    												  <a href="#" data-toggle="modal" data-target="#modal-upload-commercial" class="btn btn-sm btn-primary <?=$disCom?>">Upload</a> <a id="file_upload_name_com" href="#" target="_blank"> </a>
     												<?php
     												  else:
     													$commercialAttachment = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
@@ -1036,7 +1036,7 @@
             <input type="hidden" name="data_id" value="<?=$msr_no?>" class="data_id">
             <div class="form-group">
               <div class="col-sm-12">
-                <input type="file" name="upload" required="" class="attachment desc-note">
+                <input type="file" name="upload" required="" class="attachment desc-note" id="file_commercial">
               </div>
             </div>
             <div class="form-group">
@@ -1249,6 +1249,11 @@ $(document).ready(function(){
             	alert(filename);
             	$("#file_upload_name_tech").text(filename);
             	$("#file_upload_name_tech").attr("href", "<?=base_url('upload/evaluation/')?>"+"/"+x.filename);
+            }else if(type == 'commercial'){
+            	var filename = $('#file_commercial').val().split('\\').pop();
+            	// alert(filename);
+            	$("#file_upload_name_com").text(filename);
+            	$("#file_upload_name_com").attr("href", "<?=base_url('upload/evaluation/')?>"+"/"+x.filename);
             }
 
             swal('Done',x.msg,'success');

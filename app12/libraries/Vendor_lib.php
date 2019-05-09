@@ -192,8 +192,12 @@ class Vendor_lib
 	public function tBidBond($bled_no='', $id='')
 	{
 		$ci =& get_instance();
+		if($id)
+		{
+			$this->db->where(['created_by' => $id]);
+		}
 		return  $ci->db->select('t_bid_bond.*,m_currency.CURRENCY currency_name')
-        ->where(['bled_no' => $bled_no, 'created_by' => $id])
+        ->where(['bled_no' => $bled_no])
         ->join('m_currency','m_currency.ID=t_bid_bond.currency')
         ->get('t_bid_bond');
 	}

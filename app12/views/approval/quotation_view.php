@@ -233,8 +233,10 @@
 			 </div>
         </div>
         <div class="form-group row">
-
           <?php $this->load->view('approval/priceevaluationnegotiation-one',['ed'=>$ed,'xvendor'=>$blDetail->vendor_id, 'nego'=>false]);?>
+        </div>
+        <div class="form-group row">
+          <?php $this->load->view('approval/bid-bond', ['bled_no'=>$bled_no]);?>
         </div>
       </div>
       <div class="modal-footer">
@@ -276,7 +278,7 @@
               </div>
               <label class="col-3">Supporting Document</label>
               <div class="col-md-3">
-                <a href="<?= base_url('upload/NEGOTIATION/'.$nego->local_content_file) ?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+                <a href="<?= base_url('upload/NEGOTIATION_VENDOR/'.$nego->local_content_file) ?>" target="_blank" class="btn btn-sm btn-info">Download</a>
               </div>
             </div>
             <div class="form-group row">
@@ -286,7 +288,7 @@
               </div>
               <label class="col-3">Bid Letter File</label>
               <div class="col-md-3">
-                <a href="<?= base_url('upload/NEGOTIATION/'.@$nego->bid_letter_file) ?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+                <a href="<?= base_url('upload/NEGOTIATION_VENDOR/'.@$nego->bid_letter_file) ?>" target="_blank" class="btn btn-sm btn-info">Download</a>
               </div>
             </div>
             <div class="form-group row">

@@ -6,7 +6,7 @@
             <?= $negotiation->bid_letter_no ?>
         </td>
         <td>
-            <a href="<?= base_url('upload/NEGOTIATION/'.$negotiation->bid_letter_file) ?>" class="btn btn-info btn-sm" target="_blank">Download</a>
+            <a href="<?= base_url('upload/NEGOTIATION_VENDOR/'.$negotiation->bid_letter_file) ?>" class="btn btn-info btn-sm" target="_blank">Download</a>
         </td>
     </tr>
     <tr>
@@ -15,7 +15,7 @@
             <?= $negotiation->local_content_type ?> - <?= $negotiation->local_content ?> %
         </td>
         <td>
-            <a href="<?= base_url('upload/NEGOTIATION/'.$negotiation->local_content_file) ?>"  class="btn btn-info btn-sm" target="_blank">Download</a>
+            <a href="<?= base_url('upload/NEGOTIATION_VENDOR/'.$negotiation->local_content_file) ?>"  class="btn btn-info btn-sm" target="_blank">Download</a>
         </td>
     </tr>
     <tr>

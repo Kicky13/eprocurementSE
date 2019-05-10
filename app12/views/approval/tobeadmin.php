@@ -1,4 +1,4 @@
-    <?php
+<?php
   $t_assignment = $this->db->where(['msr_no'=>$msr_no])->get('t_assignment')->row();
 ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />

@@ -1646,6 +1646,7 @@ $('#msr-development-approval-user #submit-approver').click(function(e) {
       .done(function(data) {
         $('#draft_id').val(data.draft_id)
         $("#msr-development-form").submit()
+        $('#draft_id').val(data.draft_id)
       })
     // }
     });

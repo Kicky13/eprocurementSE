@@ -1,3 +1,4 @@
+<?php $contract_review = $this->approval_lib->contract_review($msr_no) ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
@@ -114,7 +115,6 @@
 									<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-technical" role="tab" aria-controls="nav-profile" aria-selected="false">Technical</a>
 									<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-commercial" role="tab" aria-controls="nav-contact" aria-selected="false">Commercial</a>
 									<?php if($award): ?>
-										<?php $contract_review = $this->approval_lib->contract_review($msr_no) ?>
 					          <?php if($contract_review->num_rows() > 0): ?>
 					              <a class="nav-item nav-link" id="nav-contract-review-tab" data-toggle="tab" href="#tab-contract-review" role="tab" aria-controls="nav-contact" aria-selected="false">BOD Contract Review</a>
 					          <?php endif;?>

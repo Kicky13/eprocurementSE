@@ -285,6 +285,7 @@
                                     <th>Filename</th>
                                     <th>Uploaded Date</th>
                                     <th>Uploaded By</th>
+                                    <th>Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -296,6 +297,7 @@
                                         <td><a href='".base_url('upload/contract_review/'.$cr->file_path)."' target='_blank'>".$cr->file_name."</a></td>
                                         <td>".dateToIndo($cr->created_at, false, true)."</td>
                                         <td>".user($cr->created_by)->NAME."</td>
+                                        <td>".$ed->desc_of_award."</td>
                                     </tr>";
                                 }
                             ?>

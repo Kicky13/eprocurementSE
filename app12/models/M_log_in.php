@@ -27,6 +27,7 @@ class M_log_in extends CI_Model {
 
     public function cek_intern_ex($post) {
         $data = $this->db->query("select * FROM m_user WHERE (USERNAME = '".$post['username']."' OR id_external = '".$post['username']."') AND is_external = '1' AND STATUS = '1'");
+			//echo $this->db->last_query();exit;
         return $data->row();
     }
 

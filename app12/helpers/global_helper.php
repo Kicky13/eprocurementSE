@@ -1161,3 +1161,14 @@ function isCreatorEd($ed)
   }
   return false;
 }
+function notInLoi($ed)
+{
+  $ci = &get_instance();
+  $loi = $ci->db->where('msr_no', $ed->msr_no)->get('t_letter_of_intent');
+
+  if($loi->num_rows() > 0)
+  {
+    return false;
+  }
+  return true;
+}

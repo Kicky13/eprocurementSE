@@ -770,7 +770,7 @@ function numEng($num,$precision=2){
 }
 function evaluationStatus($value='')
 {
-  $list[0] = 'Not Evaluation Yet';
+  $list[0] = 'Not Evaluated Yet';
   $list[1] = 'Pass';
   $list[2] = 'Fail';
   return $list[$value];

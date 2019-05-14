@@ -8,7 +8,7 @@ $config['msr'] = array(
 
 // letter of intent
 $config['loi'] = array(
-	'upload_path' => './upload/',
+	'upload_path' => './upload/loi',
 	'allowed_types' =>  'doc|docx|xls|xlsx|ppt|pptx|odt|odp|ods|pdf|ps|png|jpg|jpeg'
 	);
 

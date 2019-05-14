@@ -1,5 +1,5 @@
 <?php 
-  if($msr->status < 2 and isProcurementSpecialist() and isCreatorEd($ed)): 
+  if($msr->status < 2 and isProcurementSpecialist() and isCreatorEd($ed) and notInLoi($ed)): 
 ?>
 <div class="modal fade" id="modal-cancel-msr" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">

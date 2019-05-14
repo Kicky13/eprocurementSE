@@ -422,6 +422,8 @@
         <!-- Form wizard with icon tabs section end -->
       </div>
       <div class="form-group text-right">
+        <?php $this->load->view('approval/cancel_msr_modal', [ 'ed' => $ed ]);?>
+        
         <?php if($readyIssude->num_rows() > 0 and $viewaja): ?>
         <a href="javascript:void(0)" class="btn btn-success" onclick="issuedClick('frm-issued')">Issued</a>
         <?php endif;?>

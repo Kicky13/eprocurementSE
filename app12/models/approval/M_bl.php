@@ -229,7 +229,7 @@ class M_bl extends CI_Model {
       ->join($this->tbmsr, "{$this->tbmsr}.msr_no = {$this->tbl}.msr_no")
       ->join($this->tbeq, "{$this->tbeq}.msr_no = {$this->tbl}.msr_no")
       ->join($this->tbloi, "{$this->tbloi}.bl_detail_id = {$this->tbld}.id", 'left')
-      ->join($this->tbpo, "{$this->tbpo}.bl_detail_id = {$this->tbld}.id", 'left')
+      ->join($this->tbpo, "{$this->tbpo}.bl_detail_id = {$this->tbld}.id and t_msr.msr_no = t_purchase_order.msr_no", 'left')
 
       // awarder flag
       ->where("{$this->tbeq}.award", 9)

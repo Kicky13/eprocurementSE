@@ -770,7 +770,7 @@ function numEng($num,$precision=2){
 }
 function evaluationStatus($value='')
 {
-  $list[0] = 'Not Evaluation Yet';
+  $list[0] = 'Not Evaluated Yet';
   $list[1] = 'Pass';
   $list[2] = 'Fail';
   return $list[$value];
@@ -1137,4 +1137,27 @@ function arfIssuedDoc($value=0)
     return @$list[$value];
   }
   return $list;
+}
+function isProcurementSpecialist()
+{
+  $ci = &get_instance();
+  $userId             = $ci->session->userdata('ID_USER');
+  $cek                = $ci->db->where('ID_USER',$userId)->get('m_user')->row();
+  $roles              = explode(",", $cek->ROLES);
+  $roles              = array_values(array_filter($roles));
+  if(in_array(bled, $roles))
+  {
+    return true;
+  }
+  return false;
+}
+function isCreatorEd($ed)
+{
+  $ci = &get_instance();
+  $userId             = $ci->session->userdata('ID_USER');
+  if($ed->created_by == $userId)
+  {
+    return true;
+  }
+  return false;
 }

@@ -98,7 +98,8 @@ class M_approval extends CI_Model {
             }
             if($process_award['status'] == 'Issued Award Notification')
             {
-                $desc = 'Issued Award Notification';
+                // $desc = 'Issued Award Notification';
+                $desc = 'Approved';
             }
             $this->approval_lib->log([
                 'module_kode'=> $module_kode,
@@ -1880,7 +1881,7 @@ class M_approval extends CI_Model {
     }
     public function contract_review($msr_no='')
     {
-        $s =$this->db->where(['module_kode'=>'contract review', 'data_id'=> $msr_no])->get('t_upload');
+        $s =$this->db->where(['module_kode'=>'contract review', 'data_id'=> $msr_no])->order_by('id','desc')->limit(1)->get('t_upload');
         return $s;
     }
     public function assign_reject()

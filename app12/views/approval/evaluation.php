@@ -547,6 +547,7 @@
               </div>
             </div>
           </div>
+        	<?php $this->load->view('approval/cancel_msr_modal', [ 'ed' => $ed ]);?>
         </section>
         <!-- Form wizard with icon tabs section end -->
       </div>

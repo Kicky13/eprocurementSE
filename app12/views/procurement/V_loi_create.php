@@ -91,7 +91,7 @@ body {
             <tr>
               <td width="30%">Agreement No.</td>
               <td width="5%">:</td>
-              <td width="65%"><?= @$bl->po_no ?></td>
+              <td width="65%"><?= @$bl->po_no ? $bl->po_no : str_replace('OR', 'OS', $bl->msr_no); ?></td>
             </tr>
             <tr>
               <td>Agreement Value  (Excl. VAT)</td>
@@ -194,7 +194,7 @@ body {
                               </div>
                             </div>
 
-                            <div class="row form-group">
+                            <!-- <div class="row form-group">
                               <div class="col-md-6">
                                 <label>ITP Form</label>
                               </div>
@@ -210,7 +210,7 @@ body {
                               <div class="col-md-6">
                                 <input type="file" name="performance_bond" id="performance_bond" required">
                               </div>
-                            </div>
+                            </div> -->
 
                           </div>
                         </div>

@@ -14,7 +14,7 @@
               Attachment
             </label>
             <div class="col-sm-9">
-              <input type="file" name="file_cancel_msr" class="form-control">
+              <input type="file" name="file_cancel_msr" id="file_cancel_msr" class="form-control" style="height: 45px !important">
             </div>
           </div>
           <div class="form-group">
@@ -30,6 +30,9 @@
 </div>
 <a href="#" data-toggle="modal" data-target="#modal-cancel-msr" class="btn btn-danger" >Cancel MSR</a>
 <script type="text/javascript">
+  $(document).ready(function(){
+    $("#file_cancel_msr").removeAttr("disabled")
+  })
 	function cancelMsrClick()
 	{
 		swalConfirm('Cancel MSR', 'Are you sure cancel this MSR', function() {

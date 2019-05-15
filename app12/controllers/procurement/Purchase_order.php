@@ -1308,9 +1308,9 @@ class Purchase_order extends CI_Controller
         }
 
         $response['data'] = $doc;
-        echo json_encode($response);
-        /*return $this->output->set_content_type('application/json')
-            ->set_output(@json_encode($response));*/
+
+        return $this->output->set_content_type('application/json')
+            ->set_output(@json_encode($response));
 
     }
 
@@ -2276,6 +2276,43 @@ class Purchase_order extends CI_Controller
         });
 
         return true;
+    }
+    public function replace_agreement_document()
+    {
+        $config['upload_path']  = './upload/po/';
+        if (!is_dir($config['upload_path'])) {
+            mkdir($config['upload_path'],0755,TRUE);
+        }
+        $config['allowed_types']= '*';
+        // $config['max_size']      = '3000';
+
+        // print_r($_FILES['upload']);
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+        if ( ! $this->upload->do_upload('file_agreement_document'))
+        {
+            echo $this->upload->display_errors('', '');exit;
+        }else
+        {
+            $user = user();
+            $data = $this->upload->data();
+            // $field = $this->input->post();
+            $field['file_path'] = $config['upload_path'];
+            $field['file_name'] = $data['file_name'];
+            $field['created_by'] = $user->ID_USER;
+            $this->db->where('id', $this->input->post('id_agreement_document'))->update('t_upload',$field);
+        }
+        $doc = $this->db->where('id', $this->input->post('id_agreement_document'))->get('t_upload')->row();
+        if($doc)
+        {
+            echo json_encode([
+              'success'=>true,
+              'filename' => $doc->file_name,
+              'upload_time' => $doc->created_at,
+              'uploader' => $user->NAME,
+              'href' => base_url($doc->file_path.''.$doc->file_name),
+            ]);
+        }
     }
 }
 

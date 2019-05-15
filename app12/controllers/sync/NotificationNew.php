@@ -18,7 +18,7 @@ class NotificationNew extends CI_Controller {
             $result_check = $query_check_out->result();
             $mail = get_mail();
 			
-			foreach ($result_check as $row) 
+			foreach ($result_check as $row){ 
 				require_once "Mail.php";
 				require_once "Mail/mime.php";
 				$crlf = "\r\n";

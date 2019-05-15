@@ -56,7 +56,9 @@ class Log_in_in extends CI_Controller {
         if ($sess == $ch ) {
 
           $cek_ad = $this->M_log_in->cek_intern_ex($_POST);
-          if (count($cek_ad) > 0) {
+         
+//			  var_dump($cek_ad); exit;
+		  if (!$cek_ad) {
             $login_ad = $this->login_ad($_POST['username'], $_POST['password']);
             if ($login_ad != false && $login_ad == $cek_ad->id_external && $cek_ad->is_external == 1) {
               $roles = explode(",", $cek_ad->ROLES);

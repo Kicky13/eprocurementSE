@@ -49,7 +49,7 @@
                               <th>Subject Work</th>
                               <th>Contractor</th>
                               <th>Accepted Date</th>
-                              <th>Accepted By</th>
+                              <!-- <th>Accepted By</th> -->
                               <th>Action</th>
                             </tr>
                           </thead>
@@ -67,7 +67,7 @@
                                 <td><?= @$loi->title ?></td>
                                 <td><?= @$loi->nama_vendor?></td>
                                 <td><?= dateToIndo(@$loi->accept_award_date) ?></td>
-                                <td><?= @$accepted_by->NAME ?></td>
+                                <!-- <td><?= @$accepted_by->NAME ?></td> -->
                                 <!--
                                 <td><a class="approval-history" data-loi_id="<?= @$loi->id ?>" href="<?= base_url('procurement/loi/logHistory/'. $loi->id)?>"><?= @$loi->action_to_role_description ?></a></td>
                                 -->

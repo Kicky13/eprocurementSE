@@ -24,8 +24,8 @@ font-weight: normal;
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
 <?php
   if ($msr->master_list == 0) {
-    $tax = msrPajak($msr->total_amount);
-    $tax_base = msrPajak($msr->total_amount_base);
+    $tax = msrPajak($msr->total_amount, true);
+    $tax_base = msrPajak($msr->total_amount_base, true);
   } else {
     $tax = 0;
     $tax_base = 0;

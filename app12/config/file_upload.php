@@ -8,12 +8,12 @@ $config['msr'] = array(
 
 // letter of intent
 $config['loi'] = array(
-	'upload_path' => './upload/loi',
+	'upload_path' => './upload/loi/',
 	'allowed_types' =>  'doc|docx|xls|xlsx|ppt|pptx|odt|odp|ods|pdf|ps|png|jpg|jpeg'
 	);
 
 // purchase order 
 $config['purchase_order'] = array(
-	'upload_path' => './upload/po',
+	'upload_path' => './upload/po/',
 	'allowed_types' =>  'doc|docx|xls|xlsx|ppt|pptx|odt|odp|ods|pdf|ps|png|jpg|jpeg'
 	);

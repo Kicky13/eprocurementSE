@@ -400,24 +400,25 @@ body {
                             <?php if (isset($po_attachments) && count($po_attachments) > 0 ): ?>
                               <?php foreach($po_attachments as $attachment): ?>
                               <!-- start attachment -->
-                              <div class="row">
+                              <div class="row" style="margin-top: 10px">
                                 <div class="col-md-2"><?php /* type */ ?>
                                   <?= $po_attachment_type[$attachment->tipe]?>
                                 </div>
                                 <div class="col-md-1"><?php /* sequence */ ?> 
                                   <?= $attachment->sequence ?>
                                 </div>
-                                <div class="col-md-3"><?= $attachment->file_name ?></div>
+                                <div class="col-md-3" id="filename_<?= $attachment->id ?>"><?= $attachment->file_name ?></div>
 
-                                <div class="col-md-3"><?= $attachment->created_at ?> </div>
+                                <div class="col-md-3" id="upload_time_<?= $attachment->id ?>"><?= $attachment->created_at ?> </div>
 
-                                <div class="col-md-2"><?= $attachment->created_by_name ?></div>
+                                <div class="col-md-2" id="uploader_<?= $attachment->id ?>"><?= $attachment->created_by_name ?></div>
                                 <div class="col-md-1">
-                                  <a href="<?= base_url($attachment->file_path.$attachment->file_name) ?>" target="_blank">
+                                  <a  id="href_<?= $attachment->id ?>" href="<?= base_url($attachment->file_path.$attachment->file_name) ?>" target="_blank">
                                     <button type="button" class="btn btn-info btn-sm">
                                       <!-- <i class="icon-cloud-download"></i> -->
                                       Download
                                     </button>
+                                    <a href="#" onclick="updateAgreementDocClick('<?= $po_attachment_type[$attachment->tipe]?>', <?= $attachment->id ?>)" class="btn btn-sm btn-primary">Update</a>
                                   </a>
                                 </div>
                               </div>
@@ -491,8 +492,149 @@ body {
 </div>
   </div>
 
+<div class="modal fade" id="myModalAgreemetDocument" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Agreement Document</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="" class="form-horizontal" id="frm-agreement-document" enctype="multipart/form-data">
+          <!-- data_id -->
+          <input type="hidden" name="id_agreement_document" id="id_agreement_document">
+          <!-- m_approval_id -->
+          <div class="form-group row">
+            <label class="col-md-3">Type </label>
+            <label class="col-md-9" id="type_agreement_document"></label>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3">Attachment</label>
+            <div class="col-md-9">
+              <input type="file" name="file_agreement_document">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary pull-right" onclick="saveAgreementClick()">Save changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- modal #po_document_modal -->
+<div class="modal fade text-left open-this" id="updatePoDoc" role="dialog" aria-labelledby="modallabel-item" aria-hidden="true">
+<div class="modal-dialog modal-sm" role="document">
+<div class="modal-content">
+
+<div class="modal-header">
+<h4 class="modal-title" id="modal-label-item">Document</h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button>
+</div>
+
+<div class="modal-body">
+<form action="#" id="po_document-add_form">
+        <div class="modal-body">
+          <input type="hidden" id="po_document-doc_type" name="doc_type">
+          <input type="hidden" id="po_document-po_id" name="po_id" value="<?= $po->id ?>">
+          <input type="hidden" id="po_document-doc_id" name="doc_id">
+          <input type="hidden" id="po_document-id" name="id">
+          <div class="form-group">
+            <label><span id="po_document-no_label">No</span></label>
+            <input type="text" id="po_document-doc_no" name="doc_no" class="form-control">
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="po_document-issuer">Issuer: </label>
+                <input type="text" name="issuer" id="po_document-issuer" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="po_document-issued_date">Issued date: </label>
+                <input name="issued_date" id="po_document-issued_date" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="po_document-value">Value: </label>
+                <input type="text" name="value" id="po_document-value" class="form-control" number="true" min="0">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="currency_name">Currency: </label>
+                <input type="hidden" name="currency_id" id="po_document-currency_id" value="<?= $po->id_currency ?>">
+                <input readonly name="currency_name" id="po_document-currency_name" value="<?= @$opt_currency[$po->id_currency] ?>" class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="effective_date">Effective date: </label>
+                <input name="effective_date" id="po_document-effective_date" class="form-control pickadate">
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="expired_date">Expired date: </label>
+                <input name="expired_date" id="po_document-expired_date" class="form-control pickadate">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="po_document-description">Description: </label>
+                <textarea name="description" id="po_document-description" class="form-control"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="attachment">Attachment: </label>
+                <input type="file" name="attachment" id="po_document-attachment" class="form-control">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer text-right">
+      <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" id="po_document-add">Submit</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <div class="modal fade text-left open-this" id="po_document_modal" role="dialog" aria-labelledby="modallabel-item" aria-hidden="true">
 <div class="modal-dialog modal-sm" role="document">
 <div class="modal-content">
@@ -777,7 +919,7 @@ $('#po_required_doc<?= $po_rdoc->doc_type ?>').DataTable({
     { 'data': 'expired_date', 'title': 'Expired date' },
     { 'data': 'description', 'title': 'Description' },
     { 'data': 'file_name', 'title': 'File', 'createdCell': function(td, cellData, rowData, row, col) {
-        $(td).html('<a href="'+ rowData.file_url +'">'+ rowData.file_name + '</a>')
+        $(td).html('<a target="_blank" href="'+ rowData.file_url +'">'+ rowData.file_name + '</a>')
     }},
     { 'data': 'action_btn', 'title': 'Action', visible: true },
     { 'data': 'file_url', 'title': 'File URL', 'visible': false }
@@ -838,7 +980,7 @@ $.get('<?= base_url('procurement/purchase_order/getPODocumentAgreement/'.$po->id
   if (data.data.length > 0) {
     var item = data.data[0]
     var p = $('#po_document3_file').parent()
-    p.append('<a href="'+ item.file_url +'">'+ item.file_name +'</a>');
+    p.append('<a target="_blank" href="'+ item.file_url +'">'+ item.file_name +'</a>');
     $('#po_document3_file').val('').prop('disabled', true).removeClass('required').hide()
     return true
   }
@@ -871,7 +1013,7 @@ $(document).on('show.bs.modal', '#po_document_modal', function(e) {
 
     modal_start($(modal));
 
-    $.get('/procurement/purchase_order/getPODocumentAgreementItem/'+ id)
+    $.get('<?= base_url() ?>'+'procurement/purchase_order/getPODocumentAgreementItem/'+ id)
       .done(function(data) {
         // load to modal fields
         $('#po_document-id').val(data.data.id)
@@ -888,7 +1030,7 @@ $(document).on('show.bs.modal', '#po_document_modal', function(e) {
 
         $('#po_document-attachment').parents('.row').find('.po_document-file_wrapper').remove()
         if (data.data.file_name) {
-          var file_wrapper = '<div class="po_document-file_wrapper col-md-12"><a href="'+data.data.file_url+'" target="blank">'+data.data.file_name+'</a></div>'
+          var file_wrapper = '<div class="po_document-file_wrapper col-md-12"><a href="'+data.data.file_url+'" target="_blank">'+data.data.file_name+'</a></div>'
           $('#po_document-attachment').parents('.row').append(file_wrapper)
         }
       })
@@ -949,5 +1091,46 @@ $('#po_document-add').click(function(e) {
 })
 
 });
+function updateAgreementDocClick(type_text, id) {
+  $("#id_agreement_document").val(id)
+  $("#type_agreement_document").html(type_text)
+  $("#myModalAgreemetDocument").modal('show')
+}
+function saveAgreementClick() {
+  var form = $("#frm-agreement-document")[0];
+  var data = new FormData(form);
+  var id_agreement_document = $("#id_agreement_document").val();
+
+  $.ajax({
+      type: "POST",
+      enctype: 'multipart/form-data',
+      url: "<?=base_url('procurement/purchase_order/replace_agreement_document')?>",
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      beforeSend:function(){
+        start($('#configuration'));
+      },
+      success: function (data) {
+        // $("#devbled-attachment").html(data);
+        var r = eval("("+data+")")
+        if(r.success){
+          $("#filename_"+id_agreement_document).html(r.filename);
+          $("#upload_time_"+id_agreement_document).html(r.upload_time);
+          $("#uploader_"+id_agreement_document).html(r.uploader);
+          $("#href_"+id_agreement_document).attr("href",r.href);
+        }
+        stop($('#configuration'));
+        $("#myModalAgreemetDocument").modal('hide');
+      },
+      error: function (e) {
+        swal('<?= __('warning') ?>','Something went wrong!','warning')
+        stop($('#configuration'));
+        $("#myModalAgreemetDocument").modal('hide');
+      }
+  });
+}
 </script>
 <?php /* vim: set fen foldmethod=indent ts=2 sw=2 tw=0 et autoindent :*/ ?> 

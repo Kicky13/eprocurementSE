@@ -777,7 +777,7 @@ $('#po_required_doc<?= $po_rdoc->doc_type ?>').DataTable({
     { 'data': 'expired_date', 'title': 'Expired date' },
     { 'data': 'description', 'title': 'Description' },
     { 'data': 'file_name', 'title': 'File', 'createdCell': function(td, cellData, rowData, row, col) {
-        $(td).html('<a href="'+ rowData.file_url +'">'+ rowData.file_name + '</a>')
+        $(td).html('<a target="_blank" href="'+ rowData.file_url +'">'+ rowData.file_name + '</a>')
     }},
     { 'data': 'action_btn', 'title': 'Action', visible: true },
     { 'data': 'file_url', 'title': 'File URL', 'visible': false }
@@ -838,7 +838,7 @@ $.get('<?= base_url('procurement/purchase_order/getPODocumentAgreement/'.$po->id
   if (data.data.length > 0) {
     var item = data.data[0]
     var p = $('#po_document3_file').parent()
-    p.append('<a href="'+ item.file_url +'">'+ item.file_name +'</a>');
+    p.append('<a target="_blank" href="'+ item.file_url +'">'+ item.file_name +'</a>');
     $('#po_document3_file').val('').prop('disabled', true).removeClass('required').hide()
     return true
   }
@@ -888,7 +888,7 @@ $(document).on('show.bs.modal', '#po_document_modal', function(e) {
 
         $('#po_document-attachment').parents('.row').find('.po_document-file_wrapper').remove()
         if (data.data.file_name) {
-          var file_wrapper = '<div class="po_document-file_wrapper col-md-12"><a href="'+data.data.file_url+'" target="blank">'+data.data.file_name+'</a></div>'
+          var file_wrapper = '<div class="po_document-file_wrapper col-md-12"><a href="'+data.data.file_url+'" target="_blank">'+data.data.file_name+'</a></div>'
           $('#po_document-attachment').parents('.row').append(file_wrapper)
         }
       })

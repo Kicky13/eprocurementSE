@@ -158,7 +158,7 @@ body {
                                 <label><?= $loi_attachment_type[$attachment->tipe] ?></label>
                               </div>
                               <div class="col-md-6">
-                                <a href="<?= base_url().$attachment->file_path.$attachment->file_name ?>">
+                                <a target="_blank" href="<?= base_url().$attachment->file_path.$attachment->file_name ?>">
                                   <button type="button" class="btn btn-icon btn-sm">
                                     <i class="icon-cloud-download"></i>
                                   </button>

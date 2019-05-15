@@ -1743,7 +1743,7 @@ class Approval extends CI_Controller {
         if (!is_dir($config['upload_path'])) {
             mkdir($config['upload_path'],0755,TRUE);
         }
-        $config['allowed_types'] = 'pdf|jpg|jpeg|doc|docx';
+        $config['allowed_types'] = 'pdf|jpg|jpeg|doc|docx|xls|xlsx';
         $config['encrypt_name']= true;
         // $config['max_size']      = '3000';
 

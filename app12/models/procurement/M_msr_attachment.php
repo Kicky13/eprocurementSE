@@ -111,6 +111,16 @@ class M_msr_attachment extends MY_Model {
             ->where('data_id', $data_id)
             ->delete($this->table);
     }
+	
+	//machrus
+    public function updateAtt($param)
+    {
+		$this->db->set('data_id', $param['msr_no'])
+			->set('module_kode', 'msr')
+			->where('data_id', $param['draft_id'])
+			->update($this->table); 
+	}
+	
 
 }
 

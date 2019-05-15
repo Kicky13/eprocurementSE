@@ -1308,9 +1308,9 @@ class Purchase_order extends CI_Controller
         }
 
         $response['data'] = $doc;
-
-        return $this->output->set_content_type('application/json')
-            ->set_output(@json_encode($response));
+        echo json_encode($response);
+        /*return $this->output->set_content_type('application/json')
+            ->set_output(@json_encode($response));*/
 
     }
 

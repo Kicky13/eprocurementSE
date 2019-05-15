@@ -871,7 +871,7 @@ $(document).on('show.bs.modal', '#po_document_modal', function(e) {
 
     modal_start($(modal));
 
-    $.get('/procurement/purchase_order/getPODocumentAgreementItem/'+ id)
+    $.get('<?= base_url() ?>'+'/procurement/purchase_order/getPODocumentAgreementItem/'+ id)
       .done(function(data) {
         // load to modal fields
         $('#po_document-id').val(data.data.id)

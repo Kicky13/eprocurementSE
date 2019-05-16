@@ -70,7 +70,7 @@ class Loi extends CI_Controller
                 log_message('error', $message['message'].' draft_of_loi ');
             }
             
-            if(@$_FILES['itp_form']['tmp_name'])
+            /*if(@$_FILES['itp_form']['tmp_name'])
             {
                 if(false === ($attachment_files = $this->handleUploadAttachment(['itp_form'])))
                 {
@@ -92,7 +92,7 @@ class Loi extends CI_Controller
                     $message['type'] = 'danger';
                     log_message('error', $message['message'].' performance_bond ');
                 }
-            }
+            }*/
             
 
     		/*if (false === ($attachment_files = $this->handleUploadAttachment([
@@ -134,8 +134,8 @@ class Loi extends CI_Controller
 	    		$loi = $this->makeLoiFromPost();
 	    		$attachments = $this->makeLoiAttachmentsFromPost(null, $attachment_files, [
 		        	'draft_of_loi' => $this->M_loi_attachment::TYPE_DRAFT_LOI,
-		        	'itp_form' => $this->M_loi_attachment::TYPE_ITP_FORM,
-		        	'performance_bond' => $this->M_loi_attachment::TYPE_PBOND,
+		        	/*'itp_form' => $this->M_loi_attachment::TYPE_ITP_FORM,
+		        	'performance_bond' => $this->M_loi_attachment::TYPE_PBOND,*/
 		        //	'statement_of_authenticity' => $this->M_loi_attachment::TYPE_STMT_AUTH
 	    		]);
 

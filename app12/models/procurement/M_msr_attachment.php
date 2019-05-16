@@ -11,7 +11,7 @@ class M_msr_attachment extends MY_Model {
     const TYPE_SCOPEOFSUPPLY = 'SCOPESUPLY';
 
     protected $types = array(
-        self::TYPE_SCOPE   => 'Scope of Work/Supply',
+        self::TYPE_SCOPE   => 'Scope of Work',
         self::TYPE_RA      => 'Risk Assessment',
         self::TYPE_JD      => 'Justification Document',
         self::TYPE_OWNEST  => "Owners Estimate",
@@ -111,6 +111,16 @@ class M_msr_attachment extends MY_Model {
             ->where('data_id', $data_id)
             ->delete($this->table);
     }
+	
+	//machrus
+    public function updateAtt($param)
+    {
+		$this->db->set('data_id', $param['msr_no'])
+			->set('module_kode', 'msr')
+			->where('data_id', $param['draft_id'])
+			->update($this->table); 
+	}
+	
 
 }
 

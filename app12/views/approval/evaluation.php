@@ -1,3 +1,4 @@
+<?php $contract_review = $this->approval_lib->contract_review($msr_no) ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
@@ -113,6 +114,11 @@
 									<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-administrative" role="tab" aria-controls="nav-home" aria-selected="true">Administrative</a>
 									<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-technical" role="tab" aria-controls="nav-profile" aria-selected="false">Technical</a>
 									<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-commercial" role="tab" aria-controls="nav-contact" aria-selected="false">Commercial</a>
+									<?php if($award): ?>
+					          <?php if($contract_review->num_rows() > 0): ?>
+					              <a class="nav-item nav-link" id="nav-contract-review-tab" data-toggle="tab" href="#tab-contract-review" role="tab" aria-controls="nav-contact" aria-selected="false">BOD Contract Review</a>
+					          <?php endif;?>
+									<?php endif;?>
 								  </div>
 							  </nav>
 							  <div class="tab-content" id="nav-tabContent">
@@ -397,6 +403,39 @@
                                         </div>
                                     </div>
 								  </div>
+							  	<?php if($contract_review->num_rows() > 0): ?>
+					          <div class="tab-pane fade show" id="tab-contract-review" role="tabpanel" aria-labelledby="contract-review-tab" style="padding: 15px 0px;">
+					              <div class="row">
+					                  <div class="col-md-12">
+					                      <table class="table">
+					                          <thead>
+					                              <tr>
+					                                  <th width="1">No</th>
+					                                  <th>Filename</th>
+					                                  <th>Uploaded Date</th>
+					                                  <th>Uploaded By</th>
+					                                  <th>Comment</th>
+					                              </tr>
+					                          </thead>
+					                          <tbody>
+					                          <?php
+					                              $n =1;
+					                              foreach ($contract_review->result() as $cr) {
+					                                  echo "<tr>
+					                                      <td>".$n++."</td>
+					                                      <td><a href='".base_url('upload/contract_review/'.$cr->file_path)."' target='_blank'>".$cr->file_name."</a></td>
+					                                      <td>".dateToIndo($cr->created_at, false, true)."</td>
+					                                      <td>".user($cr->created_by)->NAME."</td>
+					                                      <td>".$ed->desc_of_award."</td>
+					                                  </tr>";
+					                              }
+					                          ?>
+					                          </tbody>
+					                      </table>
+					                  </div>
+					              </div>
+					          </div>
+							    <?php endif;?>
 							  </div>
 						  </div>
 						</div>
@@ -508,6 +547,7 @@
               </div>
             </div>
           </div>
+        	<?php $this->load->view('approval/cancel_msr_modal', [ 'ed' => $ed ]);?>
         </section>
         <!-- Form wizard with icon tabs section end -->
       </div>

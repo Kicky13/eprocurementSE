@@ -606,7 +606,7 @@
               <div class="col-md-3">
                 <input class="form-control" disabled="" value="<?=dateToIndo($nego->closing_date, false, true)?>">
               </div>
-              <label class="col-3">Supporting Document</label>
+              <label class="col-3">Local Content</label>
               <div class="col-md-3">
                 <a href="<?= base_url('upload/NEGOTIATION_VENDOR/'.$nego->local_content_file) ?>" target="_blank" class="btn btn-sm btn-info">Download</a>
               </div>

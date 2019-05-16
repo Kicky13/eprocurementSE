@@ -44,7 +44,8 @@ class Msr extends CI_Controller {
             ->model('setting/M_jabatan')
             ->model('setting/M_budget_holder')
             ->helper(array('form', 'array', 'url', 'exchange_rate', 'permission'))
-            ->library(['form_validation', 'DocNumber', 'upload']);
+            ->library(['form_validation', 'DocNumber', 'upload', 'form']);
+			//machrus library 'form'
     }
 
     public function index() {
@@ -346,7 +347,8 @@ class Msr extends CI_Controller {
                     // Delete attachment that already exists but deleted by user
                     if (!in_array($cur_att->id, $attachment_file_ids))  {
                         // NOTE: only delete data, NOT file
-                        $this->msr_attachment->delete($cur_att->id);
+                        //machrus inactive delete attcment
+                        //$this->msr_attachment->delete($cur_att->id);
                     } else {
                         $_attachment = $post['attachments'][$i];
                         $this->msr_attachment->update($cur_att->id, [
@@ -555,7 +557,9 @@ class Msr extends CI_Controller {
 
         $data_department = @$query->result();
 
-        $this->template->display('procurement/V_msr_create',
+//machrus
+        $this->template->display('procurement/V_msr_create_v1',
+//        $this->template->display('procurement/V_msr_create',
         compact(
             'menu', 'opt_company', 'opt_msr_type', 'opt_pmethod', 'opt_plocation', 'opt_currency',
             'opt_cost_center', 'opt_location', 'opt_delivery_point', 'opt_importation', 'opt_delivery_term',
@@ -1303,7 +1307,9 @@ class Msr extends CI_Controller {
                         where u.id_user='".$data_user["ID_USER"]."' ");
 
         $data_department = @$query->result();
-        $this->template->display('procurement/V_msr_create',
+//machrus
+        $this->template->display('procurement/V_msr_create_v1',
+//        $this->template->display('procurement/V_msr_create',
         compact(
             'menu', 'opt_company', 'opt_msr_type', 'opt_pmethod', 'opt_plocation', 'opt_currency',
             'opt_cost_center', 'opt_location', 'opt_delivery_point', 'opt_importation', 'opt_delivery_term',
@@ -1314,6 +1320,108 @@ class Msr extends CI_Controller {
         ));
     }
 
+	//machrus
+	public function saveDraftV1(){
+        $post = $this->input->post();
+        $draft_id = trim($post['draft_id']);
+        $msr_no = @$post['msr_no'] ?: NULL;
+
+        $input_data['header'] = $this->makeHeaderFromPost($msr_no);
+        $details = array();
+
+        $draft = $this->M_msr_draft->find($draft_id);
+
+        if ($draft_id != '') {
+            $input_data['header']['id'] = $draft_id;
+        }
+
+        $this->db->trans_start();
+
+        if ($draft) {
+            $this->M_msr_draft->update($draft_id, $input_data['header']);
+        } else {
+            $this->M_msr_draft->add($input_data['header']);
+            $draft_id = $input_data['header']['id'] = $this->db->insert_id();
+        }
+
+        $this->M_msr_item_draft->deleteAllByDraftId($input_data['header']['id']);
+
+        if (isset($post['items']) && count($post['items']) > 0) {
+            $msr = $this;
+
+            $input_data['items'] = array_map(
+                function($item) use($msr, $input_data) {
+                    $_item = $msr->makeItem($input_data, $item);
+                    $_item->t_msr_draft_id = $input_data['header']['id'];
+
+                    return $_item;
+                },
+                $post['items']
+            );
+
+            $details_result = $this->M_msr_item_draft->addBatch($input_data['items']);
+        }
+
+        // Update already uploaded attachment
+        $current_attachments = $this->msr_attachment->getByModuleKodeAndDataId(
+            $this->M_msr_draft::module_kode,
+            $draft_id
+        );
+		
+		$this->msr_attachment->deleteByModuleKodeAndDataId(
+			$this->M_msr_draft::module_kode,
+			$draft_id
+		);
+		
+		if(isset($post['attachment'])){
+			foreach ($post['attachment'] as $key => $row){
+				$input_data['attachments'][] = array (
+					"module_kode" => "msr_draft",
+					"data_id" => $draft_id,
+					"file_path" => "./upload/MSR/",
+					"file_name" => $row['file'],
+					"tipe" => $row['type'],
+					"created_by" => $this->session->userdata('ID_USER'),
+					"created_at" => date("Y-m-d H:i:s"),
+				);
+			}
+			$this->saveAttachments($input_data['attachments']);
+		}
+		
+		if ($this->db->trans_status() !== false) {
+          // success
+
+            $this->db->trans_commit();
+
+            $message['status'] = 'OK';
+            $message['text'] = 'Saved as draft';
+        } else {
+            $this->db->trans_rollback();
+
+            $message['status'] = 'ERROR';
+            $message['text'] = 'Error saving as draft';
+        }
+
+ 			$doctype = $this->msr::module_kode;
+			$msr_no = DocNumber::generate($doctype, $post['company']);
+
+        $this->output->set_content_type('application/json')
+            ->set_output(json_encode([
+                'message' => [
+                    'status' => $message['status'],
+                    'text'   => $message['text']
+                ],
+                'draft_id' => $draft_id,
+                'msr_no' => $msr_no,
+                'data' => @$post['items'],
+                'data2' => @$input_data['items'],
+                // 'data3' => $this,
+
+            ])
+        );
+
+    }
+	
     public function saveDraft()
     {
         /*$post = $this->input->post();
@@ -1479,6 +1587,13 @@ class Msr extends CI_Controller {
 
     }
 
+	//update attechment msr draf to msr machrus
+    public function updateAtt(){
+		$post = $this->input->post();
+		return $this->msr_attachment->updateAtt($post);
+	}
+	
+	
     public function getCostCenters()
     {
         $this->load->model('setting/M_master_costcenter');
@@ -2319,6 +2434,49 @@ class Msr extends CI_Controller {
         else
             return false;
     }
+	
+	//machrus
+	public function attachment_upload() {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('file_name', 'File Name', 'required');
+        $this->form_validation->set_rules('type', 'Type', 'required');
+		
+        if (!$this->form_validation->run()) {
+            $response = array(
+                'success' => false,
+                'message' => validation_errors('<div>', '</div>')
+            );
+            echo json_encode($response);
+            exit;
+        }
+        $config['upload_path'] = './upload/MSR/';
+        $config['upload_path'] = './upload/MSR/';
+		if (!is_dir($config['upload_path'])) {
+            mkdir($config['upload_path'],0755,TRUE);
+        }
+       // $config['allowed_types'] = 'jpg|jpeg|pdf|doc|docx';
+        $config['allowed_types'] = 'jpg|jpeg|pdf';
+        $config['max_size'] = '2048';
+        //$config['encrypt_name'] = true;
+        $config['file_name'] = $this->input->post('file_name');
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config); 
+        $response = array();
+        if ($this->upload->do_upload('file')) {
+            $response = array(
+                'success' => true,
+                'message' => 'Successfully uploded document',
+                'data' => $this->upload->data()
+            );
+        } else {
+            $response = array(
+                'success' => false,
+                'message' => $this->upload->display_errors()
+            );
+        }
+        echo json_encode($response);
+    }
+	
 	public function action_cancel_msr($msr_no='')
     {
       $this->db->trans_begin();

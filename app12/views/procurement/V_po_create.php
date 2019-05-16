@@ -74,7 +74,7 @@ body {
         </tr>
       </table>
     </div>
-    <div class="col-md-4">total_amount_base
+    <div class="col-md-4">
         <table class="table table-condensed">
           <tr>
             <td width="30%">Title</td>

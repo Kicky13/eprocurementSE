@@ -2248,8 +2248,8 @@ class Purchase_order extends CI_Controller
             curl_setopt($ch, CURLOPT_TIMEOUT,360);
 			$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-            echo $xml_post_string;
-exit;            $data_curl = curl_exec($ch);
+//            echo $xml_post_string;
+            $data_curl = curl_exec($ch);
 			$error_msg = curl_error($ch);
 			$curl_errno= curl_errno($ch);
             curl_close($ch);

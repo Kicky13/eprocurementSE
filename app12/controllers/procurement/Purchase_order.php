@@ -1921,7 +1921,7 @@ class Purchase_order extends CI_Controller
                 , o.master_list
                 , b.vat
                 , d.line_no
-				, m.create_by as orderedBy
+				, u_msr.username as orderedBy
                 from t_purchase_order o
                 join t_purchase_order_detail d on d.po_id=o.id
                 join t_msr m on m.msr_no=o.msr_no

@@ -3035,7 +3035,7 @@ function load_aas_approver_modal() {
   var amount = get_total_msr_amount_from_detail_item();
   var base_currency = '<?= base_currency_code() ?>'
 
-  amount = amount + get_tax_amount_from_total(amount)
+  //amount = amount + get_tax_amount_from_total(amount)
   console.log(company_id, currency_id, amount);
 
   /*

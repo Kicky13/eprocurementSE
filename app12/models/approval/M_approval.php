@@ -125,7 +125,9 @@ class M_approval extends CI_Model {
         unset($data['module_kode']);
         $user = user();
     	$this->db->trans_begin();
-
+		$data['status'] = 2;
+		unset($data['status_str']);
+		//var_dump ($data);exit;
         $q = "select module_kode from m_approval
         left join t_approval on t_approval.m_approval_id = m_approval.id
         where t_approval.id = '$data[id]'";
@@ -142,7 +144,7 @@ class M_approval extends CI_Model {
 			$this->db->update('t_approval', $data);
     	}
         else
-        {
+        {	
             $this->db->where(['id'=>$data['id']]);
             $this->db->update('t_approval', $data);
         }

@@ -427,29 +427,27 @@
                                 </div>
                                 <div class="form-group row amendment_recommendation_tab">
                                     <label class="col-md-3">Latest Agreement Value</label>
-                                    <div class="col-md-3">
-                                        <input class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
+                                    <div class="col-md-3" id="latest-agreement-value">
                                     </div>
                                     <label class="col-md-3">New Agreement Value</label>
-                                    <div class="col-md-3">
-                                        <input class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
+                                    <div class="col-md-3" id="new-agreement-value">
                                     </div>
                                 </div>
                                 <div class="form-group row amendment_recommendation_tab" style="margin-top:20px">
                                     <div class="col-md-6">
                                         BOD Approval for this Value Amendment Request is required
                                         <br>
-                                        <input type="radio" name="bod_approval" value="0">
+                                        <input type="radio" name="bod_approval" value="0" <?= $arf->bod_approval == 0 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;margin-right: 20px;">No</label>
-                                        <input type="radio" name="bod_approval" value="1" checked="">
+                                        <input type="radio" name="bod_approval" value="1" <?= $arf->bod_approval == 1 ? "checked=''" : '' ?> >
                                         <label style="bottom: 10px;position: relative;">Yes, BOD Review Required</label>
                                     </div>
                                     <div class="col-md-6">
                                         Accumulative Amendment
                                         <br>
-                                        <input type="radio" name="aa" value="0">
+                                        <input type="radio" name="aa" value="0" <?= $arf->aa == 0 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;margin-right: 20px;">No</label>
-                                        <input type="radio" name="aa" value="1" checked="">
+                                        <input type="radio" name="aa" value="1" <?= $arf->aa == 1 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;">Yes, requires 1 level up for the Amendment signature as per AAS</label>
                                     </div>
                                 </div>
@@ -638,15 +636,15 @@
                                             }
                                             else
                                             {
-                                                $docType = 'Amendment Signed';
+                                                $docType = arfRecomPrepType($value->tipe, true);
                                             }
                                             echo "<tr>
                                               <td>$docType</td>
-                                              <td>".$value->file_path."</td>
+                                              <td>".$value->file_name."</td>
                                               <td>".dateToIndo($value->created_at, false, true)."</td>
                                               <td>".$createdName."</td>
                                               <td>
-                                                <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                                                <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                                                 <a href='#' class='btn btn-sm btn-danger btn-hapus-file' onclick='hapusFile($value->id)'>Hapus</a>
                                               </td>
                                             </tr>";
@@ -741,6 +739,18 @@
             enableAllSteps: true,
             enableFinishButton: false
         });
+        const numberWithCommas = (x) => {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function numberNormal(n='',separator='.') {
+            n = n.replace(/\,/g, '');
+            return n;
+        }
+        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $total ?>));
+        $("#latest-agreement-value").html(Localization.number(latest_agreement_value))
+        $("#new-agreement-value").html(new_agreement)
+        
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'
         });

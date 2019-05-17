@@ -259,8 +259,8 @@
                                     <tbody>
                                         <?php foreach ($arf->response_attachment as $attachment) { ?>
                                             <tr>
-                                                <td><?= $attachment->file ?></td>
-                                                <td><a target="_blank" href="<?= base_url($document_path.'/'.$attachment->file) ?>"><?= $attachment->file ?></a></td>
+                                                <td><?= $attachment->file_name ?></td>
+                                                <td><a target="_blank" href="<?= base_url('upload/arf_notif_vendor/'.$attachment->file) ?>"><?= $attachment->file ?></a></td>
                                                 <td><?= dateToIndo($attachment->created_at, false, true) ?></td>
                                             </tr>
                                         <?php } ?>
@@ -352,11 +352,11 @@
                                             $btnHapus = $this->input->get('amd') ? "": "<a href='#' class='btn btn-sm btn-danger btn-hapus-file' onclick='hapusFile($value->id)'>Hapus</a>";
                                             echo "<tr>
                                               <td>$docType</td>
-                                              <td>".$value->file_path."</td>
+                                              <td>".$value->file_name."</td>
                                               <td>".dateToIndo($value->created_at, false, true)."</td>
                                               <td>".$createdName."</td>
                                               <td>
-                                                <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                                                <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                                                 $btnHapus
                                               </td>
                                             </tr>";
@@ -587,7 +587,7 @@
             enableFinishButton: false
         });
         $('#new_date_1,#new_date_2').datepicker({
-            format : 'yyyy-mm-dd'
+            dateFormat : 'yy-mm-dd'
         });
         $("#extend1").on('click',function(){
           var rs = $("#extend1:checked").val()

@@ -143,7 +143,8 @@ class Amendment_recommendation extends CI_Controller {
             $user = user();
             $data = $this->upload->data();
             $field = $this->input->post();
-            $field['file_path'] = $data['file_name'];
+            $field['file_path'] = $config['upload_path'].$data['file_name'];
+            $field['file_name'] = $data['file_name'];
             $field['created_by'] = $user->ID_USER;
             $this->db->insert('t_upload',$field);
         }
@@ -154,8 +155,9 @@ class Amendment_recommendation extends CI_Controller {
         $this->db->where('id',$value);
         $upload = $this->db->get('t_upload')->row();
         $data_id = $upload->data_id;
+        $_POST['data_id'] = $data_id;
         $module_kode = $upload->module_kode;
-        @unlink('upload/ARFRECOMPREP/'.$upload->file_path);
+        @unlink($upload->file_path);
 
         $this->db->where('id',$value);
         $this->db->delete('t_upload');
@@ -171,9 +173,9 @@ class Amendment_recommendation extends CI_Controller {
             $doc= $this->db->where(['data_id'=>$this->input->post('data_id')])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
         }
         foreach ($doc as $key => $value) {
-            if($module_kode == 'arf-issued')
+            if($value->module_kode == 'arf-issued')
             {
-                $type =  "Amendment Signed";
+                $type = arfIssuedDoc($value->tipe);
             }
             else
             {
@@ -181,11 +183,11 @@ class Amendment_recommendation extends CI_Controller {
             }
             echo "<tr>
               <td>".$type."</td>
-              <td>".$value->file_path."</td>
+              <td>".$value->file_name."</td>
               <td>".$value->created_at."</td>
               <td>".user($value->created_by)->NAME."</td>
               <td>
-                <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                 <a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Hapus</a>
               </td>
             </tr>";
@@ -515,13 +517,12 @@ class Amendment_recommendation extends CI_Controller {
     }
     public function send_mail()
     {
-        echo "string";
         $config = array(
             'protocol' => 'imap',
             'smtp_host' => 'mail.supreme-energy.com',
             'smtp_port' => 25,
             'smtp_user' => 'scm-portal',
-            'smtp_pass' => 'jkt@2019',
+            'smtp_pass' => 'jkt@2018',
             'mailtype'  => 'html', 
             'charset'   => 'iso-8859-1'
         );
@@ -531,14 +532,14 @@ class Amendment_recommendation extends CI_Controller {
         $this->email->initialize($config);
 
         $this->email->from('scm-portal@supreme-energy.com', 'SCM Portal');
-        $this->email->to('scm-portal@supreme-energy.com'); 
+        $this->email->to('reza@abpersada.com'); 
 
         $this->email->subject('Email Test');
         $this->email->message('Ini Terbaru');  
 
         $this->email->send();
 
-        print_r($this->email->print_debugger());
+        echo $this->email->print_debugger();
     }
     public function get_spending($value='')
     {
@@ -597,6 +598,7 @@ class Amendment_recommendation extends CI_Controller {
         $arf->response_attachment = $this->m_arf_response_attachment->where('t_arf_response_attachment.doc_id', $arf->doc_id)->get();
         $arf->performance_bond = $this->m_arf_acceptance_document->view('document')->scope('performance_bond')->where('doc_no', $arf->doc_no)->get();
         $arf->insurance = $this->m_arf_acceptance_document->view('document')->scope('insurance')->where('doc_no', $arf->doc_no)->get();
+        $arf->other = $this->m_arf_acceptance_document->view('document')->scope('other')->where('doc_no', $arf->doc_no)->get();
         $po = $this->m_arf_po->where('t_purchase_order.po_no', $arf->po_no)->first();
         $po->po_type = $this->m_arf_po->enum('type', $po->po_type);
         $po->item = $this->m_arf_po_detail->view('po_detail')
@@ -629,9 +631,12 @@ class Amendment_recommendation extends CI_Controller {
         if($this->input->get('amd'))
         {
           $data['document_path'] = $this->document_path;
-            $data['issued'] = 1;
-            $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
-            $this->template->display('procurement/V_amendment_recommendation_create', $data);
+          $data['issued'] = 1;
+          $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
+          $data['acceptance_docs'] = $this->db->select('t_arf_acceptance_document.*,m_currency.CURRENCY currency')
+          ->join('m_currency','m_currency.ID = t_arf_acceptance_document.currency_id', 'left')
+          ->where(['doc_no'=>$arf->doc_no])->get('t_arf_acceptance_document')->result();
+          $this->template->display('procurement/V_amendment_recommendation_create', $data);
         }
         else
         {

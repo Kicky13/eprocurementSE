@@ -608,7 +608,7 @@
         function get_amd(po_no){
           $.ajax({
             type:'post',
-            data:{po_no:po_no},
+            data:{po_no:po_no,doc_id:"<?= $arf->id ?>", vmod:"<?= $this->input->get('vmod') ?>"},
             url:"<?= base_url('procurement/browse/get_amd') ?>",
             success:function(e){
               var r = eval("("+e+")");

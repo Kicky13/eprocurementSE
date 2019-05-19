@@ -585,8 +585,8 @@ class Amendment_recommendation extends CI_Controller {
         }
         else
         {
-            $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no])->get('t_arf_notification');
-
+          // $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no])->get('t_arf_notification');
+            $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id <= '=> $t_arf_notification->id])->get('t_arf_notification');
         }
         $findAllResult = [];
         if($findAll->num_rows() > 0)

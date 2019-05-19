@@ -65,16 +65,14 @@ $countAllResult = count($findAllResult);
    $xTotal = @$dataTotalSummary += $total;
    if($countAllResult > 1)
    {
-    $totalSummary = $xTotal;
+    $totalSummary = $xTotal+$arf->amount_po;
    }
    else
    {
     $totalSummary = $xTotal+$arf->amount_po;
    }
   ?>
-  <div class="col-md-3 text-right amd-<?= $key ?>" id="all-amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>" data-total-summary-ref1="<?= $totalSummary ?>">
-    <?= numIndo($totalSummary) ?>
-  </div>
+  <div class="col-md-3 text-right amd-<?= $key ?>" id="all-amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>" data-total-summary-ref1="<?= $totalSummary ?>"><?= numIndo($totalSummary) ?></div>
 </div>
 <?php $i++ ?>
 <?php endforeach;?>

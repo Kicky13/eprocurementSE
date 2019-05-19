@@ -579,8 +579,15 @@ class Amendment_recommendation extends CI_Controller {
         ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
         ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->get();
         
-        $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id < '=> $t_arf_notification->id])->get('t_arf_notification');
-        
+        if($this->input->get('amd'))
+        {
+            $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id < '=> $t_arf_notification->id])->get('t_arf_notification');
+        }
+        else
+        {
+            $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no])->get('t_arf_notification');
+
+        }
         $findAllResult = [];
         if($findAll->num_rows() > 0)
         {

@@ -797,7 +797,6 @@ class Purchase_order extends CI_Controller
                 $row->status_code = 'ISSUED';
             }
 
-
             switch ($row->status_code) {
                 case 'COMPLETE':
                     $row->action_to_role_description = 'Completed';
@@ -807,6 +806,14 @@ class Purchase_order extends CI_Controller
                     break;
                 case 'ACCEPTED':
                     $row->action_to_role_description = 'Accepted';
+                    break;
+
+				case 'ACCEPTED':
+                    $row->action_to_role_description = 'Accepted';
+                    break;
+
+				case 'REJECT':
+                    $row->action_to_role_description = 'Rejected';
                     break;
                 case 'ACTIVED':
                     $row->action_to_role_description = 'Active Agreement';

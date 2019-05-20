@@ -178,7 +178,7 @@ class M_purchase_order extends MY_Model {
         ")
         ->group_start()
             ->where("$t_approval.status", 0)
-            ->or_where("$t_approval.status", 2)
+           // ->or_where("$t_approval.status", 2)
         ->group_end()
         ->group_start()
             ->where("$t_approval_prev.status", NULL, false)

@@ -166,7 +166,7 @@ class Home extends CI_Controller {
                         ->join('t_arf_nego','t_arf_nego.arf_response_id = t_arf_response.id','left')
                         ->where('t_arf_nego.status',1)
                         ->get());
-            $msrVerify['arf_nego'] = count($this->m_arf_response->view('arf_response')->get());
+            $msrVerify['arf_nego'] = count($this->m_arf_response->view('arf_response')->scope(['not_amd'])->get());
             $msrVerify['amd_reject'] = count($this->m_arf_response->view('arf_response')->scope(array('procurement_specialist','reject'))->get());
         }
         $msrVerify['arf_draft'] = $this->m_arf->scope(array('auth', 'draft'))->count_all_results();

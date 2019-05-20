@@ -482,7 +482,8 @@ class Amendment_acceptance extends CI_Controller {
       {
           $data = $this->upload->data();
           $field = $this->input->post();
-          $field['file_path'] = $data['file_name'];
+          $field['file_path'] = $config['upload_path'].$data['file_name'];
+          $field['file_name'] = $data['file_name'];
           $field['created_by'] = $this->session->userdata('ID_USER');
           $this->db->insert('t_upload',$field);
       }
@@ -508,7 +509,7 @@ class Amendment_acceptance extends CI_Controller {
     foreach ($doc as $key => $value) {
         $docType = arfIssuedDoc($value->tipe);
         $delBtn = '';
-        if($value->tipe == 2)
+        if($value->creator_type == 'vendor')
         {
           $userName = $this->db->where(['ID'=>$value->created_by])->get('m_vendor')->row();
           $userName = $userName->NAMA;
@@ -520,11 +521,11 @@ class Amendment_acceptance extends CI_Controller {
         $delBtn = "<a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Hapus</a>";
         echo "<tr>
           <td>".$docType."</td>
-          <td>".$value->file_path."</td>
+          <td>".$value->file_name."</td>
           <td>".$value->created_at."</td>
           <td>$userName</td>
           <td>
-            <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+            <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
             $delBtn
           </td>
         </tr>";

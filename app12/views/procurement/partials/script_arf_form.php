@@ -1233,7 +1233,7 @@
     function get_amd(po_no,total_amount){
       $.ajax({
         type:'post',
-        data:{po_no:po_no},
+        data:{po_no:po_no,mode:'arf-preparation'},
         url:"<?= base_url('procurement/browse/get_amd') ?>",
         success:function(e){
           var r = eval("("+e+")");

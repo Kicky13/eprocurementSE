@@ -88,7 +88,6 @@
                               <th></th>
                               <th></th>
                               <th></th>
-                              <th></th>
                               <th>Action</th>
                             </tr>
                           </tfoot>

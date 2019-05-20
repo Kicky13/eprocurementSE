@@ -1951,7 +1951,7 @@ class Purchase_order extends CI_Controller
                 return false;
             }
 
-            $ch = curl_init('https://10.1.1.94:91/PD910/ProcurementManager?WSDL');
+            $ch = curl_init('https://10.1.1.94:89/PY910/ProcurementManager?WSDL');
             $detailxml = "";
 
             for ($i=0; $i < $query_select_mat->num_rows(); $i++) {
@@ -2307,6 +2307,7 @@ class Purchase_order extends CI_Controller
             $field['file_path'] = $config['upload_path'];
             $field['file_name'] = $data['file_name'];
             $field['created_by'] = $user->ID_USER;
+            $field['creator_type'] = null;
             $this->db->where('id', $this->input->post('id_agreement_document'))->update('t_upload',$field);
         }
         $doc = $this->db->where('id', $this->input->post('id_agreement_document'))->get('t_upload')->row();

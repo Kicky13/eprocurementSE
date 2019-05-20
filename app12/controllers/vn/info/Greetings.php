@@ -371,7 +371,6 @@ class Greetings extends CI_Controller {
                         <td>".dateToIndo($value->effective_date)."</td>
                         <td>".dateToIndo($value->expired_date)."</td>
                         <td class='text-center'>".($value->bid_bond_file ? '<a href="'.base_url('upload/bid/'.$value->bid_bond_file).'" class="btn btn-info btn-sm">Download</a>' : '-')."</td>
-                        <td class='text-center'>".statusBid($value->status)."</td>
                         <td>$value->description</td>
                         <td class='text-right'><button type='button' class='btn btn-danger btn-sm' onclick='deleteBidBond(\"".$value->id."\")'>Delete</button></td>
                     </tr>";

@@ -61,19 +61,18 @@ $countAllResult = count($findAllResult);
 </div>
 <div class="form-group row <?= $i == $countAllResult  ? "" : "hidden" ?>">
   <label class="offset-md-6 col-md-3">Total Summary</label>
-  <div class="col-md-3 text-right amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>">
-      <?php 
-       $xTotal = $dataTotalSummary += $total;
-       if($countAllResult > 1)
-       {
-       echo numIndo($xTotal);
-       }
-       else
-       {
-       echo numIndo($xTotal+$arf->amount_po);
-       }
-      ?>
-  </div>
+  <?php 
+   $xTotal = @$dataTotalSummary += $total;
+   if($countAllResult > 1)
+   {
+    $totalSummary = $xTotal+$arf->amount_po;
+   }
+   else
+   {
+    $totalSummary = $xTotal+$arf->amount_po;
+   }
+  ?>
+  <div class="col-md-3 text-right amd-<?= $key ?>" id="all-amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>" data-total-summary-ref1="<?= $totalSummary ?>"><?= numIndo($totalSummary) ?></div>
 </div>
 <?php $i++ ?>
 <?php endforeach;?>

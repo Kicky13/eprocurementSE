@@ -375,7 +375,7 @@
                                                     <h4>Insurance</h4>
                                                 </div>
                                                 <div class="col-md-6 text-right">
-                                                    <button type="button" class="btn btn-success" onclick="open_form_document(1)">Update</button>
+                                                    <button type="button" class="btn btn-success" onclick="open_form_document(2)">Update</button>
                                                 </div>
                                             </div>
                                             <table id="document-table-2" class="table table-bordered">

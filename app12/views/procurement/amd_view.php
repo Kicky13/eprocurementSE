@@ -310,29 +310,7 @@
                                             <?= numIndo($arf->amount_po) ?>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h4>ARF List Item</h4>
-                                        </div>
-                                    </div><br>
-                                    <div class="table-responsive">
-                                        <table id="arf_item-table" class="table table-bordered table-sm" style="font-size: 12px;">
-                                            <thead>
-                                                <tr>
-                                                    <th>Item Type</th>
-                                                    <th>Description</th>
-                                                    <th class="text-center">Qty</th>
-                                                    <th class="text-center">UoM</th>
-                                                    <th class="text-center">Item Modif</th>
-                                                    <th class="text-center">Inventory Type</th>
-                                                    <th class="text-center">Cost Center</th>
-                                                    <th class="text-center">Acc Sub</th>
-                                                    <th class="text-right">Unit Price</th>
-                                                    <th class="text-right">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
+                                    <?php
                                                     $total = 0;
                                                     foreach ($arf->item as $item) {
                                                         $qty = $item->qty2 > 0 ? $item->qty1*$item->qty2 : $item->qty1;
@@ -341,37 +319,9 @@
                                                         $price = $item->new_price > 0 ? $item->new_price : $item->response_unit_price;
                                                         $subTotalPrice = $price*$qty;      
                                                         $total += $subTotalPrice;
+                                                      }
                                                 ?>
-                                                    <tr id="arf_item-row-<?= $item->item_semic_no_value ?>" data-row-id="<?= $item->item_semic_no_value ?>">
-                                                        <td><?= $item->item_type ?></td>
-                                                        <td><?= $item->item ?></td>
-                                                        <td class="text-center"><?= $qty ?></td>
-                                                        <td class="text-center"><?= $uom ?></td>
-                                                        <td class="text-center"><?= ($item->item_modification) ? '<i class="fa fa-check-square text-success"></i>' : '<i class=" fa fa-times text-danger"></i>' ?></td>
-                                                        <td class="text-center"><?= $item->inventory_type ?></td>
-                                                        <td class="text-center"><?= $item->id_costcenter ?> - <?= $item->costcenter_desc ?></td>
-                                                        <td class="text-center"><?= $item->id_accsub ?> - <?= $item->accsub_desc ?></td>
-                                                        <td class="text-right"><?= numIndo($price) ?></td>
-                                                        <td class="text-right">
-                                                            <?= numIndo($subTotalPrice) ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="offset-md-6 col-md-3">Total</label>
-                                        <div class="col-md-3 text-right">
-                                            <?= numIndo($total) ?>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="offset-md-6 col-md-3">Total Summary</label>
-                                        <div class="col-md-3 text-right">
-                                            <?= numIndo($arf->amount_po + $total ) ?>
-                                        </div>
-                                    </div>
+                                    <?php $this->load->view('procurement/V_all_amd')?>
                                 </div>
                             </fieldset>
                             <?php else:?>
@@ -428,28 +378,28 @@
                                 <div class="form-group row amendment_recommendation_tab">
                                     <label class="col-md-3">Latest Agreement Value</label>
                                     <div class="col-md-3">
-                                        <input class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
+                                      <input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
                                     </div>
                                     <label class="col-md-3">New Agreement Value</label>
                                     <div class="col-md-3">
-                                        <input class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
+                                      <input id="new-agreement-value" class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
                                     </div>
                                 </div>
                                 <div class="form-group row amendment_recommendation_tab" style="margin-top:20px">
                                     <div class="col-md-6">
                                         BOD Approval for this Value Amendment Request is required
                                         <br>
-                                        <input type="radio" name="bod_approval" value="0">
+                                        <input type="radio" name="bod_approval" value="0" <?= $arf->bod_approval == 0 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;margin-right: 20px;">No</label>
-                                        <input type="radio" name="bod_approval" value="1" checked="">
+                                        <input type="radio" name="bod_approval" value="1" <?= $arf->bod_approval == 1 ? "checked=''" : '' ?> >
                                         <label style="bottom: 10px;position: relative;">Yes, BOD Review Required</label>
                                     </div>
                                     <div class="col-md-6">
                                         Accumulative Amendment
                                         <br>
-                                        <input type="radio" name="aa" value="0">
+                                        <input type="radio" name="aa" value="0" <?= $arf->aa == 0 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;margin-right: 20px;">No</label>
-                                        <input type="radio" name="aa" value="1" checked="">
+                                        <input type="radio" name="aa" value="1" <?= $arf->aa == 1 ? "checked=''" : '' ?>>
                                         <label style="bottom: 10px;position: relative;">Yes, requires 1 level up for the Amendment signature as per AAS</label>
                                     </div>
                                 </div>
@@ -638,15 +588,15 @@
                                             }
                                             else
                                             {
-                                                $docType = 'Amendment Signed';
+                                                $docType = arfRecomPrepType($value->tipe, true);
                                             }
                                             echo "<tr>
                                               <td>$docType</td>
-                                              <td>".$value->file_path."</td>
+                                              <td>".$value->file_name."</td>
                                               <td>".dateToIndo($value->created_at, false, true)."</td>
                                               <td>".$createdName."</td>
                                               <td>
-                                                <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                                                <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                                                 <a href='#' class='btn btn-sm btn-danger btn-hapus-file' onclick='hapusFile($value->id)'>Hapus</a>
                                               </td>
                                             </tr>";
@@ -741,6 +691,18 @@
             enableAllSteps: true,
             enableFinishButton: false
         });
+        const numberWithCommas = (x) => {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function numberNormal(n='',separator='.') {
+            n = n.replace(/\,/g, '');
+            return n;
+        }
+        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $total ?>));
+        $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
+        $("#new-agreement-value").val(new_agreement)
+        
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'
         });

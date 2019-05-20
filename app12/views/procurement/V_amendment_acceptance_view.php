@@ -110,12 +110,10 @@
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3">Latest Agreement Value</label>
-                                    <div class="col-md-3 text-right">
-                                        <?= numIndo($arf->amount_po_arf) ?>
+                                    <div class="col-md-3 text-right" id="latest-agreement-value">
                                     </div>
                                     <label class="col-md-3">New Agreement Value</label>
-                                    <div class="col-md-3 text-right">
-                                        <?= numIndo($stt+$arf->amount_po_arf) ?>
+                                    <div class="col-md-3 text-right" id="new-agreement-value">
                                     </div>
                                 </div>
                                 <div class="form-group row" style="margin-top:20px">
@@ -312,14 +310,14 @@
                                         </thead>
                                         <tbody id="devbled-attachment">
                                           <?php foreach ($doc as $key => $value) {
-                                            $uploadName = $value->tipe == 2 ? supplier($value->created_by)->NAMA : user($value->created_by)->NAME;
+                                            $uploadName = $value->creator_type == 'vendor' ? supplier($value->created_by)->NAMA : user($value->created_by)->NAME;
                                             echo "<tr>
                                               <td>".arfIssuedDoc($value->tipe)."</td>
-                                              <td>".$value->file_path."</td>
+                                              <td>".$value->file_name."</td>
                                               <td>".$value->created_at."</td>
                                               <td>".$uploadName."</td>
                                               <td>
-                                                <a href='".base_url('upload/ARFRECOMPREP/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                                                <a href='".base_url($value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                                                 <a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Hapus</a>
                                               </td>
                                             </tr>";
@@ -371,7 +369,9 @@
                                             </tr>
                                             <?php $no++ ?>
                                         <?php } ?>
-                                        <?php foreach ($arf->performance_bond as $doc) { ?>
+                                        <?php foreach ($acceptance_docs as $doc) { 
+                                            if($doc->type == 1){
+                                        ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td><?= $doc->no ?></td>
@@ -382,10 +382,10 @@
                                                 <td class="text-center"><?= dateToIndo($doc->effective_date) ?></td>
                                                 <td class="text-center"><?= dateToIndo($doc->expired_date) ?></td>
                                                 <td><?= $doc->description ?></td>
-                                                <td class="text-right"><a href="<?= base_url($document_path.'/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
+                                                <td class="text-right"><a href="<?= base_url('./upload/amd_acceptance_vendor/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
                                             </tr>
                                             <?php $no++ ?>
-                                        <?php } ?>
+                                        <?php } } ?>
                                     </tbody>
                                 </table>
                                 <?php } ?>
@@ -412,7 +412,7 @@
                                     </thead>
                                     <tbody>
                                         <?php $no = 1 ?>
-                                        <?php foreach ($po->doc_insurance as $doc) { ?>
+                                        <?php foreach ($po->doc_issurance as $doc) { ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td><?= $doc->doc_no ?></td>
@@ -427,7 +427,9 @@
                                             </tr>
                                             <?php $no++ ?>
                                         <?php } ?>
-                                        <?php foreach ($arf->Insurance as $doc) { ?>
+                                        <?php foreach ($acceptance_docs as $doc) { 
+                                            if($doc->type == 2){
+                                        ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td><?= $doc->no ?></td>
@@ -438,10 +440,10 @@
                                                 <td class="text-center"><?= dateToIndo($doc->effective_date) ?></td>
                                                 <td class="text-center"><?= dateToIndo($doc->expired_date) ?></td>
                                                 <td><?= $doc->description ?></td>
-                                                <td class="text-right"><a href="<?= base_url($document_path.'/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
+                                                <td class="text-right"><a href="<?= base_url('./upload/amd_acceptance_vendor/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
                                             </tr>
                                             <?php $no++ ?>
-                                        <?php } ?>
+                                        <?php } } ?>
                                     </tbody>
                                 </table>
                                 <?php } ?>
@@ -468,22 +470,9 @@
                                     </thead>
                                     <tbody>
                                         <?php $no = 1 ?>
-                                        <?php foreach ($po->doc_other as $doc) { ?>
-                                            <tr>
-                                                <td><?= $no ?></td>
-                                                <td><?= $doc->doc_no ?></td>
-                                                <td class="text-center"><?= $doc->issuer ?></td>
-                                                <td class="text-center"><?= dateToIndo($doc->issued_date) ?></td>
-                                                <td class="text-center"><?= numIndo($doc->value) ?></td>
-                                                <td class="text-center"><?= $doc->currency ?></td>
-                                                <td class="text-center"><?= dateToIndo($doc->effective_date) ?></td>
-                                                <td class="text-center"><?= dateToIndo($doc->expired_date) ?></td>
-                                                <td><?= $doc->description ?></td>
-                                                <td class="text-right"><a href="<?= base_url($doc->file_path.$doc->file_name) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
-                                            </tr>
-                                            <?php $no++ ?>
-                                        <?php } ?>
-                                        <?php foreach ($arf->doc_other as $doc) { ?>
+                                        <?php foreach ($acceptance_docs as $doc) { 
+                                            if($doc->type == 3){
+                                        ?>
                                             <tr>
                                                 <td><?= $no ?></td>
                                                 <td><?= $doc->no ?></td>
@@ -494,10 +483,10 @@
                                                 <td class="text-center"><?= dateToIndo($doc->effective_date) ?></td>
                                                 <td class="text-center"><?= dateToIndo($doc->expired_date) ?></td>
                                                 <td><?= $doc->description ?></td>
-                                                <td class="text-right"><a href="<?= base_url($document_path.'/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
+                                                <td class="text-right"><a href="<?= base_url('./upload/amd_acceptance_vendor/'.$doc->file) ?>" target="_blank" class="btn btn-info btn-sm"><i class="fa fa-download"></i></a></td>
                                             </tr>
                                             <?php $no++ ?>
-                                        <?php } ?>
+                                        <?php } } ?>
                                     </tbody>
                                 </table>
                                 <?php } ?>
@@ -560,7 +549,7 @@
             <div class="col-sm-12">
               <select class="form-control" name="tipe" id="tipe">
                 <option value="1">Amendment Signed</option>
-                <option value="3">Counter Signed</option>
+                <option value="2">Counter Signed</option>
               </select>
             </div>
           </div>
@@ -594,6 +583,18 @@
             enableAllSteps: true,
             enableFinishButton: false
         });
+        const numberWithCommas = (x) => {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function numberNormal(n='',separator='.') {
+            n = n.replace(/\,/g, '');
+            return n;
+        }
+        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+        $("#latest-agreement-value").html(Localization.number(latest_agreement_value))
+        $("#new-agreement-value").html(new_agreement)
+
     });
     function completnessClick(id) {
         $.ajax({

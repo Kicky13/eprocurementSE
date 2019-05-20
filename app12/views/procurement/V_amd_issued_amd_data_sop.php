@@ -60,17 +60,20 @@
         </div>
         <label class="col-md-3">Additional Value</label>
         <div class="col-md-3">
+          <?php 
+            $stt = $total;
+          ?>
             <input class="form-control" disabled value="<?=numIndo($total)?>">
         </div>
     </div>
     <div class="form-group row amendment_recommendation_tab">
         <label class="col-md-3">Latest Agreement Value</label>
         <div class="col-md-3">
-            <input class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
+            <input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
         </div>
         <label class="col-md-3">New Agreement Value</label>
         <div class="col-md-3">
-            <input class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
+            <input class="form-control" id="new-agreement-value" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
         </div>
     </div>
     <?php if(isset($issued)): ?>
@@ -456,10 +459,11 @@
         </div>
         <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total Summary</label>
-            <div class="col-md-3 text-right">
-              <?php 
+            <?php 
                 $xTotal = count($findAllResult) > 0 ? $dataTotalSummary + $total : $dataTotalSummary + $total + $arf->amount_po;
               ?>
+            <div class="col-md-3 text-right" id="all-amd-<?= $arf->doc_no ?>" data="<?= numIndo($xTotal) ?>">
+              
                 <?= numIndo($xTotal) ?>
             </div>
         </div>
@@ -470,3 +474,20 @@
         $total = 0;
     ?>
 <?php endif;?>
+<script type="text/javascript">
+  $(document).ready(function(){
+    const numberWithCommas = (x) => {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    function numberNormal(n='',separator='.') {
+      n = n.replace(/\,/g, '');
+      return n;
+    }
+    <?php if(isset($issued)): ?>
+      var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").attr('data')
+      var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+      $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
+      $("#new-agreement-value").val(new_agreement)
+    <?php endif;?>
+  })
+</script>

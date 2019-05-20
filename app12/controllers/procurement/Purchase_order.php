@@ -807,11 +807,6 @@ class Purchase_order extends CI_Controller
                 case 'ACCEPTED':
                     $row->action_to_role_description = 'Accepted';
                     break;
-
-				case 'ACCEPTED':
-                    $row->action_to_role_description = 'Accepted';
-                    break;
-
 				case 'REJECT':
                     $row->action_to_role_description = 'Rejected';
                     break;

@@ -63,20 +63,43 @@ class Browse extends CI_Controller {
     {
         $po_no = $this->input->post('po_no');
         $this->db->get('t_arf_recommendation_preparation');
+        $addAndWhere = '';
+        if($this->input->post('doc_id') and $this->input->post('vmod'))
+        {
+          $addAndWhere = "and t_arf.id < ".$this->input->post('doc_id');
+        }
 
         $sql = "SELECT t_arf.id arf_id, t_arf_recommendation_preparation.doc_no doc_no_amd, t_arf.doc_no doc_no_arf, 
         t_arf.amount_po, t_arf_recommendation_preparation.po_no po_no_amd,t_arf.po_no po_no_arf 
         from t_arf_recommendation_preparation 
-        left join t_arf on t_arf.po_no = t_arf_recommendation_preparation.po_no 
+        left join t_arf on t_arf.po_no = t_arf_recommendation_preparation.po_no and t_arf.doc_no = t_arf_recommendation_preparation.doc_no
         left JOIN t_arf_detail_revision on t_arf_detail_revision.doc_id = t_arf.id 
-        where t_arf_recommendation_preparation.po_no = '$po_no' and t_arf_detail_revision.type = 'value' and `t_arf_detail_revision`.`value` > 0 order by t_arf.id desc";
+        where t_arf_recommendation_preparation.po_no = '$po_no' and t_arf_detail_revision.type = 'value' and `t_arf_detail_revision`.`value` > 0  $addAndWhere order by t_arf.id desc";
         $q = $this->db->query($sql);
+        // echo $sql;
         $num = $q->num_rows();
         if($num > 0)
         {
-          $allTotal = 0;
           $arf = $q->row();
-          $findAllResult = $this->db->where(['po_no'=>$arf->po_no_amd])->get('t_arf_notification')->result();
+          $allTotal = 0;
+          if($this->input->post('doc_id') and $this->input->post('vmod'))
+          {
+            $doc_no_in = [];
+            foreach ($q->result() as $qRow) {
+              $doc_no_in[] = $qRow->doc_no_amd;
+            }
+            $findAllResult = $this->db->where_in('doc_no', $doc_no_in)->get('t_arf_notification')->result();
+          }
+          else
+          {
+            $findAllResult = $this->db->where(['doc_no'=>$arf->doc_no_amd])->get('t_arf_notification')->result();
+          }
+          if($this->input->post('mode') == 'arf-preparation'){
+            $findAllResult = $this->db->where(['po_no'=>$arf->po_no_arf])->get('t_arf_notification')->result();
+          }
+          // print_r($findAllResult);
+          // echo $this->db->last_query();
+          
           $dt = '';
           foreach ($findAllResult as $r) {
             $data = $this->m_arf_sop->view('response')

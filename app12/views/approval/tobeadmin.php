@@ -1,4 +1,4 @@
-    <?php
+<?php
   $t_assignment = $this->db->where(['msr_no'=>$msr_no])->get('t_assignment')->row();
 ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
@@ -363,7 +363,8 @@
     												<?php
     												  if($ed->commercial == 0 and $ed->administrative == 5 and $ed->technical == 5 and $this->session->userdata('ID_USER') == $t_assignment->user_id):
     												?>
-    												  <a href="#" data-toggle="modal" data-target="#modal-upload-commercial" class="btn btn-sm btn-primary <?=$disCom?>">Upload</a> <a id="file_upload_name_com" href="#" target="_blank"> </a>
+    												  <a href="#" data-toggle="modal" data-target="#modal-upload-commercial" class="btn btn-sm btn-primary <?=$disCom?>">Upload</a>
+    												  <a id="file_upload_name_com" href="#" target="_blank"> </a>
     												<?php
     												  else:
     													$commercialAttachment = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
@@ -1246,7 +1247,7 @@ $(document).ready(function(){
             }else if(type == 'technical'){
 
             	var filename = $('#file_tech').val().split('\\').pop();
-            	alert(filename);
+            	// alert(filename);
             	$("#file_upload_name_tech").text(filename);
             	$("#file_upload_name_tech").attr("href", "<?=base_url('upload/evaluation/')?>"+"/"+x.filename);
             }else if(type == 'commercial'){

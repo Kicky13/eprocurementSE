@@ -424,6 +424,10 @@
                             echo $extend1 ? "disabled='' checked='checked'" : "";
                             }
                         }
+                        else
+                        {
+                          $ro1 = 'disabled=""';
+                        }
                     ?>
                     >
                 </div>
@@ -447,6 +451,11 @@
                             {                                
                             echo $extend2 ? "disabled='' checked='checked'" : "";
                             }
+                        }
+                        else
+                        {
+
+                          $ro2 = 'disabled=""';
                         }
                     ?>
                     >

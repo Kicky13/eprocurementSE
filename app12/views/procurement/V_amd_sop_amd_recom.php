@@ -43,6 +43,7 @@
         </div>
         <?php 
             $dataTotalSummary = 0;
+            $latestAdditionalValue = 0;
             foreach ($findAllResult as $key=>$value) :
         ?>  
         <div class="row">
@@ -98,7 +99,11 @@
         <div class="form-group row">
           <label class="offset-md-6 col-md-3">Total</label>
           <div class="col-md-3 text-right">
-              <?= numIndo($total) ?>
+              <?php 
+                   echo numIndo($total); 
+                          $latestAdditionalValue += $total;
+
+              ?>
           </div>
         </div>
         <div class="form-group row hidden">
@@ -163,18 +168,14 @@
         </div>
         <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total</label>
-            <div class="col-md-3 text-right">
-                <?= numIndo($total) ?>
-            </div>
+            <div class="col-md-3 text-right" id="additional-value"><?= numIndo($total) ?></div>
         </div>
         <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total Summary</label>
-            <div class="col-md-3 text-right">
-              <?php 
-                $xTotal = count($findAllResult) > 0 ? $dataTotalSummary + $total : $dataTotalSummary + $total + $arf->amount_po;
+            <?php 
+                $xTotal = count($findAllResult) > 0 ? $latestAdditionalValue + $arf->amount_po + $total : $dataTotalSummary + $total + $arf->amount_po;
               ?>
-                <?= numIndo($xTotal) ?>
-            </div>
+            <div class="col-md-3 text-right" id="all-amd-<?= $arf->doc_no ?>"><?= numIndo($xTotal) ?></div>
         </div>
     </div>
 </fieldset>
@@ -225,19 +226,13 @@
             <input class="form-control" disabled value="<?=numIndo($arf->amount_po)?>">
         </div>
         <label class="col-md-3">Additional Value</label>
-        <div class="col-md-3">
-            <input class="form-control" disabled value="<?=numIndo($total)?>">
-        </div>
+        <div class="col-md-3" ><input class="form-control" disabled value="<?=numIndo($total)?>"></div>
     </div>
     <div class="form-group row amendment_recommendation_tab">
         <label class="col-md-3">Latest Agreement Value</label>
-        <div class="col-md-3">
-            <input class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
-        </div>
+        <div class="col-md-3" ><input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>"></div>
         <label class="col-md-3">New Agreement Value</label>
-        <div class="col-md-3">
-            <input class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>">
-        </div>
+        <div class="col-md-3" ><input id="new-agreement-value" class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>"></div>
     </div>
     <?php if(isset($issued)): ?>
     <?php else:?>
@@ -417,7 +412,7 @@
                             if(isset($edit))
                             {
                             echo $extend1 ? "checked='checked'" : "";
-                            $ro1 = "";
+                            $ro1 = $extend1 ? "" : "disabled";
                             }
                             else
                             {                                
@@ -445,7 +440,7 @@
                             {
                             echo $extend2 ? "checked='checked'" : "";
 
-                            $ro2 = "";
+                            $ro2 = $extend2 ? "" : "disabled";
                             }
                             else
                             {                                

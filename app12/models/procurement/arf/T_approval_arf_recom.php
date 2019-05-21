@@ -243,9 +243,9 @@ class T_approval_arf_recom extends CI_Model {
     SELECT DISTINCT o.id_ref,o.id_user_role,o.id_user from (
             SELECT m.id_ref,min(m.sequence) as sequence
             FROM t_approval_arf_recom m
-            where m.status!=1  and m.sequence < 7 group by m.id_ref
+            where m.status=0  and m.sequence < 7 group by m.id_ref
     ) n left JOIN
-    t_approval_arf_recom o on o.id_ref=n.id_ref and o.sequence=n.sequence and o.status !=1
+    t_approval_arf_recom o on o.id_ref=n.id_ref and o.sequence=n.sequence and o.status =0
     left JOIN t_arf_recommendation_preparation p on p.arf_response_id=o.id_ref
      where o.id_user= '.$id_user. ' and o.sequence < 7')->result();
     // echo $this->db->last_query();

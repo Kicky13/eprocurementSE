@@ -591,6 +591,17 @@
             enableAllSteps: true,
             enableFinishButton: false
         });
+        const numberWithCommas = (x) => {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        function numberNormal(n='',separator='.') {
+            n = n.replace(/\,/g, '');
+            return n;
+        }
+        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        $("#new-agreement-value").val(new_agreement)
+        var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
+        $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'
         });

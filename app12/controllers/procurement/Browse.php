@@ -92,7 +92,7 @@ class Browse extends CI_Controller {
           }
           else
           {
-            $findAllResult = $this->db->where(['doc_no'=>$arf->doc_no_amd])->get('t_arf_notification')->result();
+            $findAllResult = $this->db->where(['po_no'=>$arf->po_no_arf])->get('t_arf_notification')->result();
           }
           if($this->input->post('mode') == 'arf-preparation'){
             $findAllResult = $this->db->where(['po_no'=>$arf->po_no_arf])->get('t_arf_notification')->result();

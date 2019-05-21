@@ -407,7 +407,7 @@ class Amendment_recommendation extends CI_Controller {
         $data['is_reject'] = $this->T_approval_arf_recom->is_reject($id);
         $data['findAllResult'] = $findAllResult;
         
-        $this->template->display('procurement/V_amendment_recommendation_create', $data);
+        $this->template->display('procurement/V_amendment_recommendation_view', $data);
     }
     public function approve($value='')
     {

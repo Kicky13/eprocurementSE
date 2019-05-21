@@ -272,8 +272,8 @@ class Registered_supplier extends CI_Controller {
         $this->email->to($content['email']);
         $this->email->subject($content['title']);
 
-        $ctn = ' <p>' . $content['img1'] . '<p>
-                        <p>' . $content['open'] . '<p>
+        $ctn = ' <p>' . $content['img1'] . '</p>
+                        <p>' . $content['open'] . '</p>
                         <br>
                         <table>
                             <tr>

@@ -272,7 +272,8 @@ class Registered_supplier extends CI_Controller {
         $this->email->to($content['email']);
         $this->email->subject($content['title']);
 
-        $ctn = '    <p>' . $content['open'] . '</p>
+        $ctn = ' <p>' . $content['img1'] . '</p>
+                        <p>' . $content['open'] . '</p>
                         <br>
                         <table>
                             <tr>
@@ -339,10 +340,10 @@ class Registered_supplier extends CI_Controller {
 			  
 			  switch ($exUrl) {
 				case "dev_prod":
-					$url = "<a href='".$_SERVER["HTTP_HOST"]."/dev_vendor'>Go To Login</a>";
+					$url = "<a href='http://".$_SERVER["HTTP_HOST"]."/dev_vendor'>Go To Login</a>";
 					break;
 				case "dev_user":
-					$url = "<a href='".$_SERVER["HTTP_HOST"]."/dev_user_vendor'>Go To Login</a>";
+					$url = "<a href='http://".$_SERVER["HTTP_HOST"]."/dev_user_vendor'>Go To Login</a>";
 					break;
 				default:
 					$url = "<a href='eproc.supreme-energy.com'>Go To Login</a>";

@@ -333,6 +333,7 @@
         </div>
         <?php 
             $dataTotalSummary = 0;
+            $latestAdditionalValue = 0;
             foreach ($findAllResult as $key=>$value) :
         ?>  
         <div class="row">
@@ -388,7 +389,11 @@
         <div class="form-group row">
           <label class="offset-md-6 col-md-3">Total</label>
           <div class="col-md-3 text-right">
-              <?= numIndo($total) ?>
+              <?php 
+                   echo numIndo($total); 
+                          $latestAdditionalValue += $total;
+
+              ?>
           </div>
         </div>
         <div class="form-group row hidden">
@@ -460,7 +465,7 @@
         <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total Summary</label>
             <?php 
-                $xTotal = count($findAllResult) > 0 ? $dataTotalSummary + $total : $dataTotalSummary + $total + $arf->amount_po;
+                $xTotal = count($findAllResult) > 0 ? $latestAdditionalValue + $arf->amount_po + $total : $dataTotalSummary + $total + $arf->amount_po;
               ?>
             <div class="col-md-3 text-right" id="all-amd-<?= $arf->doc_no ?>" data="<?= numIndo($xTotal) ?>">
               

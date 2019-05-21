@@ -600,10 +600,7 @@
         }
         var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
         $("#new-agreement-value").val(new_agreement)
-        alert('New Agreement Value '+ new_agreement);
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
-        alert('Number Normal additional-value '+$("#additional-value").text());
-        // alert('Latest Agreement Value '+latest_agreement_value)
         $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'

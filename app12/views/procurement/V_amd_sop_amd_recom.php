@@ -412,7 +412,7 @@
                             if(isset($edit))
                             {
                             echo $extend1 ? "checked='checked'" : "";
-                            $ro1 = "";
+                            $ro1 = $extend1 ? "" : "disabled";
                             }
                             else
                             {                                
@@ -440,7 +440,7 @@
                             {
                             echo $extend2 ? "checked='checked'" : "";
 
-                            $ro2 = "";
+                            $ro2 = $extend2 ? "" : "disabled";
                             }
                             else
                             {                                

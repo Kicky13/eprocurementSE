@@ -159,4 +159,7 @@ class M_arf_response extends M_base {
         $arfNegoDetail = $this->db->where(['arf_response_id'=>$arf_response_id])->order_by('id','desc')->get('t_arf_nego_detail')->result();
         return ['arfNego'=>$arfNego, 'arfNegoDetail' => $arfNegoDetail];
     }
+    public function scope_not_amd() {
+        $this->db->where('`t_arf_response`.`id` not in (select `arf_response_id` from t_arf_recommendation_preparation)', null, false);
+    }
 }

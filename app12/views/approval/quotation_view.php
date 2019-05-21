@@ -4,50 +4,50 @@
   $blDetails = $this->vendor_lib->blDetail($msr_no)->result();
 ?>
 <div class="row">
-	<div class="col-md-6">
-	  <div class="table-responsive">
-		<table class="table table-condensed  ">
-		  <tr>
-			<td width="200">Invitation Date</td>
-			<td>
-			  <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
-				<?=dateToIndo($t_bl->created_at)?>
-			  </label>
-			</td>
-		  </tr>
-		  <tr>
-			<td>Pre Bid Date</td>
-			<td>
-			  <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
+  <div class="col-md-6">
+    <div class="table-responsive">
+    <table class="table table-condensed  ">
+      <tr>
+      <td width="200">Invitation Date</td>
+      <td>
+        <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
+        <?=dateToIndo($t_bl->created_at)?>
+        </label>
+      </td>
+      </tr>
+      <tr>
+      <td>Pre Bid Date</td>
+      <td>
+        <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
           <?= dateToIndo($ed->prebiddate, false, true) ?  dateToIndo($ed->prebiddate, false, true) : 'Not Applicable' ?>
-			  </label>
-			</td>
-		  </tr>
-		</table>
-	  </div>
-	</div>
-	<div class="col-md-6">
-	  <div class="table-responsive">
-		<table class="table table-condensed  ">
-		  <tr>
-			<td>Bid Validity</td>
-			<td>
-			  <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
-				<?=dateToIndo($ed->bid_validity, false, false)?>
-			  </label>
-			</td>
-		  </tr>
-		  <tr>
-			<td>Closing Date</td>
-			<td>
-			  <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
-				<?=dateToIndo($ed->closing_date, false, true)?>
-			  </label>
-			</td>
-		  </tr>
-		</table>
-	  </div>
-	</div>
+        </label>
+      </td>
+      </tr>
+    </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="table-responsive">
+    <table class="table table-condensed  ">
+      <tr>
+      <td>Bid Validity</td>
+      <td>
+        <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
+        <?=dateToIndo($ed->bid_validity, false, false)?>
+        </label>
+      </td>
+      </tr>
+      <tr>
+      <td>Closing Date</td>
+      <td>
+        <label style="padding: 5px;border-radius: 8px;border: 1px solid #999;background: #aaa;width: 250px">
+        <?=dateToIndo($ed->closing_date, false, true)?>
+        </label>
+      </td>
+      </tr>
+    </table>
+    </div>
+  </div>
 </div>
 <div class="col-md-12">
   <div class="table-responsive">
@@ -145,92 +145,92 @@
         <h4 class="modal-title"><?=$blDetail->vendor_name?> - Detail Quotation</h4>
       </div>
       <div class="modal-body">
-		<div class="row">
-			<div class="col-md-6">
-				<div class="form-group row">
-				  <label class="col-12" style="font-weight:bold;">Administration</label>
-				</div>
-				<div class="form-group row">
-				  <label class="col-lg-6 col-md-12">Statement of Conformity</label>
-				  <div class="col-md-6">
-					<a href="<?=base_url('upload/bid/'.@$bidHead->soc)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
-				  </div>
-				</div>
-				<br>
-				<div class="form-group row">
-				  <label class="col-12" style="font-weight:bold;">Technical</label>
-				  <label class="col-lg-6 col-md-12">Technical Proposal</label>
-				  <div class="col-md-6">
-					<a href="<?=base_url('upload/bid/'.@$bidHead->tp)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
-				  </div>
-				</div>
-				<div class="form-group row">
-				  <label class="col-lg-6 col-md-12">Delivery work duration</label>
-			      <div class="input-group col-md-6">
-					<input class="form-control" disabled="" value="<?=@$bidHead->delivery_nilai?>" aria-describedby="basic-addon2">
-					<span class="input-group-addon" id="basic-addon2"><?=@$bidHead->delivery_satuan?></span>
-				  </div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="form-group row">
-					<label class="col-12" style="font-weight:bold;">Commercial</label>
-				</div>
-				<div class="form-group row">
-					<label class="col-lg-4 col-md-12">Bid Letter No</label>
-					<div class="col-md-4" style="padding-right:0;">
-					  <input name="bid_letter_no" class="form-control" disabled="" value="<?=@$bidHead->bid_letter_no?>">
-					</div>
-					<div class="col-md-4">
-					  <?php if(@$bidHead->bid_letter_path): ?>
-					  <a href="<?=base_url('upload/bid/'.@$bidHead->bid_letter_path)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
-					  <?php endif;?>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-lg-4 col-md-12">Bid validity</label>
-					<div class="col-md-5" style="padding-right:0;">
-					  <input class="form-control" disabled="" value="<?=@$bidHead->bid_validity ? dateToIndo($bidHead->bid_validity,false,false) : ''?>">
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-lg-4 col-md-12">Local content (TKDN)</label>
-					<div class="col-md-4" style="padding-right:0;">
-					 <?php
-					   $id_local_content_type_str = '';
-					   if(@$bidHead->id_local_content_type)
-					   {
-					  	$id_local_content_type_str = $this->mvn->find($bidHead->id_local_content_type)->name;
-					   }
-					 ?>
-					 <input class="form-control" disabled="" value="<?=$id_local_content_type_str?>">
-					</div>
-					<div class="col-md-4">
-					 <div class="input-group">
-						<input class="form-control" disabled="" value="<?=@$bidHead->local_content?>" aria-describedby="basic-addon2">
-						<span class="input-group-addon" id="basic-addon2">%</span>
-					 </div>
-					</div>
-					<div class="col-md-4"> </div>
-					<div class="col-md-8">
-					  <a href="<?=base_url('upload/bid/'.@$bidHead->local_content_path)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-lg-4 col-md-12">Other Commercial Document</label>
-					<div class="col-md-8">
-					  <?php if(isset($bidHead->pl)): ?>
-					    <a href="<?=base_url('upload/bid/'.@$bidHead->pl)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
-					  <?php endif;?>
-					</div>
-				</div>
-			</div>
-		</div>
+    <div class="row">
+      <div class="col-md-6">
         <div class="form-group row">
-			<label class="col-12">Note</label>
-			 <div class="col-md-12">
-				<textarea class="form-control" disabled=""><?=@$bidHead->note?></textarea>
-			 </div>
+          <label class="col-12" style="font-weight:bold;">Administration</label>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-6 col-md-12">Statement of Conformity</label>
+          <div class="col-md-6">
+          <a href="<?=base_url('upload/bid/'.@$bidHead->soc)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+          </div>
+        </div>
+        <br>
+        <div class="form-group row">
+          <label class="col-12" style="font-weight:bold;">Technical</label>
+          <label class="col-lg-6 col-md-12">Technical Proposal</label>
+          <div class="col-md-6">
+          <a href="<?=base_url('upload/bid/'.@$bidHead->tp)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-6 col-md-12">Delivery work duration</label>
+            <div class="input-group col-md-6">
+          <input class="form-control" disabled="" value="<?=@$bidHead->delivery_nilai?>" aria-describedby="basic-addon2">
+          <span class="input-group-addon" id="basic-addon2"><?=@$bidHead->delivery_satuan?></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group row">
+          <label class="col-12" style="font-weight:bold;">Commercial</label>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-4 col-md-12">Bid Letter No</label>
+          <div class="col-md-4" style="padding-right:0;">
+            <input name="bid_letter_no" class="form-control" disabled="" value="<?=@$bidHead->bid_letter_no?>">
+          </div>
+          <div class="col-md-4">
+            <?php if(@$bidHead->bid_letter_path): ?>
+            <a href="<?=base_url('upload/bid/'.@$bidHead->bid_letter_path)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+            <?php endif;?>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-4 col-md-12">Bid validity</label>
+          <div class="col-md-5" style="padding-right:0;">
+            <input class="form-control" disabled="" value="<?=@$bidHead->bid_validity ? dateToIndo($bidHead->bid_validity,false,false) : ''?>">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-4 col-md-12">Local content (TKDN)</label>
+          <div class="col-md-4" style="padding-right:0;">
+           <?php
+             $id_local_content_type_str = '';
+             if(@$bidHead->id_local_content_type)
+             {
+              $id_local_content_type_str = $this->mvn->find($bidHead->id_local_content_type)->name;
+             }
+           ?>
+           <input class="form-control" disabled="" value="<?=$id_local_content_type_str?>">
+          </div>
+          <div class="col-md-4">
+           <div class="input-group">
+            <input class="form-control" disabled="" value="<?=@$bidHead->local_content?>" aria-describedby="basic-addon2">
+            <span class="input-group-addon" id="basic-addon2">%</span>
+           </div>
+          </div>
+          <div class="col-md-4"> </div>
+          <div class="col-md-8">
+            <a href="<?=base_url('upload/bid/'.@$bidHead->local_content_path)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-lg-4 col-md-12">Other Commercial Document</label>
+          <div class="col-md-8">
+            <?php if(isset($bidHead->pl)): ?>
+              <a href="<?=base_url('upload/bid/'.@$bidHead->pl)?>" target="_blank" class="btn btn-sm btn-info">Download</a>
+            <?php endif;?>
+          </div>
+        </div>
+      </div>
+    </div>
+        <div class="form-group row">
+      <label class="col-12">Note</label>
+       <div class="col-md-12">
+        <textarea class="form-control" disabled=""><?=@$bidHead->note?></textarea>
+       </div>
         </div>
         <div class="form-group row">
           <?php $this->load->view('approval/priceevaluationnegotiation-one',['ed'=>$ed,'xvendor'=>$blDetail->vendor_id, 'nego'=>false]);?>

@@ -340,13 +340,13 @@ class Registered_supplier extends CI_Controller {
 			  
 			  switch ($exUrl) {
 				case "dev_prod":
-					$url = "<a href='http:https://".$_SERVER["HTTP_HOST"]."/dev_vendor/>Go To Login</a>";
+					$url = "<a href='".$_SERVER["HTTP_HOST"]."/dev_vendor'>Go To Login</a>";
 					break;
 				case "dev_user":
-					$url = "<a href='http:https://".$_SERVER["HTTP_HOST"]."/dev_user_vendor/>Go To Login</a>";
+					$url = "<a href='".$_SERVER["HTTP_HOST"]."/dev_user_vendor'>Go To Login</a>";
 					break;
 				default:
-					$url = "<a href='http:https://eproc.supreme-energy.com/>Go To Login</a>";
+					$url = "<a href='eproc.supreme-energy.com'>Go To Login</a>";
 			}
 			  
               $data = array(

@@ -1092,7 +1092,7 @@ class Msr extends CI_Controller {
             $copy_item['account_subsidiary_name'] = $item->accsub_desc;
             $copy_item['is_asset'] = $item->is_asset;
             $copy_item['inv_type_value'] = $item->inv_type;
-            $copy_item['inv_type_name'] = @$opt_msr_inventory_type[$item->is_asset];
+            $copy_item['inv_type_name'] = @$opt_msr_inventory_type[$item->inv_type];
             $copy_item['item_modification'] = $item->item_modification;
 
             return $copy_item;
@@ -1185,6 +1185,8 @@ class Msr extends CI_Controller {
         $_POST['total_amount'] = $msr->total_amount;
         $_POST['procure_processing_time'] = $msr->procure_processing_time;
         $_POST['blanket'] = $msr->blanket;
+        $_POST['master_list'] = $msr->master_list;
+        
 
         $opt_itemtype = array_pluck($this->itemtype->all(), 'ITEMTYPE_DESC', 'ID_ITEMTYPE');
         $opt_currency = array_pluck($this->currency->all(), 'DESCRIPTION', 'ID');
@@ -1272,8 +1274,8 @@ class Msr extends CI_Controller {
             $copy_item['subgroup_value'] = $item->sub_groupcat;
             $copy_item['subgroup_name'] = $item->sub_groupcat_desc;
             $copy_item['qty_required_value'] = $item->qty;
-            $copy_item['qty_onhand_value'] = 0;
-            $copy_item['qty_ordered_value'] = 0;
+            $copy_item['qty_onhand_value'] = $item->qty_onhand_value;
+            $copy_item['qty_ordered_value'] = $item->qty_ordered_value;
             $copy_item['uom_name'] = @$uom->MATERIAL_UOM;
             $copy_item['uom_description'] = @$uom->DESCRIPTION;
             $copy_item['uom_value'] = @$uom->ID;
@@ -1291,7 +1293,7 @@ class Msr extends CI_Controller {
             $copy_item['account_subsidiary_name'] = $item->accsub_desc;
             $copy_item['is_asset'] = $item->is_asset;
             $copy_item['inv_type_value'] = $item->inv_type;
-            $copy_item['inv_type_name'] = @$opt_msr_inventory_type[$item->is_asset];
+            $copy_item['inv_type_name'] = @$opt_msr_inventory_type[$item->inv_type];
             $copy_item['item_modification'] = $item->item_modification;
 
             return $copy_item;
@@ -1938,6 +1940,8 @@ class Msr extends CI_Controller {
             'sub_groupcat' => @$item['subgroup_value'] ?: NULL,
             'sub_groupcat_desc' => @$item['subgroup_name'],
             'qty' => @$item['qty_required_value'] ?: 0,
+            'qty_onhand_value' => @$item['qty_onhand_value'] ?: 0,
+            'qty_ordered_value' => @$item['qty_ordered_value'] ?: 0,
             'uom_id' => @$item['uom_value'] ?: NULL,
             'uom' => @$item['uom_name'],
             'priceunit' => @$item['unit_price_value'] ?: 0,

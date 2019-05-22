@@ -2948,7 +2948,7 @@ foreach ($posts['items'] as $i => $item) {
     "is_asset" => $item['is_asset'] == 1 ? 'yes': 'no'
         . hidden_input($item_namespace . '[is_asset]', $item['is_asset']),
 
-    "inv_type" => $item['inv_type_value'].' - '.$item['inv_type_name']
+    "inv_type" => $item['inv_type_name']
         . hidden_input($item_namespace . '[inv_type_value]', $item['inv_type_value'])
         . hidden_input($item_namespace . '[inv_type_name]', $item['inv_type_name']),
 

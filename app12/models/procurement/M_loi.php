@@ -258,7 +258,47 @@ HAVING sum_status = count_approval and sum_status > 0 and count_approval > 0
 			->update($this->table);
 	}
 
-    public function accepted($id = null, $options = array())
+    public function loiList($id = null, $options = array())
+    {
+        $m_vendor = 'm_vendor';
+
+        $this->db->from($this->table);
+
+		if (isset($options['limit'])) {
+	      $this->db->limit($options['limit']);
+	    }
+
+	    if (isset($options['offset'])) {
+	      $this->db->offset($options['offset']);
+	    }
+
+	    if (isset($options['orderBy'])) {
+	      $this->db->order_by($options['orderBy']);
+	    }
+
+        $this->db->select([
+            "{$this->table}.*",
+            "{$m_vendor}.NAMA nama_vendor",
+            ])
+            ->join($m_vendor, "$m_vendor.ID = {$this->table}.awarder_id", 'left')
+            ->join('t_assignment','t_assignment.msr_no = '.$this->table.'.msr_no','left');
+
+        //$this->whereAccepted();
+        $this->db->where('t_assignment.user_id',$this->session->userdata('ID_USER'));
+        if ($id) {
+            $this->db->where("{$this->table}.id", $id);
+        }
+            
+        $res = $this->db->get();
+
+        if (isset($options['resource']) && $options['resource'] == true) {
+            return $res;
+        }
+		return $res->result();
+        
+    }
+	
+	public function accepted($id = null, $options = array())
     {
         $m_vendor = 'm_vendor';
 

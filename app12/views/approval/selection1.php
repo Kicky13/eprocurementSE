@@ -111,7 +111,7 @@ font-weight: normal;
               <tr>
                 <td width="30%">Total (Incl. VAT)</td>
                 <td class="no-padding-lr">:</td>
-                <td class="pull-right"><?=$total_amount_with_tax_text?> </td>
+                <td class="pull-right"><?= $msr->master_list > 0 ? $total_amount_text  :  $total_amount_with_tax_text ?> </td>
               </tr>
             </table>
           </div>

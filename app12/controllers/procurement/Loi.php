@@ -466,6 +466,18 @@ class Loi extends CI_Controller
         ));
     }
 
+    public function loiList()
+    {
+        $params = [];
+        $menu = get_main_menu();
+
+        $lois = $this->M_loi->loiList($params);
+
+        $this->template->display('procurement/V_loi_list', compact(
+            'menu', 'lois'
+        ));
+    }
+
     public function acceptedList()
     {
         $params = [];

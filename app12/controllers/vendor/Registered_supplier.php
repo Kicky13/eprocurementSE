@@ -272,8 +272,8 @@ class Registered_supplier extends CI_Controller {
         $this->email->to($content['email']);
         $this->email->subject($content['title']);
 
-        $ctn = ' <p>' . $content['img1'] . '<p>
-                        <p>' . $content['open'] . '<p>
+        $ctn = ' <p>' . $content['img1'] . '</p>
+                        <p>' . $content['open'] . '</p>
                         <br>
                         <table>
                             <tr>
@@ -282,7 +282,7 @@ class Registered_supplier extends CI_Controller {
                             </tr>
                             <tr>
                                 <td>Password</td>
-                                <td>: ' . $content['pass'] . '</td>
+                                <td>: ' . $_POST['edit_supp_pass'] . '</td>
                             </tr>
                             <tr>
                                 <td>Link</td>
@@ -333,7 +333,22 @@ class Registered_supplier extends CI_Controller {
 
               $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
               $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-              $url = "<a href='http:" . base_url() . "' class='btn btn-primary btn-lg'>Go To Login</a>";
+             // $url = "<a href='" . base_url() . "' class='btn btn-primary btn-lg'></a>";
+			  $exUrl = explode("/",base_url());
+			  $exUrl = $exUrl[count($exUrl) - 2];
+			
+			  
+			  switch ($exUrl) {
+				case "dev_prod":
+					$url = "<a href='http://".$_SERVER["HTTP_HOST"]."/dev_vendor'>Go To Login</a>";
+					break;
+				case "dev_user":
+					$url = "<a href='http://".$_SERVER["HTTP_HOST"]."/dev_user_vendor'>Go To Login</a>";
+					break;
+				default:
+					$url = "<a href='eproc.supreme-energy.com'>Go To Login</a>";
+			}
+			  
               $data = array(
                   'email' => $email->ID_VENDOR,
                   'img1' => $img1,

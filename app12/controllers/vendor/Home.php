@@ -186,13 +186,14 @@ class Home extends CI_Controller {
         //$msrVerify['out'] = 'out';
 
 	    $msrVerify['out_nego'] = $this->db->select('t_eq_data.*, t_msr.title, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as requestor')
-			->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no', 'left')
-			->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type', 'left')
-			->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company', 'left')
-			->join('m_user', 'm_user.ID_USER = t_msr.create_by', 'left')
-			->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT', 'left')
-			->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no', 'left')
-			->where('t_eq_data.award', 0)
+			->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
+			->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
+			->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+			->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+			->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+            ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
+			->join('t_nego', 't_nego.msr_no = t_msr.msr_no')
+			->where('t_nego.status', 0)
 			->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
 			->get('t_eq_data')
 			->result();

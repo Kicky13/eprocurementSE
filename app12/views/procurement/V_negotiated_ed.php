@@ -45,11 +45,11 @@
     $not_responsed = $this->input->get('not_responsed');
     if($not_responsed)
     {
-        $dt_url = base_url('procurement/negotiated_ed');
+        $dt_url = base_url('procurement/negotiated_ed').'?not_responsed=1';
     }
     else
     {
-        $dt_url = base_url('procurement/negotiated_ed').'?not_responsed=1';
+        $dt_url = base_url('procurement/negotiated_ed');
     }
 ?>
 <script>

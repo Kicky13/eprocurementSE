@@ -2497,7 +2497,7 @@ class Msr extends CI_Controller {
         $data = $this->upload->data();
         // $field['attachment'] = $data['file_name'];
         $this->db->where('msr_no', $msr_no)->update('t_msr', [
-          $this->msr::status_col => 2, 
+          'status' => 2, 
           'attachment_cancel' => $data['file_name']
         ]);
       }

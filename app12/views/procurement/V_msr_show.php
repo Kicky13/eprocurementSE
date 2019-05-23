@@ -71,8 +71,8 @@ if (!empty($_POST['items']) && count($_POST['items']) > 0):
       "qty_required" => numEng($item->qty)
         . hidden_input($item_namespace . '[qty_required_value]', $item->qty),
 
-      "qty_onhand" => numEng(0), // data from somewhere
-      "qty_ordered" => numEng(0), // data from somewhere
+      "qty_onhand" => numEng($item->qty_onhand_value), // data from somewhere
+      "qty_ordered" => numEng($item->qty_ordered_value), // data from somewhere
 
       "uom" => $item->uom.' - '.$item->uom_description
         . hidden_input($item_namespace . '[uom_value]', $item->uom_id)

@@ -35,6 +35,11 @@ class Negotiated_ed extends CI_Controller {
     public function index() {
         if ($this->input->is_ajax_request()) {
             $this->load->library('datatable');
+            $not_responsed = $this->input->get('not_responsed');
+            if($not_responsed)
+            {
+                $this->db->where('t_nego.status', 0);
+            }
             return $this->datatable->resource('t_nego','
                 t_nego.msr_no,
                 t_bl.bled_no,

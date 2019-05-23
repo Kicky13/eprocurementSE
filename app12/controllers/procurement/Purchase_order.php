@@ -1022,10 +1022,19 @@ class Purchase_order extends CI_Controller
             }
 
             foreach($log as &$l) {
-                $creator = user($l->created_by);
+                if($l->description == 'Issued')
+                {
+                    $creator = user($l->created_by);
+                    $creator_name = @$creator->NAME;
+                }
+                else
+                {
+                    $creator = supplier($l->created_by);
+                    $creator_name = @$creator->NAMA;
+                }
                 $comment  = $l->keterangan;
 
-                $l->created_by_name = @$creator->NAME;
+                $l->created_by_name = $creator_name;
                 $l->activity_string = $l->description;
                 $l->activity = $l->description. ' by ' . $l->created_by_name;
                 $l->comment = $comment;

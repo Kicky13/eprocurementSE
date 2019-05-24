@@ -904,6 +904,10 @@ class Approval extends CI_Controller {
         $_POST['creator_department_name'] = @$creator_dept->DEPARTMENT_DESC;
 
         $greetings = $this->M_approval->greetings_msr();
+        /*$_POST['id_currency'] = $msr->id_currency;
+        $_POST['currency_desc'] = @$this->currency->find($msr->id_currency)->CURRENCY;*/
+        $data['id_currency'] = $msr->id_currency;
+        $data['currency_desc'] = @$this->db->where('id', $msr->id_currency)->get('m_currency')->row()->CURRENCY;
         $data['greetings'] = $greetings;
         $data['idnya'] = $approval_id;
         $data['msr_no'] = $msr_no;

@@ -111,7 +111,7 @@ font-weight: normal;
               <tr>
                 <td width="30%">Total (Incl. VAT)</td>
                 <td class="no-padding-lr">:</td>
-                <td class="pull-right"><?=$total_amount_with_tax_text?> </td>
+                <td class="pull-right"><?= $msr->master_list > 0 ? $total_amount_text  :  $total_amount_with_tax_text ?> </td>
               </tr>
             </table>
           </div>
@@ -397,8 +397,8 @@ font-weight: normal;
                                         <input type="hidden" name="<?= $item_namespace.'[uom_name]'?>" value="<?= $item->uom ?>">
                                         <input type="hidden" name="<?= $item_namespace.'[unit_price_value]'?>" value="<?= $item->priceunit ?>">
                                         <input type="hidden" name="<?= $item_namespace.'[total_value]'?>" value="<?= $item->qty * $item->priceunit ?>">
-                                        <input type="hidden" name="<?= $item_namespace.'[currency_value]'?>" value="<?= '' ?>">
-                                        <input type="hidden" name="<?= $item_namespace.'[currency_name]'?>" value="<?= '' ?>">
+                                        <input type="hidden" name="<?= $item_namespace.'[currency_value]'?>" value="<?= $id_currency ?>">
+                                        <input type="hidden" name="<?= $item_namespace.'[currency_name]'?>" value="<?= $currency_desc ?>">
                                         <input type="hidden" name="<?= $item_namespace.'[importation_value]'?>" value="<?= $item->id_importation ?>">
                                         <input type="hidden" name="<?= $item_namespace.'[importation_name]'?>" value="<?= $item->importation_desc ?>">
                                         <input type="hidden" name="<?= $item_namespace.'[delivery_point_value]'?>" value="<?= $item->id_dpoint ?>">

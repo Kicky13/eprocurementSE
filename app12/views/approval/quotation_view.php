@@ -236,7 +236,7 @@
           <?php $this->load->view('approval/priceevaluationnegotiation-one',['ed'=>$ed,'xvendor'=>$blDetail->vendor_id, 'nego'=>false]);?>
         </div>
         <div class="form-group row">
-          <?php $this->load->view('approval/bid-bond', ['bled_no'=>$bled_no]);?>
+          <?php $this->load->view('approval/bid-bond', ['bled_no'=>$bled_no, 'created_by'=> $blDetail->vendor_id]);?>
         </div>
       </div>
       <div class="modal-footer">

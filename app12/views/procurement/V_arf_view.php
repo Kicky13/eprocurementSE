@@ -1,4 +1,7 @@
-<?php $this->load->view('procurement/partials/script') ?>
+<?php 
+    $this->load->view('procurement/partials/script');
+    $amdNumber = substr($arf->doc_no, -5);
+?>
 <div class="app-content content">
     <div class="content-wrapper">
         <div class="content-header row">
@@ -118,7 +121,8 @@
                                         <div class="form-group row">
                                             <label class="col-md-5">Latest Value<br><small class="text-primary">(Original value plus previous amendment)</small></label>
                                             <div class="col-md-7">
-                                                <?= $po->currency ?> <?= ($arf->status == 'submitted') ? numIndo($arf->amount_po_arf) : numIndo($po->latest_value) ?>
+                                                <?= $po->currency ?> <span id="header-latest-value"><?= numIndo($arf->amount_po) ?></span>
+                                                <!-- <?= $po->currency ?> <?= ($arf->status == 'submitted') ? numIndo($arf->amount_po_arf) : numIndo($po->latest_value) ?> -->
                                                 <input type="hidden" id="po_latest_value" value="<?= ($arf->status == 'submitted') ? $arf->amount_po_arf : $po->latest_value ?>">
                                             </div>
                                         </div>
@@ -358,9 +362,9 @@
                                         </div>
                                         <div class="form-group row">
                                             <label class="offset-md-6 col-md-3">Total Summary</label>
-                                            <div class="col-md-3 text-right">
+                                            <div class="col-md-3 text-right" id="total-summary">
                                                 <?php if ($arf->status == 'submitted') { ?>
-                                                    <?= numIndo($arf->amount_po_arf + $arf->estimated_value) ?>
+                                                    <?= numIndo($arf->amount_po_arf) ?>
                                                 <?php } else { ?>
                                                     <?= numIndo(($po->total_amount + $arf->estimated_value)) ?>
                                                 <?php } ?>
@@ -588,23 +592,27 @@
               {
                 var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
                 $('#po_spending_value').html(r.spending_value);
-                $('#po_remaining_value').html(n);
+                $('#po_remaining_value').html(Localization.number(n));
               }
               else
               {
                 $('#po_spending_value').html('0');
-                $("#po_remaining_value").html(po_latest_value_format);
+                var n = toFloat($("#po_latest_value").val());
+                $("#po_remaining_value").html(Localization.number(n));
                 swal('Fail','Cant Get Spending Value','warning')
               }
             },
             error:function(){
               $('#po_spending_value').html('0');
-              $("#po_remaining_value").html(po_latest_value_format);
+              var n = toFloat($("#po_latest_value").val());
+              $("#po_remaining_value").html(Localization.number(n));
               swal('Fail','Cant Get Spending Value','warning')
             }
           })
         }
-        get_spending_value("<?= $arf->po_no ?>");
+        const numberWithCommas = (x) => {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
         function get_amd(po_no){
           $.ajax({
             type:'post',
@@ -616,6 +624,24 @@
               {
                 $('.div-detail-amd').show();
                 $("#dt-amd").html(r.dt);
+                var po = '<?= $arf->amount_po ?>';
+                var total = r.total;
+                var jml = toFloat(po) + toFloat(total);
+                var amdNumber = '<?= $amdNumber ?>';
+                if(amdNumber == 'AMD01')
+                {
+                    finalTotal = jml;
+                }
+                else
+                {
+                    finalTotal = total;
+                }
+                var estimated_val = '<?= $arf->estimated_value ?>';
+                var total_summary = toFloat(estimated_val) + finalTotal;
+                $("#total-summary").text(Localization.number(total_summary))
+                $("#header-latest-value").text(Localization.number(finalTotal));
+                $("#po_latest_value").val(finalTotal);
+                get_spending_value("<?= $arf->po_no ?>");
               }
               else
               {
@@ -629,7 +655,9 @@
             }
           })
         }
-        get_amd("<?= $arf->po_no ?>")
+        get_amd("<?= $arf->po_no ?>");
+        get_spending_value("<?= $arf->po_no ?>");
+
     });
 
     function assignment() {

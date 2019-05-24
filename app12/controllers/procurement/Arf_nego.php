@@ -46,7 +46,7 @@ class Arf_nego extends CI_Controller {
 
     public function index($value='')
     {
-        $data['list'] = $this->m_arf_response->view('arf_response')->where('t_arf_response.id not in (select arf_response_id from t_arf_nego where status = 0 group by arf_response_id)')->get();
+        $data['list'] = $this->m_arf_response->view('arf_response')->scope(['not_amd'])->where('t_arf_response.id not in (select arf_response_id from t_arf_nego where status = 0 group by arf_response_id)')->get();
         $data['title'] = 'Negotiation Amendment';
         $data['menu'] = $this->menu;
         $this->template->display('procurement/V_arf_nego', $data);

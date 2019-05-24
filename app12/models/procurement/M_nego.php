@@ -41,4 +41,8 @@ class M_nego extends M_base {
         $this->db->select('m_vendor.*, t_nego.id as nego_id, t_nego.status')
         ->join('m_vendor', 'm_vendor.ID = t_nego.vendor_id');
     }
+    public function scope_not_responsed()
+    {
+        $this->db->where('status',0);
+    }
 }

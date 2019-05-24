@@ -41,7 +41,17 @@
         </div>
     </div>
 </div>
-
+<?php 
+    $not_responsed = $this->input->get('not_responsed');
+    if($not_responsed)
+    {
+        $dt_url = base_url('procurement/negotiated_ed').'?not_responsed=1';
+    }
+    else
+    {
+        $dt_url = base_url('procurement/negotiated_ed');
+    }
+?>
 <script>
     var dataTable
     $(function() {
@@ -56,7 +66,7 @@
 
         dataTable = $('#data-table').dataTable({
             processing: true,
-            ajax: '<?= base_url('procurement/negotiated_ed') ?>',
+            ajax: '<?= $dt_url ?>',
             columns: [
                 {data : 'id', name: 't_nego.id', render : function(data, type, row, meta) {
                      return meta.row + meta.settings._iDisplayStart + 1;

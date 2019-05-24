@@ -31,7 +31,7 @@
                         <span id="arf_excl_vat">0.00</span><br>
                         <small>
                             <span id="excl_total_equal_to" style="display: none;">
-                                (equal to <span data-m="currency_base"> <span id="excl_total_equal_to_val">0.00</span></span>)
+                                (equal to <span data-m="currency_base"></span> <span id="excl_total_equal_to_val">0.00</span>)
                             </span>
                         </small>
                     </td>

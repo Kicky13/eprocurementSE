@@ -111,7 +111,7 @@ class T_approval_arf_recom extends CI_Model {
     $t_approval_arf_recom = $this->find($p['approval_id']);
     $id_ref = $t_approval_arf_recom->id_ref;
 
-    $ap = $this->db->where(['id_user'=>$this->session->userdata('ID_USER'),'status'=>0,'id_ref'=>$id_ref])->get('t_approval_arf_recom');
+    $ap = $this->db->where(['id_user'=>$this->session->userdata('ID_USER'),'status'=>0,'id_ref'=>$id_ref, 'sequence <'=> 8])->get('t_approval_arf_recom');
     if($ap->num_rows() > 0)
     {
         echo json_encode(['status'=>false, 'transaction_date'=>dateToIndo($transaction_date,false,false), 'note'=>$p['note'], 'status_str'=>$status_str]);

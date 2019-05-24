@@ -1844,7 +1844,7 @@
                         tableHTML +='<td class="text-center">'+rows[3]+'</td>';
                         tableHTML +='<td class="text-center">'+rows[4]+'</td>';
                         tableHTML +='<td class="text-center">'+Localization.boolean(rows[5], 'Yes', 'No')+'</td>';
-                        tableHTML +='<td>'+rows[6]+'</td>';
+                        tableHTML +='<td>'+coalesce(rows[6], '-')+'</td>';
                         tableHTML +='<td>'+coalesce(rows[7], '-')+'</td>';
                         tableHTML +='<td>'+rows[8]+'</td>';
                         tableHTML +='<td class="text-right">'+Localization.number(rows[9])+'</td>';

@@ -194,7 +194,7 @@ class Vendor_lib
 		$ci =& get_instance();
 		if($id)
 		{
-			$this->db->where(['created_by' => $id]);
+			$ci->db->where(['created_by' => $id]);
 		}
 		return  $ci->db->select('t_bid_bond.*,m_currency.CURRENCY currency_name')
         ->where(['bled_no' => $bled_no])

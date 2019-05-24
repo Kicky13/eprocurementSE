@@ -513,6 +513,7 @@ class Arf extends CI_Controller {
         $data['document_path'] = $this->document_path;
         $data['menu'] = $this->menu;
         $data['arf_detail'] = $this->m_arf_detail->getDetails($id);
+        $data['is_edit'] = 1;
         $this->template->display('procurement/V_arf_edit', $data);
     }
 
@@ -630,9 +631,12 @@ class Arf extends CI_Controller {
                         $item['tax_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['tax']);
                         $item['total_price'] = $item['total_price'] + $item['tax'];
                         $item['total_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['total_price']);
-                        $record_item[] = array_map('trim', $item);
+                        $xItem = array_map('trim', $item);
+                        $this->m_arf_detail->insert($xItem);
+
                     }
-                    $this->m_arf_detail->insert_batch($record_item);
+
+                    // $this->m_arf_detail->insert_batch($record_item);
                 }
             }
 
@@ -685,7 +689,8 @@ class Arf extends CI_Controller {
                     $record_attachment[] = array(
                         'doc_id' => $arf->id,
                         'type' => $attachment['type'],
-                        'file' => $attachment['file']
+                        'file' => $attachment['file'],
+                        'file_name' => $attachment['file_name']
                     );
                 }
                 $this->m_arf_attachment->insert_batch($record_attachment);

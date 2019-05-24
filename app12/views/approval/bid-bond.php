@@ -1,6 +1,6 @@
 <?php 
-	$t_bid_bond = $this->vendor_lib->tBidBond($bled_no)->result();
-	if($this->vendor_lib->tBidBond($bled_no)->num_rows() > 0): 
+	$t_bid_bond = $this->vendor_lib->tBidBond($bled_no, $created_by)->result();
+	if($this->vendor_lib->tBidBond($bled_no, $created_by)->num_rows() > 0): 
 ?>
 			<label class="col-12" style="margin-top: 10px;font-weight: bold">Bid Bond</label>
 		<div class="table-responsive">

@@ -193,7 +193,7 @@ class M_arf_notif_preparation extends CI_Model {
     }
 
     public function get_item_ori($po) {
-        $res = $this->db->select('t.ITEMTYPE_DESC as item_type, d.material_desc, d.qty, d.uom_desc as uom, m_material_uom.DESCRIPTION as uom_desc, d.is_modification, i.description as inv_type_desc, d.costcenter_desc,  d.id_accsub, d.accsub_desc, d.unitprice_base, d.total_price_base')
+        $res = $this->db->select('t.ITEMTYPE_DESC as item_type, d.material_desc, d.qty, d.uom_desc as uom, m_material_uom.DESCRIPTION as uom_desc, d.is_modification, i.description as inv_type_desc, d.costcenter_desc,  d.id_accsub, d.accsub_desc, d.unitprice_base, d.total_price_base, d.unitprice, d.total_price')
                         ->from('t_purchase_order_detail d')
                         ->join('m_material_uom', 'm_material_uom.MATERIAL_UOM = d.uom_desc')
                         ->join('t_purchase_order o', 'o.id = d.po_id')
@@ -205,7 +205,7 @@ class M_arf_notif_preparation extends CI_Model {
     }
 
     public function get_item_arf($po, $amd) {
-        $res = $this->db->select('d.id, t.ITEMTYPE_DESC as item_type, d.material_desc, d.qty, d.uom, m_material_uom.DESCRIPTION as uom_desc, d.item_modification, i.description as inv_type_desc, d.costcenter, d.id_account_subsidiary, d.account_subsidiary, d.unit_price_base, d.total_price_base')
+        $res = $this->db->select('d.id, t.ITEMTYPE_DESC as item_type, d.material_desc, d.qty, d.uom, m_material_uom.DESCRIPTION as uom_desc, d.item_modification, i.description as inv_type_desc, d.costcenter, d.id_account_subsidiary, d.account_subsidiary, d.unit_price_base, d.total_price_base, d.unit_price, (d.qty * d.unit_price) total_price')
                         ->from('t_arf_detail d')
                         ->join('m_material_uom', 'm_material_uom.MATERIAL_UOM = d.uom')
                         ->join('t_arf a', 'a.id = d.doc_id')

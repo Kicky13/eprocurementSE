@@ -689,7 +689,8 @@ class Arf extends CI_Controller {
                     $record_attachment[] = array(
                         'doc_id' => $arf->id,
                         'type' => $attachment['type'],
-                        'file' => $attachment['file']
+                        'file' => $attachment['file'],
+                        'file_name' => $attachment['file_name']
                     );
                 }
                 $this->m_arf_attachment->insert_batch($record_attachment);

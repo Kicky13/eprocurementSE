@@ -362,7 +362,7 @@
                                         </div>
                                         <div class="form-group row">
                                             <label class="offset-md-6 col-md-3">Total Summary</label>
-                                            <div class="col-md-3 text-right">
+                                            <div class="col-md-3 text-right" id="total-summary">
                                                 <?php if ($arf->status == 'submitted') { ?>
                                                     <?= numIndo($arf->amount_po_arf) ?>
                                                 <?php } else { ?>
@@ -592,23 +592,24 @@
               {
                 var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
                 $('#po_spending_value').html(r.spending_value);
-                $('#po_remaining_value').html(n);
+                $('#po_remaining_value').html(Localization.number(n));
               }
               else
               {
                 $('#po_spending_value').html('0');
-                $("#po_remaining_value").html(po_latest_value_format);
+                var n = toFloat($("#po_latest_value").val());
+                $("#po_remaining_value").html(Localization.number(n));
                 swal('Fail','Cant Get Spending Value','warning')
               }
             },
             error:function(){
               $('#po_spending_value').html('0');
-              $("#po_remaining_value").html(po_latest_value_format);
+              var n = toFloat($("#po_latest_value").val());
+              $("#po_remaining_value").html(Localization.number(n));
               swal('Fail','Cant Get Spending Value','warning')
             }
           })
         }
-        get_spending_value("<?= $arf->po_no ?>");
         const numberWithCommas = (x) => {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
@@ -635,7 +636,12 @@
                 {
                     finalTotal = total;
                 }
+                var estimated_val = '<?= $arf->estimated_value ?>';
+                var total_summary = toFloat(estimated_val) + finalTotal;
+                $("#total-summary").text(Localization.number(total_summary))
                 $("#header-latest-value").text(Localization.number(finalTotal));
+                $("#po_latest_value").val(finalTotal);
+                get_spending_value("<?= $arf->po_no ?>");
               }
               else
               {
@@ -649,7 +655,9 @@
             }
           })
         }
-        get_amd("<?= $arf->po_no ?>")
+        get_amd("<?= $arf->po_no ?>");
+        get_spending_value("<?= $arf->po_no ?>");
+
     });
 
     function assignment() {

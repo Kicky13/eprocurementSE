@@ -1293,6 +1293,7 @@
                 {
                     finalTotal = total;
                 }
+                // alert(finalTotal)
                 $('#po_latest_value_ori, #po_latest_value').val(finalTotal);
             }
             get_spending_value(po_no)

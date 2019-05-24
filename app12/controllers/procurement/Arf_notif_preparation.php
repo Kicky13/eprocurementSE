@@ -401,8 +401,8 @@ class Arf_notif_preparation extends CI_Controller {
                 $dt[$k][6] = $v['inv_type_desc'];
                 $dt[$k][7] = $v['costcenter_desc'];
                 $dt[$k][8] = $v['id_accsub'] . ' - '.$v['accsub_desc'];
-                $dt[$k][9] = $v['unitprice_base'];
-                $dt[$k][10] = $v['total_price_base'];
+                $dt[$k][9] = $v['unitprice'];
+                $dt[$k][10] = $v['total_price'];
             }
         }
         return $this->output($dt);
@@ -424,8 +424,8 @@ class Arf_notif_preparation extends CI_Controller {
                 $dt[$k][6] = $v['inv_type_desc'];
                 $dt[$k][7] = $v['costcenter'];
                 $dt[$k][8] = $v['id_account_subsidiary'] . ' - ' . $v['account_subsidiary'];
-                $dt[$k][9] = $v['unit_price_base'];
-                $dt[$k][10] = $v['total_price_base'];
+                $dt[$k][9] = $v['unit_price'];
+                $dt[$k][10] = $v['total_price'];
                 if ($this->input->post('type') != 3)
                     $dt[$k][11] = "<button class='btn btn-sm btn-primary' onclick='arf_item_copy(" . $v['id'] . ")'>Copy</button>";
                 else

@@ -119,7 +119,7 @@
                     $('#po_company').val(po.company);
                     $('#po_date').val(po.po_date);
                     $('#po_total').val(po.total_amount);
-                    $('#po_latest_value').val(po.latest_value);
+                    // $('#po_latest_value').val(po.latest_value);
                     $('#po_spending_value').val(po.spending_value);
                     $('#po_remaining_value').val(po.remaining_value);
                     $('#po_delivery_date').val(po.delivery_date);

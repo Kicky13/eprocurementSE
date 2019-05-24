@@ -193,7 +193,8 @@ class Home extends CI_Controller {
 			->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
             ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
 			->join('t_nego', 't_nego.msr_no = t_msr.msr_no')
-			->where('t_nego.status', 0)
+            ->where('t_nego.status', 1)
+			->where('t_nego.is_read', 0)
 			->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
 			->get('t_eq_data')
 			->result();

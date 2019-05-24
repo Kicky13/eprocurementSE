@@ -12,6 +12,10 @@
 		  		<a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-administrative" role="tab" aria-controls="nav-home" aria-selected="true">Administrative</a>
 					<a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-technical" role="tab" aria-controls="nav-profile" aria-selected="false">Technical</a>
 					<a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-commercial" role="tab" aria-controls="nav-contact" aria-selected="false">Commercial</a>
+					<?php $contract_review = $this->approval_lib->contract_review($msr_no) ?>
+					<?php if($contract_review->num_rows() > 0): ?>
+              <a class="nav-item nav-link" id="nav-contract-review-tab" data-toggle="tab" href="#tab-contract-review" role="tab" aria-controls="nav-contact" aria-selected="false">BOD Contract Review</a>
+          <?php endif;?>
 		  	<?php endif;?>
 		  </div>
 	  </nav>
@@ -312,6 +316,39 @@
 			  			</div>
 					</div>
 				  </div>
+				  <?php if($contract_review->num_rows() > 0): ?>
+			          <div class="tab-pane fade show" id="tab-contract-review" role="tabpanel" aria-labelledby="contract-review-tab" style="padding: 15px 0px;">
+			              <div class="row">
+			                  <div class="col-md-12">
+			                      <table class="table">
+			                          <thead>
+			                              <tr>
+			                                  <th width="1">No</th>
+			                                  <th>Filename</th>
+			                                  <th>Uploaded Date</th>
+			                                  <th>Uploaded By</th>
+			                                  <th>Comment</th>
+			                              </tr>
+			                          </thead>
+			                          <tbody>
+			                          <?php
+			                              $n =1;
+			                              foreach ($contract_review->result() as $cr) {
+			                                  echo "<tr>
+			                                      <td>".$n++."</td>
+			                                      <td><a href='".base_url('upload/contract_review/'.$cr->file_path)."' target='_blank'>".$cr->file_name."</a></td>
+			                                      <td>".dateToIndo($cr->created_at, false, true)."</td>
+			                                      <td>".user($cr->created_by)->NAME."</td>
+			                                      <td>".$ed->desc_of_award."</td>
+			                                  </tr>";
+			                              }
+			                          ?>
+			                          </tbody>
+			                      </table>
+			                  </div>
+			              </div>
+			          </div>
+			        <?php endif;?>
 	  	<?php endif;?>
 		  
           

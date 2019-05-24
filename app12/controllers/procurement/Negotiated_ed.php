@@ -38,7 +38,8 @@ class Negotiated_ed extends CI_Controller {
             $not_responsed = $this->input->get('not_responsed');
             if($not_responsed)
             {
-                $this->db->where('t_nego.status', 0);
+                $this->db->where('t_nego.status', 1);
+                $this->db->where('t_nego.is_read', 0);
             }
             return $this->datatable->resource('t_nego','
                 t_nego.msr_no,
@@ -88,7 +89,7 @@ class Negotiated_ed extends CI_Controller {
         $rs_negotiated = $this->m_nego->view('nego')
         ->where('t_nego.msr_no', $msr_no)
         ->get();
-
+        $this->db->where(['msr_no'=>$msr_no])->update('t_nego', ['is_read' => 1]);
         $this->template->display('procurement/V_negotiated_ed_detail',  array(
             'ed' => $ed,
             'rs_negotiated' => $rs_negotiated,

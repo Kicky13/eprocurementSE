@@ -69,13 +69,13 @@ class Purchase_order extends CI_Controller
 
         $message = ['type' => '', 'message' => null];
 
-        if (!$this->M_purchase_order->canCreateFromBlDetail($bl_detail_id)) {
+        /* if (!$this->M_purchase_order->canCreateFromBlDetail($bl_detail_id)) {
             show_error('Disallow to create PO document or document already created');
-        }
+        } 
 
         if ($this->M_purchase_order->findByBlDetailId($bl_detail_id)) {
             show_error('PO document is already created or under development');
-        }
+        } */
 
         $menu = get_main_menu();
 
@@ -97,8 +97,8 @@ class Purchase_order extends CI_Controller
             if (!$this->input->post('bl_detail_id')) {
                 show_error("Invalid document", 404);
             }
-
-            if (false === ($attachment_files = $this->handleUploadAttachment([
+			
+			if (false === ($attachment_files = $this->handleUploadAttachment([
                 'draft_of_po',
             ]))) {
                 $hit_db = false;
@@ -191,7 +191,7 @@ class Purchase_order extends CI_Controller
                         join t_msr t on t.msr_no=b.msr_no
                         where b.id=".$po_id);
                     $data_role = $query->result();
-
+					
                     $res = $data_role;
 
                     $data2 = array(
@@ -210,6 +210,14 @@ class Purchase_order extends CI_Controller
                     $flag = $this->sendMail($data2);
                     // End Email
 
+					//var_dump($po_last);exit;
+					//delete po reject
+					$this->db->where('id <', $po_id);
+					$this->db->where('msr_no', $data_role[0]->msr_no);
+					$this->db->delete('t_purchase_order');
+					//var_dump($this->db->last_query());exit;
+					
+										
                     return redirect('home');
                 }
 

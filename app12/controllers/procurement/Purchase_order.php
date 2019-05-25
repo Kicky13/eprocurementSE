@@ -1022,15 +1022,15 @@ class Purchase_order extends CI_Controller
             }
 
             foreach($log as &$l) {
-                if($l->description == 'Issued')
-                {
-                    $creator = user($l->created_by);
-                    $creator_name = @$creator->NAME;
-                }
-                else
+                if($l->description == 'Accepted')
                 {
                     $creator = supplier($l->created_by);
                     $creator_name = @$creator->NAMA;
+                }
+                else
+                {
+                    $creator = user($l->created_by);
+                    $creator_name = @$creator->NAME;
                 }
                 $comment  = $l->keterangan;
 

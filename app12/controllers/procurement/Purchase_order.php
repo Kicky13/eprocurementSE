@@ -107,7 +107,7 @@ class Purchase_order extends CI_Controller
                 $message['type'] = 'danger';
                 log_message('error', $message['message']);
             }
-
+ 
             $po = $this->makePOFromPost();
             $po_items = $this->makePODetailsFromBlDetail($this->input->post('bl_detail_id'), null);
 
@@ -116,7 +116,7 @@ class Purchase_order extends CI_Controller
             $po['total_amount_base'] = $total_po_amount['total_price_base'];
 
             $required_docs = $this->makePORequiredDocsFromPost(null);
-            $attachments = $this->makePOAttachmentsFromPost(
+			$attachments = $this->makePOAttachmentsFromPost(
                 null,
                 $attachment_files,
                 [
@@ -1566,10 +1566,11 @@ class Purchase_order extends CI_Controller
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
 
         if ($loi && !empty($loi->po_no)) {
-            $po_no = $loi->po_no;
+            //$po_no = $loi->po_no;
+			$po_no = DocNumber::generate($module_kode, $bl->id_company);
         }
         elseif (!$this->M_purchase_order->isMSRHasPO($bl->msr_no)) {
-            $po_no = DocNumber::createFrom($bl->msr_no,
+			$po_no = DocNumber::createFrom($bl->msr_no,
                 $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
                     $this->M_purchase_order::module_kode :
                     $this->M_service_order::module_kode

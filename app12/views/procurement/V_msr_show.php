@@ -572,12 +572,51 @@ font-weight: normal;
                         </div>
                       </fieldset>
 
-                      <?php if (isset($_POST['msr_no']) && !empty($_POST['msr_no'])): ?>
+					    <?php if (isset($_POST['msr_no']) && !empty($_POST['msr_no'])): ?>
                       <h6><i class="step-icon icon-directions"></i>Approval</h6>
                       <fieldset>
                         <?= function_exists('list_approval') ? list_approval('msr', @$_POST['msr_no']) : '' ?>
                       </fieldset>
                       <?php endif; ?>
+					  
+					  <?php /* Attachment Reject*/ ?>
+                      <h6><i class="step-icon icon-paper-clip"></i> Attachment Cancel</h6>
+                      <fieldset>
+						<div class="row">
+                          <div class="col-md-12">
+                            <div id="attachment-reject">
+                              <hr>
+                              <div class="row">
+                                <div class="col-md-2"><?php /* type */ ?>
+                                  <label>Type</label>
+                                </div>
+                                <div class="col-md-4"><?php /* filename */ ?>
+                                  <label>Filename</label>
+                                </div>
+                              </div>
+                              <hr>
+
+                              <?php if (isset($_POST['attachment_cancel'])): ?>
+
+								  <div class="row form-group">
+									<div class="col-md-2"><?php /* type */ ?>
+									  Attachment Cancel
+									</div>
+
+									<div class="col-md-4">
+									  <?php $href = base_url().'/upload/cancel_msr/'.$_POST['attachment_cancel']; ?>
+									  <a href="<?= $href ?>" target="_blank"><?= $_POST['attachment_cancel'] ?></a>
+									</div>
+
+								  </div>
+                              <?php endif; ?>
+                            </div>  <!-- end repeater attachment -->
+                          </div>
+                        </div>
+                      </fieldset>
+					  
+                    
+					  
                     </form>
                   </div>
                 </div>

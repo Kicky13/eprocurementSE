@@ -126,6 +126,7 @@ class Ed extends CI_Controller {
         ) approval', 'approval.data_id = t_eq_data.msr_no', 'left')
         ->join('m_currency', 'm_currency.ID = t_msr.id_currency')
         ->where(['t_msr.status'=>0])
+		->or_where(['t_msr.status'=>2])
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
         if($this->input->get('debug'))
         {

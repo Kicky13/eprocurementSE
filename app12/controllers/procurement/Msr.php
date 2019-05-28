@@ -121,6 +121,7 @@ class Msr extends CI_Controller {
         $_POST['procure_processing_time'] = $msr->procure_processing_time;
         $_POST['blanket'] = $msr->blanket;
         $_POST['master_list'] = $msr->master_list;
+        $_POST['attachment_cancel'] = $msr->attachment_cancel;
 
         $creator = user($msr->create_by);
         /* $creator_dept = $this->M_master_department->findByDeptAndCompany($creator->ID_DEPARTMENT, $msr->id_company); */

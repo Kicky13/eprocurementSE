@@ -18,8 +18,8 @@ class NotificationNew extends CI_Controller {
             $result_check = $query_check_out->result();
             $mail = get_mail();
 			foreach ($result_check as $row){ 
-				$dadi = str_replace("<p><img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>", 'dadi iki', $row->content);
-				$dadi = str_replace("dadi iki</p>", '', $dadi);
+				$dadi = str_replace("<p><img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>", '', $row->content);
+				$dadi = strstr($dadi, '<p>Greetings,');
 				$row->content = ltrim($dadi);
 
 				require_once "Mail.php";

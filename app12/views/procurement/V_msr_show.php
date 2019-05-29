@@ -618,6 +618,7 @@ font-weight: normal;
                     
 					  
                     </form>
+					<?php $this->load->view('approval/list1');?>
                   </div>
                 </div>
               </div>

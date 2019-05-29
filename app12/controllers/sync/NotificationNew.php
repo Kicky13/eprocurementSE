@@ -20,9 +20,8 @@ class NotificationNew extends CI_Controller {
 			foreach ($result_check as $row){ 
 				$dadi = str_replace("<p><img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>", 'dadi iki', $row->content);
 				$dadi = str_replace("dadi iki</p>", '', $dadi);
-				$dadi = str_replace("<p><p>", '<p>', $dadi);
 				$row->content = ltrim($dadi);
-				
+
 				require_once "Mail.php";
 				require_once "Mail/mime.php";
 				$crlf = "\r\n";

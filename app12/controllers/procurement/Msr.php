@@ -88,6 +88,7 @@ class Msr extends CI_Controller {
         // $_POST['costcenter'] = $msr->costcenter_desc;
 
         $_POST['msr_no'] = $msr->msr_no;
+        $_POST['msr_stts'] = $msr->status;
         $_POST['id_company'] = $msr->id_company;
         $_POST['company_desc'] = $msr->company_desc;
         $_POST['req_date'] = $msr->req_date;

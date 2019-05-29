@@ -579,6 +579,11 @@ font-weight: normal;
                       </fieldset>
                       <?php endif; ?>
 					  
+					  
+					  <?php 
+//						if($msr->status < 2 and isProcurementSpecialist() and isCreatorEd($ed) and notInLoi($ed)): 
+						if($_POST['msr_stts'] == 2): 
+					  ?>
 					  <?php /* Attachment Reject*/ ?>
                       <h6><i class="step-icon icon-paper-clip"></i> Attachment Cancel</h6>
                       <fieldset>
@@ -614,7 +619,7 @@ font-weight: normal;
                           </div>
                         </div>
                       </fieldset>
-					  
+					  <?php endif; ?>
                     
 					  
                     </form>

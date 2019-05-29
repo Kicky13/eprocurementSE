@@ -65,6 +65,7 @@ class NotificationNew extends CI_Controller {
 				if (PEAR::isError($mail)) {
 				  echo 'Failed sending email '.$row->id.' at '.date("Y-m-d H:i:s");
 				  echo("<p>" . $mail->getMessage() . "</p>\n");
+                    $query_update = $this->db->query("update i_notification set ismailed=3,update_date=now() where id='".$row->id."' and ismailed=0");
 				 } else {
 				   echo 'Success sending email '.$row->id.' at '.date("Y-m-d H:i:s");
                     $query_update = $this->db->query("update i_notification set ismailed=1,update_date=now() where id='".$row->id."' and ismailed=0");

@@ -97,7 +97,7 @@ class Ed extends CI_Controller {
         {
             $eds =$this->db->where('t_msr.ID_DEPARTMENT = '.$user->ID_DEPARTMENT);
         }
-    	$eds = $this->db->select("t_eq_data.*, t_msr.id_currency, t_msr.total_amount, m_currency.CURRENCY,replace(t_eq_data.msr_no,'OR','OQ') ed_no, m_departement.DEPARTMENT_DESC as department, specialist.NAME as specialist, (CASE WHEN approval.approval_posisition IS NULL THEN 'Completed' ELSE approval.approval_posisition END) as approval_posisition")
+    	$eds = $this->db->select("t_eq_data.*, t_msr.id_currency, t_msr.status as msr_stts, t_msr.total_amount, m_currency.CURRENCY,replace(t_eq_data.msr_no,'OR','OQ') ed_no, m_departement.DEPARTMENT_DESC as department, specialist.NAME as specialist, (CASE WHEN approval.approval_posisition IS NULL THEN 'Completed' ELSE approval.approval_posisition END) as approval_posisition")
         ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no', 'left')
         ->join('m_user', 'm_user.ID_USER = t_msr.create_by', 'left')
         ->join('m_departement', 'm_departement.ID_DEPARTMENT = t_msr.ID_DEPARTMENT', 'left')

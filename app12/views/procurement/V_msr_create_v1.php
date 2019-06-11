@@ -2119,7 +2119,7 @@ function select_material_label(item_type, itemtype_category) {
   return material_label
 }
 
-$('#item-cost_center').change(function(e) {
+$('#item-cost_center, #item-cost_center_slc2').change(function(e) {
     load_account_subsidiary();
 })
 

@@ -23,6 +23,11 @@ class M_Msr_draft extends MY_Model
 		$this->db->delete($this->table, array('msr_no' => $id));
 	}
 
+    public function deletedrafbyid($id)
+    {
+		$this->db->delete($this->table, array('id' => $id));
+	}
+
     public function delAppr($id)
     {
 		$this->db->delete('t_approval', array('data_id' => $id));

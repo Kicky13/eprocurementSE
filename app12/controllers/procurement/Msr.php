@@ -1351,7 +1351,6 @@ class Msr extends CI_Controller {
 		
 			$this->M_msr_draft->add($input_data['header']);
 			$draft_id = $input_data['header']['id'] = $this->db->insert_id();
-	
         }
 
         $this->M_msr_item_draft->deleteAllByDraftId($input_data['header']['id']);
@@ -1605,6 +1604,7 @@ class Msr extends CI_Controller {
 	//update attechment msr draf to msr machrus
     public function updateAtt(){
 		$post = $this->input->post();
+		$this->M_msr_draft->deletedrafbyid($post['draft_id']);
 		return $this->msr_attachment->updateAtt($post);
 	}
 	

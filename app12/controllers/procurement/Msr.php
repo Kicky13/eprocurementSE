@@ -1111,7 +1111,8 @@ class Msr extends CI_Controller {
 
         $data_department = @$query->result();
 
-        $this->template->display('procurement/V_msr_create',
+        $this->template->display('procurement/V_msr_create_v1',
+ //       $this->template->display('procurement/V_msr_create',
         compact(
             'menu', 'opt_company', 'opt_msr_type', 'opt_pmethod', 'opt_plocation', 'opt_currency',
             'opt_cost_center', 'opt_location', 'opt_delivery_point', 'opt_importation', 'opt_delivery_term',

@@ -1160,9 +1160,9 @@ class Msr extends CI_Controller {
             show_error('Document not found');
         }
 
-        if ($msr->msr_no) {
+/*         if ($msr->msr_no) {
             show_error('The document has been processed');
-        }
+        } */
 
         $_POST['draft_id'] = $id;
         $_POST['company'] = $msr->id_company;
@@ -1329,9 +1329,11 @@ class Msr extends CI_Controller {
 	public function saveDraftV1(){
         $post = $this->input->post();
         $draft_id = trim($post['draft_id']);
+		
         $msr_no = @$post['msr_no'] ?: NULL;
-
+		
         $input_data['header'] = $this->makeHeaderFromPost($msr_no);
+		
         $details = array();
 
         $draft = $this->M_msr_draft->find($draft_id);
@@ -1341,12 +1343,15 @@ class Msr extends CI_Controller {
         }
 
         $this->db->trans_start();
-
         if ($draft) {
             $this->M_msr_draft->update($draft_id, $input_data['header']);
         } else {
-            $this->M_msr_draft->add($input_data['header']);
-            $draft_id = $input_data['header']['id'] = $this->db->insert_id();
+			$this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
+			$this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
+		
+			$this->M_msr_draft->add($input_data['header']);
+			$draft_id = $input_data['header']['id'] = $this->db->insert_id();
+	
         }
 
         $this->M_msr_item_draft->deleteAllByDraftId($input_data['header']['id']);
@@ -1408,8 +1413,13 @@ class Msr extends CI_Controller {
         }
 
  			$doctype = $this->msr::module_kode;
-			$msr_no = DocNumber::generate($doctype, $post['company']);
-
+			if($post['msr_no'] == ''){
+				$msr_no = DocNumber::generate($doctype, $post['company']);
+			}else{
+				$this->M_msr_draft->delAttr($input_data['header']['msr_no']);	
+				$msr_no = $post['msr_no'];
+			}
+			
         $this->output->set_content_type('application/json')
             ->set_output(json_encode([
                 'message' => [

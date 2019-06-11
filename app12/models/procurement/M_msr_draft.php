@@ -18,6 +18,21 @@ class M_Msr_draft extends MY_Model
         parent::add($data);
     }
 
+    public function deletedraf($id)
+    {
+		$this->db->delete($this->table, array('msr_no' => $id));
+	}
+
+    public function delAppr($id)
+    {
+		$this->db->delete('t_approval', array('data_id' => $id));
+	}
+
+    public function delAttr($id)
+    {
+		$this->db->delete('t_upload', array('data_id' => $id));
+	}
+
     public function getByCreator($user_id, $options = array())
     {
         if (isset($options['limit'])) {

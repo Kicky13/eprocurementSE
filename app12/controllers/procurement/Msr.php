@@ -1387,8 +1387,8 @@ class Msr extends CI_Controller {
 				$input_data['attachments'][] = array (
 					"module_kode" => "msr_draft",
 					"data_id" => $draft_id,
-					"file_path" => "./upload/MSR/",
-					"file_name" => $row['file'],
+					"file_path" => $row['file'],
+					"file_name" => $row['file_name'],
 					"tipe" => $row['type'],
 					"created_by" => $this->session->userdata('ID_USER'),
 					"created_at" => date("Y-m-d H:i:s"),

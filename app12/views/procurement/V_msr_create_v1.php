@@ -223,7 +223,7 @@ margin-top: 5px;
                               <label for="title">Title :
                                 <span class="danger">*</span>
                               </label>
-                              <textarea class="form-control required" id="title" name="title" rows="2" maxlength="30"><?= set_value('title') ?></textarea>
+                              <textarea class="form-control required" id="title" name="title" rows="2" maxlength="60"><?= set_value('title') ?></textarea>
                             </div>
                           </div>
 

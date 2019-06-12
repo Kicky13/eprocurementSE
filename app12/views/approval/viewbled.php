@@ -439,7 +439,7 @@
 
 								  <div class="row form-group">
 									<div class="col-md-2"><?php /* type */ ?>
-									  Attachment Cancel
+									  Cancel MSR
 									</div>
 
 									<div class="col-md-4">

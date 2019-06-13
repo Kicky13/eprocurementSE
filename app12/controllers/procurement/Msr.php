@@ -123,6 +123,7 @@ class Msr extends CI_Controller {
         $_POST['blanket'] = $msr->blanket;
         $_POST['master_list'] = $msr->master_list;
         $_POST['attachment_cancel'] = $msr->attachment_cancel;
+        $_POST['deskripsi'] = $msr->deskripsi;
 
         $creator = user($msr->create_by);
         /* $creator_dept = $this->M_master_department->findByDeptAndCompany($creator->ID_DEPARTMENT, $msr->id_company); */
@@ -2511,7 +2512,8 @@ class Msr extends CI_Controller {
         // $field['attachment'] = $data['file_name'];
         $this->db->where('msr_no', $msr_no)->update('t_msr', [
           'status' => 2, 
-          'attachment_cancel' => $data['file_name']
+          'attachment_cancel' => $data['file_name'],
+          'deskripsi' => $this->input->post('deskripsi')
         ]);
       }
       if($this->db->trans_status() === TRUE)

@@ -656,7 +656,7 @@ font-weight: normal;
                                 $countMsrAssignment = $this->approval_lib->getMsrAssignment($r->ID_USER)->num_rows();
                                 $countAssignmentAgreement = $this->approval_lib->getAssignmentAgreement($r->ID_USER);
                             ?>
-                              <a target="_blank" href="<?= base_url('procurement/msr/inquiry') ?>?user=<?= $r->ID_USER ?>" class="btn btn-block btn-sm btn-primary <?= $countMsrAssignment > 0 ? "" : "disabled" ?>"> Assignment <?= $countMsrAssignment ?> </a>
+                              <a target="_blank" href="<?= base_url('procurement/msr/inquiry') ?>?user=<?= $r->ID_USER ?>" class="btn btn-block btn-sm btn-primary <?= $countMsrAssignment > 0 ? "" : "disabled" ?>"> MSR <?= $countMsrAssignment ?> </a>
                             </div>
                             <div class="col-md-4">
                               <a target="_blank" href="<?= base_url('approval/ed') ?>?user=<?= $r->ID_USER ?>" class="btn btn-block btn-sm btn-danger <?= $countAssignmentAgreement > 0 ? "" : "disabled" ?>"> ED <?= $countAssignmentAgreement ?> </a>

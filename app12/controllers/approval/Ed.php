@@ -125,7 +125,7 @@ class Ed extends CI_Controller {
             JOIN m_user_roles ON m_user_roles.ID_USER_ROLES = t_approval.role_id
         ) approval', 'approval.data_id = t_eq_data.msr_no', 'left')
         ->join('m_currency', 'm_currency.ID = t_msr.id_currency')
-        ->where('t_msr.status', [0,2])
+        ->where_in('t_msr.status', [0,2])
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
         if($this->input->get('debug'))
         {

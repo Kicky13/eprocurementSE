@@ -80,7 +80,7 @@ class Ed extends CI_Controller {
         {
             if($this->input->get('user'))
             {
-                // $this->db->where('t_assignment.user_id = '.$this->input->get('user'));
+                $this->db->where('t_assignment.user_id = '.$this->input->get('user'));
                 // echo "<pre>";
                 $getAssignmentAgreement = $this->getAssignmentAgreement($this->input->get('user'));
                 // echo count($getAssignmentAgreement);

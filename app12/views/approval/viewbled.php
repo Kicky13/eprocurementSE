@@ -432,6 +432,9 @@
                                 <div class="col-md-4"><?php /* filename */ ?>
                                   <label>Filename</label>
                                 </div>
+                                <div class="col-md-4"><?php /* filename */ ?>
+                                  <label>Comment</label>
+                                </div>
                               </div>
                               <hr>
 
@@ -441,10 +444,14 @@
 									<div class="col-md-2"><?php /* type */ ?>
 									  Attachment Cancel
 									</div>
-
+									
 									<div class="col-md-4">
 									  <?php $href = base_url().'/upload/cancel_msr/'.$msr->attachment_cancel; ?>
 									  <a href="<?= $href ?>" target="_blank"><?= $msr->attachment_cancel ?></a>
+									</div>
+
+									<div class="col-md-4">
+									  <?php echo $msr->deskripsi;?>
 									</div>
 
 								  </div>

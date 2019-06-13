@@ -651,16 +651,28 @@ font-weight: normal;
                           <input type="radio" name="user_id" value="<?=$r->ID_USER?>" <?= $i == 1 ? "checked":"" ?> >
                         </div>
                         <div class="col-sm-6 row text-right">
-                            <div class="col-md-7">
+                            <div class="col-md-4">
 							<?php 
                                 $countMsrAssignment = $this->approval_lib->getMsrAssignment($r->ID_USER)->num_rows();
                                 $countAssignmentAgreement = $this->approval_lib->getAssignmentAgreement($r->ID_USER);
                             ?>
                               <a target="_blank" href="<?= base_url('procurement/msr/inquiry') ?>?user=<?= $r->ID_USER ?>" class="btn btn-block btn-sm btn-primary <?= $countMsrAssignment > 0 ? "" : "disabled" ?>"> Assignment <?= $countMsrAssignment ?> </a>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                               <a target="_blank" href="<?= base_url('approval/ed') ?>?user=<?= $r->ID_USER ?>" class="btn btn-block btn-sm btn-danger <?= $countAssignmentAgreement > 0 ? "" : "disabled" ?>"> ED <?= $countAssignmentAgreement ?> </a>
                             </div>
+                            <?php 
+                              foreach ($this->m_arf_assignment->get_user_assigned() as $user_assigned) {
+                                if($user_assigned->user_id == $r->ID_USER)
+                                {
+                            ?>
+                                <div class="col-md-4">
+                                  <a href="<?= base_url('procurement/arf') ?>?status=submitted&user_id=<?= $user_assigned->user_id ?>" target="_blank" class="btn btn-sm btn-block btn-info <?= $user_assigned->num_of_assigned == 0 ? "disabled" : "" ?>" > ARF <?= $user_assigned->num_of_assigned ?></a>
+                                </div>
+                            <?php
+                                }
+                              }
+                            ?>
                         </div>
                       </div>
                       <?php

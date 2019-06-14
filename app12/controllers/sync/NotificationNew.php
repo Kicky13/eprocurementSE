@@ -13,7 +13,7 @@ class NotificationNew extends CI_Controller {
     
     public function sendMail() {
         ini_set('max_execution_time', 300);
-        $query_check_out = $this->db->query("select id,recipient,subject,content from i_notification where ismailed=0 limit 2");
+        $query_check_out = $this->db->query("select id,recipient,subject,content from i_notification where ismailed=0 limit 3");
         if($query_check_out->num_rows()>=0){
             $result_check = $query_check_out->result();
             $mail = get_mail();

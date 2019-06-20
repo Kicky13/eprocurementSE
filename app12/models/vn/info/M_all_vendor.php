@@ -398,7 +398,7 @@ class M_all_vendor extends CI_Model {
         JOIN m_vendor_checklist_group k ON k.id=g.group_id
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.TOTAL, 'GNS3' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate('Penyedia Jasa',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
+        SELECT k.code, k.description, a.TOTAL, 'GNS3' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate(/*'Penyedia Jasa'*/ 'Service Provider',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
          FROM (select '23' as id, SUM(svd.GNS3) TOTAL, mv.RISK
                          FROM m_status_vendor_data svd JOIN m_vendor mv ON mv.ID_VENDOR=svd.ID_VENDOR
                          WHERE svd.STATUS=1 AND mv.ID='".$id."') a
@@ -407,7 +407,7 @@ class M_all_vendor extends CI_Model {
         JOIN m_vendor v ON v.ID='".$id."'
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.TOTAL, 'GNS2' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate('Penyedia Barang',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
+        SELECT k.code, k.description, a.TOTAL, 'GNS2' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate(/*'Penyedia Barang'*/ 'Goods Supplier',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
          FROM (select '25' as id, SUM(svd.GNS2) TOTAL, mv.RISK
                          FROM m_status_vendor_data svd JOIN m_vendor mv ON mv.ID_VENDOR=svd.ID_VENDOR
                          WHERE svd.STATUS=1 AND mv.ID='".$id."') a
@@ -416,7 +416,7 @@ class M_all_vendor extends CI_Model {
         JOIN m_vendor v ON v.ID='".$id."'
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.TOTAL, 'GNS4' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate('Konsultan',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
+        SELECT k.code, k.description, a.TOTAL, 'GNS4' as LEGAL_DATA, g.description as DESC_IND, g.description as DESC_ENG, b.ismandatory,CASE WHEN locate(/*'Konsultan'*/ 'Consultant',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.RISK
          FROM (select '24' as id, SUM(svd.GNS4) TOTAL, mv.RISK
                          FROM m_status_vendor_data svd JOIN m_vendor mv ON mv.ID_VENDOR=svd.ID_VENDOR
                          WHERE svd.STATUS=1 AND mv.ID='".$id."') a
@@ -672,21 +672,21 @@ class M_all_vendor extends CI_Model {
         JOIN m_vendor_checklist_group k ON k.id=g.group_id
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate('Penyedia Jasa',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate('Penyedia Jasa',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
+        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate(/*'Penyedia Jasa'*/ 'Service Provider',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate(/*'Penyedia Jasa'*/ 'Service Provider',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
          FROM (select '23' as id, 'C' HEAD,  count(ID_VENDOR) TOTAL, 'Jasa yang dipasok' DESC_IND, 'Service Supplied' DESC_ENG, 'REQUIRED' STATUS,0 as resiko FROM m_vendor_goods_service WHERE ID_VENDOR = '".$id."' AND STATUS = '1' AND TYPE = 'SERVICE') a
         JOIN m_vendor_checklist_group_detail g ON g.id=a.id JOIN m_vendor_checklist_group_validation b ON a.id=b.checklist_group_detail_id
         JOIN m_vendor_checklist_group k ON k.id=g.group_id
         JOIN m_vendor v on v.id='".$id."'
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate('Penyedia Barang',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate('Penyedia Barang',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
+        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate(/*'Penyedia Barang'*/ 'Goods Supplier',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate(/*'Penyedia Barang'*/ 'Goods Supplier',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
          FROM (select '25' as id, 'C' HEAD,  count(ID_VENDOR) TOTAL, 'Barang yang dipasok' DESC_IND, 'Goods Supplied' DESC_ENG, 'REQUIRED' STATUS,0 as resiko FROM m_vendor_goods_service WHERE ID_VENDOR = '".$id."' AND STATUS = '1' AND TYPE = 'GOODS') a
         JOIN m_vendor_checklist_group_detail g ON g.id=a.id JOIN m_vendor_checklist_group_validation b ON a.id=b.checklist_group_detail_id
         JOIN m_vendor_checklist_group k ON k.id=g.group_id
         JOIN m_vendor v on v.id='".$id."'
         WHERE b.prefix_id = '".$prefix_id."'
         UNION
-        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate('Konsultan',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate('Konsultan',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
+        SELECT k.code, k.description, a.HEAD, a.TOTAL, REPLACE(LOWER(g.description), ' ', '_') as divname, g.description as DESC_IND, g.description as DESC_ENG, CASE WHEN locate(/*'Konsultan'*/ 'Consultant',v.CLASSIFICATION)>0 THEN 1 ELSE b.ismandatory END as ismandatory,CASE WHEN locate(/*'Konsultan'*/ 'Consultant',v.CLASSIFICATION)>0 THEN 'REQUIRED' ELSE 'OPTIONAL' END as STATUS, a.resiko
          FROM (select '24' as id, 'C' HEAD,  count(ID_VENDOR) TOTAL, 'Konsultasi yang dipasok' DESC_IND, 'Consultation Supplied' DESC_ENG, 'REQUIRED' STATUS,0 as resiko FROM m_vendor_goods_service WHERE ID_VENDOR = '".$id."' AND STATUS = '1' AND TYPE = 'CONSULTATION') a
         JOIN m_vendor_checklist_group_detail g ON g.id=a.id JOIN m_vendor_checklist_group_validation b ON a.id=b.checklist_group_detail_id
         JOIN m_vendor_checklist_group k ON k.id=g.group_id

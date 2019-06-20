@@ -198,7 +198,22 @@ class Approval extends CI_Controller {
             $this->email->to($content['dest']);
             $this->email->subject($content['title']);
             $date_until = date('d F Y', strtotime("+" . $content['hari'] . " days", strtotime(date('Y-m-d'))));
-            $url = "<a href='http:" . base_url() . "log_in/index/" . $content['URL'] . "'>Invitation Link</a>";
+		
+			switch (base_url()) {
+				case "http://eproc-dev.supreme-energy.com/dev_prod/":
+					$hyperlink = "http://eproc-dev.supreme-energy.com/dev_vendor/";
+					break;
+				case "http://eproc-dev.supreme-energy.com/dev_user/":
+					$hyperlink = "http://eproc-dev.supreme-energy.com/dev_user_vendor/";
+					break;
+				case "http://scm.supreme-energy.com/":
+					$hyperlink = "http://eproc.supreme-energy.com/";
+					break;
+				default:
+					$hyperlink = base_url();
+			}
+		
+            $url = "<a href='http:" . $hyperlink . "log_in/index/" . $content['URL'] . "'>Invitation Link</a>";
             $ctn = ' <p>' . $content['img1'] . '<p>
                             <p>' . $content['open'] . '<p>
                             <br>

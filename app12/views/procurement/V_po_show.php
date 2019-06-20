@@ -471,13 +471,28 @@ body {
                     </fieldset>
                     <?php endif; ?>
 
-
                   </form>
                 </div>
               </div>
             </div>
           </div>
         </div>
+<div class="col-md-12 text-right">
+    <div class="form-group">
+	<?php 
+		foreach($approval_list as $appr){
+			if($appr->status == 2){
+	?>
+				<a href="<?= base_url('procurement/purchase_order/create/'.$this->db->where('msr_no', $msr->msr_no)->get('t_bl')->result()[0]->id)?>" class="btn btn-warning">Re Submit</a>
+	<?php 
+			break;	
+			}
+		}
+	
+	?>
+        <!--a href="#" class="btn btn-success resubmit" msr-no="<?=$_POST['msr_no']?>">Re Submit</a-->
+    </div>
+  </div>
       </div>
     </div>
   </section>

@@ -10,12 +10,20 @@
       <div class="modal-body">
         <form id="frm-cancel-msr" method="post" class="form-horizontal" enctype="multipart/form-data">
           <div class="form-group row">
-            <label class="col-sm-3">
-              Attachment
-            </label>
-            <div class="col-sm-9">
-              <input type="file" name="file_cancel_msr" id="file_cancel_msr" class="form-control" style="height: 45px !important">
-            </div>
+				<label class="col-sm-3">
+				  Attachment
+				</label>
+				<div class="col-sm-9">
+				  <input type="file" name="file_cancel_msr" id="file_cancel_msr" class="form-control" style="height: 45px !important">
+				</div>
+          </div>
+		  <div class="form-group row">
+				<label class="col-sm-3">
+				  Comment
+				</label>
+				<div class="col-sm-9">
+				  <textarea class="form-control" name="deskripsi" id="deskripsi" style="weight: 1px !important"></textarea>
+				</div>
           </div>
           <div class="form-group">
             <div class="col-sm-12">

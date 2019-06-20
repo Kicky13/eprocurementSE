@@ -624,27 +624,31 @@ function date_moment(idclass, bool){
             var arr = [];
             var splitx = res.data.CLASSIFICATION.toLowerCase().split(",");
             arr.push(splitx);
-            console.log(splitx);
+//            console.log(splitx);
 
-            if (splitx.indexOf("penyedia barang") == -1) {
+            //if (splitx.indexOf("penyedia barang") == -1) {
+            if (splitx.indexOf("goods supplier") == -1) {
               $(".barang").hide();
             } else {
               $(".barang").show();
             }
 
-            if (splitx.indexOf("konsultan") == -1) {
+//            if (splitx.indexOf("konsultan") == -1) {
+            if (splitx.indexOf("consultant") == -1) {
               $(".konsul").hide();
             } else {
               $(".konsul").show();
             }
 
-            if (splitx.indexOf("jasa pemborongan") == -1) {
+//            if (splitx.indexOf("jasa pemborongan") == -1) {
+            if (splitx.indexOf("contractor") == -1) {
               $(".jasa").hide();
             } else {
               $(".jasa").show();
             }
 
-            if (splitx.indexOf("penyedia jasa") == -1) {
+//            if (splitx.indexOf("penyedia jasa") == -1) {
+            if (splitx.indexOf("service provider") == -1) {
               // $(".jasa").hide();
             } else {
               $(".jasa").show();

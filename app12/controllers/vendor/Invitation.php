@@ -445,7 +445,22 @@ class Invitation extends CI_Controller {
         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
         $mini_url = date("HiY") . rand(10000000, 99999999) . date("md") . $id;
-        $url = "<a href=' " . base_url() . "log_in/index/" . $mini_url . "' class='btn btn-primary btn-lg'>Invitation Link</a>";
+		
+		switch (base_url()) {
+			case "http://eproc-dev.supreme-energy.com/dev_prod/":
+				$hyperlink = "http://eproc-dev.supreme-energy.com/dev_vendor/";
+				break;
+			case "http://eproc-dev.supreme-energy.com/dev_user/":
+				$hyperlink = "http://eproc-dev.supreme-energy.com/dev_user_vendor/";
+				break;
+			case "http://scm.supreme-energy.com/":
+				$hyperlink = "http://eproc.supreme-energy.com/";
+				break;
+			default:
+				$hyperlink = base_url();
+		}
+	
+        $url = "<a href=' " . $hyperlink . "log_in/index/" . $mini_url . "' class='btn btn-primary btn-lg'>Invitation Link</a>";
         //$mini_url=date("HiY").rand(100000000,999999999).date("md").$id;
         $data = array(
             'email' => $email->ID_VENDOR,

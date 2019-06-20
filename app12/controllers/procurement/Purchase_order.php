@@ -69,13 +69,13 @@ class Purchase_order extends CI_Controller
 
         $message = ['type' => '', 'message' => null];
 
-        if (!$this->M_purchase_order->canCreateFromBlDetail($bl_detail_id)) {
+        /* if (!$this->M_purchase_order->canCreateFromBlDetail($bl_detail_id)) {
             show_error('Disallow to create PO document or document already created');
-        }
+        } 
 
         if ($this->M_purchase_order->findByBlDetailId($bl_detail_id)) {
             show_error('PO document is already created or under development');
-        }
+        } */
 
         $menu = get_main_menu();
 
@@ -97,8 +97,8 @@ class Purchase_order extends CI_Controller
             if (!$this->input->post('bl_detail_id')) {
                 show_error("Invalid document", 404);
             }
-
-            if (false === ($attachment_files = $this->handleUploadAttachment([
+			
+			if (false === ($attachment_files = $this->handleUploadAttachment([
                 'draft_of_po',
             ]))) {
                 $hit_db = false;
@@ -107,7 +107,7 @@ class Purchase_order extends CI_Controller
                 $message['type'] = 'danger';
                 log_message('error', $message['message']);
             }
-
+ 
             $po = $this->makePOFromPost();
             $po_items = $this->makePODetailsFromBlDetail($this->input->post('bl_detail_id'), null);
 
@@ -116,7 +116,7 @@ class Purchase_order extends CI_Controller
             $po['total_amount_base'] = $total_po_amount['total_price_base'];
 
             $required_docs = $this->makePORequiredDocsFromPost(null);
-            $attachments = $this->makePOAttachmentsFromPost(
+			$attachments = $this->makePOAttachmentsFromPost(
                 null,
                 $attachment_files,
                 [
@@ -191,7 +191,7 @@ class Purchase_order extends CI_Controller
                         join t_msr t on t.msr_no=b.msr_no
                         where b.id=".$po_id);
                     $data_role = $query->result();
-
+					
                     $res = $data_role;
 
                     $data2 = array(
@@ -210,6 +210,14 @@ class Purchase_order extends CI_Controller
                     $flag = $this->sendMail($data2);
                     // End Email
 
+					//var_dump($po_last);exit;
+					//delete po reject
+					$this->db->where('id <', $po_id);
+					$this->db->where('msr_no', $data_role[0]->msr_no);
+					$this->db->delete('t_purchase_order');
+					//var_dump($this->db->last_query());exit;
+					
+										
                     return redirect('home');
                 }
 
@@ -1022,15 +1030,15 @@ class Purchase_order extends CI_Controller
             }
 
             foreach($log as &$l) {
-                if($l->description == 'Issued')
-                {
-                    $creator = user($l->created_by);
-                    $creator_name = @$creator->NAME;
-                }
-                else
+                if($l->description == 'Accepted')
                 {
                     $creator = supplier($l->created_by);
                     $creator_name = @$creator->NAMA;
+                }
+                else
+                {
+                    $creator = user($l->created_by);
+                    $creator_name = @$creator->NAME;
                 }
                 $comment  = $l->keterangan;
 
@@ -1558,10 +1566,11 @@ class Purchase_order extends CI_Controller
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
 
         if ($loi && !empty($loi->po_no)) {
-            $po_no = $loi->po_no;
+            //$po_no = $loi->po_no;
+			$po_no = DocNumber::generate($module_kode, $bl->id_company);
         }
         elseif (!$this->M_purchase_order->isMSRHasPO($bl->msr_no)) {
-            $po_no = DocNumber::createFrom($bl->msr_no,
+			$po_no = DocNumber::createFrom($bl->msr_no,
                 $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
                     $this->M_purchase_order::module_kode :
                     $this->M_service_order::module_kode

@@ -19,8 +19,8 @@
   $no = 1;
   $urutan = [];
   $msr = $this->M_msr->find($po->msr_no);
-  foreach ($rows as $row) :
-    $t_approval_id = $row->t_approval_id;
+  foreach ($rows as $key => $row) :
+	$t_approval_id = $row->t_approval_id;
     $m_approval_id = $row->approval_id;
     $urutan[$row->urutan] = $row->status;
 
@@ -42,16 +42,24 @@
     }
 
     $display_approve_button = false;
-    if (in_array($row->role_id, $roles)) {
+	if (in_array($row->role_id, $roles)) {
       if ($row->urutan - 1 == 0) {
-        if ($row->status != 1) {
-          $display_approve_button = true;
-        }
+		if (isset($rows[$key-1]->status)) {
+			if ($rows[$key-1]->status != 2 && $row->status == 0) {
+			  $display_approve_button = true;
+			}
+		}else{
+			if ($row->status == 0) {
+			  $display_approve_button = true;
+			}
+		}
       }
       elseif (@$urutan[$row->urutan - 1] == 1 || @$urutan[$row->urutan - 1] == 2) {
-        if ($row->status != 1 && $user_approver->ID_USER == $this->session->userdata('ID_USER')) {
-          $display_approve_button = true;
-        }
+       if ($rows[$key-1]->status != 2 && $row->status == 0 && $user_approver->ID_USER == $this->session->userdata('ID_USER')) {
+			  $display_approve_button = true;
+			}
+		
+		
       }
     }
 

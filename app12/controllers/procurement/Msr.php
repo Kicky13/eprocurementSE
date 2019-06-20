@@ -88,6 +88,7 @@ class Msr extends CI_Controller {
         // $_POST['costcenter'] = $msr->costcenter_desc;
 
         $_POST['msr_no'] = $msr->msr_no;
+        $_POST['msr_stts'] = $msr->status;
         $_POST['id_company'] = $msr->id_company;
         $_POST['company_desc'] = $msr->company_desc;
         $_POST['req_date'] = $msr->req_date;
@@ -121,6 +122,8 @@ class Msr extends CI_Controller {
         $_POST['procure_processing_time'] = $msr->procure_processing_time;
         $_POST['blanket'] = $msr->blanket;
         $_POST['master_list'] = $msr->master_list;
+        $_POST['attachment_cancel'] = $msr->attachment_cancel;
+        $_POST['deskripsi'] = $msr->deskripsi;
 
         $creator = user($msr->create_by);
         /* $creator_dept = $this->M_master_department->findByDeptAndCompany($creator->ID_DEPARTMENT, $msr->id_company); */
@@ -1109,7 +1112,8 @@ class Msr extends CI_Controller {
 
         $data_department = @$query->result();
 
-        $this->template->display('procurement/V_msr_create',
+        $this->template->display('procurement/V_msr_create_v1',
+ //       $this->template->display('procurement/V_msr_create',
         compact(
             'menu', 'opt_company', 'opt_msr_type', 'opt_pmethod', 'opt_plocation', 'opt_currency',
             'opt_cost_center', 'opt_location', 'opt_delivery_point', 'opt_importation', 'opt_delivery_term',
@@ -1157,9 +1161,9 @@ class Msr extends CI_Controller {
             show_error('Document not found');
         }
 
-        if ($msr->msr_no) {
+/*         if ($msr->msr_no) {
             show_error('The document has been processed');
-        }
+        } */
 
         $_POST['draft_id'] = $id;
         $_POST['company'] = $msr->id_company;
@@ -1326,9 +1330,11 @@ class Msr extends CI_Controller {
 	public function saveDraftV1(){
         $post = $this->input->post();
         $draft_id = trim($post['draft_id']);
+		
         $msr_no = @$post['msr_no'] ?: NULL;
-
+		
         $input_data['header'] = $this->makeHeaderFromPost($msr_no);
+		
         $details = array();
 
         $draft = $this->M_msr_draft->find($draft_id);
@@ -1338,12 +1344,14 @@ class Msr extends CI_Controller {
         }
 
         $this->db->trans_start();
-
         if ($draft) {
             $this->M_msr_draft->update($draft_id, $input_data['header']);
         } else {
-            $this->M_msr_draft->add($input_data['header']);
-            $draft_id = $input_data['header']['id'] = $this->db->insert_id();
+			$this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
+			$this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
+		
+			$this->M_msr_draft->add($input_data['header']);
+			$draft_id = $input_data['header']['id'] = $this->db->insert_id();
         }
 
         $this->M_msr_item_draft->deleteAllByDraftId($input_data['header']['id']);
@@ -1380,8 +1388,8 @@ class Msr extends CI_Controller {
 				$input_data['attachments'][] = array (
 					"module_kode" => "msr_draft",
 					"data_id" => $draft_id,
-					"file_path" => "./upload/MSR/",
-					"file_name" => $row['file'],
+					"file_path" => $row['file'],
+					"file_name" => $row['file_name'],
 					"tipe" => $row['type'],
 					"created_by" => $this->session->userdata('ID_USER'),
 					"created_at" => date("Y-m-d H:i:s"),
@@ -1405,8 +1413,13 @@ class Msr extends CI_Controller {
         }
 
  			$doctype = $this->msr::module_kode;
-			$msr_no = DocNumber::generate($doctype, $post['company']);
-
+			if($post['msr_no'] == ''){
+				$msr_no = DocNumber::generate($doctype, $post['company']);
+			}else{
+				$this->M_msr_draft->delAttr($input_data['header']['msr_no']);	
+				$msr_no = $post['msr_no'];
+			}
+			
         $this->output->set_content_type('application/json')
             ->set_output(json_encode([
                 'message' => [
@@ -1592,6 +1605,7 @@ class Msr extends CI_Controller {
 	//update attechment msr draf to msr machrus
     public function updateAtt(){
 		$post = $this->input->post();
+		$this->M_msr_draft->deletedrafbyid($post['draft_id']);
 		return $this->msr_attachment->updateAtt($post);
 	}
 	
@@ -2458,8 +2472,8 @@ class Msr extends CI_Controller {
 		if (!is_dir($config['upload_path'])) {
             mkdir($config['upload_path'],0755,TRUE);
         }
-       // $config['allowed_types'] = 'jpg|jpeg|pdf|doc|docx';
-        $config['allowed_types'] = 'jpg|jpeg|pdf';
+		$config['allowed_types'] = 'jpg|jpeg|pdf|doc|docx';
+        //$config['allowed_types'] = 'jpg|jpeg|pdf';
         $config['max_size'] = '2048';
         //$config['encrypt_name'] = true;
         $config['file_name'] = $this->input->post('file_name');
@@ -2497,8 +2511,9 @@ class Msr extends CI_Controller {
         $data = $this->upload->data();
         // $field['attachment'] = $data['file_name'];
         $this->db->where('msr_no', $msr_no)->update('t_msr', [
-          $this->msr::status_col => 2, 
-          'attachment_cancel' => $data['file_name']
+          'status' => 2, 
+          'attachment_cancel' => $data['file_name'],
+          'deskripsi' => $this->input->post('deskripsi')
         ]);
       }
       if($this->db->trans_status() === TRUE)

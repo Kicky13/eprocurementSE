@@ -97,6 +97,10 @@
                                     {
                                       $status = 'Awarded';
                                     }
+                                    if($ed->msr_stts == 2)
+                                    {
+                                      $status = 'Cancelled';
+                                    }
                                     echo $status;
                                   ?>
                                 </a>

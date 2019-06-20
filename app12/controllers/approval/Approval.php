@@ -182,6 +182,7 @@ class Approval extends CI_Controller {
                       $str = str_replace('_var1_',$data_replace[0]->title,$str);
                       $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
                       $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var4_',$data["data_id"],$str);
 
                       $data = array(
                         'img1' => $img1,
@@ -237,6 +238,7 @@ class Approval extends CI_Controller {
                       $str = str_replace('_var1_',$data_replace[0]->title,$str);
                       $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
                       $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var4_',$data["data_id"],$str);
 
                       $data = array(
                         'img1' => $img1,

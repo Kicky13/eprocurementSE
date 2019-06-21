@@ -9,6 +9,17 @@
 	$sop = $this->vendor_lib->sop_get(false, $msrItemList)->result();
 ?>
 <?php if($ed->packet == 2): ?>
+	<?php 
+		if($this->input->get('ed_list'))
+		{
+			$pemenang = $this->db->select('vendor_id')->where(['awarder'=>1, 'msr_no' => $ed->msr_no])->get('t_bl_detail');
+			if($pemenang->num_rows() > 0)
+			{
+				$pemenang = $pemenang->row();
+				echo "<script>$(document).ready(function(){ $('#award_choice').attr('disabled',''); $('#award_choice').val(".$pemenang->vendor_id.") })</script>";
+			}
+		}
+	?>
 	<div class="form-inline" style="margin-bottom: 10px;">
 		<div class="form-group">
 			<label>Award Choice</label>&nbsp;
@@ -213,7 +224,7 @@
 				var s = eval("("+r+")");
 				$("#bidders-recomendation").html(s.result);
 				$(".award-popup").html(s.popup);
-				<?php if($ed->packet == 2): ?>
+				<?php if($ed->packet == 2 or $this->input->get('ed_list')): ?>
 				$(".recomendation").attr("disabled","");
 				<?php endif;?>
 			}

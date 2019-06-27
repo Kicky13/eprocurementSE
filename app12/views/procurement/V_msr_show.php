@@ -556,7 +556,7 @@ font-weight: normal;
                                 <div class="col-md-1"><?= $attachment->sequence ?> </div>
 
                                 <div class="col-md-4">
-                                  <?php $href = base_url().$attachment->file_path.$attachment->file_name; ?>
+                                  <?php $href = base_url().$attachment->file_path ?>
                                   <a href="<?= $href ?>" target="_blank"><?= $attachment->file_name ?></a>
                                 </div>
 

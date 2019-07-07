@@ -2,6 +2,13 @@
 require_once "Mail.php";
 $to = "eko-hardiananto@supreme-energy.com";
 $to = "agungudik@gmail.com";
+$to = "donna.sianturi@sisi.id";
+$to = "machrus.alifuddin21@gmail.com";
+$to = "machrus.alifudin@sisi.id";
+$to = "alfhanz@gmail.com";
+$to = "agus.purnomo@sisi.id";
+$to = "ilhambagaskars@gmail.com";
+
 $cc = "scm-portal@supreme-energy.com,developersisi1@gmail.com";
 $from = "SCM Portal <scm-portal@supreme-energy.com>";
 $subject = "Test EPROC-DEV_PROD ".date("Y-m-d H:i:s");

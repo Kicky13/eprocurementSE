@@ -111,10 +111,10 @@
                               <th class="text-center">
                                 <a href="<?= base_url('approval/approval/viewbled/'.$ed->msr_no) ?>" class="btn btn-primary btn-sm">ED</a>
                                 <?php if($ed->bid_opening == 1) : ?>
-                                <a href="<?= base_url('approval/approval/evaluation/'.$ed->msr_no) ?>" class="btn btn-success btn-sm">Evaluation</a>
+                                <a href="<?= base_url('approval/approval/evaluation/'.$ed->msr_no) ?>?ed_list=1" class="btn btn-success btn-sm">Evaluation</a>
                                 <?php endif;?>
                                 <?php if($ed->commercial == 1) : ?>
-                                  <a href="<?= base_url('approval/approval/evaluation/'.$ed->msr_no) ?>?award=1" class="btn btn-info btn-sm">Award</a>
+                                  <a href="<?= base_url('approval/approval/evaluation/'.$ed->msr_no) ?>?award=1&ed_list=1" class="btn btn-info btn-sm">Award</a>
                                 <?php endif;?>
                               </th>
                             </tr>

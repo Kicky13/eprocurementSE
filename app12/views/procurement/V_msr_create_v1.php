@@ -1260,7 +1260,7 @@ function validate_msr_item(form) {
 */
   $("#item-item_type, #item-itemtype_category, \
     #item-material_id, #item-qty_required, #item-unit_price, \
-    #item-cost_center, #item-semic_no_name").addClass('required')
+    #item-semic_no_name").addClass('required')
 
   $('#item-qty_required, #item-unit_price').attr('number', true);
 

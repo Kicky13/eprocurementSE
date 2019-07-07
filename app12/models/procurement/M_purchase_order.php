@@ -56,6 +56,12 @@ class M_purchase_order extends MY_Model {
             ->get($this->table)->num_rows() > 0;
     }
 
+    public function isMSRHasPO2($msr_no)
+    {
+        return $this->db->where('msr_no', $msr_no)
+            ->get($this->table)->row();
+    }
+
     /* public function find($po_no) */
     /* { */
     /*     return @$this->db->where('po_no', $po_no)->get($this->table)->result()[0]; */

@@ -182,6 +182,7 @@ class Approval extends CI_Controller {
                       $str = str_replace('_var1_',$data_replace[0]->title,$str);
                       $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
                       $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var4_',$data["data_id"],$str);
 
                       $data = array(
                         'img1' => $img1,
@@ -237,6 +238,7 @@ class Approval extends CI_Controller {
                       $str = str_replace('_var1_',$data_replace[0]->title,$str);
                       $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
                       $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var4_',$data["data_id"],$str);
 
                       $data = array(
                         'img1' => $img1,
@@ -756,6 +758,8 @@ class Approval extends CI_Controller {
                     $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                     $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
+                    /*get MSR*/
+                    $msr = $this->db->select('title')->where('msr_no', $data['msr_no'])->get('t_msr')->row();
 
                     $query = $this->db->query("SELECT distinct u.NAME,d.DEPARTMENT_DESC,u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM m_user u
                         join m_notic n on n.ID=51
@@ -769,12 +773,18 @@ class Approval extends CI_Controller {
                     }
 
                     if ($count === 1) {
-
+                      $q = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+                        join m_user u on u.id_user=t.create_by
+                        join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
+                        where msr_no='".$data['msr_no']."' ");
+                      $rs = $q->row();
+                      
                       $res = $data_role;
                       $str = $data_role[0]->OPEN_VALUE;
-                      $str = str_replace('_var1_',$data_role[0]->TITLE,$str);
-                      $str = str_replace('_var2_',$data_role[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_role[0]->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var1_',$msr->title,$str);
+                      $str = str_replace('_var2_',$rs->NAME,$str);
+                      $str = str_replace('_var3_',$rs->DEPARTMENT_DESC,$str);
+                      $str = str_replace('_var4_',$data['msr_no'],$str);
 
                       $data = array(
                         'img1' => $img1,

@@ -210,11 +210,24 @@ class Purchase_order extends CI_Controller
                     $flag = $this->sendMail($data2);
                     // End Email
 
-					//var_dump($po_last);exit;
+					//var_dump($po_id);exit;
 					//delete po reject
+					
+					
+					
+					
+
+					$dtOld = $this->db->where('id <', $po_id)->where('msr_no', $data_role[0]->msr_no)->get('t_purchase_order')->row();
+					//var_dump($dtOld);exit;
 					$this->db->where('id <', $po_id);
 					$this->db->where('msr_no', $data_role[0]->msr_no);
 					$this->db->delete('t_purchase_order');
+					
+					
+					$this->db->where('id', $po_id);
+					$this->db->update('t_purchase_order',['po_no'=>$dtOld->po_no]);
+					
+					
 					//var_dump($this->db->last_query());exit;
 					
 										
@@ -284,7 +297,10 @@ class Purchase_order extends CI_Controller
         $po_no = '';
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
         if ($loi && !empty($loi->po_no)) {
-            $po_no = $loi->po_no;
+ 			$isMSRHasPO = $this->M_purchase_order->isMSRHasPO2($loi->msr_no);
+			$po_no = $isMSRHasPO->po_no;
+			$bl->title = $isMSRHasPO->title;
+			//$po_no = $loi->po_no;
         }
 
         $this->template->display('procurement/V_po_create', compact(

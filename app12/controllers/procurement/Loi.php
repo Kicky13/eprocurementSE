@@ -117,7 +117,7 @@ class Loi extends CI_Controller
             }
             elseif (!$this->M_purchase_order->isMSRHasPO($bl->msr_no)) {
                 $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
-                if($bidder->num_rows() > 0)
+                if($bidder->num_rows() > 1)
                 {
                     $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
                     $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();

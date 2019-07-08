@@ -57,6 +57,12 @@ class M_purchase_order extends MY_Model {
             ->get($this->table)->num_rows() > 0;
     }
 
+    public function isMSRHasPO2($msr_no)
+    {
+        return $this->db->where('msr_no', $msr_no)
+            ->get($this->table)->row();
+    }
+
     /* public function find($po_no) */
     /* { */
     /*     return @$this->db->where('po_no', $po_no)->get($this->table)->result()[0]; */
@@ -375,6 +381,10 @@ class M_purchase_order extends MY_Model {
           $where = '1=1';
         } else {
           $where = "(t_msr.id_department = '".$ID_DEPARTMENT."' OR e.created_by='".$ID_USER."' )";
+        }
+        if($this->input->get('reject_list'))
+        {
+            $where .= " and t_purchase_order.id in (select data_id from t_approval WHERE m_approval_id in (17,18,19) and status = 2 GROUP BY data_id) and t_purchase_order.create_by =  ".$this->session->userdata('ID_USER');
         }
 		//
         // $this->db->select([
@@ -760,5 +770,11 @@ SQL;
                 left join t_sop on t_sop.id = t_sop_bid.sop_id
                 where t_sop_bid.msr_no = '$msr_no' and award = 1) a where vendor_id = '$vendor_id' group by vendor_id";
         return $this->db->query($q)->row();
+    }
+    public function reject_list()
+    {
+        $q = "select data_id from t_approval WHERE m_approval_id in (17,18,19) and status = 2 GROUP BY data_id";
+        // $qq = "select * from t_purchase_order where id in ($q) and ";
+        return $this->db->where("id in ($q)",'',false)->from('t_purchase_order');
     }
 }

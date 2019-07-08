@@ -13,15 +13,18 @@ class NotificationNew extends CI_Controller {
     
     public function sendMail() {
         ini_set('max_execution_time', 300);
-        $query_check_out = $this->db->query("select id,recipient,subject,content from i_notification where ismailed=0 limit 5");
+        $query_check_out = $this->db->query("select id,recipient,subject,content from i_notification where ismailed=0 limit 1");
         if($query_check_out->num_rows()>=0){
             $result_check = $query_check_out->result();
             $mail = get_mail();
 			foreach ($result_check as $row){ 
-				$dadi = str_replace("<p><img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>", '', $row->content);
-				$dadi = strstr($dadi, '<p>Greetings,');
-				$row->content = ltrim($dadi);
+				//$dadi = str_replace("<p><img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>", '', $row->content);
+				//$dadi = strstr($dadi, '<p>Greetings,');
+				//$row->content = ltrim($dadi);
 
+				$dadi = str_replace("https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg", '', $row->content);
+				$row->content = $dadi;
+				
 				require_once "Mail.php";
 				require_once "Mail/mime.php";
 				$crlf = "\r\n";

@@ -129,9 +129,25 @@ class Purchase_order extends CI_Controller
             if ($hit_db) {
 
                 $this->db->trans_start();
+                /*get if any by bl_detail_id*/
+                $anyPo = $this->db->where('bl_detail_id', $bl_detail_id)->get('t_purchase_order');
+                if($anyPo->num_rows() > 0)
+                {
+                    $anyPo = $anyPo->row();
+                    $po_id = $anyPo->id;
+                    unset($po['id']);
+                    $this->M_purchase_order->update($po_id, $po);
 
-                $this->M_purchase_order->add($po);
-                $po_id = $this->db->insert_id();
+                    $this->db->where(['data_id'=>$po_id])->where_in('m_approval_id', [17,18,19])->delete('t_approval');
+                    $this->db->where(['po_id'=>$po_id])->delete('t_purchase_order_required_doc');
+                    $this->db->where(['module_kode'=>'po', 'data_id'=>$po_id])->delete('t_upload');
+                    $this->db->where(['po_id'=>$po_id])->delete('t_purchase_order_detail');
+                }
+                else
+                {
+                    $this->M_purchase_order->add($po);
+                    $po_id = $this->db->insert_id();
+                }
                 $po_no = $po['po_no'];
 
                 // Details
@@ -211,12 +227,24 @@ class Purchase_order extends CI_Controller
                     $flag = $this->sendMail($data2);
                     // End Email
 
-					//var_dump($po_last);exit;
+					//var_dump($po_id);exit;
 					//delete po reject
+
 					/*$this->db->where('id <', $po_id);
 					$this->db->where('msr_no', $data_role[0]->msr_no);
 					$this->db->delete('t_purchase_order');*/
-					//var_dump($this->db->last_query());exit;
+
+
+					/*$dtOld = $this->db->where('id <', $po_id)->where('msr_no', $data_role[0]->msr_no)->get('t_purchase_order')->row();
+					//var_dump($dtOld);exit;
+					$this->db->where('id <', $po_id);
+					$this->db->where('msr_no', $data_role[0]->msr_no);
+					$this->db->delete('t_purchase_order');
+					
+					
+					$this->db->where('id', $po_id);
+					$this->db->update('t_purchase_order',['po_no'=>$dtOld->po_no]);
+					//var_dump($this->db->last_query());exit;*/
 					
 										
                     return redirect(base_url('home'));
@@ -284,7 +312,10 @@ class Purchase_order extends CI_Controller
         $po_no = '';
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
         if ($loi && !empty($loi->po_no)) {
-            $po_no = $loi->po_no;
+ 			/*$isMSRHasPO = $this->M_purchase_order->isMSRHasPO2($loi->msr_no);
+			$po_no = $isMSRHasPO->po_no;
+			$bl->title = $isMSRHasPO->title;*/
+			$po_no = $loi->po_no;
         }
 
         $this->template->display('procurement/V_po_create', compact(

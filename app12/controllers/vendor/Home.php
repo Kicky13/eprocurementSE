@@ -201,7 +201,7 @@ class Home extends CI_Controller {
 		$msrVerify['out_nego'] = count($msrVerify['out_nego']);
 //      $msrVerify['out_nego'] = '10000000';
 
-		
+		$msrVerify['po_reject'] = $this->M_purchase_order->reject_list()->where('create_by', $this->session->userdata('ID_USER'))->get()->num_rows();
 		$get_task = $this->M_vendor->task();
 		$get_task_baru = array();
 		foreach($get_task as $row){

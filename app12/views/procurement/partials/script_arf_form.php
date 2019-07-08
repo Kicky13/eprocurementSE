@@ -1,5 +1,13 @@
 <script>
+    <?php if(isset($arf)): ?>
+        <?php if($arf->tax > 0):  ?>
+        var vat_percent = 10;
+        <?php else:?>
+        var vat_percent = 0;
+        <?php endif;?>
+    <?php else:?>
     var vat_percent = 10;
+    <?php endif;?>
     var item_type_categories = <?= json_encode($item_type_categories) ?>;
     var po_item = [];
     var arf_item = [];
@@ -1271,45 +1279,8 @@
         $amdNumber = substr($arf->doc_no, -5);
     ?>
     $(document).ready(function(){
-      function get_amd(po_no,total_amount){
-        $.ajax({
-          type:'post',
-          data:{po_no:po_no,mode:'arf-preparation'},
-          url:"<?= base_url('procurement/browse/get_amd') ?>",
-          success:function(e){
-            var r = eval("("+e+")");
-            if(r.status)
-            {
-              $('.div-detail-amd').show();
-              $("#dt-amd").html(r.dt);
-              $("#amd_total").val(r.total);
-              /*$('#po_latest_value_ori').val(r.total);
-              $('#po_latest_value').val(r.total);*/
-              var po = '<?= $arf->amount_po ?>';
-                var total = r.total;
-                var jml = toFloat(po) + toFloat(total);
-                var amdNumber = '<?= $amdNumber ?>';
-                if(amdNumber == 'AMD01')
-                {
-                    finalTotal = jml;
-                }
-                else
-                {
-                    finalTotal = total;
-                }
-                // alert(finalTotal)
-                $('#po_latest_value_ori, #po_latest_value').val(finalTotal);
-            }
-            get_spending_value(po_no)
-          },
-          error:function(){
-            $('.div-detail-amd').hide();
-            $("#dt-amd").html('');
-            $("#amd_total").val(0);
-          }
-        })
-      }
-      get_amd('<?= $arf->po_no ?>', 0)
+     
+      get_amd('<?= $arf->po_no ?>', '<?= $arf->amount_po ?>')
     })
     <?php endif;?>
 </script>

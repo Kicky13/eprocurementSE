@@ -310,7 +310,14 @@ class Arf extends CI_Controller {
 
             $po = $this->m_arf_po->view('po')->find($post['po_id']);
             $estimated_value = isset($post['value_value']) ? $post['value_value'] : 0;
-            $tax = (10/100) * $estimated_value;
+            if($po->master_list == 1)
+            {
+                $tax = 0;
+            }
+            else
+            {
+                $tax = (10/100) * $estimated_value;
+            }
             $total = $estimated_value + $tax;
 
             $arf = $this->m_arf->insert(array(

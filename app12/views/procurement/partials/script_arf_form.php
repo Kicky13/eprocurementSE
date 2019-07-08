@@ -336,6 +336,10 @@
             dataType : 'json',
             success : function(response) {
                 if (response.data) {
+                    if(response.data.master_list == 1)
+                    {
+                        vat_percent = 0;
+                    }
                     $('#no_reference').val(response.data.po_no);
                     $('#po_id').val(response.data.id);
                     $('#po-title').html(response.data.title);

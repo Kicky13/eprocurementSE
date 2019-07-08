@@ -60,13 +60,12 @@ body {
         <table class="table table-condensed">
           <tr>
             <td width="30%">Company</td>
-            <td width="5%">:</td>
-            <td width="65%"><?= $bl->company_desc ?>
-            </td>
+            <td width="10">:</td>
+            <td><?= $bl->company_desc ?></td>
           </tr>
           <tr>
             <td>Contractor</td>
-            <td>:</td>
+            <td width="10">:</td>
             <td><?= $awarder->NAMA ?>
             </td>
           </tr>
@@ -89,9 +88,9 @@ body {
         <div class="col-md-4">
           <table class="table table-condensed">
             <tr>
-              <td width="30%">Agreement No.</td>
+              <!-- <td width="30%">Agreement No.</td>
               <td width="5%">:</td>
-              <td width="65%"><?= @$bl->po_no ? $bl->po_no : str_replace('OR', 'OS', $bl->msr_no); ?></td>
+              <td width="65%"><?= @$bl->po_no ? $bl->po_no : str_replace('OR', 'OS', $bl->msr_no); ?></td> -->
             </tr>
             <tr>
               <td>Agreement Value  (Excl. VAT)</td>

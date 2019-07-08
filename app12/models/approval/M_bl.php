@@ -280,6 +280,7 @@ class M_bl extends CI_Model {
         "if (t_bid_head.id_local_content_type = 1, t_bid_head.local_content, '') as tkdn_value_goods",
         "if (t_bid_head.id_local_content_type = 2, t_bid_head.local_content, '') as tkdn_value_service",
         "if (t_bid_head.id_local_content_type = 3, t_bid_head.local_content, '') as tkdn_value_combination",
+        "{$this->tbld}.vendor_id"
     ])
     // $this->db->join($this->tbv, $this->tbv.'.ID = '.$this->tbld.'.vendor_id');
         ->join($this->tbl, $this->tbl.'.msr_no = '.$this->tbld.'.msr_no')

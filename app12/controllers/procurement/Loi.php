@@ -116,18 +116,122 @@ class Loi extends CI_Controller
                 $_POST['po_no'] = $po->po_no;
             }
             elseif (!$this->M_purchase_order->isMSRHasPO($bl->msr_no)) {
-                $_POST['po_no'] = DocNumber::createFrom($bl->msr_no,
-                    $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
-                        $this->M_purchase_order::module_kode :
-                        $this->M_service_order::module_kode
-                );
+                $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
+                if($bidder->num_rows() > 0)
+                {
+                    $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
+                    $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
+                    $arrPoNo = [];
+                    foreach ($po as $v) {
+                        $arrPoNo[] = $v->po_no;
+                    }
+                    foreach ($loi as $v) {
+                        $arrPoNo[] = $v->po_no;
+                    }
+                    if(count($arrPoNo) > 0)
+                    {
+                        $sorting = arsort($arrPoNo);
+                        $last = $arrPoNo[0];
+                        $msrNo = $last; //po_no not msrNo
+                        $substr = substr($msrNo, 2, 1);
+                        $seq = $substr+1;
+                        $substr = substr($msrNo,0,2);
+                        $substrLast = substr($msrNo,3,14);
+                        $newNumber = $substr.$seq.$substrLast;
+                        $_POST['po_no'] = $newNumber;
+                    }
+                    else
+                    {
+                        // $msrNo = '19143002-OR-10103';
+                        $msrNo = $bl->msr_no;
+                        // echo "msrNo = $msrNo <br>";
+                        $substr = substr($msrNo, 2, 1);
+                        // echo "substr = $substr <br>";
+                        $seq = $substr+1;
+                        // echo "seq = $seq <br>";
+                        $substr = substr($msrNo,0,2);
+                        $substrLast = substr($msrNo,3,14);
+                        $newNumber = $substr.$seq.$substrLast;
+                        // echo "substr = $substr <br>";
+                        // echo "substrLast = $substrLast <br>";
+                        // echo "new number = $newNumber <br>";
+                        $po_code = $po_type == $this->M_purchase_order_type::TYPE_GOODS ? $this->M_purchase_order::module_kode : $this->M_service_order::module_kode;
+                        $doc_no = new DocNumber();
+                        $po_code = $doc_no->getDocTypeCode($po_code);
+                        $_POST['po_no'] = str_replace('OR', $po_code, $newNumber);
+                    }
+                }
+                else
+                {
+                    $_POST['po_no'] = DocNumber::createFrom($bl->msr_no,
+                        $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
+                            $this->M_purchase_order::module_kode :
+                            $this->M_service_order::module_kode
+                    );
+                }
             }
             else {
-                $module_kode = $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
-                    $this->M_purchase_order::module_kode :
-                    $this->M_service_order::module_kode;
+                $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
+                $poFindByDetailId = $this->M_purchase_order->findByBlDetailId($bl_detail_id);
+                if($poFindByDetailId)
+                {
+                    $po_no = $poFindByDetailId->po_no;
+                }
+                else
+                {
+                    if($bidder->num_rows() > 0)
+                    {
+                        $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
+                        $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
+                        $arrPoNo = [];
+                        foreach ($po as $v) {
+                            $arrPoNo[] = $v->po_no;
+                        }
+                        foreach ($loi as $v) {
+                            $arrPoNo[] = $v->po_no;
+                        }
+                        if(count($arrPoNo) > 0)
+                        {
+                            $sorting = arsort($arrPoNo);
+                            $last = $arrPoNo[0];
+                            $msrNo = $last; //po_no not msrNo
+                            $substr = substr($msrNo, 2, 1);
+                            $seq = $substr+1;
+                            $substr = substr($msrNo,0,2);
+                            $substrLast = substr($msrNo,3,14);
+                            $newNumber = $substr.$seq.$substrLast;
+                            $_POST['po_no'] = $newNumber;
+                        }
+                        else
+                        {
+                            // $msrNo = '19143002-OR-10103';
+                            $msrNo = $bl->msr_no;
+                            // echo "msrNo = $msrNo <br>";
+                            $substr = substr($msrNo, 2, 1);
+                            // echo "substr = $substr <br>";
+                            $seq = $substr+1;
+                            // echo "seq = $seq <br>";
+                            $substr = substr($msrNo,0,2);
+                            $substrLast = substr($msrNo,3,14);
+                            $newNumber = $substr.$seq.$substrLast;
+                            // echo "substr = $substr <br>";
+                            // echo "substrLast = $substrLast <br>";
+                            // echo "new number = $newNumber <br>";
+                            $po_code = $po_type == $this->M_purchase_order_type::TYPE_GOODS ? $this->M_purchase_order::module_kode : $this->M_service_order::module_kode;
+                            $doc_no = new DocNumber();
+                            $po_code = $doc_no->getDocTypeCode($po_code);
+                            $_POST['po_no'] = str_replace('OR', $po_code, $newNumber);
+                        }
+                    }
+                    else
+                    {
+                        $module_kode = $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
+                            $this->M_purchase_order::module_kode :
+                            $this->M_service_order::module_kode;
 
-                $_POST['po_no'] = DocNumber::generate($module_kode, $bl->id_company);
+                        $_POST['po_no'] = DocNumber::generate($module_kode, $bl->id_company);
+                    }
+                }
             }
 
     		if ($hit_db) {
@@ -198,10 +302,12 @@ class Loi extends CI_Controller
         $currency = $this->M_currency->find($bl->id_currency);
         $base_currency = get_base_currency();
         // update exchange rate
+        $value_award = $this->M_purchase_order->value_award($bl->msr_no, $bl->vendor_id);
+        $bl->total_amount = $value_award->amount;
+        // exit();
         $bl->total_amount_base = exchange_rate_by_id(
             $bl->id_currency, $base_currency->ID, $bl->total_amount
         );
-
     	$this->template->display('procurement/V_loi_create', compact(
             'menu', 'bl_detail_id', 'bl', 'awarder', 'message', 'currency',
             'base_currency', 'total_amount_base'

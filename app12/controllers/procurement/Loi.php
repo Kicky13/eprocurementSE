@@ -179,7 +179,7 @@ class Loi extends CI_Controller
                 }
                 else
                 {
-                    if($bidder->num_rows() > 0)
+                    if($bidder->num_rows() > 1)
                     {
                         $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
                         $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
@@ -685,6 +685,8 @@ class Loi extends CI_Controller
 		$bl = $this->M_bl->getBlByBlDetailId($bl_detail_id);
     	$awarder = $this->M_bl->getAwarderById($bl_detail_id);
         $id_currency_base = base_currency();
+        $value_award = $this->M_purchase_order->value_award($bl->msr_no, $bl->vendor_id);
+        $bl->total_amount = $value_award->amount;
         $total_amount_base = exchange_rate_by_id($bl->id_currency, $id_currency_base, $bl->total_amount);
 
     	return [

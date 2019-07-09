@@ -597,7 +597,15 @@ class Arf extends CI_Controller {
             $po = $this->m_arf_po->view('po_edit')->where('t_purchase_order.po_no', $arf->po_no)->first();
 
             $estimated_value = isset($post['value_value']) ? $post['value_value'] : 0;
-            $tax = (10/100) * $estimated_value;
+            if($po->master_list == 1)
+            {
+                $percent_tax = 0;
+            }
+            else
+            {
+                $percent_tax = (10/100);
+            }
+            $tax = $percent_tax * $estimated_value;
             $total = $estimated_value + $tax;
 
             $this->m_arf_detail->where('doc_id', $id)
@@ -634,7 +642,7 @@ class Arf extends CI_Controller {
                         $item['id_currency_base'] = $po->id_currency_base;
                         $item['unit_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['unit_price']);
                         $item['is_tax'] = 1;
-                        $item['tax'] = (10/100) * $item['unit_price'];
+                        $item['tax'] = $percent_tax * $item['unit_price'];
                         $item['tax_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['tax']);
                         $item['total_price'] = $item['total_price'] + $item['tax'];
                         $item['total_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['total_price']);

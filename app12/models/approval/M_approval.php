@@ -666,15 +666,15 @@ class M_approval extends CI_Model {
         }
         if(in_array(45, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
         if(in_array(46, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
         if(in_array(47, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
 
         return $data;
@@ -1719,7 +1719,7 @@ class M_approval extends CI_Model {
             LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
             LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
             LEFT JOIN t_msr on t_msr.msr_no = t_approval.data_id
-            where m_approval.module_kode = 'award' and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and ".$this->msrActive(1);
+            where m_approval.id in (20,21,22,23) and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and ".$this->msrActive(1);
         $award_approval = $this->db->query($sql);
         $rs_award_approval = [];
         foreach ($award_approval->result() as $r) {
@@ -1766,6 +1766,20 @@ class M_approval extends CI_Model {
             }
         }
         return $rs_award_approval;
+    }
+    public function bod_award_approval()
+    {
+        $userLogin = user();
+        $idUser = $userLogin->ID_USER;
+        $sql = "select t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama
+            from t_approval
+            left join m_approval on m_approval.id = t_approval.m_approval_id
+            LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+            LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+            LEFT JOIN t_msr on t_msr.msr_no = t_approval.data_id
+            where m_approval.module_kode = 'award' and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and m_approval_id in (24,25,26) and t_approval.data_id not in (select data_id from t_approval where m_approval_id in (20,21,22,23) and status = 0 ) ";
+            // exit();
+        return $this->db->query($sql)->num_rows();
     }
     public function reject_award($value='')
     {

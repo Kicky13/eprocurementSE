@@ -1539,6 +1539,10 @@ class M_approval extends CI_Model {
 
         $m_approval = $this->db->where(['module_kode'=>'award','aktif'=>1])->order_by('urutan','asc')->get('m_approval');
         $urutan = 1;
+        if($this->input->get('debug'))
+        {
+            echo "sum_award_total_value = $sum_award_total_value";
+        }
         foreach ($m_approval->result() as $r) {
             $data['m_approval_id']  = $r->id;
             $data['data_id']        = $msr_no;
@@ -1687,7 +1691,7 @@ class M_approval extends CI_Model {
     public function sumawardtotalvalue($msr_no='')
     {
         //$sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*qty) else sum(unit_price_base*qty) end) nilai from t_sop_bid WHERE msr_no = '$msr_no' and award = 1 group by nego_price_base";
-        $sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) else sum(unit_price_base*nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) end) nilai from t_sop_bid join t_sop on t_sop.id = t_sop_bid.sop_id WHERE t_sop.msr_no = '$msr_no' and award = 1 group by nego_price_base";
+        $sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) else sum(unit_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) end) nilai from t_sop_bid join t_sop on t_sop.id = t_sop_bid.sop_id WHERE t_sop.msr_no = '$msr_no' and award = 1 group by nego_price_base";
         $rs = $this->db->query($sql)->result();
         $total = 0;
         foreach ($rs as $r) {

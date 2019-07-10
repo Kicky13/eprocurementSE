@@ -108,13 +108,7 @@
                     </fieldset>
 
                     <h6><i class="step-icon fa fa-th-list"></i>Evaluation</h6>
-                    <?php $this->load->view('award/tab-evaluation', ['blDetails'=>$blDetails])?>
-
-                    <h6><i class="step-icon fa fa-info"></i> Quotation</h6>
-                    <fieldset>
-                        <h3>Quotation Status</h3>
-                        <?php $this->load->view('approval/quotation_view',['ed'=>$ed]);?>
-                      </fieldset>
+                    <?php $this->load->view('award/tab-evaluation', ['blDetails'=>$blDetails, 'bod'=>true])?>
                   </form>
                 </div>
               </div>
@@ -125,7 +119,7 @@
     </div>
     <div class="content-footer text-right">
       <!-- <a href="#" class="btn btn-primary" onclick="saveBoc('frm-bled')">Save BOC & BOD</a> -->
-      <a href="#" class="btn btn-success" onclick="issuedAwardClick()">Issued Award Notification</a>
+      <a href="#" class="btn btn-success" onclick="issuedAwardClick()">Submit</a>
     </div>
   </div>
 </div>
@@ -134,7 +128,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title" id="myModalLabel">
-            Award to be Issued
+            BOC Approval
           </h4>
         </div>
         <div class="modal-body">

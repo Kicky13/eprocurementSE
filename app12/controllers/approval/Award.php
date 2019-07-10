@@ -422,7 +422,7 @@ class Award extends CI_Controller {
                 $dt[$v->PARENT][$v->ID_MENU]['DESKRIPSI_ENG'] = $v->DESKRIPSI_ENG;
             }
             $data['menu'] = $dt;
-            $data['titleApp'] = 'Award Recomendation & Evaluation';
+            $data['titleApp'] = 'BOC Approval';
             if(empty($msr_no))
             {
                 $greetings = $this->M_approval->awardtobeissued_data();

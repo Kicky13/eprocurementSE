@@ -190,6 +190,57 @@ class Award extends CI_Controller {
             }
         }
     }
+    public function bod_approval($msr_no='')
+    {
+        if($this->input->post('id'))
+        {
+            $data = $this->input->post();
+            $this->db->where(['id'=>$data['id']]);
+            $this->db->update('t_eq_data', ['award'=>$data['award']]);
+            $this->session->set_flashdata('message', array(
+                'message' => __('success_submit'),
+                'type' => 'success'
+            ));
+            echo "Success";
+        }
+        else
+        {
+            $get_menu = $this->M_vendor->menu();
+            $dt = array();
+            foreach ($get_menu as $k => $v) {
+                $dt[$v->PARENT][$v->ID_MENU]['ICON'] = $v->ICON;
+                $dt[$v->PARENT][$v->ID_MENU]['URL'] = $v->URL;
+                $dt[$v->PARENT][$v->ID_MENU]['DESKRIPSI_IND'] = $v->DESKRIPSI_IND;
+                $dt[$v->PARENT][$v->ID_MENU]['DESKRIPSI_ENG'] = $v->DESKRIPSI_ENG;
+            }
+            $data['menu'] = $dt;
+            $data['titleApp'] = 'BOD Contract Review Approval';
+            if(empty($msr_no))
+            {
+                $greetings = $this->M_approval->bod_award_approval();
+                $data['greetings'] = $greetings;
+                $data['link'] = 'bod_approval';
+                // $data['awardtobeissued'] = false;
+                $this->template->display('award/approval', $data);
+            }
+            else
+            {
+                $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
+                $data['ed']         = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
+                $data['blDetails']  = $this->vendor_lib->blDetail($msr_no);
+                $data['doc']        = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
+                $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+                $data['technicalAttachment'] = $this->M_approval->seeAttachment('eva-technical', $msr_no)->row();
+                $data['adminAttachment'] = $this->M_approval->seeAttachment('eva-administrative', $msr_no)->row();
+                $data['approval'] = true;
+                $data['msr_no'] = $msr_no;
+                $data['awardtobeissued'] = false;
+                $data['msr'] = $this->M_approval->findMsrByMsrNo($msr_no);
+                $data['bod'] = $this->bodApproval($msr_no);
+                $this->template->display('award/approval-form', $data);
+            }
+        }
+    }
     public function ackawardrec($msr_no='')
     {
         if($this->input->post('id'))

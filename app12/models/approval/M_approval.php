@@ -1779,7 +1779,12 @@ class M_approval extends CI_Model {
             LEFT JOIN t_msr on t_msr.msr_no = t_approval.data_id
             where m_approval.module_kode = 'award' and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and m_approval_id in (24,25,26) and t_approval.data_id not in (select data_id from t_approval where m_approval_id in (20,21,22,23) and status = 0 ) ";
             // exit();
-        return $this->db->query($sql)->num_rows();
+        $bo_approval = $this->db->query($sql);
+        $bo_approval_data = [];
+        foreach ($bo_approval->result() as $r) {
+            $bo_approval_data[] = $r;
+        }
+        return $bo_approval_data;
     }
     public function reject_award($value='')
     {

@@ -229,7 +229,7 @@
                                         $notifUpload = $this->db->select('t_arf_notification_upload.*,m_user.NAME user_name')
                                         ->join('m_user','m_user.ID_USER=t_arf_notification_upload.create_by','left')
                                         ->join('t_arf_notification','t_arf_notification.id=t_arf_notification_upload.doc_id','left')
-                                        ->where(['po_no'=>$po_no, 't_arf_notification.doc_no' => $arf->doc_no])->get('t_arf_notification_upload');
+                                        ->where(['t_arf_notification_upload.po_no'=>$po_no, 't_arf_notification.doc_no' => $arf->doc_no])->get('t_arf_notification_upload');
                                         
                                         foreach ($notifUpload->result() as $notif) :
                                             $fileName = $notif->file_name;

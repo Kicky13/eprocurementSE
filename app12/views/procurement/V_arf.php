@@ -97,7 +97,7 @@
                     actionColumn.create('amd', {
                         template : function() {
                             if (row.arf_response_id) {
-                                return '<a href="<?= base_url('procurement/amendment_recommendation/amd_view') ?>/'+row.arf_response_id+'?back_url=1" class="btn btn-primary btn-sm">AMD</a>';
+                                return '<a href="<?= base_url('procurement/amendment_recommendation/view') ?>/'+row.arf_response_id+'?back_url=1" class="btn btn-primary btn-sm">AMD</a>';
                             } else {
                                 return '';
                             }

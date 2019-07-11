@@ -80,7 +80,21 @@ class Purchase_order extends CI_Controller
         $menu = get_main_menu();
 
         $bl = $this->M_bl->getBlByBlDetailId($bl_detail_id);
-
+        $anyPo = $this->db->where('bl_detail_id', $bl_detail_id)->get('t_purchase_order');
+        $frompo = false;
+        if($anyPo->num_rows() > 0)
+        {
+            $frompo = $anyPo->row();
+            $bl->title = $frompo->title;
+            $bl->blanket = $frompo->blanket;
+            $bl->incoterm = $frompo->shipping_term;
+            $bl->id_dpoint = $frompo->id_dpoint;
+            $bl->tkdn_type = $frompo->tkdn_type;
+            $bl->tkdn_value_goods = $frompo->tkdn_value_goods;
+            $bl->tkdn_value_service = $frompo->tkdn_value_service;
+            $bl->tkdn_value_combination = $frompo->tkdn_value_combination;
+            $bl->master_list = $frompo->master_list;
+        } 
         if (!$bl) {
             show_error("Document not found", 404);
         }
@@ -323,7 +337,7 @@ class Purchase_order extends CI_Controller
             'm_purchase_order_attachment', 'vendor', 'opt_currency','opt_dpoint',
             'opt_importation', 'requestor', 'requestor_dept', 'opt_tkdn_type', 'po_items',
             'opt_item_type', 'vendor_bank_account', 'delivery_date', 'po_type', 'opt_vendor_bank_account', 'opt_msr_inventory_type',
-            'opt_delivery_term'
+            'opt_delivery_term','frompo'
         ));
     }
 

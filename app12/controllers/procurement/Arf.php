@@ -351,15 +351,23 @@ class Arf extends CI_Controller {
                 ));
                 if (isset($post['item'])) {
                     $record_item = array();
+                    if($po->master_list == 1)
+                    {
+                        $tax = 0;
+                    }
+                    else
+                    {
+                        $tax = (10/100);
+                    }
                     foreach ($post['item'] as $item) {
                         $item['doc_id'] = $arf->id;
                         $item['id_currency'] = $po->id_currency;
                         $item['id_currency_base'] = $po->id_currency_base;
                         $item['unit_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['unit_price']);
-                        $item['is_tax'] = 1;
-                        $item['tax'] = (10/100) * $item['unit_price'];
+                        $item['is_tax'] = $tax > 0 ? 1 : 0;
+                        $item['tax'] = $tax * $item['unit_price'];
                         $item['tax_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['tax']);
-                        $item['total_price'] = $item['total_price'] + $item['tax'];
+                        $item['total_price'] = $item['unit_price'] + $item['tax'];
                         $item['total_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['total_price']);
                         $record_item[] = $item;
                     }
@@ -519,7 +527,7 @@ class Arf extends CI_Controller {
         $data['item_type_categories'] = $item_type_categories;
         $data['document_path'] = $this->document_path;
         $data['menu'] = $this->menu;
-        $data['arf_detail'] = $this->m_arf_detail->getDetails($id);
+        $data['arf_detail'] = $this->m_arf_detail->getDetails2($id);
         $data['is_edit'] = 1;
         $this->template->display('procurement/V_arf_edit', $data);
     }
@@ -636,15 +644,23 @@ class Arf extends CI_Controller {
                 ));
                 if (isset($post['item'])) {
                     $record_item = array();
+                    if($po->master_list == 1)
+                    {
+                        $tax = 0;
+                    }
+                    else
+                    {
+                        $tax = (10/100);
+                    }
                     foreach ($post['item'] as $item) {
                         $item['doc_id'] = $arf->id;
                         $item['id_currency'] = $po->id_currency;
                         $item['id_currency_base'] = $po->id_currency_base;
                         $item['unit_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['unit_price']);
-                        $item['is_tax'] = 1;
-                        $item['tax'] = $percent_tax * $item['unit_price'];
+                        $item['is_tax'] = $tax > 0 ? 1 : 0;
+                        $item['tax'] = $tax * $item['unit_price'];
                         $item['tax_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['tax']);
-                        $item['total_price'] = $item['total_price'] + $item['tax'];
+                        $item['total_price'] = $item['unit_price'] + $item['tax'];
                         $item['total_price_base'] = exchange_rate_by_id($po->id_currency, $po->id_currency_base, $item['total_price']);
                         $xItem = array_map('trim', $item);
                         $this->m_arf_detail->insert($xItem);

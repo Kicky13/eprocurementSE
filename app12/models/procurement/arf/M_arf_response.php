@@ -27,6 +27,7 @@ class M_arf_response extends M_base {
             t_arf_notification.id as notification_id,
             t_arf_notification.dated as notification_date,
             t_arf_notification.response_date as close_date,
+            t_arf_notification.estimated_value_new,
             t_purchase_order.title, t_purchase_order.po_type,
             t_msr.create_by AS id_requestor,
             m_user.NAME AS requestor,

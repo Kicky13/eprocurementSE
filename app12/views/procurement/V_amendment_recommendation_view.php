@@ -132,7 +132,7 @@
                           <input type="hidden" name="po_no" value="<?= $arf->po_no ?>">
                             <?php if(isset($issued)): ?>
                             <?php else:?>
-                            <h6><i class="step-icon icon-info"></i> Amendment Request</h6>
+                            <h6><i class="step-icon icon-info"></i> Amendment Notification</h6>
                             <fieldset>
                                 <table class="table table-condensed table-bordered">
                                     <thead>
@@ -153,7 +153,7 @@
                                             <td>Value</td>
                                             <td>
                                                 <?php if (isset($arf->revision['value'])) { ?>
-                                                    <?= $arf->currency ?> <span id="arf_request_value"></span>
+                                                    <?= $arf->currency ?> <span><?= numIndo($arf->estimated_value_new) ?></span>
                                                 <?php } ?>
                                             </td>
                                             <td><?= @$arf->revision['value']->remark ?></td>
@@ -215,6 +215,33 @@
                                         <?= dateToIndo($arf->responsed_at, false, true) ?>
                                     </div>
                                 </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>Uploaded Date</th>
+                                            <th>Uploaded By</th>
+                                            <th>Download</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php 
+                                        $notifUpload = $this->db->select('t_arf_notification_upload.*,m_user.NAME user_name')->join('m_user','m_user.ID_USER=t_arf_notification_upload.create_by','left')->where('po_no',$po_no)->get('t_arf_notification_upload');
+                                        foreach ($notifUpload->result() as $notif) :
+                                            $fileName = $notif->file_name;
+                                            $createdDate = dateToIndo($notif->create_date);
+                                            $createdBy = $notif->user_name;
+                                            $filePath = $notif->file_path;
+                                    ?>
+                                        <tr>
+                                            <td><?= $fileName ?></td>
+                                            <td><?= $createdDate ?></td>
+                                            <td><?= $createdBy ?></td>
+                                            <td><a target="_blank" class="btn btn-sm btn-info" href="<?= base_url() ?><?= $filePath ?>">Download</a></td>
+                                        </tr>
+                                    <?php endforeach;?>
+                                    </tbody>
+                                </table>
                             </fieldset>
                             <?php endif;?>
                             <?php if(isset($issued)): ?>

@@ -3,7 +3,7 @@
 <fieldset>
   <div class="nav nav-tabs sub-tabs" id="nav-tab" role="tablist">
       <a class="nav-item nav-link active" id="nav-arf-sop" data-toggle="tab" href="#tab-arf-sop" role="tab" aria-controls="nav-home" aria-selected="true">ARF</a>
-      <a class="nav-item nav-link" id="nav-response-sop" data-toggle="tab" href="#tab-response-sop" role="tab" aria-controls="nav-profile" aria-selected="false">Response</a>
+      <a class="nav-item nav-link" id="nav-response-sop" data-toggle="tab" href="#tab-response-sop" role="tab" aria-controls="nav-profile" aria-selected="false">Amendment</a>
   </div>
   <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="tab-arf-sop" role="tabpanel" aria-labelledby="original-value-tab" style="padding: 15px 0px;">

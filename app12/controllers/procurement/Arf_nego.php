@@ -50,6 +50,7 @@ class Arf_nego extends CI_Controller {
         $data['title'] = 'Negotiation Amendment';
         $data['menu'] = $this->menu;
         $data['add_link'] = $this->input->get('close') ? "?close=1" : '';
+            $data['btn_title'] = $this->input->get('close') ? 'Show' : 'Process';
         $this->template->display('procurement/V_arf_nego', $data);
     }
     public function create($id='')

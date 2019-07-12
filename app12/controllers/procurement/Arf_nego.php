@@ -110,6 +110,7 @@ class Arf_nego extends CI_Controller {
             exit();*/
             $data['response'] = 1;
             $data['btn_title'] = $this->input->get('close') ? 'Show' : 'Process';
+            $data['add_link'] = $this->input->get('close') ? "?close=1" : '';
         $this->template->display('procurement/V_arf_nego', $data);
         }
     }

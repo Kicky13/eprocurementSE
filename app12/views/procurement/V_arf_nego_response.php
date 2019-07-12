@@ -21,7 +21,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12 text-right">
-                                <?php if($status > 1):?>
+                                <?php if($status == 1):?>
                                 <a href="#" onclick="closeAllNego()" class="btn btn-primary">Close All Negotiation</a>
                                 <?php endif;?>
                             </div>

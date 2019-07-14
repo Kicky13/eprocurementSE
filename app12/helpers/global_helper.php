@@ -1172,3 +1172,15 @@ function notInLoi($ed)
   }
   return true;
 }
+function thead($value='')
+{
+  foreach ($value as $k => $v) {
+    echo "<th>$v</th>";
+  }
+}
+function cmms_settings($value='')
+{
+  $ci = &get_instance();
+  $rs = $ci->db->where('module', $value)->from('cmms_settings');
+  return $rs;
+}

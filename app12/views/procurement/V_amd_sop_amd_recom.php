@@ -1,58 +1,18 @@
 <?php if(isset($arf->revision['value'])):?>
 <h6><i class="step-icon fa fa-calendar"></i> SOP List Item</h6>
 <fieldset>
-    <div id="po-detail">
-        <h4>Contract List Item</h4>
-        <table width="100%" id="po_item-table" class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Item Type</th>
-                    <th>Description</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-center">UoM</th>
-                    <th class="text-center">Item Modif</th>
-                    <th class="text-center">Inventory Type</th>
-                    <th class="text-center">Cost Center</th>
-                    <th class="text-center">Acc Sub</th>
-                    <th class="text-right">Unit Price</th>
-                    <th class="text-right">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($po->item as $item) { ?>
-                    <tr>
-                        <td><?= $item->item_type ?></td>
-                        <td><?= $item->material_desc ?></td>
-                        <td class="text-center"><?= $item->qty ?></td>
-                        <td class="text-center"><?= $item->uom ?></td>
-                        <td class="text-center"><?= ($item->item_modification) ? '<i class="fa fa-check-square text-success"></i>' : '<i class=" fa fa-times text-danger"></i>' ?></td>
-                        <td class="text-center"><?= $item->inventory_type ?></td>
-                        <td class="text-center"><?= $item->id_costcenter ?> - <?= $item->costcenter ?></td>
-                        <td class="text-center"><?= $item->id_account_subsidiary ?> - <?= $item->account_subsidiary ?></td>
-                        <td class="text-right"><?= numIndo($item->unit_price) ?></td>
-                        <td class="text-right"><?= numIndo($item->total_price) ?></td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-        <div class="form-group row">
-            <label class="offset-md-6 col-md-3">Total</label>
-            <div class="col-md-3 text-right">
-                <?= numIndo($arf->amount_po) ?>
-            </div>
-        </div>
-        <?php 
-            $dataTotalSummary = 0;
-            $latestAdditionalValue = 0;
-            foreach ($findAllResult as $key=>$value) :
-        ?>  
-        <div class="row">
-          <div class="col-md-6">
-              <h4><?= $key ?></h4>
-          </div>
-        </div><br>
-        <div class="table-responsive">
-          <table id="arf_item-table" class="table table-bordered table-sm" style="font-size: 12px;">
+  <div class="nav nav-tabs sub-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-arf-sop" data-toggle="tab" href="#tab-arf-sop" role="tab" aria-controls="nav-home" aria-selected="true">ARF</a>
+      <a class="nav-item nav-link" id="nav-response-sop" data-toggle="tab" href="#tab-response-sop" role="tab" aria-controls="nav-profile" aria-selected="false">Amendment</a>
+  </div>
+  <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="tab-arf-sop" role="tabpanel" aria-labelledby="original-value-tab" style="padding: 15px 0px;">
+        <?php $this->load->view('procurement/V_amd_recom_tab_sop_arf')?>
+      </div>
+      <div class="tab-pane fade show" id="tab-response-sop" role="tabpanel" aria-labelledby="latest-value-tab" style="padding: 15px 0px;">
+        <div id="po-detail">
+          <h4>Contract List Item</h4>
+          <table width="100%" id="po_item-table" class="table table-bordered table-sm">
               <thead>
                   <tr>
                       <th>Item Type</th>
@@ -68,60 +28,39 @@
                   </tr>
               </thead>
               <tbody>
-                  <?php
-                      $total = 0;
-                      foreach ($value as $item) {
-                          $qty = $item->qty2 > 0 ? $item->qty1*$item->qty2 : $item->qty1;
-                          $response_qty = $item->response_qty1 > 0 ? $item->response_qty1*$item->response_qty2 : $item->response_qty1;
-                          $uom = $item->uom2 ? $item->uom1.'/'.$item->uom2 : $item->uom1;
-                          $price = $item->new_price > 0 ? $item->new_price : $item->response_unit_price;
-                          $subTotalPrice = $price*$qty;      
-                          $total += $subTotalPrice;
-                  ?>
-                      <tr id="arf_item-row-<?= $item->item_semic_no_value ?>" data-row-id="<?= $item->item_semic_no_value ?>">
+                  <?php foreach ($po->item as $item) { ?>
+                      <tr>
                           <td><?= $item->item_type ?></td>
-                          <td><?= $item->item ?></td>
-                          <td class="text-center"><?= $qty ?></td>
-                          <td class="text-center"><?= $uom ?></td>
+                          <td><?= $item->material_desc ?></td>
+                          <td class="text-center"><?= $item->qty ?></td>
+                          <td class="text-center"><?= $item->uom ?></td>
                           <td class="text-center"><?= ($item->item_modification) ? '<i class="fa fa-check-square text-success"></i>' : '<i class=" fa fa-times text-danger"></i>' ?></td>
                           <td class="text-center"><?= $item->inventory_type ?></td>
-                          <td class="text-center"><?= $item->id_costcenter ?> - <?= $item->costcenter_desc ?></td>
-                          <td class="text-center"><?= $item->id_accsub ?> - <?= $item->accsub_desc ?></td>
-                          <td class="text-right"><?= numIndo($price) ?></td>
-                          <td class="text-right">
-                              <?= numIndo($subTotalPrice) ?>
-                          </td>
+                          <td class="text-center"><?= $item->id_costcenter ?> - <?= $item->costcenter ?></td>
+                          <td class="text-center"><?= $item->id_account_subsidiary ?> - <?= $item->account_subsidiary ?></td>
+                          <td class="text-right"><?= numIndo($item->unit_price) ?></td>
+                          <td class="text-right"><?= numIndo($item->total_price) ?></td>
                       </tr>
                   <?php } ?>
               </tbody>
           </table>
-        </div>
-        <div class="form-group row">
-          <label class="offset-md-6 col-md-3">Total</label>
-          <div class="col-md-3 text-right">
-              <?php 
-                   echo numIndo($total); 
-                          $latestAdditionalValue += $total;
-
-              ?>
+          <div class="form-group row">
+              <label class="offset-md-6 col-md-3">Total</label>
+              <div class="col-md-3 text-right">
+                  <?= numIndo($arf->amount_po) ?>
+              </div>
           </div>
-        </div>
-        <div class="form-group row hidden">
-          <label class="offset-md-6 col-md-3">Total Summary</label>
-          <div class="col-md-3 text-right amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>">
-              <?= numIndo($arf->amount_po + $total ) ?>
-              <?php 
-                $dataTotalSummary += $arf->amount_po + $total;
-              ?>
-          </div>
-        </div>
-        <?php endforeach;?>
-        <div class="row">
+          <?php 
+              $dataTotalSummary = 0;
+              $latestAdditionalValue = 0;
+              foreach ($findAllResult as $key=>$value) :
+          ?>  
+          <div class="row">
             <div class="col-md-6">
-                <h4><?= $arf->doc_no ?> </h4>
+                <h4><?= $key ?></h4>
             </div>
-        </div><br>
-        <div class="table-responsive">
+          </div><br>
+          <div class="table-responsive">
             <table id="arf_item-table" class="table table-bordered table-sm" style="font-size: 12px;">
                 <thead>
                     <tr>
@@ -140,7 +79,7 @@
                 <tbody>
                     <?php
                         $total = 0;
-                        foreach ($arf->item as $item) {
+                        foreach ($value as $item) {
                             $qty = $item->qty2 > 0 ? $item->qty1*$item->qty2 : $item->qty1;
                             $response_qty = $item->response_qty1 > 0 ? $item->response_qty1*$item->response_qty2 : $item->response_qty1;
                             $uom = $item->uom2 ? $item->uom1.'/'.$item->uom2 : $item->uom1;
@@ -165,19 +104,91 @@
                     <?php } ?>
                 </tbody>
             </table>
-        </div>
-        <div class="form-group row">
+          </div>
+          <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total</label>
-            <div class="col-md-3 text-right" id="additional-value"><?= numIndo($total) ?></div>
-        </div>
-        <div class="form-group row">
+            <div class="col-md-3 text-right">
+                <?php 
+                     echo numIndo($total); 
+                            $latestAdditionalValue += $total;
+
+                ?>
+            </div>
+          </div>
+          <div class="form-group row hidden">
             <label class="offset-md-6 col-md-3">Total Summary</label>
-            <?php 
-                $xTotal = count($findAllResult) > 0 ? $latestAdditionalValue + $arf->amount_po + $total : $dataTotalSummary + $total + $arf->amount_po;
-              ?>
-            <div class="col-md-3 text-right" id="all-amd-<?= $arf->doc_no ?>"><?= numIndo($xTotal) ?></div>
-        </div>
-    </div>
+            <div class="col-md-3 text-right amd-<?= $key ?>" data-total-summary="<?= $arf->amount_po + $total ?>">
+                <?= numIndo($arf->amount_po + $total ) ?>
+                <?php 
+                  $dataTotalSummary += $arf->amount_po + $total;
+                ?>
+            </div>
+          </div>
+          <?php endforeach;?>
+          <div class="row">
+              <div class="col-md-6">
+                  <h4><?= $arf->doc_no ?> </h4>
+              </div>
+          </div><br>
+          <div class="table-responsive">
+              <table id="arf_item-table" class="table table-bordered table-sm" style="font-size: 12px;">
+                  <thead>
+                      <tr>
+                          <th>Item Type</th>
+                          <th>Description</th>
+                          <th class="text-center">Qty</th>
+                          <th class="text-center">UoM</th>
+                          <th class="text-center">Item Modif</th>
+                          <th class="text-center">Inventory Type</th>
+                          <th class="text-center">Cost Center</th>
+                          <th class="text-center">Acc Sub</th>
+                          <th class="text-right">Unit Price</th>
+                          <th class="text-right">Total</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <?php
+                          $total = 0;
+                          foreach ($arf->item as $item) {
+                              $qty = $item->qty2 > 0 ? $item->qty1*$item->qty2 : $item->qty1;
+                              $response_qty = $item->response_qty1 > 0 ? $item->response_qty1*$item->response_qty2 : $item->response_qty1;
+                              $uom = $item->uom2 ? $item->uom1.'/'.$item->uom2 : $item->uom1;
+                              $price = $item->new_price > 0 ? $item->new_price : $item->response_unit_price;
+                              $subTotalPrice = $price*$qty;      
+                              $total += $subTotalPrice;
+                      ?>
+                          <tr id="arf_item-row-<?= $item->item_semic_no_value ?>" data-row-id="<?= $item->item_semic_no_value ?>">
+                              <td><?= $item->item_type ?></td>
+                              <td><?= $item->item ?></td>
+                              <td class="text-center"><?= $qty ?></td>
+                              <td class="text-center"><?= $uom ?></td>
+                              <td class="text-center"><?= ($item->item_modification) ? '<i class="fa fa-check-square text-success"></i>' : '<i class=" fa fa-times text-danger"></i>' ?></td>
+                              <td class="text-center"><?= $item->inventory_type ?></td>
+                              <td class="text-center"><?= $item->id_costcenter ?> - <?= $item->costcenter_desc ?></td>
+                              <td class="text-center"><?= $item->id_accsub ?> - <?= $item->accsub_desc ?></td>
+                              <td class="text-right"><?= numIndo($price) ?></td>
+                              <td class="text-right">
+                                  <?= numIndo($subTotalPrice) ?>
+                              </td>
+                          </tr>
+                      <?php } ?>
+                  </tbody>
+              </table>
+          </div>
+          <div class="form-group row">
+              <label class="offset-md-6 col-md-3">Total</label>
+              <div class="col-md-3 text-right" id="additional-value"><?= numIndo($total) ?></div>
+          </div>
+          <div class="form-group row">
+              <label class="offset-md-6 col-md-3">Total Summary</label>
+              <?php 
+                  $xTotal = count($findAllResult) > 0 ? $latestAdditionalValue + $arf->amount_po + $total : $dataTotalSummary + $total + $arf->amount_po;
+                ?>
+              <div class="col-md-3 text-right" id="all-amd-<?= $arf->doc_no ?>"><?= numIndo($xTotal) ?></div>
+          </div>
+      </div>
+      </div>
+  </div>
 </fieldset>
 <?php else:?>
     <?php 

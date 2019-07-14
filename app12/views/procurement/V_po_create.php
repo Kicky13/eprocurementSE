@@ -210,7 +210,7 @@ print_r($this->form_validation->error_array());
                                   Payment Term :
 								  <span class="danger">*</span>
                                 </label>
-                                <textarea rows="2" onkeyup="titleKeyup('payment_term')" class="form-control required" id="payment_term" name="payment_term"><?= set_value('payment_term') ?></textarea>
+                                <textarea rows="2" onkeyup="titleKeyup('payment_term')" class="form-control required" id="payment_term" name="payment_term"><?= $frompo ? $frompo->payment_term : set_value('payment_term') ?></textarea>
                               </div>
                           </div>
 
@@ -656,7 +656,7 @@ var po_date = $('#po_date').pickadate({
   format: 'd mmmm yyyy',
   formatSubmit: 'yyyy-mm-dd'
 })
-.pickadate('picker').set('select', new Date('<?= set_value('po_date_submit')?>'));
+.pickadate('picker').set('select', new Date('<?= $frompo ? $frompo->po_date :  set_value('po_date_submit')?>'));
 
 var delivery_date = $('#delivery_date').pickadate({
   format: 'd mmmm yyyy',

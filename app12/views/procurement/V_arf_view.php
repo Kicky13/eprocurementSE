@@ -123,7 +123,7 @@
                                             <div class="col-md-7">
                                                 <?= $po->currency ?> <span id="header-latest-value"><?= numIndo($arf->amount_po) ?></span>
                                                 <!-- <?= $po->currency ?> <?= ($arf->status == 'submitted') ? numIndo($arf->amount_po_arf) : numIndo($po->latest_value) ?> -->
-                                                <input type="hidden" id="po_latest_value" value="<?= ($arf->status == 'submitted') ? $arf->amount_po_arf : $po->latest_value ?>">
+                                                <input type="hidden" id="po_latest_value" value="<?= ($arf->status == 'submitted') ? $arf->amount_po : $arf->amount_po ?>">
                                             </div>
                                         </div>
                                         <h4>Agreement  Remaining Value (Excl. VAT)</h4>
@@ -480,7 +480,7 @@
                                         <?php foreach ($arf->attachment as $attachment) { ?>
                                             <tr>
                                                 <td><?= $attachment->type ?></td>
-                                                <td><a href="<?= base_url($document_path.'/'.$attachment->file) ?>"><?= $attachment->file_name ?></a></td>
+                                                <td><a target="_blank" href="<?= base_url($document_path.'/'.$attachment->file) ?>"><?= $attachment->file_name ?></a></td>
                                                 <td><?= dateToIndo($attachment->created_at, false, true) ?></td>
                                                 <td><?= $attachment->creator ?></td>
                                             </tr>
@@ -647,6 +647,7 @@
               {
                 $('.div-detail-amd').hide();
                 $("#dt-amd").html('');
+                $("#total-summary").text(Localization.number("<?= $po->total_amount + $arf->estimated_value ?>"))
               }
             },
             error:function(){

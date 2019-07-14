@@ -124,6 +124,22 @@ class Amendment_recommendation extends CI_Controller {
         }
         $data['approval_list'] = $this->approval_list($id);
         $data['findAllResult'] = $findAllResult;
+
+        $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id <= '=> $t_arf_notification->id])->get('t_arf_notification');
+        
+        $findAllResult = [];
+        if($findAll->num_rows() > 0)
+        {
+            foreach ($findAll->result() as $r) {
+                $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
+                ->select('t_arf_nego_detail.unit_price new_price')
+                ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+            }
+        }
+
+        $data['findAllResult2'] = $findAllResult;
+        
         $this->template->display('procurement/V_amendment_recommendation_create', $data);
     }
     public function attachment_upload($value='')
@@ -406,6 +422,23 @@ class Amendment_recommendation extends CI_Controller {
         }
         $data['is_reject'] = $this->T_approval_arf_recom->is_reject($id);
         $data['findAllResult'] = $findAllResult;
+
+        $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id <= '=> $t_arf_notification->id])->get('t_arf_notification');
+        
+        $findAllResult = [];
+        if($findAll->num_rows() > 0)
+        {
+            foreach ($findAll->result() as $r) {
+                $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
+                ->select('t_arf_nego_detail.unit_price new_price')
+                ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+            }
+        }
+
+        $data['findAllResult2'] = $findAllResult;
+        // print_r($data['findAllResult2']);
+        // exit();
         
         $this->template->display('procurement/V_amendment_recommendation_view', $data);
     }
@@ -421,7 +454,7 @@ class Amendment_recommendation extends CI_Controller {
     public function newAgreementPeriodTo($arf='')
     {
         $doc_date = $this->db->where(['po_no'=>$arf->po_no])->order_by('doc_date','desc')->get('t_arf')->row();
-        $doc_date = $doc_date->doc_date;
+        $doc_date = $arf->amended_date;
 
         $detail_revision = $this->m_arf_detail_revision->detail_revision($arf);
         if($this->input->get('debug'))

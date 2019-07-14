@@ -33,4 +33,8 @@ class M_arf_detail extends M_base {
     {
         $rs = $this->db->where('doc_id',$doc_id)->get($this->table)->result(); return $rs;
     }
+    public function getDetails2($doc_id='')
+    {
+        $rs = $this->db->select('unit_price as total_price')->where('doc_id',$doc_id)->get($this->table)->result(); return $rs;
+    }
 }

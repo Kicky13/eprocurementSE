@@ -80,7 +80,21 @@ class Purchase_order extends CI_Controller
         $menu = get_main_menu();
 
         $bl = $this->M_bl->getBlByBlDetailId($bl_detail_id);
-
+        $anyPo = $this->db->where('bl_detail_id', $bl_detail_id)->get('t_purchase_order');
+        $frompo = false;
+        if($anyPo->num_rows() > 0)
+        {
+            $frompo = $anyPo->row();
+            $bl->title = $frompo->title;
+            $bl->blanket = $frompo->blanket;
+            $bl->incoterm = $frompo->shipping_term;
+            $bl->id_dpoint = $frompo->id_dpoint;
+            $bl->tkdn_type = $frompo->tkdn_type;
+            $bl->tkdn_value_goods = $frompo->tkdn_value_goods;
+            $bl->tkdn_value_service = $frompo->tkdn_value_service;
+            $bl->tkdn_value_combination = $frompo->tkdn_value_combination;
+            $bl->master_list = $frompo->master_list;
+        } 
         if (!$bl) {
             show_error("Document not found", 404);
         }
@@ -112,8 +126,9 @@ class Purchase_order extends CI_Controller
             $po_items = $this->makePODetailsFromBlDetail($this->input->post('bl_detail_id'), null);
 
             $total_po_amount = $this->getTotalAmountFromDetail($po_items);
-            $po['total_amount'] = $total_po_amount['total_price'];
-            $po['total_amount_base'] = $total_po_amount['total_price_base'];
+            $value_award = $this->M_purchase_order->value_award($bl->msr_no, $bl->vendor_id);
+            $po['total_amount'] = $value_award->amount;
+            $po['total_amount_base'] = $value_award->amount_base;
 
             $required_docs = $this->makePORequiredDocsFromPost(null);
 			$attachments = $this->makePOAttachmentsFromPost(
@@ -128,9 +143,25 @@ class Purchase_order extends CI_Controller
             if ($hit_db) {
 
                 $this->db->trans_start();
+                /*get if any by bl_detail_id*/
+                $anyPo = $this->db->where('bl_detail_id', $bl_detail_id)->get('t_purchase_order');
+                if($anyPo->num_rows() > 0)
+                {
+                    $anyPo = $anyPo->row();
+                    $po_id = $anyPo->id;
+                    unset($po['id']);
+                    $this->M_purchase_order->update($po_id, $po);
 
-                $this->M_purchase_order->add($po);
-                $po_id = $this->db->insert_id();
+                    $this->db->where(['data_id'=>$po_id])->where_in('m_approval_id', [17,18,19])->delete('t_approval');
+                    $this->db->where(['po_id'=>$po_id])->delete('t_purchase_order_required_doc');
+                    $this->db->where(['module_kode'=>'po', 'data_id'=>$po_id])->delete('t_upload');
+                    $this->db->where(['po_id'=>$po_id])->delete('t_purchase_order_detail');
+                }
+                else
+                {
+                    $this->M_purchase_order->add($po);
+                    $po_id = $this->db->insert_id();
+                }
                 $po_no = $po['po_no'];
 
                 // Details
@@ -212,12 +243,13 @@ class Purchase_order extends CI_Controller
 
 					//var_dump($po_id);exit;
 					//delete po reject
-					
-					
-					
-					
 
-					$dtOld = $this->db->where('id <', $po_id)->where('msr_no', $data_role[0]->msr_no)->get('t_purchase_order')->row();
+					/*$this->db->where('id <', $po_id);
+					$this->db->where('msr_no', $data_role[0]->msr_no);
+					$this->db->delete('t_purchase_order');*/
+
+
+					/*$dtOld = $this->db->where('id <', $po_id)->where('msr_no', $data_role[0]->msr_no)->get('t_purchase_order')->row();
 					//var_dump($dtOld);exit;
 					$this->db->where('id <', $po_id);
 					$this->db->where('msr_no', $data_role[0]->msr_no);
@@ -226,12 +258,10 @@ class Purchase_order extends CI_Controller
 					
 					$this->db->where('id', $po_id);
 					$this->db->update('t_purchase_order',['po_no'=>$dtOld->po_no]);
-					
-					
-					//var_dump($this->db->last_query());exit;
+					//var_dump($this->db->last_query());exit;*/
 					
 										
-                    return redirect('home');
+                    return redirect(base_url('home'));
                 }
 
                 $message['type'] = 'error';
@@ -257,12 +287,11 @@ class Purchase_order extends CI_Controller
         }
 
         $opt_uom = array_pluck($this->M_material_uom->all(), 'MATERIAL_UOM', 'ID');
-
         $po_items = $this->makePODetailsFromBlDetail($bl_detail_id, null);
-
+        
+        $value_award = $this->M_purchase_order->value_award($bl->msr_no, $bl->vendor_id);
         $total_po_amount = $this->getTotalAmountFromDetail($po_items);
-
-        $bl->total_amount = $total_po_amount['total_price'];
+        $bl->total_amount = $value_award->amount;
         $bl->est_total_amount = $total_po_amount['est_total_price'];
 
         foreach($po_items as $item) {
@@ -297,10 +326,10 @@ class Purchase_order extends CI_Controller
         $po_no = '';
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
         if ($loi && !empty($loi->po_no)) {
- 			$isMSRHasPO = $this->M_purchase_order->isMSRHasPO2($loi->msr_no);
+ 			/*$isMSRHasPO = $this->M_purchase_order->isMSRHasPO2($loi->msr_no);
 			$po_no = $isMSRHasPO->po_no;
-			$bl->title = $isMSRHasPO->title;
-			//$po_no = $loi->po_no;
+			$bl->title = $isMSRHasPO->title;*/
+			$po_no = $loi->po_no;
         }
 
         $this->template->display('procurement/V_po_create', compact(
@@ -308,7 +337,7 @@ class Purchase_order extends CI_Controller
             'm_purchase_order_attachment', 'vendor', 'opt_currency','opt_dpoint',
             'opt_importation', 'requestor', 'requestor_dept', 'opt_tkdn_type', 'po_items',
             'opt_item_type', 'vendor_bank_account', 'delivery_date', 'po_type', 'opt_vendor_bank_account', 'opt_msr_inventory_type',
-            'opt_delivery_term'
+            'opt_delivery_term','frompo'
         ));
     }
 
@@ -1582,18 +1611,127 @@ class Purchase_order extends CI_Controller
         $loi = $this->M_loi->findByBlDetailId($bl_detail_id);
 
         if ($loi && !empty($loi->po_no)) {
-            //$po_no = $loi->po_no;
-			$po_no = DocNumber::generate($module_kode, $bl->id_company);
+            $po_no = $loi->po_no;
+            // $po_no = DocNumber::generate($module_kode, $bl->id_company);
         }
         elseif (!$this->M_purchase_order->isMSRHasPO($bl->msr_no)) {
-			$po_no = DocNumber::createFrom($bl->msr_no,
-                $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
-                    $this->M_purchase_order::module_kode :
-                    $this->M_service_order::module_kode
-            );
+            #cek berapa pemenang
+            #lebih dari 1 pemenang pakai code baru, kalo 1 pemenang pakai code lama
+            #cek di po dan loi msr tersebut ada gak, kalo ada cari angka maksimalnya 190 atau 191 atau 192
+            $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
+            if($bidder->num_rows() > 1)
+            {
+                $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
+                $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
+                $arrPoNo = [];
+                foreach ($po as $v) {
+                    $arrPoNo[] = $v->po_no;
+                }
+                foreach ($loi as $v) {
+                    $arrPoNo[] = $v->po_no;
+                }
+                if(count($arrPoNo) > 0)
+                {
+                    $sorting = arsort($arrPoNo);
+                    $last = $arrPoNo[0];
+                    $msrNo = $last; //po_no not msrNo
+                    $substr = substr($msrNo, 2, 1);
+                    $seq = $substr+1;
+                    $substr = substr($msrNo,0,2);
+                    $substrLast = substr($msrNo,3,14);
+                    $newNumber = $substr.$seq.$substrLast;
+                    $po_no = $newNumber;
+                }
+                else
+                {
+                    // $msrNo = '19143002-OR-10103';
+                    $msrNo = $bl->msr_no;
+                    // echo "msrNo = $msrNo <br>";
+                    $substr = substr($msrNo, 2, 1);
+                    // echo "substr = $substr <br>";
+                    $seq = $substr+1;
+                    // echo "seq = $seq <br>";
+                    $substr = substr($msrNo,0,2);
+                    $substrLast = substr($msrNo,3,14);
+                    $newNumber = $substr.$seq.$substrLast;
+                    // echo "substr = $substr <br>";
+                    // echo "substrLast = $substrLast <br>";
+                    // echo "new number = $newNumber <br>";
+                    $po_code = $po_type == $this->M_purchase_order_type::TYPE_GOODS ? $this->M_purchase_order::module_kode : $this->M_service_order::module_kode;
+                    $doc_no = new DocNumber();
+                    $po_code = $doc_no->getDocTypeCode($po_code);
+                    $po_no = str_replace('OR', $po_code, $newNumber).'sasd';
+                }
+            }
+            else
+            {
+                #oldCode
+                $po_no = DocNumber::createFrom($bl->msr_no,
+                    $po_type == $this->M_purchase_order_type::TYPE_GOODS ?
+                        $this->M_purchase_order::module_kode :
+                        $this->M_service_order::module_kode
+                );
+            }
         }
         else {
-            $po_no = DocNumber::generate($module_kode, $bl->id_company);
+            $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
+            $poFindByDetailId = $this->M_purchase_order->findByBlDetailId($bl_detail_id);
+            if($poFindByDetailId)
+            {
+                $po_no = $poFindByDetailId->po_no;
+            }
+            else
+            {
+                if($bidder->num_rows() > 1)
+                {
+                    $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
+                    $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
+                    $arrPoNo = [];
+                    foreach ($po as $v) {
+                        $arrPoNo[] = $v->po_no;
+                    }
+                    foreach ($loi as $v) {
+                        $arrPoNo[] = $v->po_no;
+                    }
+                    if(count($arrPoNo) > 0)
+                    {
+                        $sorting = arsort($arrPoNo);
+                        $last = $arrPoNo[0];
+                        $msrNo = $last; //po_no not msrNo
+                        $substr = substr($msrNo, 2, 1);
+                        $seq = $substr+1;
+                        $substr = substr($msrNo,0,2);
+                        $substrLast = substr($msrNo,3,14);
+                        $newNumber = $substr.$seq.$substrLast;
+                        $po_no = $newNumber;
+                    }
+                    else
+                    {
+                        // $msrNo = '19143002-OR-10103';
+                        $msrNo = $bl->msr_no;
+                        // echo "msrNo = $msrNo <br>";
+                        $substr = substr($msrNo, 2, 1);
+                        // echo "substr = $substr <br>";
+                        $seq = $substr+1;
+                        // echo "seq = $seq <br>";
+                        $substr = substr($msrNo,0,2);
+                        $substrLast = substr($msrNo,3,14);
+                        $newNumber = $substr.$seq.$substrLast;
+                        // echo "substr = $substr <br>";
+                        // echo "substrLast = $substrLast <br>";
+                        // echo "new number = $newNumber <br>";
+                        $po_code = $po_type == $this->M_purchase_order_type::TYPE_GOODS ? $this->M_purchase_order::module_kode : $this->M_service_order::module_kode;
+                        $doc_no = new DocNumber();
+                        $po_code = $doc_no->getDocTypeCode($po_code);
+                        $po_no = str_replace('OR', $po_code, $newNumber);
+                    }
+                }
+                else
+                {
+                    #oldCode
+                    $po_no = DocNumber::generate($module_kode, $bl->id_company);
+                }
+            }
         }
 
 

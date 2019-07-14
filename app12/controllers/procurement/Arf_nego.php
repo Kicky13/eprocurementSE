@@ -49,6 +49,8 @@ class Arf_nego extends CI_Controller {
         $data['list'] = $this->m_arf_response->view('arf_response')->scope(['not_amd'])->where('t_arf_response.id not in (select arf_response_id from t_arf_nego where status = 0 group by arf_response_id)')->get();
         $data['title'] = 'Negotiation Amendment';
         $data['menu'] = $this->menu;
+        $data['add_link'] = $this->input->get('close') ? "?close=1" : '';
+            $data['btn_title'] = $this->input->get('close') ? 'Show' : 'Process';
         $this->template->display('procurement/V_arf_nego', $data);
     }
     public function create($id='')
@@ -89,24 +91,29 @@ class Arf_nego extends CI_Controller {
         $data['menu'] = $this->menu;
         if($id > 0)
         {
+            $status = $this->input->get('close') ? 2 : 1;
             $data['list'] = $this->m_arf_response->view('arf_response')->select('t_arf_nego.*')
             ->join('t_arf_nego','t_arf_nego.arf_response_id = t_arf_response.id','left')
-            ->where(['t_arf_nego.status'=>1 ,'t_arf_nego.arf_response_id'=>$id])
+            ->where(['t_arf_nego.status'=>$status ,'t_arf_nego.arf_response_id'=>$id])
             ->get();
             $data['arf_response_id'] = $id;
+            $data['status'] = $status;
             $this->template->display('procurement/V_arf_nego_response', $data);
         }
         else
         {
+            $status = $this->input->get('close') ? 2 : 1;
             $data['list'] = $this->m_arf_response->view('arf_response')->select('t_arf_nego.tanggal nego_date, t_arf_nego.vendor_response_date')
             ->join('t_arf_nego','t_arf_nego.arf_response_id = t_arf_response.id','left')
-            ->where('t_arf_nego.status',1)
+            ->where('t_arf_nego.status',$status)
             ->get();
             // echo "<pre>";
             /*print_r($data['list']);
             exit();*/
             $data['response'] = 1;
-            $this->template->display('procurement/V_arf_nego', $data);
+            $data['btn_title'] = $this->input->get('close') ? 'Show' : 'Process';
+            $data['add_link'] = $this->input->get('close') ? "?close=1" : '';
+        $this->template->display('procurement/V_arf_nego', $data);
         }
     }
     public function close_all_nego($value='')

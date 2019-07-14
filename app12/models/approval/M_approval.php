@@ -666,15 +666,15 @@ class M_approval extends CI_Model {
         }
         if(in_array(45, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
         if(in_array(46, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
         if(in_array(47, $roles))
         {
-            $data['awardapproval'] = $this->greeting_award_approval();
+            $data['awardapproval_bod'] = $this->bod_award_approval();
         }
 
         return $data;
@@ -1539,6 +1539,10 @@ class M_approval extends CI_Model {
 
         $m_approval = $this->db->where(['module_kode'=>'award','aktif'=>1])->order_by('urutan','asc')->get('m_approval');
         $urutan = 1;
+        if($this->input->get('debug'))
+        {
+            echo "sum_award_total_value = $sum_award_total_value";
+        }
         foreach ($m_approval->result() as $r) {
             $data['m_approval_id']  = $r->id;
             $data['data_id']        = $msr_no;
@@ -1687,7 +1691,7 @@ class M_approval extends CI_Model {
     public function sumawardtotalvalue($msr_no='')
     {
         //$sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*qty) else sum(unit_price_base*qty) end) nilai from t_sop_bid WHERE msr_no = '$msr_no' and award = 1 group by nego_price_base";
-        $sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) else sum(unit_price_base*nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) end) nilai from t_sop_bid join t_sop on t_sop.id = t_sop_bid.sop_id WHERE t_sop.msr_no = '$msr_no' and award = 1 group by nego_price_base";
+        $sql = "SELECT (case when nego_price_base > 0 THEN sum(nego_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) else sum(unit_price_base*(case when t_sop.qty2 > 0 then (t_sop.qty1 * t_sop.qty2) else t_sop.qty1 end)) end) nilai from t_sop_bid join t_sop on t_sop.id = t_sop_bid.sop_id WHERE t_sop.msr_no = '$msr_no' and award = 1 group by nego_price_base";
         $rs = $this->db->query($sql)->result();
         $total = 0;
         foreach ($rs as $r) {
@@ -1715,7 +1719,7 @@ class M_approval extends CI_Model {
             LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
             LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
             LEFT JOIN t_msr on t_msr.msr_no = t_approval.data_id
-            where m_approval.module_kode = 'award' and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and ".$this->msrActive(1);
+            where m_approval.id in (20,21,22,23) and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and ".$this->msrActive(1);
         $award_approval = $this->db->query($sql);
         $rs_award_approval = [];
         foreach ($award_approval->result() as $r) {
@@ -1762,6 +1766,25 @@ class M_approval extends CI_Model {
             }
         }
         return $rs_award_approval;
+    }
+    public function bod_award_approval()
+    {
+        $userLogin = user();
+        $idUser = $userLogin->ID_USER;
+        $sql = "select t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama
+            from t_approval
+            left join m_approval on m_approval.id = t_approval.m_approval_id
+            LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+            LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+            LEFT JOIN t_msr on t_msr.msr_no = t_approval.data_id
+            where m_approval.module_kode = 'award' and t_approval.created_by = $idUser and (t_approval.status = 0 or t_approval.status = 2) and m_approval_id in (24,25,26) and t_approval.data_id not in (select data_id from t_approval where m_approval_id in (20,21,22,23) and status = 0 ) ";
+            // exit();
+        $bo_approval = $this->db->query($sql);
+        $bo_approval_data = [];
+        foreach ($bo_approval->result() as $r) {
+            $bo_approval_data[] = $r;
+        }
+        return $bo_approval_data;
     }
     public function reject_award($value='')
     {

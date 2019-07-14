@@ -53,7 +53,7 @@
                                         echo "<td>".dateToIndo($r->nego_date)."</td>
                                         <td>$vendor_response_date</td>";
                                     endif;
-                                    echo "<td><a href='".base_url('procurement/arf_nego/'.$link.'/'.$r->id)."' class='btn btn-sm btn-primary'>Process</a></td>
+                                    echo "<td><a href='".base_url('procurement/arf_nego/'.$link.'/'.$r->id)."$add_link' class='btn btn-sm btn-primary'>$btn_title</a></td>
                                     </tr>";
                                     $no++;
                                 }?>

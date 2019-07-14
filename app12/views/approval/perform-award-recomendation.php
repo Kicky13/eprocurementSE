@@ -153,11 +153,31 @@
 						echo "<select style='width:125px' class='form-control recomendation' id='recomendation_$r->id' name='recomendation[$r->id]' onchange='recomenrationChange($r->id)'>";
 						foreach ($header->result() as $row) {
 							if($row->confirmed == 1)
-							{
-								$selected = $row->vendor_id == $first ? "selected":"";
-								if($ed->packet == 2)
+							{	
+								$adasddadsdasweqwdasqewd = $this->db->where(['sop_id'=>$r->id, 'award'=>1])->get('t_sop_bid');
+								/*'vendor_id'=>$row->vendor_id*/
+								if($adasddadsdasweqwdasqewd->num_rows() > 0)
 								{
-									$selected = "";
+									$sadas = $adasddadsdasweqwdasqewd->result();
+									$selected='';
+									foreach ($sadas as $uu) {
+										if($uu->vendor_id == $row->vendor_id)
+										{
+											$selected = 'selected';
+										}
+									}
+										/*$adasddadsdasweqwdasqewd = $adasddadsdasweqwdasqewd->where('vendor_id',$row->vendor_id)->get('t_sop_bid');
+										$adasddadsdasweqwdasqewd = $adasddadsdasweqwdasqewd->row();
+										$selected = $adasddadsdasweqwdasqewd->vendor_id == $row->vendor_id ? "selected='selected'":'';*/
+								}
+								else
+								{
+									$selected = $row->vendor_id == $first ? "selected":"";
+									if($ed->packet == 2)
+									{
+										$selected = "";
+									}
+									// $selected='';
 								}
 								echo "<option $selected value='$row->vendor_id' nilai='".$vendorRecomendation[$row->vendor_id]."'>$row->NAMA</option>";
 							}

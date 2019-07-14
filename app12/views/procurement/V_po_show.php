@@ -483,7 +483,7 @@ body {
 		foreach($approval_list as $appr){
 			if($appr->status == 2){
 	?>
-				<a href="<?= base_url('procurement/purchase_order/create/'.$this->db->where('msr_no', $msr->msr_no)->get('t_bl')->result()[0]->id)?>" class="btn btn-warning">Re Submit</a>
+				<a href="<?= base_url('procurement/purchase_order/create/'.$po->bl_detail_id)?>" class="btn btn-warning">Re Submit</a>
 	<?php 
 			break;	
 			}

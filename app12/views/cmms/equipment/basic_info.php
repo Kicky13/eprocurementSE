@@ -5,10 +5,11 @@
 	<?php
 		foreach ($cmms_settings as $bi) :
 			if($bi->desc1 == 'left'):
+			$col = $bi->desc2;
 	?>
 				<div class="form-group">
 					<label><?= $bi->desc ?></label>
-					<input class="form-control" disabled="">		
+					<input class="form-control" disabled="" value="<?= $basic_info_form->$col ?>">
 				</div>
 		<?php endif;?>
 	<?php endforeach;?>
@@ -17,10 +18,11 @@
 	<?php
 		foreach ($cmms_settings as $bi) :
 			if($bi->desc1 == 'right'):
+			$col = $bi->desc2;
 	?>
 				<div class="form-group">
 					<label><?= $bi->desc ?></label>
-					<input class="form-control" disabled="">		
+					<input class="form-control" disabled="" value="<?= $basic_info_form->$col ?>">
 				</div>
 		<?php endif;?>
 	<?php endforeach;?>

@@ -48,4 +48,11 @@ class M_equipment extends CI_Model {
     $sql = $this->_get_datatables_query();
     return $this->db->query($sql)->num_rows();
   }
+  public function find($faaaid='')
+  {
+    $sql = $this->sql();
+    $sql .= " where a.faaaid = $faaaid";
+    $rs = $this->db->query($sql)->row();
+    return $rs;
+  }
 }

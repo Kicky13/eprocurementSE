@@ -10,7 +10,7 @@ class Equipment extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    $this->load->model('cmms/equipment_model','mod');
+    $this->load->model('cmms/M_equipment','mod');
 
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -49,6 +49,7 @@ class Equipment extends CI_Controller {
     $data['menu'] = $this->menu;
     $data['title'] = 'Equipment Information';
     $data['view'] = $this->view;
+	$data['basic_info_form'] = $this->mod->find($id);
     $this->template->display($this->view .'/detail', $data);
   }
   public function ajax_list()

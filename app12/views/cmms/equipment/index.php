@@ -61,3 +61,43 @@
     </div>
   </div>
 </div>
+	<SCRIPT LANGUAGE='JavaScript'>
+	var table;
+	//jquery
+	$(document).ready(function() {
+		
+		//datatables
+		table = $('#tbl').DataTable({ 
+	 
+			'processing': true, //Feature control the processing indicator.
+			'serverSide': true, //Feature control DataTables' server-side processing mode.
+			'order': [], //Initial no order.
+			'bSort':false,
+			// Load data for the table's content from an Ajax source
+			'ajax': {
+				'url': '<?php echo base_url('cmms/equipment/ajax_list')?>',
+				'type': 'POST',
+				'data': function ( data ) {
+
+				}
+			},
+	 
+			//Set column definition initialisation properties.
+			'columnDefs': [
+			{ 
+				'defaultContent': '-',
+				'targets': '_all',
+			},
+			],
+	 
+		});
+	 
+		$('#btn-filter').click(function(){ //button filter event click
+			table.ajax.reload();  //just reload table
+		});
+		$('#btn-reset').click(function(){ //button reset event click
+			$('#form-filter')[0].reset();
+			table.ajax.reload();  //just reload table
+		});
+	});
+	</script>

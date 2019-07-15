@@ -49,7 +49,9 @@ class Equipment extends CI_Controller {
     $data['menu'] = $this->menu;
     $data['title'] = 'Equipment Information';
     $data['view'] = $this->view;
-	$data['basic_info_form'] = $this->mod->find($id);
+    $data['basic_info_form'] = $this->mod->find($id);
+    $data['pm1'] = $this->mod->pm1($id);
+    $data['pm2'] = $this->mod->pm1($id);
     $this->template->display($this->view .'/detail', $data);
   }
   public function ajax_list()

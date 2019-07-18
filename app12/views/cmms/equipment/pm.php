@@ -1,11 +1,11 @@
 <div class="col-md-12">
 <div class="form-group row">
 	<label>Eqipment Number</label>
-	<input class="form-control" disabled="" value="<?= $basic_info_form->FAASID ?>">
+	<input class="form-control" disabled="" value="<?= @$basic_info_form->FAASID ?>">
 </div>
 <div class="form-group row">
 	<label>Eqipment Description</label>
-	<input class="form-control" disabled="" value="<?= $basic_info_form->FADL01 ?>">
+	<input class="form-control" disabled="" value="<?= @$basic_info_form->FADL01 ?>">
 </div>
 </div>
 <table class="table">
@@ -20,9 +20,12 @@
 	<tbody>
 		<?php 
 			$no=1;
-			foreach ($pm1 as $pm) {
-				echo "<tr><td>$pm->WO_NUMBER<td><td>$pm->WO_DESC<td><td>$pm->NEXT_DUE_DATE<td></tr>";
-				$no++;
+			if(isset($pm1))
+			{
+				foreach ($pm1 as $pm) {
+					echo "<tr><td>$pm->WO_NUMBER</td><td>$pm->WO_DESC</td><td>$pm->NEXT_DUE_DATE</td></tr>";
+					$no++;
+				}
 			}
 		?>
 	</tbody>

@@ -21,7 +21,7 @@
 		<?php 
 			$no=1;
 			foreach ($pm1 as $pm) {
-				echo "<tr><td>$pm->WO_NUMBER<td><td>$pm->WO_DESC<td><td>$pm->NEXT_DUE_DATE<td></tr>";
+				echo "<tr><td>$no</td><td>$pm->WO_NUMBER</td><td>$pm->WO_DESC</td><td>$pm->NEXT_DUE_DATE</td></tr>";
 				$no++;
 			}
 		?>

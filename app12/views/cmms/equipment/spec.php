@@ -5,7 +5,7 @@
 	<?php
 		foreach ($cmms_settings as $bi) :
 			if($bi->desc1 == 'left'):
-				$col = $bi->desc2;7
+				$col = $bi->desc2;
 				$txt = $bi->desc2 == 'FAASID' ? @$basic_info_form->FAASID : @$spec->$col;
 	?>
 				<div class="form-group">

@@ -10,7 +10,7 @@ class Equipment extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    // $this->load->model('cmms/M_equipment','mod');
+    $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
 
     $this->mai->cek_session();

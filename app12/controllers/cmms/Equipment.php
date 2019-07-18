@@ -10,7 +10,7 @@ class Equipment extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    // $this->load->model('cmms/M_equipment','mod');
+    $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
 
     $this->mai->cek_session();
@@ -55,6 +55,7 @@ class Equipment extends CI_Controller {
     $data['pm2'] = $this->mod->pm1($id);
     $data['eq_picture'] = $this->picture->findByEquipment($id);
     $data['spec'] = $this->mod->spec($id);
+    $data['wo'] = $this->mod->wo($id);
     $data['equipment_id'] = $id;
     $this->template->display($this->view .'/detail', $data);
   }

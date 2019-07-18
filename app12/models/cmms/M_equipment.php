@@ -76,4 +76,11 @@ class M_equipment extends CI_Model {
     ";
     return $this->db->query($sql)->row();
   }
+  public function wo($id='')
+  {
+    $sql = "select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status
+    from (select * from f4801 where  watyps not in ('M')  and wanumb='$id' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
+    inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
+    return $this->db->query($sql)->result();
+  }
 }

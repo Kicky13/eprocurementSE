@@ -22,6 +22,24 @@
                 <div class="card-body card-dashboard">
                   <div class="row">
                     <div class="col-md-12">
+                      <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View</a>
+                      <div class="panel panel-default collapse" id="filter-view">
+                        <div class="panel-heading"><h3 class="panel-title">Filter Table</h3></div>
+                        <div class="panel-body">
+                          <?php 
+                            foreach ($thead as $key => $value) {
+                          ?>
+                          <div class="form-group row">
+                            <label class="col-md-3"><?=$value?></label>
+                            <div class="col-md-9">
+                              <input class="form-control" name="<?= $key ?>" id="filter_<?= $key ?>">
+                            </div>
+                          </div>
+                          <?php } ?>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
                       <div class="table-responsive">
                         <table id="tbl" class="table table-striped table-bordered table-fixed-column order-column dataex-lr-fixedcolumns table-hover table-no-wrap display" width="100%">
                           <thead>
@@ -34,20 +52,6 @@
                           <tbody>
                             
                           </tbody>
-                          <tfoot>
-                            <tr>
-                              <th>No</th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                              <th>Action</th>
-                            </tr>
-                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -62,7 +66,15 @@
   </div>
 </div>
 	<SCRIPT LANGUAGE='JavaScript'>
-	var table;
+	var table
+  /*'FAASID' => 'Equipment Number',
+      'FADL01' => 'Equipment Description',
+      'LOCT' => 'Location',
+      'CIT' => 'Criticality',
+      'PARENTS' => 'Parent EQ Number',
+      'DSPARENTS' => 'Parent Description',
+      'EQCLAS' => 'Equipment Class',
+      'EQTYPE' => 'Equipment Type',*/;
 	//jquery
 	$(document).ready(function() {
 		
@@ -78,7 +90,13 @@
 				'url': '<?php echo base_url('cmms/equipment/ajax_list')?>',
 				'type': 'POST',
 				'data': function ( data ) {
-
+          data.FAASID = $('#filter_FAASID').val();
+          data.FADL01 = $('#filter_FADL01').val();
+          data.LOCT = $('#filter_LOCT').val();
+          data.CIT = $('#filter_CIT').val();
+          data.PARENTS = $('#filter_PARENTS').val();
+          data.EQCLAS = $('#filter_EQCLAS').val();
+          data.EQTYPE = $('#filter_EQTYPE').val();
 				}
 			},
 	 

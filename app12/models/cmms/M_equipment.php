@@ -65,4 +65,15 @@ class M_equipment extends CI_Model {
     $sql = "select * from f1216 where gznumb=$id";
     return $this->db->query($sql)->result();
   }
+  public function spec($id='')
+  {
+    $sql = "select a.*, b.gzfb01 as service_desc, b.gzfb02 as item_cat
+    from 
+    (select * from f1216 where gznumb = $id and gzpgnm = 1) a
+    left join 
+    (select * from f1216 where gznumb = $id and gzpgnm = 2) b
+    on a.gznumb = b.gznumb
+    ";
+    return $this->db->query($sql)->row();
+  }
 }

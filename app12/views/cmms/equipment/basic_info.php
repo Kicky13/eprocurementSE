@@ -9,7 +9,7 @@
 	?>
 				<div class="form-group">
 					<label><?= $bi->desc ?></label>
-					<input class="form-control" disabled="" value="<?= $basic_info_form->$col ?>">
+					<input class="form-control" disabled="" value="<?= @$basic_info_form->$col ?>">
 				</div>
 		<?php endif;?>
 	<?php endforeach;?>
@@ -22,7 +22,7 @@
 	?>
 				<div class="form-group">
 					<label><?= $bi->desc ?></label>
-					<input class="form-control" disabled="" value="<?= $basic_info_form->$col ?>">
+					<input class="form-control" disabled="" value="<?= @$basic_info_form->$col ?>">
 				</div>
 		<?php endif;?>
 	<?php endforeach;?>

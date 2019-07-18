@@ -21,11 +21,11 @@
 				$no=1;
 				foreach ($wo as $key => $value) {
 					$woNo = $value->WADOCO;
-					$woDesc = $value->WALD01;
+					$woDesc = $value->WADL01;
 					$woType = $value->WOTYPE;
 					$woStatus = $value->STATUS;
 					echo "<tr><td>$no</td><td>$woNo</td><td>$woDesc</td><td>$woType</td><td>$woStatus</td></tr>";
-					$no+=;
+					$no++;
 				}
 			?>
 			<td></td>

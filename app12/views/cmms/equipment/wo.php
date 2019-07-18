@@ -1,10 +1,10 @@
 <div class="col-md-12">
 <div class="form-group row">
-	<label>Eqipment Number</label>
+	<label>Equipment Number</label>
 	<input class="form-control" disabled="" value="<?= $basic_info_form->FAASID ?>">
 </div>
 <div class="form-group row">
-	<label>Eqipment Description</label>
+	<label>Equipment Description</label>
 	<input class="form-control" disabled="" value="<?= $basic_info_form->FADL01 ?>">
 </div>
 </div>

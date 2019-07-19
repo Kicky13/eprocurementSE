@@ -130,4 +130,10 @@ class Equipment extends CI_Controller {
       $no++;
     }
   }
+  public function wo_detail($wo_no='')
+  {
+    $data['wo_detail'] = $this->mod->wo_detail($wo_no);
+    $data['task_instruction'] = $this->mod->task_instruction($data['wo_detail']->TASK_INSTRUCTION);
+    $this->load->view($this->view.'/wo_detail');
+  }
 }

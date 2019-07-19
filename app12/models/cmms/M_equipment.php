@@ -125,4 +125,18 @@ class M_equipment extends CI_Model {
     inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
     return $this->db->query($sql)->result();
   }
+  public function wo_detail($wo_no='')
+  {
+    $q = "select c.dta201 as wotype,a.washno as taskinstruction, a.*,
+    concat(trim(drky),concat(' - ',drdl01)) as status
+    from (select * from f4801 where  wadoco='$id' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
+    inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
+    return $this->db->query($sql)->row();
+  }
+  public function task_instruction($cfky='')
+  {
+    //cfky = washno
+    $q = "select * from f00192 where cfsy='48' and cfrt='SN' and cfky='$cfky' order by cflins";
+    return $this->db->query($sql)->result();
+  }
 }

@@ -26,49 +26,49 @@ class M_equipment extends CI_Model {
     $sql .= " where 1=1  ";
     if($this->input->post('FAASID'))
     {
-      $sql .= " or FAASID =  ".$this->input->post('FAASID');
+      $sql .= " and FAASID =  '".$this->input->post('FAASID')."'";
     }
     if($this->input->post('FADL01'))
     {
-      $sql .= " or FADL01 like '%".$this->input->post('FADL01')."%'";
+      $sql .= " and FADL01 like '%".$this->input->post('FADL01')."%'";
     }
     if($this->input->post('LOCT'))
     {
-      $sql .= " or LOCT like '%".$this->input->post('LOCT')."%'";
+      $sql .= " and LOCT like '%".$this->input->post('LOCT')."%'";
     }
     if($this->input->post('CIT'))
     {
-      $sql .= " or CIT like '%".$this->input->post('CIT')."%'";
+      $sql .= " and CIT like '%".$this->input->post('CIT')."%'";
     }
     if($this->input->post('PARENTS'))
     {
-      $sql .= " or PARENTS like '%".$this->input->post('PARENTS')."%'";
+      $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
     }
     if($this->input->post('DSPARENTS'))
     {
-      $sql .= " or DSPARENTS like '%".$this->input->post('DSPARENTS')."%'";
+      $sql .= " and DSPARENTS like '%".$this->input->post('DSPARENTS')."%'";
     }
     if($this->input->post('EQCLAS'))
     {
-      $sql .= " or EQCLAS like '%".$this->input->post('EQCLAS')."%'";
+      $sql .= " and EQCLAS like '%".$this->input->post('EQCLAS')."%'";
     }
     if($this->input->post('EQTYPE'))
     {
-      $sql .= " or EQTYPE like '%".$this->input->post('EQTYPE')."%'";
+      $sql .= " and EQTYPE like '%".$this->input->post('EQTYPE')."%'";
     }
     
-    $sql .= " order by a.faaaid asc";
+    $sql .= " order by faaaid asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
     }
-
+	//echo $sql;
     $query = $this->db->query($sql);
     return $query->result();
   }
   public function sql($value='')
   {
-    $sql = "selct * from (select a.faaaid,a.fanumb,fadl01,faasid,(select faasid from f1201 where fanumb=a.faaaid ) parents,(select fadl01 from f1201 where fanumb=a.faaaid ) dsparents,
+    $sql = "select * from (select a.faaaid,a.fanumb,fadl01,faasid,(select faasid from f1201 where fanumb=a.faaaid ) parents,(select fadl01 from f1201 where fanumb=a.faaaid ) dsparents,
         nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PA' and trim(drky)=trim(b.wrprodf) ),' ') as eqtype,
         nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PM' and trim(drky)=trim(b.wrPRODM) ),' ') as eqclas,
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C3' and trim(drky)=trim(a.faacl3) ) as manuf,
@@ -93,7 +93,7 @@ class M_equipment extends CI_Model {
   public function find($faaaid='')
   {
     $sql = $this->sql();
-    $sql .= " where a.faaaid = $faaaid";
+    $sql .= " where faaaid = $faaaid";
     $rs = $this->db->query($sql)->row();
     return $rs;
   }

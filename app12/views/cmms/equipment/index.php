@@ -21,10 +21,10 @@
               <div class="card-content collapse show">
                 <div class="card-body card-dashboard">
                   <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12" style="margin-bottom:10px">
                       <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View</a>
                       <div class="panel panel-default collapse" id="filter-view">
-                        <div class="panel-heading"><h3 class="panel-title">Filter Table</h3></div>
+                        
                         <div class="panel-body">
                           <?php 
                             foreach ($thead as $key => $value) {
@@ -36,6 +36,9 @@
                             </div>
                           </div>
                           <?php } ?>
+						  <div class="form-group row">
+							<button type='button' id='btn-filter' class='btn btn-primary'>Filter</button>
+						  </div>
                         </div>
                       </div>
                     </div>

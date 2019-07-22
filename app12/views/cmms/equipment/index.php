@@ -85,6 +85,7 @@
 			'serverSide': true, //Feature control DataTables' server-side processing mode.
 			'order': [], //Initial no order.
 			'bSort':false,
+      'bFilter':false,
 			// Load data for the table's content from an Ajax source
 			'ajax': {
 				'url': '<?php echo base_url('cmms/equipment/ajax_list')?>',

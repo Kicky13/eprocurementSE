@@ -24,7 +24,7 @@
 					$woDesc = $value->WADL01;
 					$woType = $value->WOTYPE;
 					$woStatus = $value->STATUS;
-					$link = "<a href='#' onclick=\"openModalWoDetail('$wono')\">$woNo</a>";
+					$link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
 					echo "<tr><td>$no</td><td>$link</td><td>$woDesc</td><td>$woType</td><td>$woStatus</td></tr>";
 					$no++;
 				}

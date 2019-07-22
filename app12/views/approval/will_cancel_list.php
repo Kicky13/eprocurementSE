@@ -6,13 +6,13 @@
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-6 col-12 mb-1">
-         <h3 class="content-header-title">Cancel MSR</h3>
+         <h3 class="content-header-title">MSR Cancellation</h3>
       </div>
       <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
         <div class="breadcrumb-wrapper col-12">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= base_url() ?>/home/">Home</a></li>
-            <li class="breadcrumb-item active"><?= lang("Cancel MSR", "Cancel MSR") ?></li>
+            <li class="breadcrumb-item active"><?= lang("MSR Cancellation", "MSR Cancellation") ?></li>
           </ol>
         </div>
       </div>
@@ -75,7 +75,7 @@
                     <div class="col-md-12">
                       <?php if($this->uri->rsegment(3)): ?>
                       <form action="#" class="wizard-circle frm-bled" id="frm-bled">
-                        <h6><i class="step-icon fa fa-paper-clip"></i> Cancel MSR Document</h6>
+                        <h6><i class="step-icon fa fa-paper-clip"></i> MSR Cancellation Document</h6>
                         <fieldset>
                           <div class="row">
                             <?php if(isset($head)): ?>
@@ -273,12 +273,12 @@
                               <td><?=user($row->create_by)->NAME?></td>
                               <td>
                                 <?php if(isset(($head))): ?>
-                                <a href="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>" class="btn btn-sm btn-danger">Cancel MSR</a>
+                                <a href="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>" class="btn btn-sm btn-danger">MSR Cancellation</a>
                                 <?php else: ?>
                                   <?php if($row->status == 0): ?>
-                                  <a href="#" data-id="<?=$row->msr_no?>" class="btn btn-sm btn-danger btn-cancel-msr" title="Cancel MSR" url="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>">Cancel MSR</a>
+                                  <a href="#" data-id="<?=$row->msr_no?>" class="btn btn-sm btn-danger btn-cancel-msr" title="MSR Cancellation" url="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>">MSR Cancellation</a>
                                   <?php else:?>
-                                  <a href="#" data-id="<?=$row->msr_no?>" class="btn btn-sm btn-danger btn-cancel-msr btn-block" url="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>" title="Cancel MSR">Cancel MSR</a>
+                                  <a href="#" data-id="<?=$row->msr_no?>" class="btn btn-sm btn-danger btn-cancel-msr btn-block" url="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>" title="MSR Cancellation">MSR Cancellation</a>
                                   <a href="#" data-id="<?=$row->msr_no?>" class="btn btn-sm btn-primary btn-cancel-msr btn-block" url="<?= base_url('approval/approval/will_cancel/'.$row->msr_no) ?>?release=1" title="Release MSR">Release MSR</a>
                                   <?php endif;?>
                                 <?php endif;?>
@@ -349,7 +349,7 @@
           <input type="hidden" id="msr_no" name="msr_no">
           <div class="row form-group">
             <div class="col-md-12 title-submit-confirmaton">
-              Are You Sure Cancel MSR?
+              Are You Sure MSR Cancellation?
             </div>
           </div>
           <div class="form-group">

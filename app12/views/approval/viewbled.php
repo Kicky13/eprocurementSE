@@ -419,7 +419,7 @@
 						?>
 					  
 					   <?php /* Attachment Reject*/ ?>
-                      <h6><i class="step-icon icon-paper-clip"></i> Cancel MSR</h6>
+                      <h6><i class="step-icon icon-paper-clip"></i> MSR Cancellation</h6>
                       <fieldset>
 						<div class="row">
                           <div class="col-md-12">

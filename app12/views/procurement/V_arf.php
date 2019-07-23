@@ -113,7 +113,7 @@
                         }
                     });
                     return actionColumn.create('view', {
-                        template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">Detail</a>'
+                        template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">ARF</a>'
                     }).render('{view} {edit} {notification} {amd}', {url : '<?= base_url('procurement/arf') ?>', key : data});
                 }, class : 'text-center', searchable : false, orderable : false}
             ],

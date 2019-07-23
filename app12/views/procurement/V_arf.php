@@ -103,9 +103,18 @@
                             }
                         }
                     });
+                    actionColumn.create('notification', {
+                        template : function() {
+                            if (row.arf_notification_doc_no) {
+                                return '<a href="<?= base_url('procurement/arf_notif_preparation/view') ?>/'+row.arf_notification_doc_no+'" class="btn btn-warning btn-sm">NOTIFICATION</a>';
+                            } else {
+                                return '';
+                            }
+                        }
+                    });
                     return actionColumn.create('view', {
                         template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">Detail</a>'
-                    }).render('{view} {edit} {amd}', {url : '<?= base_url('procurement/arf') ?>', key : data});
+                    }).render('{view} {edit} {notification} {amd}', {url : '<?= base_url('procurement/arf') ?>', key : data});
                 }, class : 'text-center', searchable : false, orderable : false}
             ],
             scrollX : true,

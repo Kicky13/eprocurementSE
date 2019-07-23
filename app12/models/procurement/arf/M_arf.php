@@ -11,7 +11,7 @@ class M_arf extends M_base {
     protected $procurement_head_id = 23;
 
     public function view_arf() {
-        $this->db->select("t_arf.*, t_purchase_order.title, t_purchase_order.po_type, t_arf.created_by AS id_requestor, m_user.USERNAME as username_requestor, m_user.NAME AS requestor, t_msr.id_company, m_company.DESCRIPTION as company, m_user.NAME as requestor,m_company.ABBREVIATION as abbr, m_user.ID_DEPARTMENT as id_department, m_departement.DEPARTMENT_DESC as department,m_vendor.NAMA as vendor, m_warehouse.id_warehouse, approval.sequence, user_assignment.NAME user_assignment_name, t_arf_recommendation_preparation.arf_response_id, 
+        $this->db->select("t_arf.*, t_purchase_order.title, t_purchase_order.po_type, t_arf.created_by AS id_requestor, m_user.USERNAME as username_requestor, m_user.NAME AS requestor, t_msr.id_company, m_company.DESCRIPTION as company, m_user.NAME as requestor,m_company.ABBREVIATION as abbr, m_user.ID_DEPARTMENT as id_department, m_departement.DEPARTMENT_DESC as department,m_vendor.NAMA as vendor, m_warehouse.id_warehouse, approval.sequence, user_assignment.NAME user_assignment_name, t_arf_recommendation_preparation.arf_response_id, t_arf_notification.doc_no as arf_notification_doc_no,
             (case 
                 when t_arf_acceptance.doc_no is not null then 'Acceptance'
                 when issuance.id_ref is not null then 'Award Recommendation Issuance'

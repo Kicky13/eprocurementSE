@@ -49,6 +49,7 @@ class Arf extends CI_Controller {
     }
 
     public function index() {
+        $this->session->set_userdata('arf_recom_title','Amendment Recommendation');
         if ($this->input->is_ajax_request()) {
             $this->load->library('m_datatable');
             if (strpos($this->session->userdata('ROLES'), ','.$this->procurement_head_id.',') === FALSE && strpos($this->session->userdata('ROLES'), ','.$this->procurement_specialist_id.',') === FALSE) {

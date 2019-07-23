@@ -50,14 +50,7 @@
                                 <div class="col-sm-8">
                                 </div>
                                 <div class="col-sm-4 pull-right text-right">
-                                    <button id="cpm_btn1" class="btn btn-primary onprogress" onclick="show_prepare()" style="display: none;">
-                                        <i class="fa fa-exchange"></i>
-                                        <?=lang("Persiapan", "Preparation")?>
-                                    </button>
-                                    <button id="cpm_btn2" class="btn btn-primary onprepare" onclick="show_progress()">
-                                        <i class="fa fa-exchange"></i>
-                                        <?=lang("Progres", "On Progress")?>
-                                    </button>
+                                    
                                 </div>
                             </div>
                         </div>

@@ -10,7 +10,7 @@ class M_arf_detail_revision extends M_base {
     {
     	return $this->db->select('t_arf_detail_revision.*')
         ->join('t_arf_detail_revision','t_arf_detail_revision.doc_id = t_arf.id')
-        ->where(['po_no <='=>$arf->doc_no, 't_arf_detail_revision.type'=>'time'])
+        ->where(['doc_no <='=>$arf->doc_no, 't_arf_detail_revision.type'=>'time'])
         ->order_by('t_arf_detail_revision.value','desc')->get('t_arf');
     }
     public function time_revision($doc_no='')

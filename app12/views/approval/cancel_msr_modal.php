@@ -5,7 +5,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Cancel MSR</h4>
+        <h4 class="modal-title" id="myModalLabel">MSR Cancellation</h4>
       </div>
       <div class="modal-body">
         <form id="frm-cancel-msr" method="post" class="form-horizontal" enctype="multipart/form-data">
@@ -36,14 +36,14 @@
     </div>
   </div>
 </div>
-<a href="#" data-toggle="modal" data-target="#modal-cancel-msr" class="btn btn-danger" >Cancel MSR</a>
+<a href="#" data-toggle="modal" data-target="#modal-cancel-msr" class="btn btn-danger" >MSR Cancellation</a>
 <script type="text/javascript">
   $(document).ready(function(){
     $("#file_cancel_msr").removeAttr("disabled")
   })
 	function cancelMsrClick()
 	{
-		swalConfirm('Cancel MSR', 'Are you sure cancel this MSR', function() {
+		swalConfirm('MSR Cancellation', 'Are you sure cancel this MSR', function() {
       var form = $('#frm-cancel-msr')[0];
         var data = new FormData(form);
         $.ajax({

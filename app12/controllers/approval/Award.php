@@ -459,7 +459,7 @@ class Award extends CI_Controller {
                     }
 
                     //End Send Email
-            echo "Issued Award Notification";
+            echo "Submit";
 
         }
         else

@@ -232,7 +232,8 @@ print_r($this->form_validation->error_array());
                                 <label for="id_dpoint">
                                   Delivery Point :
                                 </label>
-                                <?= form_dropdown('id_dpoint', $opt_dpoint, set_value('id_dpoint', $bl->id_dpoint), 'class="form-control required" id="id_dpoint"') ?>
+                                <?= form_dropdown('dpoint', $opt_dpoint, set_value('dpoint', $bl->id_dpoint), 'class="form-control required" disabled id="dpoint"') ?>
+                                <input type="hidden" name="id_dpoint" id="id_dpoint" value=<?=$bl->id_dpoint?>>
                               </div>
                           </div>
 

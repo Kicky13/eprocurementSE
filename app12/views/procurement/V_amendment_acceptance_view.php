@@ -53,7 +53,7 @@
                             <tr>
                                 <td>Amendment Value</td>
                                 <td>:</td>
-                                <td><?= numIndo($arf->estimated_value) ?></td>
+                                <td id="amendment_value"><?= numIndo($arf->estimated_value) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -104,7 +104,7 @@
                                         <?= numIndo($arf->amount_po) ?>
                                     </div>
                                     <label class="col-md-3">Additional Value</label>
-                                    <div class="col-md-3 text-right">
+                                    <div class="col-md-3 text-right" id="additonal_value">
                                         <?= numIndo($stt) ?>
                                     </div>
                                 </div>
@@ -594,6 +594,7 @@
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
         $("#latest-agreement-value").html(Localization.number(latest_agreement_value))
         $("#new-agreement-value").html(new_agreement)
+        $("#amendment_value").text($("#additonal_value").text())
 
     });
     function completnessClick(id) {

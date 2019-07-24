@@ -1153,8 +1153,8 @@ $(document).ready(function(){
     transitionEffect: "fade",
     titleTemplate: '#title#',
     enableFinishButton: false,
-  enablePagination: true,
-  enableAllSteps: true,
+    enablePagination: true,
+    enableAllSteps: true,
     labels: {
         finish: 'Done'
     },
@@ -1291,6 +1291,7 @@ $(document).ready(function(){
         $("#commercial-confirm").html('Fail Evaluation Confirmation');
         $("#body-commercial-confirm").html('Are You Sure to Fail?');
       }
+      $("#desc_commercial").val("");
       $("#bl_detail_id").val(bl_detail_id);
       $("#commercial").val(technical);
       $("#modal-pass-commercial").modal('show');

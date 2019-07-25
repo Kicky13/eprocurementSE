@@ -641,7 +641,14 @@
                 });
                 exchange_rate_val = response.data.exchange_rate;
                 var exchange_rate = accounting.formatMoney(1, { format: '%s %v', symbol:  response.data.currency}) + ' = ' + accounting.formatMoney(response.data.exchange_rate, { format: '%s %v', symbol: $('#currency').val() });
-                $('#exchange-rate').html(exchange_rate);
+                if($('#currency').val() == 'USD')
+                {
+                    $('#exchange-rate').html("");
+                }
+                else
+                {
+                    $('#exchange-rate').html(exchange_rate);
+                }
                 count_total();
             }
         });

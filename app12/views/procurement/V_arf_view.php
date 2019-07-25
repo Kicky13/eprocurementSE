@@ -376,7 +376,10 @@
                             <h6><i class="step-icon icon-calculator"></i> Budget</h6>
                             <fieldset >
                                 <div class="mb-1">
+                                    <?php if($arf->currency == 'USD'): ?>
+                                    <?php else:?>
                                     <?= numIndo(1) ?> <?= base_currency_code() ?> = <?= numIndo(exchange_rate_by_id(base_currency(), $arf->currency_id, 1)) ?> <?= $arf->currency ?>
+                                    <?php endif;?>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="budget_item-table" class="table table-no-wrap">

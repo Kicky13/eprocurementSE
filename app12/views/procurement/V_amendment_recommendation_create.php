@@ -471,7 +471,10 @@
                     </div>
                     <div class="card-footer">
                       <?php if(!$view): ?>
-                        <button class="btn btn-primary" onclick="beforeSubmitConfirmation()">Submit</button>
+                        <button class="btn btn-primary btn-submit" onclick="beforeSubmitConfirmation()">Submit</button>
+                        <div class="alert alert-danger danger-out-value">
+                          <strong>Danger!</strong> Your ARF Value is <span id="arf-value"></span> and your AMD Value is <span id="amd-value"></span>
+                        </div>
                       <?php endif;?>
                       <?php if(isset($issued) and !$this->input->get('amd')): ?>
                         <button class="btn btn-primary" onclick="beforeIssued()">Issued</button>
@@ -867,6 +870,20 @@
     <?php if(isset($issued)):?>
         $(".btn-upload, .btn-hapus-file").show()
     <?php endif;?>
-    $("#arf_request_value,#amd-value-header").text('<?= numIndo($total) ?>');
+    $("#arf_request_value,#amd-value-header,#amd-value").text('<?= numIndo($total) ?>');
+    $("#arf-value").text($(".arf-<?=$arf->doc_no?>").text())
+    arfvalue = $(".arf-<?=$arf->doc_no?>").attr('data-total');
+    amdvalue = "<?=$total?>";
+    if(toFloat(arfvalue) <= toFloat(amdvalue))
+    {
+
+        $(".danger-out-value").show()
+        $(".btn-submit").hide()
+    }
+    else
+    {
+        $(".danger-out-value").hide()
+        $(".btn-submit").show()
+    }
   })
 </script>

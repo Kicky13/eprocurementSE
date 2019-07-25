@@ -472,6 +472,7 @@
                     <div class="card-footer">
                       <?php if(!$view): ?>
                         <button class="btn btn-primary btn-submit" onclick="beforeSubmitConfirmation()">Submit</button>
+                        <button type="button" class="btn btn-danger" onclick="cancelArf()">ARF Cancellation</button>
                         <div class="alert alert-danger danger-out-value">
                           <strong>Danger!</strong> Your ARF Value is <span id="arf-value"></span> and your AMD Value is <span id="amd-value"></span>
                         </div>
@@ -605,6 +606,42 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button type="button" onclick="approveRejectclick()" class="btn btn-primary">Yes, Continue</button>
       </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modal-cancel-arf" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ARF Cancellation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" method="post" enctype="multipart/form-data" id="frm-arf-cancel">
+            <div class="form-group">
+                <div class="col-md-12">
+                    Are you sure want to cancel this ARF?
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                  &nbsp;
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                  Attach File
+                  <input class="form-control" type="file" name="file_cancel_arf" id="file_cancel_arf" required="">
+                </div>
+            </div>
+        </form>
+      </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="cancelArfSend()">Submit</button>
+        </div>
     </div>
   </div>
 </div>
@@ -886,4 +923,34 @@
         $(".btn-submit").show()
     }
   })
+  function cancelArf() {
+    $("#modal-cancel-arf").modal('show');
+  }
+  function cancelArfSend() {
+    var form = $('#frm-arf-cancel')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url:"<?= base_url('procurement/arf/cancel_arf/'.$arf->doc_no) ?>",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        beforeSend:function(){
+            start($("#modal-cancel-arf"));
+        },
+        success:function(e){
+            stop($("#modal-cancel-arf"));
+            var r = eval("("+e+")");
+            swal('Done',r.msg,'success');
+            window.open("<?=base_url()?>",'_self');
+        },
+        error:function(){
+            stop($("#modal-cancel-arf"))
+            swal('<?= __('warning') ?>','Something went wrong!','warning')
+        }
+    });
+  }
 </script>

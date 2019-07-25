@@ -1558,8 +1558,8 @@ class Approval extends CI_Controller {
         $this->M_approval->updateBidOpening();
 
         ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+        $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
         $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
             join t_msr t on t.msr_no=q.msr_no
@@ -1781,6 +1781,34 @@ class Approval extends CI_Controller {
     {
         $referred_from = $this->session->userdata('referred_from');
         $administrationevaluation = $this->M_approval->administrationevaluation();
+        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+        $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+
+        $edid = $this->input->post('ed_id');
+        $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
+            join t_msr t on t.msr_no=q.msr_no
+            join m_user u on u.roles like CONCAT('%', 28 ,'%')
+            join m_notic c on c.ID=65
+            where q.id='".$edid."' ");
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->OPEN_VALUE;
+        $str = str_replace('no_msr',$data_replace[0]->msr_no,$str);
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->TITLE,
+            'open' => $str,
+            'close' => $data_replace[0]->CLOSE_VALUE
+        );
+        $data['dest'][0] = 'kicky120@gmail.com';
+
+        //   foreach ($data_replace as $k => $v) {
+        //     // $data['dest'][] = $v->recipient;
+        //     $data['dest'][] = 'kicky120@gmail.com';
+        //   }
+        $flag = $this->sendMail($data);
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
             'type' => 'success'
@@ -1792,8 +1820,36 @@ class Approval extends CI_Controller {
         $this->session->set_userdata('evaluation_step','technicalevaluation');
         if($this->input->post('ed_id'))
         {
+            $edid = $this->input->post('ed_id');
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
+            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+
+            $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
+                join t_msr t on t.msr_no=q.msr_no
+                join m_user u on u.roles like CONCAT('%', 28 ,'%')
+                join m_notic c on c.ID=65
+                where q.id='".$edid."' ");
+
+          $data_replace = $query->result();
+
+          $str = $data_replace[0]->OPEN_VALUE;
+          $str = str_replace('no_msr',$data_replace[0]->msr_no,$str);
+          $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->TITLE,
+            'open' => $str,
+            'close' => $data_replace[0]->CLOSE_VALUE
+          );
+          $data['dest'][0] = 'kicky120@gmail.com';
+
+        //   foreach ($data_replace as $k => $v) {
+        //     // $data['dest'][] = $v->recipient;
+        //     $data['dest'][] = 'kicky120@gmail.com';
+        //   }
+          $flag = $this->sendMail($data);
             // echo $this->db->last_query();
             redirect(base_url('home'));
         }

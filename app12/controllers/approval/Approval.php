@@ -1788,7 +1788,7 @@ class Approval extends CI_Controller {
         $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
             join t_msr t on t.msr_no=q.msr_no
             join m_user u on u.roles like CONCAT('%', 28 ,'%')
-            join m_notic c on c.ID=65
+            join m_notic c on c.ID=64
             where q.id='".$edid."' ");
 
         $data_replace = $query->result();

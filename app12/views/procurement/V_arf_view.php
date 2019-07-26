@@ -594,19 +594,19 @@
               if(r.status)
               {
                 var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
-                $('#po_spending_value').html(r.spending_value);
+                $('#po_spending_value').html(Localization.number(r.spending_value));
                 $('#po_remaining_value').html(Localization.number(n));
               }
               else
               {
-                $('#po_spending_value').html('0');
+                $('#po_spending_value').html(Localization.number(0));
                 var n = toFloat($("#po_latest_value").val());
                 $("#po_remaining_value").html(Localization.number(n));
                 swal('Fail','Cant Get Spending Value','warning')
               }
             },
             error:function(){
-              $('#po_spending_value').html('0');
+              $('#po_spending_value').html(Localization.number(0));
               var n = toFloat($("#po_latest_value").val());
               $("#po_remaining_value").html(Localization.number(n));
               swal('Fail','Cant Get Spending Value','warning')

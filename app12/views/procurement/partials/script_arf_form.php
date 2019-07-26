@@ -1231,19 +1231,19 @@
                 var r = eval("("+e+")");
                 if(r.status)
                 {
-                    var n = parseInt($("#po_latest_value_ori").val()) - parseInt(r.spending_value);
-                    $('#po_spending_value').val(r.spending_value);
-                    $('#po_remaining_value').val(n);
+                    var n = toFloat($("#po_latest_value_ori").val()) - toFloat(r.spending_value);
+                    $('#po_spending_value').val(Localization.number(r.spending_value));
+                    $('#po_remaining_value').val(Localization.number(n));
                 }
                 else
                 {
-                    $('#po_spending_value').val('0');
+                    $('#po_spending_value').val(Localization.number(0));
                     $("#po_remaining_value").val($("#po_latest_value").val());
                     swal('Fail','Cant Get Spending Value','warning')
                 }
             },
             error:function(){
-                    $('#po_spending_value').val('0');
+                    $('#po_spending_value').val(Localization.number(0));
                     $("#po_remaining_value").val($("#po_latest_value").val());
                 swal('Fail','Cant Get Spending Value','warning')
             }

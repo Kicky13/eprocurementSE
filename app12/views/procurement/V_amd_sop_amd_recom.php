@@ -243,7 +243,7 @@
         <label class="col-md-3">Latest Agreement Value</label>
         <div class="col-md-3" ><input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>"></div>
         <label class="col-md-3">New Agreement Value</label>
-        <div class="col-md-3" ><input id="new-agreement-value" class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>"></div>
+        <div class="col-md-3" ><input id="new-agreement-value" class="form-control" disabled value=""></div>
     </div>
     <?php if(isset($issued)): ?>
     <?php else:?>

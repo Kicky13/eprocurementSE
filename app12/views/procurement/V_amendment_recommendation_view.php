@@ -624,13 +624,30 @@
             n = n.replace(/\,/g, '');
             return n;
         }
-        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        function get_ajax_last_agreement() {
+            $.ajax({
+                type:'post',
+                url:"<?= base_url('procurement/browse/last_amd_when_create_amd/'.$arf->doc_no) ?>",
+                success: function (data) {
+                    $("#latest-agreement-value").val(Localization.number(data))
+                    var new_agreement = (toFloat(data) + toFloat(numberNormal($("#additional-value").text())));
+                    $("#new-agreement-value").val(Localization.number(new_agreement))
+                }
+            })
+        }
+        get_ajax_last_agreement()
+        /*var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        if(!new_agreement)
+        {
+            new_agreement = 0
+        }*/
+        // alert(new_agreement)
         // alert('New Agreement Value '+ new_agreement);
-        var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
+        // var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
+
         // alert('Number Normal additional-value '+$("#additional-value").text());
         // alert('Latest Agreement Value '+latest_agreement_value)
-        $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
-        $("#new-agreement-value").val(new_agreement)
+        // $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
 
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'

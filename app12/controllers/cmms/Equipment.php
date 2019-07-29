@@ -41,7 +41,7 @@ class Equipment extends CI_Controller {
   }
   public function index() {
     $data['menu'] = $this->menu;
-    $data['title'] = 'Equipment List';
+    $data['title'] = 'Equipment List - CMMS01';
     $data['thead'] = $this->settings('thead');
     $this->template->display($this->view .'/index', $data);
   }

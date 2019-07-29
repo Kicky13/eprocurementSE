@@ -27,7 +27,7 @@ class Wr extends CI_Controller {
   public function create($FAAAID='')
   {
     $data['menu'] = $this->menu;
-    $data['title'] = 'Create Work Request';
+    $data['title'] = 'Work Request Create/Edit Form - CMMS10';
     $data['view'] = $this->view;
     $this->template->display($this->view .'/create', $data);
   }

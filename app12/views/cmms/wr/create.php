@@ -21,11 +21,64 @@
             <div class="card">
             	<div class="card-content collapse show">
                 <div class="card-body card-scroll">
-                  <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
+                  <form action="#" class="wizard-circle frm-bled" id="frm" enctype="multipart/form-data">
                 	<h6> <?= $title ?></h6>
                   <fieldset>
                     <div class="row">
-                    	UNDER CONSTRUCTION
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Parent WO</label>
+                          <input class="form-control" value="" id="parent_id" name="parent_id">
+                        </div>
+                        <div class="form-group">
+                          <label>Equipment Number</label>
+                          <input class="form-control" readonly="" id="eq_number" name="eq_number">
+                          <small><a href="#" onclick="browseEquipmentPoup()">Click Here to Browse</a></small>
+                        </div>
+                        <div class="form-group">
+                          <label>Equipment Description</label>
+                          <input class="form-control" readonly="" id="eq_desc" name="eq_desc">
+                        </div>
+                        <div class="form-group">
+                          <label>Equipment Class</label>
+                          <input class="form-control" readonly="" id="eq_class" name="eq_class">
+                        </div>
+                        <div class="form-group">
+                          <label>Equipment Type</label>
+                          <input class="form-control" readonly="" id="eq_type" name="eq_type">
+                        </div>
+                        <div class="form-group">
+                          <label>Location</label>
+                          <input class="form-control" readonly="" id="location" name="location">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                          <label>WO Type</label>
+                          <?= $optWoType ?>
+                        </div>
+                        <div class="form-group">
+                          <label>WR Description</label>
+                          <input class="form-control" id="wr_description" name="wr_description">
+                        </div>
+                        <div class="form-group">
+                          <label>Failure Description</label>
+                          <?= $optFailureDescription ?>
+                        </div>
+                        <div class="form-group">
+                          <label>Photo</label>
+                          <input type="file" id="photo" name="photo">
+                        </div>
+                        <div class="form-group">
+                          <label>Requested Finish Date</label>
+                          <input class="form-control" readonly="" id="eq_type" name="eq_type">
+                        </div>
+                        <div class="form-group">
+                          <label>Priority</label>
+                          <?= $optPriority ?>
+                        </div>
+                      </div>
                     </div>
                   </fieldset>
                 	
@@ -59,8 +112,10 @@
 
       }
     });
-		//hide next and previous button
-		$('a[href="#next"]').hide();
-		$('a[href="#previous"]').hide();
-
+    $('a[href="#next"]').hide();
+    $('a[href="#previous"]').hide();
+  });
+  function browseEquipmentPoup() {
+    alert('Underconstruction')
+  }
 </script>

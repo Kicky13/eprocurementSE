@@ -22,7 +22,7 @@
                 <div class="card-body card-dashboard">
                   <div class="row">
                     <div class="col-md-12" style="margin-bottom:10px">
-                      <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View  - CMMS09</a>
+                      <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View</a>
                       <div class="panel panel-default collapse" id="filter-view">
                         <div class="panel-body">
                           <?php 

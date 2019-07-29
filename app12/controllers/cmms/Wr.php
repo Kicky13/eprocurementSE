@@ -10,8 +10,8 @@ class Wr extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    $this->load->model('cmms/M_equipment','mod');
-    $this->load->model('cmms/M_equipment_picture','picture');
+    // $this->load->model('cmms/M_equipment','mod');
+    // $this->load->model('cmms/M_equipment_picture','picture');
 
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -37,13 +37,13 @@ class Wr extends CI_Controller {
   public function optWoType()
   {
     $s = "<select name='wo_type_id' id='wo_type_id' class='form-control'>";
-    $s .= "</option>";
+    $s .= "</select>";
     return $s;
   }
   public function optFailureDescription()
   {
     $s = "<select name='failure_description' id='failure_description' class='form-control'>";
-    $s .= "</option>";
+    $s .= "</select>";
     return $s;
   }
   public function optPriority($row=0)
@@ -62,7 +62,7 @@ class Wr extends CI_Controller {
       // $selected = $row == $key ? "selected=''":"";
       $s .= "<option value='$key'>$value</option>";
     }
-    $s .= "</option>";
+    $s .= "</select>";
     return $s;
   }
 }

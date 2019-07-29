@@ -68,7 +68,7 @@ class M_equipment extends CI_Model {
   }
   public function sql($value='')
   {
-    $sql = "select * from (select a.faaaid,a.fanumb,fadl01,faasid,(select faasid from f1201 where fanumb=a.faaaid ) parents,(select fadl01 from f1201 where fanumb=a.faaaid ) dsparents,
+    $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb,fadl01,faasid,(select faasid from f1201 where fanumb=a.faaaid ) parents,(select fadl01 from f1201 where fanumb=a.faaaid ) dsparents,
         nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PA' and trim(drky)=trim(b.wrprodf) ),' ') as eqtype,
         nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PM' and trim(drky)=trim(b.wrPRODM) ),' ') as eqclas,
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C3' and trim(drky)=trim(a.faacl3) ) as manuf,

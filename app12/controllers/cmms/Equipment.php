@@ -68,11 +68,13 @@ class Equipment extends CI_Controller {
       $no++;
       $row = array();
       $row[] = $no;
+      $detailLink = "<a href='".base_url('cmms/equipment/detail/'.$rows->FAAAID)."' class='btn btn-info btn-sm'>Detail</a>";
+      $wrLink = $rows->FAAAID == 1 ? "<a href='".base_url('cmms/wr/create/'.$rows->FAAAID)."' target='_blank' class='btn btn-primary btn-sm'>Create WR</a>" : "";
+      $row[] = "$detailLink $wrLink";
       foreach ($this->settings('thead') as $key => $value) {
         $row[] = $rows->$key;
       }
       
-      $row[] = "<a href='".base_url('cmms/equipment/detail/'.$rows->FAAAID)."' class='btn btn-info btn-sm'>Detail</a>";
       $data[] = $row;
     }
  

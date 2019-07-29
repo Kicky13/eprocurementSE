@@ -48,8 +48,8 @@
                           <thead>
                             <tr>
                               <th width="25">No</th>
-                              <?php thead($thead);?>
                               <th class="text-center">Action</th>
+                              <?php thead($thead);?>
                             </tr>
                           </thead>
                           <tbody>

@@ -425,7 +425,7 @@ class Perform_itp_approval extends CI_Controller {
         $ediDocumentNumber = '1'.substr(str_repeat('0', 7).$res[0]->ediDocumentNumber, -7);
         $costCenter = substr(str_repeat(' ', 12).$res[0]->id_warehouse, -12);
         $parseDocumentOrderInvoiceE = explode('-', $res[0]->documentOrderInvoiceE);
-        $ch_header = curl_init('https://10.1.1.94:91/PD910/F47071InManager?WSDL');
+        $ch_header = curl_init('https://10.1.1.94:89/PY910/F47071InManager?WSDL');
         $xml_post_string_header = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57R71/">
           <soapenv:Header>
            <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -522,7 +522,7 @@ class Perform_itp_approval extends CI_Controller {
           $res_item = $m_mat_item->result();
           $counter_item = 1;
           foreach ($res_item as $k => $v) {
-      $ch[$counter_item] = curl_init('https://10.1.1.94:91/PD910/F47072InManager?WSDL');
+      $ch[$counter_item] = curl_init('https://10.1.1.94:89/PY910/F47072InManager?WSDL');
             $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57R072/">
               <soapenv:Header>
                 <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -733,7 +733,7 @@ class Perform_itp_approval extends CI_Controller {
       //.$extime[0]->exectime.
 
       if($query_check_lastexec->num_rows()>0){
-        $ch = curl_init('https://10.1.1.94:91/PD910/F47072SelManager?WSDL');
+        $ch = curl_init('https://10.1.1.94:89/PY910/F47072SelManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57R72Q/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -845,7 +845,7 @@ class Perform_itp_approval extends CI_Controller {
       //
 
       if($query_check_lastexec->num_rows()>0){
-        $ch = curl_init('https://10.1.1.94:91/PD910/F47072SelManager?WSDL');
+        $ch = curl_init('https://10.1.1.94:89/PY910/F47072SelManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57R72Q/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -957,7 +957,7 @@ class Perform_itp_approval extends CI_Controller {
       //
 
       if($query_check_lastexec->num_rows()>0){
-        $ch = curl_init('https://10.1.1.94:91/PD910/F47072SelManager?WSDL');
+        $ch = curl_init('https://10.1.1.94:89/PY910/F47072SelManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57R72Q/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"

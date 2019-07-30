@@ -300,7 +300,7 @@ class Registration_spvlogistic_validation extends CI_Controller {
     $proxyusername = 'SCM';
     $proxypassword = 'password';
     $useCURL = isset($_POST['usecurl']) ? $_POST['usecurl'] : '0';
-    $client = new nusoap_client('https://10.1.1.94:91/PD910/InventoryManager?wsdl', true,
+    $client = new nusoap_client('https://10.1.1.94:89/PY910/InventoryManager?wsdl', true,
                 $proxyhost, $proxyport, $proxyusername, $proxypassword);
 
     $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP410000/">
@@ -407,7 +407,7 @@ class Registration_spvlogistic_validation extends CI_Controller {
         echopre($result);**/
         // exit;
 
-        $ch = curl_init('https://10.1.1.94:91/PD910/InventoryManager');
+        $ch = curl_init('https://10.1.1.94:89/PY910/InventoryManager');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP410000/">
               <soapenv:Header>
                   <wsse:Security
@@ -524,7 +524,7 @@ class Registration_spvlogistic_validation extends CI_Controller {
         }
 
         // Insert Long description
-        $ch = curl_init('https://10.1.1.94:91/PD910/F554101AddManager');
+        $ch = curl_init('https://10.1.1.94:89/PY910/F554101AddManager');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP554101/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"

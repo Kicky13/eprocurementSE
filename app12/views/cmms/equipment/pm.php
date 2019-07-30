@@ -23,6 +23,11 @@
 			if(isset($pm1))
 			{
 				foreach ($pm1 as $pm) {
+					$taskLink = $pm->WO_NUMBER;
+					if($pm->TASKINSTRUCTION)
+					{
+						$taskLink = "<a href='#' onclick='taskInstructionPm(\"'$pm->TASKINSTRUCTION'\")'>$pm->WO_NUMBER</a>";
+					}
 					echo "<tr><td>$no</td><td>$pm->WO_NUMBER</td><td>$pm->WO_DESC</td><td>$pm->NEXT_DUE_DATE</td></tr>";
 					$no++;
 				}

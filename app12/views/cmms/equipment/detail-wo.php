@@ -1,4 +1,4 @@
-<table width="100">
+<table class="table">
 	<tbody>
 <?php 
 	foreach(cmms_settings('wo_detail')->get()->result() as $wod):
@@ -12,7 +12,7 @@
 ?>
 		<tr>
 			<td><?= $wod->desc ?></td>
-			<td><input disabled="" class="form-control" value="$txt"></td>
+			<td><input disabled="" class="form-control" value="<?=$txt?>"></td>
 		</tr>
 <?php endforeach;?>
 	</tbody>

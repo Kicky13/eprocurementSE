@@ -141,6 +141,6 @@ class Equipment extends CI_Controller {
   public function get_task_instruction_from_pm($value='')
   {
     $data['results'] = $this->mod->task_instruction($this->input->post('task_instruction'));
-    $this->load->view($this->view.'/get_task_instruction_from_pm',$data);
+    $this->load->view($this->view.'/task_instruction_from_pm',$data);
   }
 }

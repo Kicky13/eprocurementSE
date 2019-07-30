@@ -51,7 +51,7 @@
   </div>
 </div>
 <script type="text/javascript">
-	function openModal(task_instruction) {
+	function taskInstructionPm(task_instruction) {
 		$.ajax({
 			type:'post',
 			data:{task_instruction:task_instruction},

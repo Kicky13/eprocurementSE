@@ -144,4 +144,11 @@ class M_equipment extends CI_Model {
     $sql = "select WMCPIL as item_number, concat(trim(WMDSC1),concat(' ',trim(WMDSC1))) as DESCRIPTION, WMTRQT as qty,WMUM AS UOM from f3111 where WMTRQT > 0 and WMDOCO = '$wo_no'" ;
     return $this->db->query($sql)->result();
   }
+  public function labor_list($wo_no='')
+  {
+    $sql = "select a.WTDOCO WO_NO, b.ABALPH EMPLOYEE_NAME, trim(c.RMMCULT) DEPARTMENT, WTHRW LABOR_HOUR from F31122 a 
+    inner join F0101 b on a.WTAN8 = B.ABAN8
+    inner join F48310 c on c.RMRSCN = a.WTAN8 where a.WTDOCO = '$wo_no'";
+    return $this->db->query($sql)->result();
+  }
 }

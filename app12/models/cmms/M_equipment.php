@@ -141,7 +141,7 @@ class M_equipment extends CI_Model {
   }
   public function part_list($wo_no='')
   {
-    $sql = "select WMCPIL as item_number, concat(trim(WMDSC1),concat(' ',trim(WMDSC1))) decsription, WMTRQT as qty,WMUM AS UOM from f3111 where WMTRQT > 0 where WMDOCO = '$wo_no'" ;
+    $sql = "select WMCPIL as item_number, concat(trim(WMDSC1),concat(' ',trim(WMDSC1))) as DESCRIPTION, WMTRQT as qty,WMUM AS UOM from f3111 where WMTRQT > 0 and WMDOCO = '$wo_no'" ;
     return $this->db->query($sql)->result();
   }
 }

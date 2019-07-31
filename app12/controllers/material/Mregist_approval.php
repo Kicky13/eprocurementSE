@@ -781,7 +781,7 @@ class Mregist_approval extends CI_Controller {
 
       public function change_jde($data) {
         ini_set('max_execution_time', 300);
-        $ch = curl_init('https://10.1.1.94:91/PD910/InventoryManager?WSDL');
+        $ch = curl_init('https://10.1.1.94:89/PY910/InventoryManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP410000/">
               <soapenv:Header>
                   <wsse:Security
@@ -792,7 +792,7 @@ class Mregist_approval extends CI_Controller {
                     <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
                       xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
                          <wsse:Username>SCM</wsse:Username>
-                         <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+                         <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
                     </wsse:UsernameToken>
                   </wsse:Security>
                 </soapenv:Header>
@@ -899,7 +899,7 @@ class Mregist_approval extends CI_Controller {
             }
 
             // Insert Long description
-            $ch = curl_init('https://10.1.1.94:91/PD910/F4101_UpdateMgr?WSDL');
+            $ch = curl_init('https://10.1.1.94:89/PY910/F4101_UpdateMgr?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP554101/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -909,7 +909,7 @@ class Mregist_approval extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>
@@ -988,7 +988,7 @@ where MATERIAL='".$req_no."' ");
             $res = $query_select_mat->result();
 
 
-            $ch = curl_init('https://10.1.1.94:91/PD910/F4101_UpdateMgr?WSDL');
+            $ch = curl_init('https://10.1.1.94:89/PY910/F4101_UpdateMgr?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP574101/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -998,7 +998,7 @@ where MATERIAL='".$req_no."' ");
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>
@@ -1085,7 +1085,7 @@ where MATERIAL='".$req_no."' ");
         $MATERIAL_NAME = str_replace('&','',$res[0]->MATERIAL_NAME);
         $SHORTDESC = str_replace('&','',$res[0]->SHORTDESC);
 
-        $ch = curl_init('https://10.1.1.94:91/PD910/InventoryManager?WSDL');
+        $ch = curl_init('https://10.1.1.94:89/PY910/InventoryManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP410000/">
               <soapenv:Header>
                   <wsse:Security
@@ -1096,7 +1096,7 @@ where MATERIAL='".$req_no."' ");
                     <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
                       xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
                          <wsse:Username>SCM</wsse:Username>
-                         <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+                         <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
                     </wsse:UsernameToken>
                   </wsse:Security>
                 </soapenv:Header>
@@ -1266,7 +1266,7 @@ where MATERIAL='".$req_no."' ");
 
 
             // Insert Long description
-            $ch = curl_init('https://10.1.1.94:91/PD910/F554101AddManager?WSDL');
+            $ch = curl_init('https://10.1.1.94:89/PY910/F554101AddManager?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP554101/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -1276,7 +1276,7 @@ where MATERIAL='".$req_no."' ");
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>

@@ -54,7 +54,7 @@ $i = 0;
 </div>
 <div class="form-group row">
   <label class="offset-md-6 col-md-3">Total</label>
-  <div class="col-md-3 text-right">
+  <div class="col-md-3 text-right arf-<?=$key?>" data-total="<?=$total?>">
       <?= numIndo($total) ?>
   </div>
 </div>

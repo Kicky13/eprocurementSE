@@ -588,7 +588,7 @@ class Material_req_approval extends CI_Controller {
       $whto = substr($whto,-12);
       }
 
-    $ch = curl_init('https://10.1.1.94:91/PD910/F55MR001_InputMgr?WSDL');
+    $ch = curl_init('https://10.1.1.94:89/PY910/F55MR001_InputMgr?WSDL');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57MR01/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -598,7 +598,7 @@ class Material_req_approval extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>
@@ -664,7 +664,7 @@ class Material_req_approval extends CI_Controller {
           $counter_item = 0;
 
           foreach ($res_item as $k => $v) {
-            $ch = curl_init('https://10.1.1.94:91/PD910/F55MR002_InputMgr?WSDL');
+            $ch = curl_init('https://10.1.1.94:89/PY910/F55MR002_InputMgr?WSDL');
             $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57MR02/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -674,7 +674,7 @@ class Material_req_approval extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>
@@ -766,7 +766,7 @@ class Material_req_approval extends CI_Controller {
       $extime = $query_check_lastexec->result();
 
       if($query_check_lastexec->num_rows()>0){
-        $ch = curl_init('https://10.1.1.94:91/PD910/F55MR001_InputMgr');
+        $ch = curl_init('https://10.1.1.94:89/PY910/F55MR001_InputMgr');
         $xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP57MR01/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -776,7 +776,7 @@ class Material_req_approval extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>

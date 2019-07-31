@@ -2172,8 +2172,8 @@ class Msr extends CI_Controller {
         $id_item = $this->material->showItem($semic_no);
 
 
-        //$ch = curl_init('https://10.1.1.94:91/PD910/InventoryManager');
-        $ch = curl_init('https://10.1.1.94:91/PD910/V41021A_SelectMgr');
+        //$ch = curl_init('https://10.1.1.94:89/PY910/InventoryManager');
+        $ch = curl_init('https://10.1.1.94:89/PY910/V41021A_SelectMgr');
         /**$xml_post_string = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:orac="http://oracle.e1.bssv.JP410000/">
 <soapenv:Header>
    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
@@ -2183,7 +2183,7 @@ class Msr extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>
@@ -2203,7 +2203,7 @@ class Msr extends CI_Controller {
      <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
        xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
        <wsse:Username>SCM</wsse:Username>
-       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">password</wsse:Password>
+       <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
      </wsse:UsernameToken>
    </wsse:Security>
  </soapenv:Header>

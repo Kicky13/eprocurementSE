@@ -911,16 +911,17 @@
     $("#arf-value").text($(".arf-<?=$arf->doc_no?>").text())
     arfvalue = $(".arf-<?=$arf->doc_no?>").attr('data-total');
     amdvalue = "<?=$total?>";
-    if(toFloat(arfvalue) <= toFloat(amdvalue))
+	//alert('amdvalue = '+amdvalue+' - arfvalue='+arfvalue)
+    if(toFloat(arfvalue) >= toFloat(amdvalue))
     {
 
-        $(".danger-out-value").show()
-        $(".btn-submit").hide()
+        $(".danger-out-value").hide()
+        $(".btn-submit").show()
     }
     else
     {
-        $(".danger-out-value").hide()
-        $(".btn-submit").show()
+        $(".danger-out-value").show()
+        $(".btn-submit").hide()
     }
   })
   function cancelArf() {

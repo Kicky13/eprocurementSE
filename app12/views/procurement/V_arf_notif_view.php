@@ -85,7 +85,7 @@
                                             <td>Value</td>
                                             <td>
                                                 <?php if (isset($arf->revision['value'])) { ?>
-                                                    <?= $arf->currency ?> <span><?= numIndo($arf->estimated_value_new) ?></span>
+                                                    <?= $arf->currency ?> <span><?= numIndo($arf->revision['value']->value) ?></span>
                                                 <?php } ?>
                                             </td>
                                             <td><?= @$arf->revision['value']->remark ?></td>

@@ -458,7 +458,7 @@
         </div>
         <div class="form-group row">
             <label class="offset-md-6 col-md-3">Total</label>
-            <div class="col-md-3 text-right">
+            <div class="col-md-3 text-right" id="additional-value">
                 <?= numIndo($total) ?>
             </div>
         </div>

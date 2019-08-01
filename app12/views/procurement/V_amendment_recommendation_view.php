@@ -630,7 +630,10 @@
                 url:"<?= base_url('procurement/browse/last_amd_when_create_amd/'.$arf->doc_no) ?>",
                 success: function (data) {
                     $("#latest-agreement-value").val(Localization.number(data))
+					//alert(data+' as latest-agreement-value')
                     var new_agreement = (toFloat(data) + toFloat(numberNormal($("#additional-value").text())));
+					//alert($("#additional-value").text()+' as additional-value')
+					//alert(new_agreement+' as new_agreement')
                     $("#new-agreement-value").val(Localization.number(new_agreement))
                 }
             })

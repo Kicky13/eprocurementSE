@@ -438,7 +438,7 @@
                               </div>
                               <hr>
 
-                              <?php if (isset($msr->attachment_cancel)): ?>
+                              <?php if (isset($msr->cancellation_attachment)): ?>
 
 								  <div class="row form-group">
 									<div class="col-md-2"><?php /* type */ ?>
@@ -446,8 +446,8 @@
 									</div>
 									
 									<div class="col-md-4">
-									  <?php $href = base_url().'/upload/cancel_msr/'.$msr->attachment_cancel; ?>
-									  <a href="<?= $href ?>" target="_blank"><?= $msr->attachment_cancel ?></a>
+									  <?php $href = base_url().'/upload/cancel_msr/'.$msr->cancellation_attachment; ?>
+									  <a href="<?= $href ?>" target="_blank"><?= $msr->cancellation_attachment ?></a>
 									</div>
 
 									<div class="col-md-4">

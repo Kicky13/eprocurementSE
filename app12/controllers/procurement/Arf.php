@@ -972,7 +972,7 @@ class Arf extends CI_Controller
         if (!is_null($bod_review_meeting) && $bod_review_meeting !== '') {
             $detail['bod_review_meeting'] = $bod_review_meeting;
             $approvalArf = $this->db->where('id', $id)->get('t_approval_arf')->row();
-            $this->prepare_mail_send($approvalArf->id_ref);
+//            $this->prepare_mail_send($approvalArf->id_ref);
         }
         if (!is_null($review_bod)) {
             $this->m_arf->update($id, array(

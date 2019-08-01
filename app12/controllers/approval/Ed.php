@@ -69,12 +69,13 @@ class Ed extends CI_Controller {
     public function getEdList()
     {
     	$eds = $this->db->select("t_eq_data.*,replace(t_eq_data.msr_no,'OR','OQ') ed_no")->where(['status'=>1])->order_by('msr_no','desc')->get('t_eq_data');
+//    	$lastquery = $this->db->last_query();
     	return $eds;
     }
     public function getEdListLimit($limit,$start)
     {
         $user = user();
-        $roles              = explode(",", $user->ROLES);
+        $roles      = explode(",", $user->ROLES);
         $roles      = array_values(array_filter($roles));
 
         if($user->ID_USER == 164 or $user->ID_USER == 165 or $user->ID_USER == 166 or  $user->ID_USER == 167 or in_array(bled, $roles) or in_array(proc_committe, $roles))
@@ -126,8 +127,9 @@ class Ed extends CI_Controller {
             JOIN m_user_roles ON m_user_roles.ID_USER_ROLES = t_approval.role_id
         ) approval', 'approval.data_id = t_eq_data.msr_no', 'left')
         ->join('m_currency', 'm_currency.ID = t_msr.id_currency')
-        ->where_in('t_msr.status', [0,2])
+        ->where_in('t_msr.status', [0,1])
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
+
         if($this->input->get('debug'))
         {
             echo "<pre>";
@@ -135,7 +137,7 @@ class Ed extends CI_Controller {
             echo "<br> : ".$this->db->last_query();
             exit();
         }
-    	return $eds;
+    	return $eds->result();
     }
     public function draft($value='')
     {
@@ -595,7 +597,7 @@ class Ed extends CI_Controller {
         }
         if($this->db->trans_status() === true)
         {
-            // $this->db->trans_commit();
+            $this->db->trans_commit();
             $template = $this->db->where('ID', 65)->get('m_notic')->result();
             $img1 = '';
             $img2 = '';

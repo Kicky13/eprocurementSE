@@ -24,6 +24,14 @@ class M_equipment extends CI_Model {
       'EQCLAS' => 'Equipment Class',
       'EQTYPE' => 'Equipment Type',*/
     $sql .= " where 1=1  ";
+    if($this->input->post('ALLOWANCE') == 2)
+    {
+      $sql .= " and FAWOYN =  '0'";
+    }
+    if($this->input->post('ALLOWANCE') == 1)
+    {
+      $sql .= " and FAWOYN =  '".$this->input->post('ALLOWANCE')."'";
+    }
     if($this->input->post('FAASID'))
     {
       $sql .= " and FAASID =  '".$this->input->post('FAASID')."'";

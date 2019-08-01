@@ -23,6 +23,7 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		$(".modal-collapse").hide()
+		$('#detail-wo').show()
 	})
 	function togglThisWODetail(param) {
 		$('.modal-collapse').hide()

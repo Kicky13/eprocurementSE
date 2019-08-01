@@ -23,14 +23,24 @@
                   <div class="row">
                     <div class="col-md-12" style="margin-bottom:10px">
                       <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View</a>
-                      <div class="panel panel-default collapse" id="filter-view">
+                      <div class="panel panel-default collapse" id="filter-view" style="margin-top: 10px">
                         <div class="panel-body">
+                          <div class="form-group row">
+                            <label class="col-md-3">Allowance WR</label>
+                            <div class="col-md-6">
+                              <select class="form-control" name="ALLOWANCE" id="filter_ALLOWANCE">
+                                <option value="0">--Select One--</option>
+                                <option value="1">YES</option>
+                                <option value="2">NO</option>
+                              </select>
+                            </div>
+                          </div>
                           <?php 
                             foreach ($thead as $key => $value) {
                           ?>
                           <div class="form-group row">
                             <label class="col-md-3"><?=$value?></label>
-                            <div class="col-md-9">
+                            <div class="col-md-6">
                               <input class="form-control" name="<?= $key ?>" id="filter_<?= $key ?>">
                             </div>
                           </div>
@@ -100,6 +110,7 @@
           data.PARENTS = $('#filter_PARENTS').val();
           data.EQCLAS = $('#filter_EQCLAS').val();
           data.EQTYPE = $('#filter_EQTYPE').val();
+          data.ALLOWANCE = $('#filter_ALLOWANCE').val();
 				}
 			},
 	 

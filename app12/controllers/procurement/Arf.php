@@ -972,7 +972,7 @@ class Arf extends CI_Controller
         if (!is_null($bod_review_meeting) && $bod_review_meeting !== '') {
             $detail['bod_review_meeting'] = $bod_review_meeting;
             $approvalArf = $this->db->where('id', $id)->get('t_approval_arf')->row();
-//            $this->prepare_mail_send($approvalArf->id_ref);
+//            $this->prepare_mail_send($approvalArf->id_ref, $status);
         }
         if (!is_null($review_bod)) {
             $this->m_arf->update($id, array(
@@ -992,7 +992,7 @@ class Arf extends CI_Controller
                     'type' => 'danger'
                 ));
             }
-            $flag = $this->prepare_mail_send($approval_id, $status);
+//            $flag = $this->prepare_mail_send($approval_id, $status);
             $response = array('success' => true);
         } else {
             $response = array(
@@ -1150,7 +1150,7 @@ class Arf extends CI_Controller
         } else {
             $flag = 0;
         }
-        return $flag;
+        return $this->db->last_query();
     }
 
     protected function sendMail($content)

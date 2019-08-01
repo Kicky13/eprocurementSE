@@ -595,7 +595,7 @@ class Ed extends CI_Controller {
         }
         if($this->db->trans_status() === true)
         {
-            // $this->db->trans_commit();
+            $this->db->trans_commit();
             $template = $this->db->where('ID', 65)->get('m_notic')->result();
             $img1 = '';
             $img2 = '';

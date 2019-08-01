@@ -604,7 +604,7 @@ font-weight: normal;
                               </div>
                               <hr>
 
-                              <?php if (isset($_POST['attachment_cancel'])): ?>
+                              <?php if (isset($_POST['cancellation_attachment'])): ?>
 
 								  <div class="row form-group">
 									<div class="col-md-2"><?php /* type */ ?>
@@ -612,8 +612,8 @@ font-weight: normal;
 									</div>
 
 									<div class="col-md-4">
-									  <?php $href = base_url().'/upload/cancel_msr/'.$_POST['attachment_cancel']; ?>
-									  <a href="<?= $href ?>" target="_blank"><?= $_POST['attachment_cancel'] ?></a>
+									  <?php $href = base_url().'/upload/cancel_msr/'.$_POST['cancellation_attachment']; ?>
+									  <a href="<?= $href ?>" target="_blank"><?= $_POST['cancellation_attachment'] ?></a>
 									</div>
 																		
 									<div class="col-md-4">

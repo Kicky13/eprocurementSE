@@ -992,6 +992,7 @@ class Arf extends CI_Controller
                     'type' => 'danger'
                 ));
             }
+            $flag = $this->prepare_mail_send($approval_id, $status);
             $response = array('success' => true);
         } else {
             $response = array(
@@ -1110,50 +1111,46 @@ class Arf extends CI_Controller
         }
     }
 
-    public function prepare_mail_send($arfId = '')
+    public function testSession()
+    {
+        echo json_encode($this->session->userdata);
+    }
+
+    public function prepare_mail_send($arfId = '', $status = '')
     {
         ini_set('max_execution_time', 300);
         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-        $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE 
-            FROM t_arf t
-            join t_approval_arf on t_approval_arf.id_ref = t.id
-            join m_user u on u.ID_USER = t_approval_arf.id_user
-            join m_notic n on n.ID=81
-            where t.id=$arfId and t_approval_arf.sequence in (1,2)");
-        if ($query->num_rows() > 0) {
-            $data_role = $query->result();
-            $count = 1;
-        } else {
-            $count = 0;
-        }
-        if ($count === 1) {
-            $query = $this->db->query("select t_arf.*, m_user.NAME nama_user 
-                from t_arf 
-                left join m_user on m_user.id_user = t_arf.created_by
-                where id = $arfId");
-
-            $data_replace = $query->result();
-
-            $res = $data_role;
-            $str = $data_role[0]->OPEN_VALUE;
-            $str = str_replace('_var1_', $data_replace[0]->doc_no, $str);
-            $str = str_replace('_var2_', $data_replace[0]->nama_user, $str);
+        if ($arfId !== '') {
+            if ($status = 1) {
+                $template = 57;
+            } else {
+                $template = 58;
+            }
+            $query = $this->db->query('SELECT po.msr_no as msr_no, u.EMAIL as recipient, n.TITLE as title, n.OPEN_VALUE as open, n.CLOSE_VALUE as close, n.CATEGORY as category FROM t_arf arf
+                                            JOIN t_purchase_order po ON arf.po_no = po.po_no
+                                            JOIN t_approval_arf aa ON arf.id = aa.id_ref
+                                            JOIN m_user u ON aa.id_user = u.ID_USER
+                                            JOIN m_notic n ON n.ID = ' . $template . '
+                                            WHERE aa.id_ref = "' . $arfId . '" AND sequence = 1');
+            $datasend = $query->result();
+            $str = str_replace('no_msr', $datasend[0]->msr_no, $datasend[0]->open);
 
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,
-                'title' => $data_role[0]->TITLE,
+                'title' => $datasend[0]->title,
                 'open' => $str,
-                'close' => $data_role[0]->CLOSE_VALUE
+                'close' => $datasend[0]->close
             );
 
-            foreach ($data_role as $k => $v) {
-                $data['dest'][] = $v->recipient;
-            }
+            $data['dest'][0] = 'kicky120@gmail.com';
             $flag = $this->sendMail($data);
+        } else {
+            $flag = 0;
         }
+        return $flag;
     }
 
     protected function sendMail($content)

@@ -26,8 +26,10 @@
 					$wotype = $cmms_wo_type = $this->db->where('id', $value->WOTYPE)->get('cmms_wo_type')->row();
 					@$woType = $wotype->notation;
 					$woStatus = $value->STATUS;
+					$woDate = $value->WO_DATE;
+					$woFailureDesc = $value->FAILURE_DESC;
 					$link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
-					echo "<tr><td>$no</td><td>$link</td><td>$woDesc</td><td>$woType</td><td>$woStatus</td></tr>";
+					echo "<tr><td>$no</td><td>$link</td><td>$woDesc</td><td>$woType</td><td>$woStatus</td><td>$woDate</td><td>$woFailureDesc</td></tr>";
 					$no++;
 				}
 			?>

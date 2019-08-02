@@ -122,7 +122,7 @@ class Msr extends CI_Controller {
         $_POST['procure_processing_time'] = $msr->procure_processing_time;
         $_POST['blanket'] = $msr->blanket;
         $_POST['master_list'] = $msr->master_list;
-        $_POST['cancellation_attachment'] = $msr->cancellation_attachment;
+        $_POST['cancellation_attachment'] = $msr->attachment_cancel;
         $_POST['deskripsi'] = $msr->deskripsi;
 
         $creator = user($msr->create_by);

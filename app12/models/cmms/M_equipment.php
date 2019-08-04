@@ -163,4 +163,12 @@ class M_equipment extends CI_Model {
     inner join F48310 c on c.RMRSCN = a.WTAN8 where a.WTDOCO = '$wo_no'";
     return $this->db->query($sql)->result();
   }
+  public function search_for_wr($q='')
+  {
+    $a = [];
+    for ($i=1; $i < 10; $i++) { 
+      $a[] = ['EQ_NO'=>'1900000'.$i, 'EQ_DESC'=>'Desc of Eq 1900000'.$i, 'EQ_CLASS'=>'EQ Clas Of 1900000'.$i, 'EQ_TYPE'=>'EQ TYPE Of 1900000'.$i];
+    }
+    return $a;
+  }
 }

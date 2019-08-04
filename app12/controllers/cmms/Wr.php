@@ -2,7 +2,13 @@
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Wr extends CI_Controller {
-
+  /*Note : Rule Work Order Approval Status:
+  Status 01 WO Created by User
+  Status 05 WO approval by supervisor
+  Status 10, 20, 30, 40, 50, 60, review by Maintenance Planner
+  Status 70, 80, update by PIC
+  Status 90 review by supervisor
+  */
   protected $view = 'cmms/wr';
   protected $menu;
 
@@ -10,9 +16,12 @@ class Wr extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
+    $this->load->model('cmms/M_work_request', 'wr');
+    $this->load->model('cmms/M_wo_type', 'wo_type');
+    $this->load->model('cmms/M_failure_description', 'failure');
     // $this->load->model('cmms/M_equipment','mod');
-    // $this->load->model('cmms/M_equipment_picture','picture');
-
+    $this->load->model('cmms/M_equipment_picture','picture');
+    $this->load->helper(array('permission'));
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
     $this->menu = array();
@@ -24,25 +33,129 @@ class Wr extends CI_Controller {
     }
   }
 
+  
+
+  public function index()
+  {
+    $thead = cmms_settings('wr_list')->get()->result();
+    $data['menu'] = $this->menu;
+    $data['thead'] = $thead;
+    $data['title'] = 'Work Request Tracking - CMMS16';
+    $this->template->display($this->view .'/index', $data);
+  }
+
+  public function ajax_list()
+  {
+    $list = $this->wr->dt_get_datatables();
+    /*echo "string";
+    print_r($list);
+    exit();*/
+    $data = array();
+    $no = $_POST['start'];
+    foreach ($list as $rows) {
+      $no++;
+      $row = array();
+      $row[] = $no;
+      // $row[] = "$detailLink";
+      foreach (cmms_settings('wr_list')->get()->result() as $key => $value) {
+        $field = $value->desc1;
+        if($field == 'req_finish_date')
+        {
+          $txt = dateToIndo($rows->$field);
+        }
+        else
+        {
+          $txt = $rows->$field;
+        }
+        if($field == 'wr_no')
+        {
+          $txt = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."' class='btn btn-info btn-sm'>$txt</a>";
+        }
+        $row[] = $txt;
+      }
+      
+      $data[] = $row;
+    }
+    // print_r($data);
+    $output = array(
+            'draw' => $_POST['draw'],
+            'recordsTotal' => $this->wr->dt_count_all(),
+            'recordsFiltered' => $this->wr->dt_count_filtered(),
+            'data' => $data,
+        );
+    echo json_encode($output);
+  }
+
   public function create($FAAAID='')
   {
+    if(!can_create_msr())
+    {
+      $this->session->set_flashdata('message', array(
+          'message' => "You dont have permission to create this WR",
+          'type' => 'danger'
+      ));
+      redirect(base_url('home'));
+    }
     $data['menu'] = $this->menu;
     $data['title'] = 'Work Request Create/Edit Form - CMMS10';
     $data['view'] = $this->view;
     $data['optWoType'] = $this->optWoType();
-    $data['optFailureDescription'] = $this->optFailureDescription();
     $data['optPriority'] = $this->optPriority();
     $this->template->display($this->view .'/create', $data);
   }
+  public function store()
+  {
+    // print_r($this->input->post());
+    if($_FILES['photo']['tmp_name'])
+    {
+      $config['upload_path']  = './upload/wr/';
+      if (!is_dir($config['upload_path'])) {
+          mkdir($config['upload_path'],0755,TRUE);
+      }
+      $config['allowed_types'] = 'jpg|jpeg|png|JPEG|PNG|JPG';
+      $config['encrypt_name']= true;
+      $config['max_size']      = '2000';
+
+      $this->load->library('upload', $config);
+      if ( ! $this->upload->do_upload('photo'))
+      {
+        $msg = $this->upload->display_errors('', '');
+        $status = false;
+        echo json_encode(['status'=>$status, 'msg'=>$msg]);
+        exit;
+      }
+      else
+      {
+        $data_foto = $this->upload->data();
+        $file_name =  $data_foto['file_name'];
+
+        $data = $this->input->post();
+        $data['photo'] = $file_name;
+
+        $store = $this->wr->store($data);
+
+        if($store)
+        {
+          echo json_encode(['status'=>true,'msg'=>'WR Has Been Created']);
+        }
+        else
+        {
+          echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+        }
+      }
+    }
+    else
+    {
+        echo json_encode(['status'=>false,'msg'=>'Image is Required']);
+    }
+  }
   public function optWoType()
   {
+    $wotype = $this->wo_type->all();
     $s = "<select name='wo_type_id' id='wo_type_id' class='form-control'>";
-    $s .= "</select>";
-    return $s;
-  }
-  public function optFailureDescription()
-  {
-    $s = "<select name='failure_description' id='failure_description' class='form-control'>";
+    foreach ($wotype as $r) {
+      $s .= "<option value='$r->id'>$r->code_alpha - $r->notation</option>";
+    }
     $s .= "</select>";
     return $s;
   }
@@ -64,5 +177,44 @@ class Wr extends CI_Controller {
     }
     $s .= "</select>";
     return $s;
+  }
+  public function search_for_wr($value='')
+  {
+    $q = $this->input->post('q');
+    
+    $a = [];
+    for ($i=1; $i < 10; $i++) { 
+      $a[] = ['EQ_NO'=>'1900000'.$i, 'EQ_DESC'=>'Desc of Eq 1900000'.$i, 'EQ_CLASS'=>'EQ Clas Of 1900000'.$i, 'EQ_TYPE'=>'EQ TYPE Of 1900000'.$i, 'EQ_LOCATION'=>'Location Of 1900000'.$i];
+    }
+    $data['results'] = $a;
+    $this->load->view('cmms/equipment/search_for_wr',$data);
+  }
+  public function opt_ajax_failure_desc()
+  {
+    $p = $this->input->post();
+    $s = "";
+    $failures = $this->failure->all();
+    foreach ($failures as $failure) {
+      $s .= "<option value='$failure->id'>$failure->nama</option>";
+    }
+    echo $s;
+  }
+  public function generate_approval($wr_no='')
+  {
+    /*user create*/
+    // $user = user();
+    /*t_jabatan*/
+    $generate_approval = $this->wr->generate_approval($wr_no);
+    /*cek di m_user*/
+    /*$msr_company = trim($msr->id_company);
+    $q = "select * from m_user where ID_USER  = $s->user_id and COMPANY like '%$msr_company%'";
+    if($this->db->query($q)->num_rows() > 0)
+    {
+
+    }
+    else
+    {
+      $s = $this->db->where(['first'=>1])->get('t_jabatan')->row();
+    }*/
   }
 }

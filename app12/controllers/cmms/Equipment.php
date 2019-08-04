@@ -148,4 +148,16 @@ class Equipment extends CI_Controller {
     $data['results'] = $this->mod->task_instruction($this->input->post('task_instruction'));
     $this->load->view($this->view.'/task_instruction_pm',$data);
   }
+  public function search_for_wr($value='')
+  {
+    $q = $this->input->post('q');
+    
+    // $results = $this->mod->search_for_wr($q);
+    $a = [];
+    for ($i=1; $i < 10; $i++) { 
+      $a[] = ['EQ_NO'=>'1900000'.$i, 'EQ_DESC'=>'Desc of Eq 1900000'.$i, 'EQ_CLASS'=>'EQ Clas Of 1900000'.$i, 'EQ_TYPE'=>'EQ TYPE Of 1900000'.$i];
+    }
+    $data['results'] = $a;
+    $this->load->view($this->view.'/search_for_wr',$data);
+  }
 }

@@ -49,7 +49,7 @@
                           </div>
                           <div class="form-group">
                             <label>Location</label>
-                            <input class="form-control" readonly="" id="location" name="location">
+                            <input class="form-control" readonly="" id="eq_location" name="eq_location">
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -64,7 +64,7 @@
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <?= $optFailureDescription ?>
+                            <select class="form-control" name="failure_desc" id="failure_desc"></select>
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
@@ -72,12 +72,15 @@
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
-                            <input class="form-control" readonly="" id="eq_type" name="eq_type">
+                            <input class="form-control" id="req_finish_date" name="req_finish_date">
                           </div>
                           <div class="form-group">
                             <label>Priority</label>
                             <?= $optPriority ?>
                           </div>
+                        </div>
+                        <div class="col-md-12">
+                          <button class="btn btn-primary" type="button" onclick="creaeteWrClick()">Create</button>
                         </div>
                       </div>
                     </fieldset>
@@ -88,6 +91,43 @@
           </div>
         </div>
       </section>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Search Equipment - CMMS09</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <input class="form-control" name="q" id="q" placeholder="Search EQ Number">
+          </div>
+          <a href="#" class="btn btn-sm btn-info" onclick="searchEquipmentClick()"><i class="fa fa-search"></i> </a>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table class="table table-condensed" id="dt-equipment">
+                <thead>
+                  <tr>
+                    <th>Equipment Number</th>
+                    <th>Equipment Description</th>
+                    <th>Equipment Class</th>
+                    <th>Equipment Type</th>
+                    <th>Select</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-equipment-search">
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -111,11 +151,87 @@
 
       }
     });
+    $('#req_finish_date').datepicker({
+      dateFormat:'yy-mm-dd',
+    });
     //hide next and previous button
     $('a[href="#next"]').hide();
     $('a[href="#previous"]').hide();
   });
   function browseEquipmentPoup() {
-    alert('Underconstruction')
+    $("#myModal").modal('show')
+  }
+  function searchEquipmentClick() {
+    var q = $("#q").val()
+    $.ajax({
+      type:'post',
+      data:{q:q},
+      url:"<?=base_url('cmms/wr/search_for_wr')?>",
+      success:function(e){
+        $("#tbody-equipment-search").html(e)
+      }
+    })
+  }
+  function selectEquipmentForWr(eq_no) {
+    $("#eq_number").val(eq_no)
+    $("#eq_desc").val($("#eqdesc-"+eq_no).text())
+    $("#eq_type").val($("#eqtype-"+eq_no).text())
+    $("#eq_class").val($("#eqclass-"+eq_no).text())
+    $("#eq_location").val($("#eqlocation-"+eq_no).text())
+    $.ajax({
+      type:'post',
+      data:{eq_number:eq_no},
+      url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
+      success:function(q){
+        $("#failure_desc").html(q)
+      }
+    })
+    $("#myModal").modal('hide')
+  }
+  function creaeteWrClick(argument) {
+    var eq_number = $("#eq_number").val()
+    if(eq_number)
+    {
+      var req_finish_date = $("#req_finish_date").val()
+      if(!req_finish_date)
+      {
+        swal('Info','Requested Finish Date is Required','warning')
+        return false
+      }
+
+      var form = $("#frm-bled")[0];
+      var data = new FormData(form);
+      $.ajax({
+          type: "POST",
+          enctype: 'multipart/form-data',
+          url: "<?=base_url('cmms/wr/store')?>",
+          data: data,
+          processData: false,
+          contentType: false,
+          cache: false,
+          timeout: 600000,
+          beforeSend:function(){
+            start($('#icon-tabs'));
+          },
+          success: function (e) {
+            var r = eval("("+e+")");
+            if(r.status){
+              swal('Success',r.msg,'success')
+              window.open("<?=base_url('home')?>","_self")
+            }else{
+              swal('<?= __('warning') ?>',r.msg,'warning')
+            }
+            stop($('#icon-tabs'));
+          },
+          error: function (e) {
+            swal('<?= __('warning') ?>','Something went wrong!','warning')
+            stop($('#icon-tabs'));
+          }
+      });
+    }
+    else
+    {
+      swal('Info','Please Select Equipment First','warning')
+    }
   }
 </script>

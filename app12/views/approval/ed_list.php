@@ -41,6 +41,8 @@
                           <tbody>
                             <?php
                               $no = 1;
+                              // echo json_encode($data->result());
+                              // die();
                               foreach ($data->result() as $ed) :
                                 $log = $this->approval_lib->getLog(['data_id'=>$ed->msr_no,'module_kode'=>'msr_spa']);
                                 if($log->num_rows() > 0)

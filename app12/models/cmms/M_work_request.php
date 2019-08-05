@@ -7,6 +7,14 @@ class M_work_request extends CI_Model {
 
   public function __construct() {
     parent::__construct();
+    $user = user();
+    $this->user = $user;
+    if (isset($user->ROLES)) {
+        $roles = explode(",", $user->ROLES);
+    } else {
+        $roles = array();
+    }
+    $this->roles      = array_values(array_filter($roles));
   }
   public function _get_datatables_query($value='')
   {
@@ -66,13 +74,20 @@ class M_work_request extends CI_Model {
     {
       $sql .= " and status like '%".$this->input->post('status')."%'";
     }
-    
+    if(in_array(user_primary,$this->roles))
+    {
+      $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
+    }
+    if(in_array(user_manager, $this->roles))
+    {
+      $sql .= " and cmms_wr.wr_no in (select wr_no from cmms_wr_approval where sequence = 2 and status = 0 and user_assign_id = {$this->user->ID_USER})";
+    }
     $sql .= " order by cmms_wr.id asc";
     if($_POST['length'] != -1)
     {
       $sql .= " LIMIT ".$_POST['start'].",".$_POST['length'];
     }
-    // echo $sql;
+    
     $query = $this->db->query($sql);
     return $query->result();
   }
@@ -129,26 +144,14 @@ class M_work_request extends CI_Model {
     $wr = $this->findByWrNo($wr_no);
     $t_jabatan = $this->db->where(['user_id'=>$wr->created_by])->get('t_jabatan')->row();
     $supervisor = $this->db->where(['id'=>$t_jabatan->parent_id])->get('t_jabatan')->row();
-    // echo "<pre>SUPERVISOR<br>";
-    // print_r($supervisor);
     $maintenance_planner = $this->db->where(['id'=>$supervisor->parent_id])->get('t_jabatan')->row();
-    // echo "MAINTENANCE PLANNER<br>";
-    // print_r($maintenance_planner);
-    // $this->db->trans_begin();
     $data[] = ['wr_no'=>$wr_no, 'user_assign_id'=>$wr->created_by,'sequence'=>1,'status'=>1, 'created_at'=>date("Y-m-d H:i:s"), 'created_by'=> $this->session->userdata('ID_USER')];
     $data[] = ['wr_no'=>$wr_no, 'user_assign_id'=>$supervisor->user_id,'sequence'=>2,'status'=>0, 'created_at'=>date("Y-m-d H:i:s"), 'created_by'=> $this->session->userdata('ID_USER')];
     $data[] = ['wr_no'=>$wr_no, 'user_assign_id'=>$maintenance_planner->user_id,'sequence'=>3,'status'=>0, 'created_at'=>date("Y-m-d H:i:s"), 'created_by'=> $this->session->userdata('ID_USER')];
     $this->db->insert_batch($this->table_approval,$data);
-
-    /*if($this->db->trans_status() === true)
-    {
-      $this->db->trans_commit();
-      return true;
-    }
-    else
-    {
-      $this->db->trans_rollback();
-      return false;
-    }*/
+  }
+  public function can_approve_user_manager($wr_no='')
+  {
+    return $this->db->where('wr_no',$wr_no)->where("wr_no in (select wr_no from cmms_wr_approval where sequence = 2 and status = 0 and user_assign_id = {$this->user->ID_USER})")->get($this->table);
   }
 }

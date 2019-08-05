@@ -31,6 +31,14 @@ class Wr extends CI_Controller {
       $this->menu[$v->PARENT][$v->ID_MENU]['DESKRIPSI_IND'] = $v->DESKRIPSI_IND;
       $this->menu[$v->PARENT][$v->ID_MENU]['DESKRIPSI_ENG'] = $v->DESKRIPSI_ENG;
     }
+    $user = user();
+    $this->user = $user;
+    if (isset($user->ROLES)) {
+        $roles = explode(",", $user->ROLES);
+    } else {
+        $roles = array();
+    }
+    $this->roles      = array_values(array_filter($roles));
   }
 
   
@@ -47,16 +55,12 @@ class Wr extends CI_Controller {
   public function ajax_list()
   {
     $list = $this->wr->dt_get_datatables();
-    /*echo "string";
-    print_r($list);
-    exit();*/
     $data = array();
     $no = $_POST['start'];
     foreach ($list as $rows) {
       $no++;
       $row = array();
       $row[] = $no;
-      // $row[] = "$detailLink";
       foreach (cmms_settings('wr_list')->get()->result() as $key => $value) {
         $field = $value->desc1;
         if($field == 'req_finish_date')
@@ -103,6 +107,21 @@ class Wr extends CI_Controller {
     $data['optPriority'] = $this->optPriority();
     $this->template->display($this->view .'/create', $data);
   }
+  public function show($wr_no='')
+  {
+    $can_approve = $this->can_approve($wr_no);
+    $wr = $this->wr->findByWrNo($wr_no);
+
+    $data['menu'] = $this->menu;
+    $data['title'] = 'Work Request Approval- CMMS12';
+    $data['view'] = $this->view;
+    $data['approval'] = $can_approve;
+    $data['row'] = $wr;
+    $data['optWoType'] = $this->optWoType($wr->wo_type_id);
+    $data['optPriority'] = $this->optPriority($wr->priority);
+
+    $this->template->display($this->view .'/edit', $data);
+  }
   public function store()
   {
     // print_r($this->input->post());
@@ -147,6 +166,47 @@ class Wr extends CI_Controller {
     else
     {
         echo json_encode(['status'=>false,'msg'=>'Image is Required']);
+    }
+  }
+  public function update_and_approve($value='')
+  {
+    $data = $this->input->post();
+    /*echo "<pre>";
+    print_r($p);*/
+    if($_FILES['photo']['tmp_name'])
+    {
+      $config['upload_path']  = './upload/wr/';
+      if (!is_dir($config['upload_path'])) {
+          mkdir($config['upload_path'],0755,TRUE);
+      }
+      $config['allowed_types'] = 'jpg|jpeg|png|JPEG|PNG|JPG';
+      $config['encrypt_name']= true;
+      $config['max_size']      = '2000';
+
+      $this->load->library('upload', $config);
+      if ( ! $this->upload->do_upload('photo'))
+      {
+        $msg = $this->upload->display_errors('', '');
+        $status = false;
+        echo json_encode(['status'=>$status, 'msg'=>$msg]);
+        exit;
+      }
+      else
+      {
+        $data_foto = $this->upload->data();
+        $file_name =  $data_foto['file_name'];
+        $data['photo'] = $file_name;
+      }
+    }
+    unset($data['status'],$data['id'],$data['description']);
+    $update = $this->wr->update($data);
+    if($update)
+    {
+      echo json_encode(['status'=>true,'msg'=>'WR Has Been Created']);
+    }
+    else
+    {
+      echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
     }
   }
   public function optWoType()
@@ -195,26 +255,30 @@ class Wr extends CI_Controller {
     $s = "";
     $failures = $this->failure->all();
     foreach ($failures as $failure) {
-      $s .= "<option value='$failure->id'>$failure->nama</option>";
+      $selected = '';
+      if(isset($p['failure_desc']))
+      {
+        $selected = $failure->id == $p['failure_desc'] ? "selected='selected'":"";
+      }
+      $s .= "<option $selected value='$failure->id'>$failure->nama</option>";
     }
     echo $s;
   }
   public function generate_approval($wr_no='')
   {
-    /*user create*/
-    // $user = user();
-    /*t_jabatan*/
     $generate_approval = $this->wr->generate_approval($wr_no);
-    /*cek di m_user*/
-    /*$msr_company = trim($msr->id_company);
-    $q = "select * from m_user where ID_USER  = $s->user_id and COMPANY like '%$msr_company%'";
-    if($this->db->query($q)->num_rows() > 0)
+  }
+  public function can_approve($wr_no='')
+  {
+    $result = false;
+    if(in_array(user_manager, $this->roles))
     {
-
+      $can_approve = $this->wr->can_approve_user_manager($wr_no)->row();
+      if($can_approve)
+      {
+        $result = $can_approve;
+      }
     }
-    else
-    {
-      $s = $this->db->where(['first'=>1])->get('t_jabatan')->row();
-    }*/
+    return $result;
   }
 }

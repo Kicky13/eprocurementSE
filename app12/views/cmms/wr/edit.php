@@ -32,24 +32,23 @@
                           </div>
                           <div class="form-group">
                             <label>Equipment Number</label>
-                            <input class="form-control" readonly="" id="eq_number" name="eq_number">
-                            <small><a href="#" onclick="browseEquipmentPoup()">Click Here to Browse</a></small>
+                            <input class="form-control" readonly="" id="eq_number" name="eq_number" value="<?=$row->eq_number?>">
                           </div>
                           <div class="form-group">
                             <label>Equipment Description</label>
-                            <input class="form-control" readonly="" id="eq_desc" name="eq_desc">
+                            <input class="form-control" readonly="" id="eq_desc" name="eq_desc" value="<?=$row->eq_desc?>">
                           </div>
                           <div class="form-group">
                             <label>Equipment Class</label>
-                            <input class="form-control" readonly="" id="eq_class" name="eq_class">
+                            <input class="form-control" readonly="" id="eq_class" name="eq_class" value="<?=$row->eq_class?>">
                           </div>
                           <div class="form-group">
                             <label>Equipment Type</label>
-                            <input class="form-control" readonly="" id="eq_type" name="eq_type">
+                            <input class="form-control" readonly="" id="eq_type" name="eq_type" value="<?=$row->eq_type?>">
                           </div>
                           <div class="form-group">
                             <label>Location</label>
-                            <input class="form-control" readonly="" id="eq_location" name="eq_location">
+                            <input class="form-control" readonly="" id="eq_location" name="eq_location" value="<?=$row->eq_location?>">
                           </div>
                         </div>
                         <div class="col-md-6">
@@ -59,20 +58,19 @@
                           </div>
                           <div class="form-group">
                             <label>WR Description</label>
-                            <input class="form-control" id="wr_description" name="wr_description">
-                            <small>&nbsp;</small>
+                            <input class="form-control" id="wr_description" name="wr_description" value="<?=$row->wr_description?>">
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
                             <select class="form-control" name="failure_desc" id="failure_desc"></select>
                           </div>
                           <div class="form-group">
-                            <label>Photo</label>
+                            <label><a href="<?=base_url('upload/cmms/wr/'.$row->photo)?>" target="_blank" title="Click to View">Photo (Click to View) </a></label>
                             <input class="form-control" type="file" id="photo" name="photo">
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
-                            <input class="form-control" id="req_finish_date" name="req_finish_date">
+                            <input class="form-control" id="req_finish_date" name="req_finish_date" value="<?=$row->req_finish_date?>">
                           </div>
                           <div class="form-group">
                             <label>Priority</label>
@@ -82,18 +80,20 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Additional Description</label>
-                            <input class="form-control" name="additional_description" id="additional_description">
+                            <input class="form-control" name="additional_description" id="additional_description" value="<?=$row->additional_description?>">
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <textarea class="form-control" name="hazard" id="hazard" rows="5"></textarea>
+                            <textarea class="form-control" name="hazard" id="hazard" rows="5"><?=$row->hazard?></textarea>
                           </div>
                         </div>
+                        <?php if($approval): ?>
                         <div class="col-md-12">
-                          <button class="btn btn-primary" type="button" onclick="creaeteWrClick()">Create</button>
+                          <button class="btn btn-primary" type="button" onclick="updateAndApprove()">Approve/Reject</button>
                         </div>
+                        <?php endif;?>
                       </div>
                     </fieldset>
                 	</form>
@@ -107,38 +107,31 @@
   </div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Search Equipment - CMMS09</h4>
+        <h4 class="modal-title" id="myModalLabel">Approval</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <input class="form-control" name="q" id="q" placeholder="Search EQ Number">
+        <form class="form-horizontal" id="frm-approval" method="post">
+          <input type="hidden" name="wr_no" value="<?=$row->wr_no?>">
+          <input type="hidden" name="id" value="<?=$approval->id?>">
+          <div class="form-group">
+            <label>Approval</label>
+            <select class="form-control" name="status" id="status">
+              <option value="1">Approve</option>
+              <option value="2">Reject</option>
+            </select>
           </div>
-          <a href="#" class="btn btn-sm btn-info" onclick="searchEquipmentClick()"><i class="fa fa-search"></i> </a>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-condensed" id="dt-equipment">
-                <thead>
-                  <tr>
-                    <th>Equipment Number</th>
-                    <th>Equipment Description</th>
-                    <th>Equipment Class</th>
-                    <th>Equipment Type</th>
-                    <th>Select</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody-equipment-search">
-                  
-                </tbody>
-              </table>
-            </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" name="description" id="description"></textarea>
           </div>
-        </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button class="btn btn-primary" type="button" onclick="submitApproval()">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -169,81 +162,72 @@
     //hide next and previous button
     $('a[href="#next"]').hide();
     $('a[href="#previous"]').hide();
+    function selectEquipmentForWr() {
+      var eq_no = $("#eq_number").val()
+      $.ajax({
+        type:'post',
+        data:{eq_number:eq_no,failure_desc:"<?= $row->failure_desc ?>"},
+        url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
+        success:function(q){
+          $("#failure_desc").html(q)
+        }
+      })
+    }
+    selectEquipmentForWr()
   });
-  function browseEquipmentPoup() {
+  function updateAndApprove() {
     $("#myModal").modal('show')
   }
-  function searchEquipmentClick() {
-    var q = $("#q").val()
-    $.ajax({
-      type:'post',
-      data:{q:q},
-      url:"<?=base_url('cmms/wr/search_for_wr')?>",
-      success:function(e){
-        $("#tbody-equipment-search").html(e)
-      }
-    })
-  }
-  function selectEquipmentForWr(eq_no) {
-    $("#eq_number").val(eq_no)
-    $("#eq_desc").val($("#eqdesc-"+eq_no).text())
-    $("#eq_type").val($("#eqtype-"+eq_no).text())
-    $("#eq_class").val($("#eqclass-"+eq_no).text())
-    $("#eq_location").val($("#eqlocation-"+eq_no).text())
-    $.ajax({
-      type:'post',
-      data:{eq_number:eq_no},
-      url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
-      success:function(q){
-        $("#failure_desc").html(q)
-      }
-    })
-    $("#myModal").modal('hide')
-  }
-  function creaeteWrClick(argument) {
-    var eq_number = $("#eq_number").val()
-    if(eq_number)
+  function submitApproval() {
+    var status = $("#status").val()
+    if(parseInt(status) == 2)
     {
-      var req_finish_date = $("#req_finish_date").val()
-      if(!req_finish_date)
+      var description = $("#description").val()
+      if(!description)
       {
-        swal('Info','Requested Finish Date is Required','warning')
+        swal('Reject','Description is Required','warning')
         return false
       }
-
-      var form = $("#frm-bled")[0];
-      var data = new FormData(form);
-      $.ajax({
-          type: "POST",
-          enctype: 'multipart/form-data',
-          url: "<?=base_url('cmms/wr/store')?>",
-          data: data,
-          processData: false,
-          contentType: false,
-          cache: false,
-          timeout: 600000,
-          beforeSend:function(){
-            start($('#icon-tabs'));
-          },
-          success: function (e) {
-            var r = eval("("+e+")");
-            if(r.status){
-              swal('Success',r.msg,'success')
-              window.open("<?=base_url('home')?>","_self")
-            }else{
-              swal('<?= __('warning') ?>',r.msg,'warning')
-            }
-            stop($('#icon-tabs'));
-          },
-          error: function (e) {
-            swal('<?= __('warning') ?>','Something went wrong!','warning')
-            stop($('#icon-tabs'));
-          }
-      });
     }
-    else
+    var req_finish_date = $("#req_finish_date").val()
+    if(!req_finish_date)
     {
-      swal('Info','Please Select Equipment First','warning')
+      swal('Info','Requested Finish Date is Required','warning')
+      return false
     }
+
+    var form = $("#frm-bled")[0];
+    var data = new FormData(form);
+    var poData = jQuery(document.forms['frm-approval']).serializeArray();
+    for (var i=0; i<poData.length; i++)
+      data.append(poData[i].name, poData[i].value);
+
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "<?=base_url('cmms/wr/update_and_approve')?>",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        beforeSend:function(){
+          start($('#icon-tabs'));
+        },
+        success: function (e) {
+          var r = eval("("+e+")");
+          if(r.status){
+            swal('Success',r.msg,'success')
+            window.open("<?=base_url('home')?>","_self")
+          }else{
+            swal('<?= __('warning') ?>',r.msg,'warning')
+          }
+          stop($('#icon-tabs'));
+        },
+        error: function (e) {
+          swal('<?= __('warning') ?>','Something went wrong!','warning')
+          stop($('#icon-tabs'));
+        }
+    });
   }
 </script>

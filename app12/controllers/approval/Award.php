@@ -369,6 +369,8 @@ class Award extends CI_Controller {
         if($this->input->post('id'))
         {
             $data = $this->input->post();
+            echo json_encode($data);
+            die();
             $edid = $data['id'];
             $this->db->where(['id'=>$data['id']]);
             unset($data['id']);

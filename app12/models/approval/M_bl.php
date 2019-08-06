@@ -268,7 +268,7 @@ class M_bl extends CI_Model {
   {
     $this->db->select([
         "{$this->tbl}.*",
-        "{$this->tbmsr}.*",
+        "{$this->tbeq}.*",
         "COALESCE({$this->tbl}.title, {$this->tbeq}.subject) title",
         "{$this->tbeq}.incoterm",
         "t_bid_head.duration",

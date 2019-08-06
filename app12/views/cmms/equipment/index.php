@@ -26,13 +26,14 @@
                       <div class="panel panel-default collapse" id="filter-view" style="margin-top: 10px">
                         <div class="panel-body">
                           <div class="form-group row">
-                            <label class="col-md-3">Allowance WR</label>
+                            <label class="col-md-3">Allow Work Request</label>
                             <div class="col-md-6">
-                              <select class="form-control" name="ALLOWANCE" id="filter_ALLOWANCE">
+							<input type="checkbox" value="1" name="ALLOWANCE" id="filter_ALLOWANCE" checked="true">
+                              <!--<select class="form-control" name="ALLOWANCE" id="filter_ALLOWANCE">
                                 <option value="0">--Select One--</option>
                                 <option value="1">YES</option>
                                 <option value="2">NO</option>
-                              </select>
+                              </select>-->
                             </div>
                           </div>
                           <?php 
@@ -110,7 +111,12 @@
           data.PARENTS = $('#filter_PARENTS').val();
           data.EQCLAS = $('#filter_EQCLAS').val();
           data.EQTYPE = $('#filter_EQTYPE').val();
-          data.ALLOWANCE = $('#filter_ALLOWANCE').val();
+		  var filterallowance = 2;
+		  if ($('#filter_ALLOWANCE').is(":checked"))
+			{
+			  var filterallowance = 1;
+			}
+          data.ALLOWANCE = filterallowance;
 				}
 			},
 	 

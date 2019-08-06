@@ -191,7 +191,7 @@
             /*swal('Done',data,'success')
             stop($('#modal-'+frm));
             $('#modal-'+frm).modal('hide');*/
-            //window.open("<?//=base_url('home')?>//","_self")
+            window.open("<?=base_url('home')?>","_self")
           },
           error: function (e) {
             swal('<?= __('warning') ?>','Fail, Try Again','warning')

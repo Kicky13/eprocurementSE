@@ -358,6 +358,23 @@ class Approval extends CI_Controller
                 'message' => __('success_reject'),
                 'type' => 'success'
             ));
+            $img1 = '';
+            $img2 = '';
+            $query = $this->db->query('SELECT msr.msr_no, u.EMAIL, n.TITLE, n.OPEN_VALUE, n.CLOSE_VALUE FROM t_msr msr
+            JOIN m_user u ON u.ID_USER = msr.create_by
+            JOIN m_notic n ON n.ID = 64
+            WHERE msr.msr_no = "' . $this->input->post('data_id') . '"');
+            $data_replace = $query->result();
+            $str = str_replace('no_msr', $this->input->post('data_id'), $data_replace[0]->OPEN_VALUE);
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->TITLE,
+                'open' => $str,
+                'close' => $data_replace[0]->CLOSE_VALUE
+            );
+            $data['dest'][] = $data_replace[0]->EMAIL;
+            $this->sendMail($data);
             echo json_encode(['msg' => 'MSR Successfully Rejected']);
         } else {
             echo json_encode(['msg' => 'Something Wrong, Please Try Again']);

@@ -2512,7 +2512,7 @@ class Msr extends CI_Controller {
         // $field['attachment'] = $data['file_name'];
         $this->db->where('msr_no', $msr_no)->update('t_msr', [
           'status' => 2, 
-          'cancellation_attachment' => $data['file_name'],
+          'attachment_cancel' => $data['file_name'],
           'deskripsi' => $this->input->post('deskripsi')
         ]);
       }

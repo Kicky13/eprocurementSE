@@ -173,7 +173,7 @@
                 if (response.data.arf) {
                     var arf = response.data.arf;
                     $.each (arf.item, function(i, item) {
-                        item.total_price = item.unit_price;
+                        item.total_price = item.unit_price * item.qty;
                         arf_item[i] = item;
                         console.log(item)
                     });

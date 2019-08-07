@@ -848,6 +848,17 @@ class Arf extends CI_Controller
 
     public function calculate_budget()
     {
+        /*$po_no = $this->input->post('po_no');
+        $pajak = 0.1;
+        if($po_no)
+        {
+            $po = $this->db->where('po_no',$po_no)->get('t_purchase_order')->row();
+            $vat = $po->master_list == 1 ? false : true;
+            $pajak = $vat == true ? 0.1 : 0;
+        }*/
+        $vat_percent = $this->input->post('vat_percent');
+        $pajak = $vat_percent == 10 ? 0.1 : 0;
+
         $id_currency = $this->input->post('id_currency');
         $budget_item = $this->input->post('budget_item');
         $result = array();
@@ -868,7 +879,7 @@ class Arf extends CI_Controller
                         ->row();
                     if ($r_budget) {
                         $booking_amount = exchange_rate_by_id($id_currency, $r_budget->id_currency, $row['booking_amount']);
-                        $booking_amount += (10 / 100 * $booking_amount);
+                        $booking_amount += ($pajak * $booking_amount);
                         $budget = array(
                             'id_currency' => $r_budget->id_currency,
                             'currency' => $r_budget->currency,
@@ -878,7 +889,7 @@ class Arf extends CI_Controller
                         );
                     } else {
                         $booking_amount = exchange_rate_by_id($id_currency, base_currency(), $row['booking_amount']);
-                        $booking_amount += (10 / 100 * $booking_amount);
+                        $booking_amount += ($pajak * $booking_amount);
                         $budget = array(
                             'id_currency' => base_currency(),
                             'currency' => base_currency_code(),

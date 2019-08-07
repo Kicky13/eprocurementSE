@@ -43,6 +43,8 @@ class Equipment extends CI_Controller {
     $data['menu'] = $this->menu;
     $data['title'] = 'Equipment List - CMMS01';
     $data['thead'] = $this->settings('thead');
+    $data['optCriticality'] = $this->optCriticality('filter_CIT');
+    $data['optEqType'] = $this->optEqType('filter_EQTYPE');
     $this->template->display($this->view .'/index', $data);
   }
   public function detail($id='')
@@ -159,5 +161,27 @@ class Equipment extends CI_Controller {
     }
     $data['results'] = $a;
     $this->load->view($this->view.'/search_for_wr',$data);
+  }
+  public function optCriticality($name_id='')
+  {
+    $crt = $this->mod->criticality();
+    $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
+    // $opt .= "<option value=''>--ALL CRITICALLY--</option>";
+    foreach ($crt as $key => $value) {
+      $opt .= "<option value='$value->CRITICALLY'>$value->CRITICALLY</option>";
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optEqType($name_id='')
+  {
+    $crt = $this->mod->eq_type();
+    $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
+    // $opt .= "<option value=''>--ALL TYPE--</option>";
+    foreach ($crt as $key => $value) {
+      $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+    }
+    $opt .= "</select>";
+    return $opt;
   }
 }

@@ -177,4 +177,16 @@ class M_equipment extends CI_Model {
     }
     return $a;
   }
+  public function criticality()
+  {
+    $q = "select concat(trim(drky),concat(' - ',drdl01)) critically from CRPCTL.f0005 where drsy='12' and drrt='C7'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
+  public function eq_type()
+  {
+    $q = "select concat(trim(drky),concat(' - ',drdl01)) EQ_TYPE  from CRPCTL.f0005 where drsy='17' and drrt='PA'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
 }

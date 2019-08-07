@@ -42,7 +42,13 @@
                           <div class="form-group row">
                             <label class="col-md-3"><?=$value?></label>
                             <div class="col-md-6">
+                              <?php if($key == 'CIT'): ?>
+                                <?= $optCriticality ?>
+                              <?php elseif($key == 'EQTYPE'):?>
+                                <?= $optEqType ?>
+                              <?php else:?>
                               <input class="form-control" name="<?= $key ?>" id="filter_<?= $key ?>">
+                              <?php endif;?>
                             </div>
                           </div>
                           <?php } ?>

@@ -168,7 +168,14 @@ class Equipment extends CI_Controller {
     $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
     // $opt .= "<option value=''>--ALL CRITICALLY--</option>";
     foreach ($crt as $key => $value) {
-      $opt .= "<option value='$value->CRITICALLY'>$value->CRITICALLY</option>";
+      if($value->CRITICALLY == ' - .')
+      {
+        $opt .= "<option value=''>ALL CRITICALLY</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->CRITICALLY'>$value->CRITICALLY</option>";
+      }
     }
     $opt .= "</select>";
     return $opt;
@@ -179,7 +186,14 @@ class Equipment extends CI_Controller {
     $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
     // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
-      $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      if($value->EQ_TYPE == ' - .')
+      {
+        $opt .= "<option value=''>ALL TYPE</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
     }
     $opt .= "</select>";
     return $opt;

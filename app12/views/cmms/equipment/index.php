@@ -28,7 +28,7 @@
                           <div class="form-group row">
                             <label class="col-md-3">Allow Work Request</label>
                             <div class="col-md-6">
-							<input type="checkbox" value="1" name="ALLOWANCE" id="filter_ALLOWANCE" checked="true">
+							<input type="checkbox" value="1" name="ALLOWANCE" id="filter_ALLOWANCE">
                               <!--<select class="form-control" name="ALLOWANCE" id="filter_ALLOWANCE">
                                 <option value="0">--Select One--</option>
                                 <option value="1">YES</option>
@@ -111,7 +111,7 @@
           data.PARENTS = $('#filter_PARENTS').val();
           data.EQCLAS = $('#filter_EQCLAS').val();
           data.EQTYPE = $('#filter_EQTYPE').val();
-		  var filterallowance = 2;
+		  var filterallowance = 0;
 		  if ($('#filter_ALLOWANCE').is(":checked"))
 			{
 			  var filterallowance = 1;

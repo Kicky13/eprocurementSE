@@ -196,25 +196,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h4><b>Amendment Process</b></h4>
-                                <div class="form-group row">
-                                    <label class="col-md-3">ARF Received</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->assignment_date, false, true) ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3">Amendment Notification Issued</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->notification_date) ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3">Contractor Response Received</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->responsed_at, false, true) ?>
-                                    </div>
-                                </div>
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -246,6 +227,26 @@
                                     <?php endforeach;?>
                                     </tbody>
                                 </table>
+                                <h4><b>Amendment Process</b></h4>
+                                <div class="form-group row">
+                                    <label class="col-md-3">ARF Received</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->assignment_date, false, true) ?>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3">Amendment Notification Issued</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->notification_date) ?>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3">Contractor Response Received</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->responsed_at, false, true) ?>
+                                    </div>
+                                </div>
+                                
                             </fieldset>
                             <?php endif;?>
                             <?php if(isset($issued)): ?>
@@ -630,12 +631,12 @@
                   &nbsp;
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-md-12">
                   Attach File
                   <input class="form-control" type="file" name="file_cancel_arf" id="file_cancel_arf" required="">
                 </div>
-            </div>
+            </div> -->
         </form>
       </div>
         <div class="modal-footer">

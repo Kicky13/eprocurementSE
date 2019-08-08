@@ -1264,8 +1264,19 @@ class Arf extends CI_Controller
         $this->db->where('id_ref', $id);
         $this->db->delete('t_approval_arf');
 
+        $t_arf_notification = $this->db->where('doc_no', $arf_no)->get('t_arf_notification')->row();
+
         $this->db->where('doc_no', $arf_no);
         $this->db->delete('t_arf_notification');
+
+        $this->db->where('doc_id', $t_arf_notification->id);
+        $this->db->delete('t_arf_notification_detail_revision');
+
+        $t_arf_notification_upload = $this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_upload')->row();
+        @unlink($t_arf_notification_upload->file_path);
+
+        $this->db->where('doc_id', $t_arf_notification->id);
+        $this->db->delete('t_arf_notification_upload');
 
         $this->db->where('doc_id', $id);
         $this->db->delete('t_arf_attachment');
@@ -1282,7 +1293,30 @@ class Arf extends CI_Controller
         $this->db->where('doc_id', $id);
         $this->db->delete('t_arf_detail_revision');
 
-        $config['upload_path'] = './upload/cancel_arf/';
+        $t_arf_response = $this->db->where('doc_no', $arf_no)->get('t_arf_response')->row();
+
+        if($t_arf_response)
+        {
+            $this->db->where('doc_id', $t_arf_response->id);
+            $this->db->delete('t_arf_sop');
+
+            $this->db->where('arf_response_id', $t_arf_response->id);
+            $this->db->delete('t_arf_nego');
+
+            $this->db->where('arf_response_id', $t_arf_response->id);
+            $this->db->delete('t_arf_nego_detail');
+
+            $this->db->where('doc_no', $arf_no);
+            $this->db->delete('t_arf_recommendation_preparation');
+
+            $this->db->where('doc_no', $arf_no);
+            $this->db->delete('t_arf_response');
+
+            $this->db->where('doc_no', $arf_no);
+            $this->db->delete('t_arf_response_detail');
+        }
+
+        /*$config['upload_path'] = './upload/cancel_arf/';
         if (!is_dir($config['upload_path'])) {
             mkdir($config['upload_path'], 0755, TRUE);
         }
@@ -1296,7 +1330,7 @@ class Arf extends CI_Controller
             $data = $this->upload->data();
             $field['attachment'] = $data['file_name'];
             $this->db->where('id', $id)->update('t_arf_trash', $field);
-        }
+        }*/
 
         if ($this->db->trans_status() === TRUE) {
             $this->db->trans_commit();

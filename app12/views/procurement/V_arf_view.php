@@ -431,7 +431,7 @@
                                                 $roles      = explode(",", $this->session->userdata('ROLES'));
                                                 $roles      = array_values(array_filter($roles));
 
-                                                $disabled = '';
+                                                $disabled = 'disabled';
                                                 if($this->input->get('vmod'))
                                                 {
                                                     $disabled = 'disabled';

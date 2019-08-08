@@ -630,12 +630,12 @@
                   &nbsp;
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-md-12">
                   Attach File
                   <input class="form-control" type="file" name="file_cancel_arf" id="file_cancel_arf" required="">
                 </div>
-            </div>
+            </div> -->
         </form>
       </div>
         <div class="modal-footer">

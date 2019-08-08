@@ -610,7 +610,8 @@
             dataType : 'json',
             data : {
                 id_currency : $('#id_currency').val(),
-                budget_item : budget_item
+                budget_item : budget_item,
+                vat_percent : vat_percent,
             },
             success : function(response) {
                 budget_item = response.data.budget_item;

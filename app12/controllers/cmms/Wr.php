@@ -110,6 +110,8 @@ class Wr extends CI_Controller {
   public function show($wr_no='')
   {
     $can_approve = $this->can_approve($wr_no);
+    /*print_r($can_approve);
+    exit();*/
     $wr = $this->wr->findByWrNo($wr_no);
 
     $data['menu'] = $this->menu;
@@ -172,7 +174,8 @@ class Wr extends CI_Controller {
   {
     $data = $this->input->post();
     /*echo "<pre>";
-    print_r($p);*/
+    print_r($data);
+    exit();*/
     if($_FILES['photo']['tmp_name'])
     {
       $config['upload_path']  = './upload/wr/';
@@ -198,23 +201,23 @@ class Wr extends CI_Controller {
         $data['photo'] = $file_name;
       }
     }
-    unset($data['status'],$data['id'],$data['description']);
-    $update = $this->wr->update($data);
+    $update = $this->wr->update_and_approve($data);
     if($update)
     {
       echo json_encode(['status'=>true,'msg'=>'WR Has Been Created']);
     }
     else
     {
-      echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+      echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
     }
   }
-  public function optWoType()
+  public function optWoType($wo_type_selected = '')
   {
     $wotype = $this->wo_type->all();
     $s = "<select name='wo_type_id' id='wo_type_id' class='form-control'>";
     foreach ($wotype as $r) {
-      $s .= "<option value='$r->id'>$r->code_alpha - $r->notation</option>";
+      $selected = $wo_type_selected == $r->id ? "selected=''":"";
+      $s .= "<option $selected value='$r->id'>$r->code_alpha - $r->notation</option>";
     }
     $s .= "</select>";
     return $s;
@@ -232,8 +235,8 @@ class Wr extends CI_Controller {
     ];
     $s = "<select name='priority' id='priority' class='form-control'>";
     foreach ($list as $key => $value) {
-      // $selected = $row == $key ? "selected=''":"";
-      $s .= "<option value='$key'>$value</option>";
+      $selected = $row == $key ? "selected=''":"";
+      $s .= "<option $selected value='$key'>$value</option>";
     }
     $s .= "</select>";
     return $s;

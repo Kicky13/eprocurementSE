@@ -65,7 +65,7 @@
                             <select class="form-control" name="failure_desc" id="failure_desc"></select>
                           </div>
                           <div class="form-group">
-                            <label><a href="<?=base_url('upload/cmms/wr/'.$row->photo)?>" target="_blank" title="Click to View">Photo (Click to View) </a></label>
+                            <label><a href="<?=base_url('upload/wr/'.$row->photo)?>" target="_blank" title="Click to View">Photo (Click to View) </a></label>
                             <input class="form-control" type="file" id="photo" name="photo">
                           </div>
                           <div class="form-group">
@@ -115,7 +115,7 @@
       <div class="modal-body">
         <form class="form-horizontal" id="frm-approval" method="post">
           <input type="hidden" name="wr_no" value="<?=$row->wr_no?>">
-          <input type="hidden" name="id" value="<?=$approval->id?>">
+          <input type="hidden" name="id" value="<?=$approval->approval_id?>">
           <div class="form-group">
             <label>Approval</label>
             <select class="form-control" name="status" id="status">

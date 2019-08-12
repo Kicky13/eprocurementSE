@@ -152,6 +152,32 @@ class M_work_request extends CI_Model {
   }
   public function can_approve_user_manager($wr_no='')
   {
-    return $this->db->where('wr_no',$wr_no)->where("wr_no in (select wr_no from cmms_wr_approval where sequence = 2 and status = 0 and user_assign_id = {$this->user->ID_USER})")->get($this->table);
+    return $this->db->select("cmms_wr.*,cmms_wr_approval.id approval_id")
+    ->join('cmms_wr_approval', "cmms_wr_approval.wr_no = cmms_wr.wr_no and cmms_wr_approval.user_assign_id={$this->user->ID_USER}",'left')
+    ->where('cmms_wr.wr_no',$wr_no)
+    ->where("cmms_wr.wr_no in (select wr_no from cmms_wr_approval where sequence = 2 and status = 0 and user_assign_id = {$this->user->ID_USER})")
+    ->where("cmms_wr_approval.sequence = 2 and cmms_wr_approval.status = 0")
+    ->get($this->table);
+  }
+  public function update_and_approve($data='')
+  {
+    $this->db->trans_begin();
+    unset($data['status'],$data['id'],$data['description']);
+    $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
+    $this->approve($this->input->post());
+    if($this->db->trans_status() === true)
+    {
+      $this->db->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->db->trans_rollback();
+      return false;
+    }
+  }
+  public function approve($data='')
+  {
+    $this->db->where("id",$data['id'])->update($this->table_approval, ['status'=>$data['status'], 'description'=>$data['description'], 'user_approval_id'=>$this->session->userdata('ID_USER'), 'updated_by'=>$this->session->userdata('ID_USER')]);
   }
 }

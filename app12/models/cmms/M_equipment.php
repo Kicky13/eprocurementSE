@@ -98,10 +98,10 @@ class M_equipment extends CI_Model {
     $sql = $this->_get_datatables_query();
     return $this->db->query($sql)->num_rows();
   }
-  public function find($faaaid='')
+  public function find($fanumb='')
   {
     $sql = $this->sql();
-    $sql .= " where faaaid = $faaaid";
+    $sql .= " where fanumb = $fanumb";
     $rs = $this->db->query($sql)->row();
     return $rs;
   }

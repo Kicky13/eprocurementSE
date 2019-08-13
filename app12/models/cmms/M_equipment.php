@@ -9,20 +9,6 @@ class M_equipment extends CI_Model {
   public function _get_datatables_query($value='')
   {
     $sql = $this->sql();
-    return $sql;
-
-  }
-  public function dt_get_datatables()
-  {
-    $sql = $this->_get_datatables_query();
-    /*'FAASID' => 'Equipment Number',
-      'FADL01' => 'Equipment Description',
-      'LOCT' => 'Location',
-      'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
-      'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',*/
     $sql .= " where 1=1  ";
     if($this->input->post('ALLOWANCE') == 2)
     {
@@ -48,9 +34,18 @@ class M_equipment extends CI_Model {
     {
       $sql .= " and CIT like '%".$this->input->post('CIT')."%'";
     }
+    $addParents = '';
     if($this->input->post('PARENTS'))
     {
-      $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
+      // $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
+    	$findFANUMB = $this->db->query("select FANUMB from F1201 where TRIM(FAASID) = '".$this->input->post('PARENTS')."'")->row();
+    	if($findFANUMB)
+    	{
+    		$fanumb = $findFANUMB->FANUMB;
+    		/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
+    		$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
+    	}
+    	/*get FANUMB*/
     }
     if($this->input->post('DSPARENTS'))
     {
@@ -64,6 +59,22 @@ class M_equipment extends CI_Model {
     {
       $sql .= " and EQTYPE like '%".$this->input->post('EQTYPE')."%'";
     }
+    $sql .= $addParents;
+    return $sql;
+
+  }
+  public function dt_get_datatables()
+  {
+    $sql = $this->_get_datatables_query();
+    /*'FAASID' => 'Equipment Number',
+      'FADL01' => 'Equipment Description',
+      'LOCT' => 'Location',
+      'CIT' => 'Criticality',
+      'PARENTS' => 'Parent EQ Number',
+      'DSPARENTS' => 'Parent Description',
+      'EQCLAS' => 'Equipment Class',
+      'EQTYPE' => 'Equipment Type',*/
+    
     
     $sql .= " order by faaaid asc";
     if($_POST['length'] != -1)

@@ -75,7 +75,12 @@
                               <td><?= $ed->department ?></td>
                               <td><?= $ed->specialist ?></td>
                               <td><?= $ed->CURRENCY ?></td>
-                              <td class="text-right"><?= numIndo($ed->total_amount) ?></td>
+                              <td class="text-right">
+                                <?php
+                                  if($ed->ee_value > 0) echo numIndo($ed->ee_value);
+                                  else echo numIndo($ed->total_amount);
+                                ?>
+                              </td>
                               <td><?= dateToIndo($ed->closing_date, false, true) ?></td>
                               <td>
                                 <?php if($log->num_rows() > 0): ?>

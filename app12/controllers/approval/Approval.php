@@ -1705,29 +1705,26 @@ class Approval extends CI_Controller
         $img2 = "";
 
         $edid = $this->input->post('ed_id');
-        $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
-            join t_msr t on t.msr_no=q.msr_no
-            join m_user u on u.roles like CONCAT('%', 28 ,'%')
-            join m_notic c on c.ID=64
-            where q.id='" . $edid . "' ");
+        $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_approval approval
+        JOIN m_approval main ON approval.m_approval_id = main.id
+        JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
+        JOIN m_user user ON approval.created_by = user.ID_USER
+        JOIN m_notic notif ON notif.ID = 63
+        WHERE approval.data_id = "' . $edid . '"
+        AND roles.ID_USER_ROLES = 23');
 
         $data_replace = $query->result();
 
-        $str = $data_replace[0]->OPEN_VALUE;
+        $str = $data_replace[0]->open;
         $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
         $data = array(
             'img1' => $img1,
             'img2' => $img2,
-            'title' => $data_replace[0]->TITLE,
+            'title' => $data_replace[0]->title,
             'open' => $str,
-            'close' => $data_replace[0]->CLOSE_VALUE
+            'close' => $data_replace[0]->close
         );
-        $data['dest'][0] = 'kicky120@gmail.com';
-
-        //   foreach ($data_replace as $k => $v) {
-        //     // $data['dest'][] = $v->recipient;
-        //     $data['dest'][] = 'kicky120@gmail.com';
-        //   }
+        $data['dest'][0] = $data_replace[0]->email;
         $flag = $this->sendMail($data);
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
@@ -1748,31 +1745,27 @@ class Approval extends CI_Controller
             $img1 = "";
             $img2 = "";
 
-            $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
-                join t_msr t on t.msr_no=q.msr_no
-                join m_user u on u.roles like CONCAT('%', 28 ,'%')
-                join m_notic c on c.ID=65
-                where q.id='" . $edid . "' ");
+            $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_approval approval
+            JOIN m_approval main ON approval.m_approval_id = main.id
+            JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
+            JOIN m_user user ON approval.created_by = user.ID_USER
+            JOIN m_notic notif ON notif.ID = 65
+            WHERE approval.data_id = "' . $edid . '"
+            AND roles.ID_USER_ROLES = 18');
 
             $data_replace = $query->result();
 
-            $str = $data_replace[0]->OPEN_VALUE;
+            $str = $data_replace[0]->open;
             $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,
-                'title' => $data_replace[0]->TITLE,
+                'title' => $data_replace[0]->title,
                 'open' => $str,
-                'close' => $data_replace[0]->CLOSE_VALUE
+                'close' => $data_replace[0]->close
             );
-            $data['dest'][0] = 'kicky120@gmail.com';
-
-            //   foreach ($data_replace as $k => $v) {
-            //     // $data['dest'][] = $v->recipient;
-            //     $data['dest'][] = 'kicky120@gmail.com';
-            //   }
+            $data['dest'][0] = $data_replace[0]->email;
             $flag = $this->sendMail($data);
-            // echo $this->db->last_query();
             redirect(base_url('home'));
         } else {
             $get_menu = $this->M_vendor->menu();
@@ -1914,24 +1907,22 @@ class Approval extends CI_Controller
                 $img1 = "";
                 $img2 = "";
                 $edid = $this->input->post('ed_id');
-                $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
-                join t_msr t on t.msr_no=q.msr_no
-                join m_user u on u.roles like CONCAT('%', 28 ,'%')
-                join m_notic c on c.ID=64
-                where q.id='" . $this->input->post('ed_id') . "' ");
+                $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                JOIN m_user user ON ed.created_by = user.ID_USER
+                JOIN m_notic notif ON notif.ID = 83
+                WHERE ed.id = ' . $this->input->post('ed_id'));
 
                 $data_replace = $query->result();
 
-                $str = $data_replace[0]->OPEN_VALUE;
-                $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+                $str = $data_replace[0]->open;
                 $data = array(
                     'img1' => $img1,
                     'img2' => $img2,
-                    'title' => $data_replace[0]->TITLE,
+                    'title' => $data_replace[0]->title,
                     'open' => $str,
-                    'close' => $data_replace[0]->CLOSE_VALUE
+                    'close' => $data_replace[0]->close
                 );
-                $data['dest'][0] = 'kicky120@gmail.com';
+                $data['dest'][0] = $data_replace[0]->email;
                 $flag = $this->sendMail($data);
             }
             $this->session->set_flashdata('message', array(
@@ -2797,6 +2788,30 @@ class Approval extends CI_Controller
                 }
             }
         }
+        $img1 = '';
+        $img2 = '';
+
+        $query = 'SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
+        JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
+        JOIN m_notic notic ON notic.ID = 82
+        WHERE bl.msr_no = "' . $msr_no . '"';
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->open;
+
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+
+        foreach ($data_replace as $item) {
+            $data['dest'][] = $item['email'];
+        }
+        $flag = $this->sendMail($data);
         $response = array(
             'success' => true,
             'message' => 'Success request negotiation'

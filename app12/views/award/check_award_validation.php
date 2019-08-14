@@ -6,6 +6,7 @@
 	4. Negotiation in progress
 	5. Insufficient budget*/
 ?>
+<div class="modal-body">
 <table class="table table-condensed">
 	<?php foreach ($lists as $key => $value) : ?>
 	<tr>
@@ -22,3 +23,7 @@
 	</tr>
 	<?php endforeach;?>
 </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>

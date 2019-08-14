@@ -1293,11 +1293,8 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div id="modal-award-validation-data" class="modal-body">
+            <div id="modal-award-validation-data">
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

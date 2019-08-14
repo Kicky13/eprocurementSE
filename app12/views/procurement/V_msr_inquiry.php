@@ -68,6 +68,9 @@ $page_title = isset($page_title) ? $page_title : ['IND' => 'MSR List', 'ENG' => 
                             $no = 1;
                             foreach ($msrs as $msr) :
                             $create_by = user($msr->create_by);
+                            $this->db->select("ee_value");
+                            $this->db->where("msr_no",$msr->msr_no);
+                            $review_ee = $this->db->get("t_eq_data")->row();
                             ?>
                               <tr>
                                 <td><?= @$no++ ?></td>
@@ -77,7 +80,16 @@ $page_title = isset($page_title) ? $page_title : ['IND' => 'MSR List', 'ENG' => 
                                 <td><?= @dateToIndo($msr->create_on, false, true) ?></td>
                                 <td><?= @$create_by->NAME ?></td>
                                 <td><?= @$msr->CURRENCY ?></td>
-                                <td class="text-right"><?= @numIndo($msr->total_amount) ?>
+                                <td class="text-right">
+                                  <?php
+                                    if(empty($review_ee) || $review_ee->ee_value == 0){
+                                      echo @numIndo($msr->total_amount);
+                                    }else{
+                                      echo @numIndo($review_ee->ee_value);
+                                    }
+                                  ?>
+                                </td>
+                                <!-- <td class="text-right"><?= @numIndo($msr->total_amount) ?></td> -->
                                 <td><a class="approval-history" data-msr_no="<?= @$msr->msr_no ?>" href="<?= base_url('procurement/msr/logHistory/'. $msr->msr_no)?>"><?= @$msr->action_to_role_description ?></a></td>
                                 <td><?= @$msr->procurement_specialist_name ?></td>
                                 <td class="text-center">

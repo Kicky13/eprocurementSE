@@ -595,14 +595,14 @@ font-weight: normal;
                       </fieldset>
                       <?php endif; ?>
                       <?php
-                        if(!empty($_POST['msr_no'])){
-                          $this->db->select("*");
-                          $this->db->where("msr_no",$_POST['msr_no']);
-                          $data["ed"] = $this->db->get("t_eq_data")->row();
-                          if(!empty($data)){
-                            $this->load->view('approval/review_ee_tab', $data);  
-                          }
-                        }
+                        // if(!empty($_POST['msr_no'])){
+                        //   $this->db->select("*");
+                        //   $this->db->where("msr_no",$_POST['msr_no']);
+                        //   $data["ed"] = $this->db->get("t_eq_data")->row();
+                        //   if(!empty($data)){
+                        //     $this->load->view('approval/review_ee_tab', $data);  
+                        //   }
+                        // }
                       ?>
 					  
 					  <?php 

@@ -44,7 +44,7 @@
             <tr>
                 <td style="width: 150px;">MSR Value  (Excl. VAT</i>)</td>
                 <td class="no-padding-lr">:</td>
-                <td class="text-right">
+                <td class="text-left">
                   <?=$msr->currency?> <?=numIndo($msr->total_amount)?>
                   <?=equal_to($msr)?>
                 </td>
@@ -63,6 +63,19 @@
                 <td class="no-padding-lr">:</td>
                 <td><label id="msr_title"></label></td>
             </tr>
+            <?php if($ed->ee_value > 0): ?>
+            <tr>
+                <td style="width: 125px;">Rev. MSR Value</td>
+                <td class="no-padding-lr">:</td>
+                <td>
+                  <?php
+                    $edc = $this->db->where(['ID'=>$ed->currency])->get('m_currency')->row();
+                    echo $edc->CURRENCY;
+                  ?>
+                  <?=numIndo($ed->ee_value)?>
+                </td>
+            </tr>
+            <?php endif;?>
           </table>
         </div>
 	  </div>

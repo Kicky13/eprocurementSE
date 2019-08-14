@@ -30,7 +30,7 @@
                             <tr>
                               <th width="25">No</th>
                               <th>ARF No</th>
-                              <!-- <th>Action</th> -->
+                              <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -41,9 +41,9 @@
                             <tr>
                               <td><?=$no++?></td>
                               <td><?=$list->doc_no?></td>
-                              <!-- <td class="text-center">
+                              <td class="text-center">
                                 <a href="<?=base_url('upload/cancel_arf/'.$list->attachment)?>" class="btn btn-sm btn-info" target="_blank">Download</a>
-                              </td> -->
+                              </td>
                             </tr>
                             <?php endforeach;?>
                           </tbody>

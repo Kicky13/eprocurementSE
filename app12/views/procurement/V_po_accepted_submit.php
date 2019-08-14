@@ -418,7 +418,7 @@ body {
                                       <!-- <i class="icon-cloud-download"></i> -->
                                       Download
                                     </button>
-                                    <a href="#" onclick="updateAgreementDocClick('<?= $po_attachment_type[$attachment->tipe]?>', <?= $attachment->id ?>)" class="btn btn-sm btn-primary">Update</a>
+                                    <!-- <a href="#" onclick="updateAgreementDocClick('<?= $po_attachment_type[$attachment->tipe]?>', <?= $attachment->id ?>)" class="btn btn-sm btn-primary">Update</a> -->
                                   </a>
                                 </div>
                               </div>
@@ -431,7 +431,7 @@ body {
                     </fieldset>
 
                     <?php if ($po->completed == 1): ?>
-                    <h6><i class="step-icon icon-directions"></i>Completeness</h6>
+                    <h6><i class="step-icon icon-directions"></i>Supporting Document</h6>
                     <fieldset>
                     <?php foreach($po_required_doc as $po_rdoc): ?>
                     <div class="row">

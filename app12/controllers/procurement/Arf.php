@@ -1316,7 +1316,7 @@ class Arf extends CI_Controller
             $this->db->delete('t_arf_response_detail');
         }
 
-        /*$config['upload_path'] = './upload/cancel_arf/';
+        $config['upload_path'] = './upload/cancel_arf/';
         if (!is_dir($config['upload_path'])) {
             mkdir($config['upload_path'], 0755, TRUE);
         }
@@ -1330,7 +1330,7 @@ class Arf extends CI_Controller
             $data = $this->upload->data();
             $field['attachment'] = $data['file_name'];
             $this->db->where('id', $id)->update('t_arf_trash', $field);
-        }*/
+        }
 
         if ($this->db->trans_status() === TRUE) {
             $this->db->trans_commit();

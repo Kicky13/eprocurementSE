@@ -247,7 +247,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Paricipation Confirmation</h4>
+        <h4 class="modal-title" id="myModalLabel">Participation Confirmation</h4>
       </div>
       <div class="modal-body">
         <form method="post" class="form-horizontal  open-this" enctype="multipart/form-data" action="<?=base_url('vn/info/greetings/confirmation')?>">

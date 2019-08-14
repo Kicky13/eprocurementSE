@@ -162,6 +162,6 @@ class M_arf_response extends M_base {
     }
     public function scope_not_amd() {
         // $this->db->where("`t_arf_response`.`id` not in (select `arf_response_id` from t_arf_recommendation_preparation where arf_response_id not in (select id_ref as arf_response_id from t_approval_arf_recom WHERE description = 'Award Recommendation Issuance') )", null, false);
-        $this->db->where("`t_arf_response`.`id` not in (select id_ref as arf_response_id from t_approval_arf_recom WHERE description = 'Award Recommendation Issuance' and status=1)", null, false);
+        $this->db->where("`t_arf_response`.`id` not in (select id_ref as arf_response_id from t_approval_arf_recom WHERE (description = 'Award Recommendation Issuance' and status=1) or status = 0 group by id_ref)", null, false);
     }
 }

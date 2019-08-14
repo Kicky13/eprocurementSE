@@ -43,7 +43,7 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                     <tr>
                         <td style="width: 150px;">MSR Value (Excl. VAT)</td>
                         <td class="no-padding-lr">:</td>
-                        <td>
+                        <td class="text-left">
                             <?= $msr->currency ?> <?= numIndo($msr->total_amount) ?>
                             <?= equal_to($msr) ?>
                         </td>

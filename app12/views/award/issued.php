@@ -154,7 +154,7 @@
       {
         if(path_boc)
         {
-          swalConfirm('Award Recomendation & Evaluation', '<?= __('confirm_submit') ?>', function() {
+          swalConfirm('BOC Approval', '<?= __('confirm_submit') ?>', function() {
             formSubmitAjax('frm-recomendation')
           });
         }

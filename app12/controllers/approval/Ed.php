@@ -61,6 +61,9 @@ class Ed extends CI_Controller {
 
         $data['data'] = $this->getEdListLimit($config["per_page"], $data['page']);
 
+//        echo $data['data'];
+//        die();
+
         $data['pagination'] = $this->pagination->create_links();
 
         $this->template->display('approval/ed_list', $data);
@@ -128,6 +131,7 @@ class Ed extends CI_Controller {
         ->join('m_currency', 'm_currency.ID = t_msr.id_currency')
         ->where_in('t_msr.status', [0,1])
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
+        $query = $this->db->last_query();
         if($this->input->get('debug'))
         {
             echo "<pre>";
@@ -742,7 +746,7 @@ class Ed extends CI_Controller {
             // echo "<pre>";
             // print_r($newMsr);
             // exit();
-          return $newMsr;
+          return $msr_no;
         }
         else
         {

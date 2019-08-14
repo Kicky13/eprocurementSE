@@ -33,7 +33,7 @@
                     <li class="mr-3">
                       <h5 class="block"><b>Classification</b> </h5><?php if ($data_vendor->CLASSIFICATION != ""){ echo strtoupper($data_vendor->CLASSIFICATION); } else { echo "-"; } ?></li>
                     <li class="mr-3">
-                      <h5 class="block"><b>Cualification</b> </h5><?php if ($data_vendor->CUALIFICATION != ""){ echo strtoupper($data_vendor->CUALIFICATION); } else { echo "-"; } ?>
+                      <h5 class="block"><b>Qualification</b> </h5><?php if ($data_vendor->CUALIFICATION != ""){ echo strtoupper($data_vendor->CUALIFICATION); } else { echo "-"; } ?>
                     </li>
                     <li class="mr-3">
                       <h5 class="block"><b>Company Type</b> </h5><?php if ($data_vendor->PREFIX != ""){ echo strtoupper($data_vendor->PREFIX); } else { echo "-"; } ?>

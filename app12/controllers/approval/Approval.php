@@ -1707,12 +1707,13 @@ class Approval extends CI_Controller
         $edid = $this->input->post('ed_id');
         $edid = str_replace('OQ', 'OR', $edid);
 
-        $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_approval approval
+        $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+        JOIN t_approval approval ON ed.msr_no = approval.data_id
         JOIN m_approval main ON approval.m_approval_id = main.id
         JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
         JOIN m_user user ON approval.created_by = user.ID_USER
         JOIN m_notic notif ON notif.ID = 63
-        WHERE approval.data_id = "' . $edid . '"
+        WHERE ed.id = "' . $edid . '"
         AND roles.ID_USER_ROLES = 23');
 
         $data_replace = $query->result();
@@ -1748,12 +1749,13 @@ class Approval extends CI_Controller
             $img2 = "";
             $edid = str_replace('OQ', 'OR', $edid);
 
-            $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_approval approval
+            $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+            JOIN t_approval approval ON ed.msr_no = approval.data_id
             JOIN m_approval main ON approval.m_approval_id = main.id
             JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
             JOIN m_user user ON approval.created_by = user.ID_USER
             JOIN m_notic notif ON notif.ID = 65
-            WHERE approval.data_id = "' . $edid . '"
+            WHERE ed.id = "' . $edid . '"
             AND roles.ID_USER_ROLES = 18');
 
             $data_replace = $query->result();

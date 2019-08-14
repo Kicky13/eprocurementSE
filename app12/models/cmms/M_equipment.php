@@ -20,25 +20,25 @@ class M_equipment extends CI_Model {
     }
     if($this->input->post('FAASID'))
     {
-      $sql .= " and FAASID =  '".$this->input->post('FAASID')."'";
+      $sql .= " and UPPER(FAASID) = UPPER('".$this->input->post('FAASID')."')";
     }
     if($this->input->post('FADL01'))
     {
-      $sql .= " and FADL01 like '%".$this->input->post('FADL01')."%'";
+      $sql .= " and UPPER(FADL01) like UPPER('%".$this->input->post('FADL01')."%')";
     }
     if($this->input->post('LOCT'))
     {
-      $sql .= " and LOCT like '%".$this->input->post('LOCT')."%'";
+      $sql .= " and UPPER(LOCT) like UPPER('%".$this->input->post('LOCT')."%')";
     }
     if($this->input->post('CIT'))
     {
-      $sql .= " and CIT like '%".$this->input->post('CIT')."%'";
+      $sql .= " and UPPER(CIT) like UPPER('%".$this->input->post('CIT')."%')";
     }
     $addParents = '';
     if($this->input->post('PARENTS'))
     {
       // $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
-    	$findFANUMB = $this->db->query("select FANUMB from F1201 where TRIM(FAASID) = '".$this->input->post('PARENTS')."'")->row();
+    	$findFANUMB = $this->db->query("select FANUMB from F1201 where TRIM(UPPER(FAASID)) = UPPER('".$this->input->post('PARENTS')."')")->row();
     	if($findFANUMB)
     	{
     		$fanumb = $findFANUMB->FANUMB;
@@ -49,15 +49,15 @@ class M_equipment extends CI_Model {
     }
     if($this->input->post('DSPARENTS'))
     {
-      $sql .= " and DSPARENTS like '%".$this->input->post('DSPARENTS')."%'";
+      $sql .= " and UPPER(DSPARENTS) like UPPER('%".$this->input->post('DSPARENTS')."%')";
     }
     if($this->input->post('EQCLAS'))
     {
-      $sql .= " and EQCLAS like '%".$this->input->post('EQCLAS')."%'";
+      $sql .= " and UPPER(EQCLAS) like UPPER('%".$this->input->post('EQCLAS')."%')";
     }
     if($this->input->post('EQTYPE'))
     {
-      $sql .= " and EQTYPE like '%".$this->input->post('EQTYPE')."%'";
+      $sql .= " and UPPER(EQTYPE) like UPPER('%".$this->input->post('EQTYPE')."%')";
     }
     $sql .= $addParents;
     return $sql;

@@ -714,6 +714,7 @@ class Purchase_order extends CI_Controller
             ->model('setting/M_delivery_point')
             ->model('setting/M_importation')
             ->model('other_master/M_currency')
+            ->model('M_sendmail')
             ->model('setting/M_itemtype');
 
         $message = array();
@@ -775,6 +776,63 @@ class Purchase_order extends CI_Controller
                     $this->M_purchase_order->addToISync($po->id);
 
                     $this->sendTheRestRegretLetter($po->bl_detail_id);
+
+                    $img1 = "";
+                    $img2 = "";
+                    $query = $this->db->query('SELECT po.po_no AS po, po.msr_no AS msr_no, po.company_desc AS company, po.po_date AS po_date, po.delivery_date AS delivery_date, vend.ID_VENDOR AS email, vend.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
+                    JOIN t_bl_detail bl ON po.bl_detail_id = bl.id
+                    JOIN m_vendor vend ON bl.vendor_id = vend.ID
+                    JOIN m_notic notif ON notif.ID = 85
+                    WHERE po.id = ' . $id);
+
+                    $data_succes = $query->result();
+
+                    $query2 = $this->db->query('SELECT bl.bled_no AS doc_no, bl.title AS doc_title, bl.msr_no AS msr_no, msr.dpoint_desc AS company, vnd.ID_VENDOR AS email, vnd.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl bl
+                    JOIN t_bl_detail bld ON bl.msr_no = bld.msr_no
+                    JOIN t_msr msr ON bl.msr_no = msr.msr_no
+                    JOIN m_vendor vnd ON bld.vendor_id = vnd.ID
+                    JOIN m_notic notif ON notif.ID = 41
+                    WHERE bl.msr_no = "' . $data_succes[0]->msr_no . '"
+                    AND bld.awarder = 0');
+
+                    $data_unsuccess = $query2->result();
+
+                    $str = $data_succes[0]->open;
+
+                    $success = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_succes[0]->title,
+                        'open' => $str,
+                        'close' => $data_succes[0]->close
+                    );
+
+                    foreach ($data_succes as $value) {
+                        $success['dest'][] = $value->email;
+                    }
+
+                    if (count($data_unsuccess) > 0) {
+                        $rep = $data_unsuccess[0]->open;
+                        $rep = str_replace('[_var1_]', $data_unsuccess[0]->company, $rep);
+                        $rep = str_replace('[title]', $data_unsuccess[0]->doc_title, $rep);
+                        $rep = str_replace('[no]', $data_unsuccess[0]->doc_no, $rep);
+
+                        $unsuccess = array(
+                            'img1' => $img1,
+                            'img2' => $img2,
+                            'title' => $data_unsuccess[0]->title,
+                            'open' => $rep,
+                            'close' => $data_unsuccess[0]->close
+                        );
+
+                        foreach ($data_unsuccess as $item) {
+                            $unsuccess['dest'][] = $item->email;
+                        }
+
+                        $unsuccessmail = $this->M_sendmail->sendMail($unsuccess);
+                    }
+
+                    $successmail = $this->M_sendmail->sendMail($success);
 
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit'),

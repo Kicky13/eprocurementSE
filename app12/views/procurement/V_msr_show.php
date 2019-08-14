@@ -175,6 +175,22 @@ font-weight: normal;
               <td class="no-padding-lr">:</td>
               <td><span><?= $_POST['creator_department_name'] ?></span></td>
             </tr>
+            <?php
+              if(!empty($_POST['msr_no'])){
+                $this->db->select("ee_value");
+                $this->db->where("msr_no",$_POST['msr_no']);
+                $review_ee = $this->db->get("t_eq_data")->row();
+                if(!empty($review_ee) && $review_ee->ee_value != 0){
+            ?>
+            <tr>
+              <td width="20%">Rev. MSR Value</td>
+              <td class="no-padding-lr">:</td>
+              <td>IDR <?= numIndo($review_ee->ee_value) ?></span></td>
+            </tr>
+            <?php
+                }
+              }
+            ?>
           </table>
         </div>
 		<div class="col-md-5">
@@ -578,7 +594,16 @@ font-weight: normal;
                         <?= function_exists('list_approval') ? list_approval('msr', @$_POST['msr_no']) : '' ?>
                       </fieldset>
                       <?php endif; ?>
-					  
+                      <?php
+                        if(!empty($_POST['msr_no'])){
+                          $this->db->select("*");
+                          $this->db->where("msr_no",$_POST['msr_no']);
+                          $data["ed"] = $this->db->get("t_eq_data")->row();
+                          if(!empty($data)){
+                            $this->load->view('approval/review_ee_tab', $data);  
+                          }
+                        }
+                      ?>
 					  
 					  <?php 
 //						if($msr->status < 2 and isProcurementSpecialist() and isCreatorEd($ed) and notInLoi($ed)): 

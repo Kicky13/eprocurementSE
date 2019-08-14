@@ -166,26 +166,6 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                             <th class="text-center">Result</th>
                                                                             <th>Remark</th>
                                                                             <th class="text-center">
-                                                                                <!--                                                                                --><?php
-                                                                                //                                                                                if (($ed->administrative == 0 or $ed->administrative == 2) and $this->session->userdata('ID_USER') == $t_assignment->user_id):
-                                                                                //                                                                                    ?>
-                                                                                <!--                                                                                    <a href="#" data-toggle="modal"-->
-                                                                                <!--                                                                                       data-target="#modal-upload-administrative"-->
-                                                                                <!--                                                                                       class="btn btn-sm btn-primary">Upload </a>-->
-                                                                                <!--                                                                                    <a id="file_upload_name" href="#"-->
-                                                                                <!--                                                                                       target="_blank"> </a>-->
-                                                                                <!--                                                                                --><?php
-                                                                                //                                                                                else:
-                                                                                //                                                                                    $adminAttachment = $this->M_approval->seeAttachment('eva-administrative', $msr_no)->row();
-                                                                                //                                                                                    if (@$adminAttachment->file_path):
-                                                                                //                                                                                        ?>
-                                                                                <!--                                                                                        <a href="-->
-                                                                                <? //= base_url('upload/evaluation/' . @$adminAttachment->file_path) ?><!--"-->
-                                                                                <!--                                                                                           target="_blank"-->
-                                                                                <!--                                                                                           class="btn btn-sm btn-primary">See-->
-                                                                                <!--                                                                                            Attachment</a>-->
-                                                                                <!--                                                                                    --><?php //endif; ?>
-                                                                                <!--                                                                                --><?php //endif; ?>
                                                                             </th>
                                                                         </tr>
                                                                         </thead>
@@ -301,28 +281,7 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                                 <th class="text-center">Result</th>
                                                                                 <th>Remark</th>
                                                                                 <th>
-                                                                                    <!--                                                                                    --><?php
-                                                                                    //                                                                                    if ($ed->technical == 0 and $msr->create_by == $this->session->userdata('ID_USER')):
-                                                                                    //                                                                                        ?>
-                                                                                    <!--                                                                                        <a href="#" data-toggle="modal"-->
-                                                                                    <!--                                                                                           data-target="#modal-upload-technical"-->
-                                                                                    <!--                                                                                           class="btn btn-sm btn-primary -->
-                                                                                    <? //= $disTech ?><!--">Upload</a>-->
-                                                                                    <!--                                                                                        <a id="file_upload_name_tech"-->
-                                                                                    <!--                                                                                           href="#"-->
-                                                                                    <!--                                                                                           target="_blank"> </a>-->
-                                                                                    <!--                                                                                    --><?php
-                                                                                    //                                                                                    else:
-                                                                                    //                                                                                        $techAttachment = $this->M_approval->seeAttachment('eva-technical', $msr_no)->row();
-                                                                                    //                                                                                        if (@$techAttachment->file_path):
-                                                                                    //                                                                                            ?>
-                                                                                    <!--                                                                                            <a href="-->
-                                                                                    <? //= base_url('upload/evaluation/' . @$techAttachment->file_path) ?><!--"-->
-                                                                                    <!--                                                                                               target="_blank"-->
-                                                                                    <!--                                                                                               class="btn btn-sm btn-primary">See-->
-                                                                                    <!--                                                                                                Attachment</a>-->
-                                                                                    <!--                                                                                        --><?php //endif; ?>
-                                                                                    <!--                                                                                    --><?php //endif; ?>
+                                                                                    
                                                                                 </th>
                                                                             </tr>
                                                                             </thead>
@@ -440,28 +399,7 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                                 </th>
                                                                                 <th class="text-right">Latest Value</th>
                                                                                 <th>
-                                                                                    <!--                                                                                    --><?php
-                                                                                    //                                                                                    if ($ed->commercial == 0 and $ed->administrative == 5 and $ed->technical == 5 and $this->session->userdata('ID_USER') == $t_assignment->user_id):
-                                                                                    //                                                                                        ?>
-                                                                                    <!--                                                                                        <a href="#" data-toggle="modal"-->
-                                                                                    <!--                                                                                           data-target="#modal-upload-commercial"-->
-                                                                                    <!--                                                                                           class="btn btn-sm btn-primary -->
-                                                                                    <? //= $disCom ?><!--">Upload</a>-->
-                                                                                    <!--                                                                                        <a id="file_upload_name_com"-->
-                                                                                    <!--                                                                                           href="#"-->
-                                                                                    <!--                                                                                           target="_blank"> </a>-->
-                                                                                    <!--                                                                                    --><?php
-                                                                                    //                                                                                    else:
-                                                                                    //                                                                                        $commercialAttachment = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
-                                                                                    //                                                                                        if (@$commercialAttachment->file_path):
-                                                                                    //                                                                                            ?>
-                                                                                    <!--                                                                                            <a href="-->
-                                                                                    <? //= base_url('upload/evaluation/' . @$commercialAttachment->file_path) ?><!--"-->
-                                                                                    <!--                                                                                               target="_blank"-->
-                                                                                    <!--                                                                                               class="btn btn-sm btn-primary">See-->
-                                                                                    <!--                                                                                                Attachment</a>-->
-                                                                                    <!--                                                                                        --><?php //endif; ?>
-                                                                                    <!--                                                                                    --><?php //endif; ?>
+                                                                                   
                                                                                 </th>
                                                                             </tr>
                                                                             </thead>

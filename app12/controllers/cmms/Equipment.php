@@ -27,7 +27,7 @@ class Equipment extends CI_Controller {
   public function settings($value='')
   {
     $head = [
-      'FANUMB' => 'Equipment Number',
+      'FAASID' => 'Equipment Number',
       'FADL01' => 'Equipment Description',
       'LOCT' => 'Location',
       'CIT' => 'Criticality',

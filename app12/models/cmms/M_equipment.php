@@ -18,9 +18,9 @@ class M_equipment extends CI_Model {
     {
       $sql .= " and FAWOYN =  '".$this->input->post('ALLOWANCE')."'";
     }
-    if($this->input->post('FANUMB'))
+    if($this->input->post('FAASID'))
     {
-      $sql .= " and UPPER(FANUMB) = UPPER('".$this->input->post('FANUMB')."')";
+      $sql .= " and UPPER(FAASID) = UPPER('".$this->input->post('FAASID')."')";
     }
     if($this->input->post('FADL01'))
     {

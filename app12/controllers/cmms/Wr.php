@@ -245,7 +245,7 @@ class Wr extends CI_Controller {
   public function settings($value='')
   {
     $head = [
-      'FANUMB' => 'Equipment Number',
+      'FAASID' => 'Equipment Number',
       'FADL01' => 'Equipment Description',
       'EQCLAS' => 'Equipment Class',
       'EQTYPE' => 'Equipment Type',
@@ -261,8 +261,7 @@ class Wr extends CI_Controller {
     foreach ($list as $rows) {
       $no++;
       $row = array();
-      $row[] = $no;
-      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' onclick=\"selectEquipmentForWr($rows)\">Select</a>";
+      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' onclick=\"selectEquipmentForWr(101)\">Select</a>";
       foreach ($this->settings('thead') as $key => $value) {
         $row[] = $rows->$key;
       }

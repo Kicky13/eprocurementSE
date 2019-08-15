@@ -118,7 +118,7 @@
             <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
-            <input class="form-control" name="eq_number" id="filter_FANUMB" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
             <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
             <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
@@ -203,12 +203,13 @@
         'url': '<?php echo base_url('cmms/wr/ajax_list_equipment')?>',
         'type': 'POST',
         'data': function ( data ) {
-          data.FANUMB = $('#filter_FANUMB').val();
+          data.FAASID = $('#filter_FAASID').val();
           data.FADL01 = $('#filter_FADL01').val();
           data.EQCLAS = $('#filter_EQCLAS').val();
           data.EQTYPE = $('#filter_EQTYPE').val();
           data.ALLOWANCE = 1;
-        }
+        },
+        "bLengthChange": false
       },
    
       //Set column definition initialisation properties.

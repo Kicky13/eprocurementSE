@@ -2819,7 +2819,8 @@ class Approval extends CI_Controller
         $flag = $this->sendMail($data);
         $response = array(
             'success' => true,
-            'message' => 'Success request negotiation'
+            'message' => 'Success request negotiation',
+            'sendmail' => $flag
         );
         echo json_encode($response);
     }

@@ -82,20 +82,6 @@
                         <label class="col-md-3">Bid Letter No</label>
                         <label class="col-md-6"><?= $value->bid_letter_no ?></label>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-md-3">Local Content</label>
-                        <label class="col-md-6">
-                        <?php 
-                            $get_tkdn_type = $this->mvn->get_tkdn_type();
-                            foreach ($get_tkdn_type as $tkdn) {
-                                if($tkdn->id == $value->id_local_content_type)
-                                {
-                                    echo $tkdn->name.' '.$value->local_content.'% '."<a href='".base_url('upload/arf_nego/'.$value->local_content_file)."' class='btn btn-info btn-sm'>Download</a>";
-                                }
-                            }
-                        ?>
-                        </label>
-                    </div>
                 </div>
                 <div class="col-md-12">
                     <div class="table-responsive">

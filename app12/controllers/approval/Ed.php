@@ -12,7 +12,7 @@ class Ed extends CI_Controller {
         $this->load->model('approval/M_bl')->model('approval/M_ed');
         $this->load->model('procurement/M_msr_item', 'msr_item');
         $this->load->model('procurement/M_msr_attachment', 'msr_attachment');
-        $this->load->model('M_sendmail', 'sendmailTo');
+        $this->load->model('M_sendmail');
         $this->load->helper('exchange_rate_helper')->helper(array('form', 'array', 'url', 'exchange_rate'));
     }
     public function index($value='')
@@ -600,7 +600,7 @@ class Ed extends CI_Controller {
         if($this->db->trans_status() === true)
         {
             $this->db->trans_commit();
-            $template = $this->db->where('ID', 65)->get('m_notic')->result();
+            $template = $this->db->where('ID', 87)->get('m_notic')->result();
             $img1 = '';
             $img2 = '';
             $emailData = array(
@@ -616,7 +616,7 @@ class Ed extends CI_Controller {
                 $emailData['dest'][] = $vendor->ID_VENDOR;
             }
             $call = $this->db->where('msr_no',$data['msr_no'])->get('t_bl_detail')->result();
-            $flag = $this->sendmailTo->sendMail($emailData);
+            $flag = $this->M_sendmail->sendMail($emailData);
             $response = array(
                 'query' => $flag,
                 'success' => true,

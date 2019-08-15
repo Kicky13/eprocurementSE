@@ -13,6 +13,7 @@ class Clarification extends CI_Controller {
         $this->load->library('redirect');
         $this->load->model('vendor/M_vendor');
         $this->load->model('vendor/M_all_intern', 'mai');
+        $this->load->model('M_sendmail');
 
         $this->load->model('m_base');
         $this->load->model('m_clarification');
@@ -173,6 +174,21 @@ class Clarification extends CI_Controller {
                 $post['to'][] = $r_user->id;
             }
         }
+
+        $img1 = '';
+        $img2 = '';
+
+        $content = $this->db->where('ID', '88')->get('m_notic')->result();
+        $str = $content[0]->OPEN_VALUE;
+
+        $emailData = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $content[0]->TITLE,
+            'open' => $str,
+            'close' => $content[0]->CLOSE_VALUE
+        );
+
         foreach ($post['to'] as $to) {
             $this->db->insert('t_note', array(
                 'vendor_id' => $to,
@@ -192,7 +208,11 @@ class Clarification extends CI_Controller {
                 $this->db->insert('t_note_detail', $fieldDetail);
               }
             }*/
+            $mailTo = $this->db->where('ID', $to)->get('m_vendor')->row();
+            $emailData['dest'][] = $mailTo->ID_VENDOR;
         }
+
+        $flag = $this->M_sendmail->sendMail($emailData);
         $response = array(
             'success' => true,
             'message' => 'Clarification has been sent'

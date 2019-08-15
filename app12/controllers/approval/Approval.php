@@ -2796,10 +2796,10 @@ class Approval extends CI_Controller
         $img1 = '';
         $img2 = '';
 
-        $query = 'SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
+        $query = $this->db->query('SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
         JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
         JOIN m_notic notic ON notic.ID = 82
-        WHERE bl.msr_no = "' . $msr_no . '"';
+        WHERE bl.msr_no = "' . $msr_no . '"');
 
         $data_replace = $query->result();
 

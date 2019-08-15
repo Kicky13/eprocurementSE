@@ -114,10 +114,16 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6">
-            <input class="form-control" name="q" id="q" placeholder="Search EQ Number">
+          <div class="col-md-12" style="margin-bottom: 10px">
+            <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
-          <a href="#" class="btn btn-sm btn-info" onclick="searchEquipmentClick()"><i class="fa fa-search"></i> </a>
+          <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
+            <input class="form-control" name="eq_number" id="filter_FANUMB" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
+            <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
+            <?= $optEqType ?>
+            <a href="#" class="btn btn-sm btn-primary" onclick="searchEquipmentClick()">Filter</a>
+          </div>
         </div>
         <div class="row">
           <div class="col-md-12">
@@ -139,6 +145,9 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-info" data-dismiss="modal">Close</a>
       </div>
     </div>
   </div>
@@ -174,7 +183,7 @@
     $("#myModal").modal('show')
   }
   function searchEquipmentClick() {
-    var q = $("#q").val()
+    /*var q = $("#q").val()
     $.ajax({
       type:'post',
       data:{q:q},
@@ -182,7 +191,35 @@
       success:function(e){
         $("#tbody-equipment-search").html(e)
       }
-    })
+    })*/
+    table = $('#dt-equipment').DataTable({ 
+      'processing': true, //Feature control the processing indicator.
+      'serverSide': true, //Feature control DataTables' server-side processing mode.
+      'order': [], //Initial no order.
+      'bSort':false,
+      'bFilter':false,
+      // Load data for the table's content from an Ajax source
+      'ajax': {
+        'url': '<?php echo base_url('cmms/wr/ajax_list_equipment')?>',
+        'type': 'POST',
+        'data': function ( data ) {
+          data.FANUMB = $('#filter_FANUMB').val();
+          data.FADL01 = $('#filter_FADL01').val();
+          data.EQCLAS = $('#filter_EQCLAS').val();
+          data.EQTYPE = $('#filter_EQTYPE').val();
+          data.ALLOWANCE = 1;
+        }
+      },
+   
+      //Set column definition initialisation properties.
+      'columnDefs': [
+      { 
+        'defaultContent': '-',
+        'targets': '_all',
+      },
+      ],
+   
+    });
   }
   function selectEquipmentForWr(eq_no) {
     $("#eq_number").val(eq_no)

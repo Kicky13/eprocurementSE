@@ -19,7 +19,7 @@ class Wr extends CI_Controller {
     $this->load->model('cmms/M_work_request', 'wr');
     $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->model('cmms/M_failure_description', 'failure');
-    // $this->load->model('cmms/M_equipment','mod');
+    $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
@@ -105,6 +105,7 @@ class Wr extends CI_Controller {
     $data['view'] = $this->view;
     $data['optWoType'] = $this->optWoType();
     $data['optPriority'] = $this->optPriority();
+    $data['optEqType'] = $this->optEqType('filter_EQTYPE');
     $this->template->display($this->view .'/create', $data);
   }
   public function show($wr_no='')
@@ -241,7 +242,43 @@ class Wr extends CI_Controller {
     $s .= "</select>";
     return $s;
   }
-  public function search_for_wr($value='')
+  public function settings($value='')
+  {
+    $head = [
+      'FANUMB' => 'Equipment Number',
+      'FADL01' => 'Equipment Description',
+      'EQCLAS' => 'Equipment Class',
+      'EQTYPE' => 'Equipment Type',
+    ];
+    $data['thead'] = $head;
+    return $data[$value];
+  }
+  public function ajax_list_equipment()
+  {
+    $list = $this->mod->dt_get_datatables();
+    $data = array();
+    $no = $_POST['start'];
+    foreach ($list as $rows) {
+      $no++;
+      $row = array();
+      $row[] = $no;
+      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' onclick=\"selectEquipmentForWr($rows)\">Select</a>";
+      foreach ($this->settings('thead') as $key => $value) {
+        $row[] = $rows->$key;
+      }
+      $row[] = "$btnAdd";
+      $data[] = $row;
+    }
+ 
+    $output = array(
+            'draw' => $_POST['draw'],
+            'recordsTotal' => $this->mod->dt_count_all(),
+            'recordsFiltered' => $this->mod->dt_count_filtered(),
+            'data' => $data,
+        );
+    echo json_encode($output);
+  }
+  /*public function search_for_wr($value='')
   {
     $q = $this->input->post('q');
     
@@ -251,7 +288,7 @@ class Wr extends CI_Controller {
     }
     $data['results'] = $a;
     $this->load->view('cmms/equipment/search_for_wr',$data);
-  }
+  }*/
   public function opt_ajax_failure_desc()
   {
     $p = $this->input->post();
@@ -283,5 +320,24 @@ class Wr extends CI_Controller {
       }
     }
     return $result;
+ 
+  }
+  public function optEqType($name_id='')
+  {
+    $crt = $this->mod->eq_type();
+    $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
+    // $opt .= "<option value=''>--ALL TYPE--</option>";
+    foreach ($crt as $key => $value) {
+      if($value->EQ_TYPE == ' - .')
+      {
+        $opt .= "<option value=''>ALL TYPE</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
   }
 }

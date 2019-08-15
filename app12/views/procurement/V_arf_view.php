@@ -661,7 +661,7 @@
           })
         }
         function cur_exchange(){
-            var base = "<?= base_currency_code() ?>";
+            var base = "<?= $this->db->where('CURRENCY_BASE',1)->get('m_currency')->row()->CURRENCY ?>";
             var to = "<?= $arf->currency ?>";
             $.ajax({
                 url : 'https://api.exchangeratesapi.io/latest?base='+base+'&symbols='+to,

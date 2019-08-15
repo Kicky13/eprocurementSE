@@ -131,7 +131,7 @@
                                         <?php } ?>
                                     </div>
                                     <div class="col-md-6">
-                                        Accumulative Amendment
+                                        Accumulative Amendment(s) value exceeds 30% of original Contract Value
                                         <br>
                                         <?php if ($arf->aa) { ?>
                                             <i class="fa fa-square-o"></i> No

@@ -1914,7 +1914,7 @@ class Approval extends CI_Controller
                 $edid = $this->input->post('ed_id');
                 $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
                 JOIN m_user user ON ed.created_by = user.ID_USER
-                JOIN m_notic notif ON notif.ID = 83
+                JOIN m_notic notif ON notif.ID = 89
                 WHERE ed.id = ' . $this->input->post('ed_id'));
 
                 $data_replace = $query->result();

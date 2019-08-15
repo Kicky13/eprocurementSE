@@ -251,6 +251,21 @@ class Wr extends CI_Controller {
       'EQTYPE' => 'Equipment Type',
     ];
     $data['thead'] = $head;
+
+    $detail = [
+	'FAAAID' => 'PARENT EQUIPMENT ID',
+      'FANUMB' => 'EQUIPMENT ID',
+      'FAASID' => 'Equipment Number',
+      'FADL01' => 'Equipment Description',
+      'LOCT' => 'Location',
+      'CIT' => 'Criticality',
+      'PARENTS' => 'Parent EQ Number',
+      'DSPARENTS' => 'Parent Description',
+      'EQCLAS' => 'Equipment Class',
+      'EQTYPE' => 'Equipment Type',
+    ];
+    $data['detail'] = $detail;
+
     return $data[$value];
   }
   public function ajax_list_equipment()
@@ -261,10 +276,14 @@ class Wr extends CI_Controller {
     foreach ($list as $rows) {
       $no++;
       $row = array();
-      $jsondata = json_encode($rows);
-      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' data=\"$jsondata\">Select</a>";
+      // $jsondata = json_encode($rows);
+      $tampung = '';
+      foreach ($this->settings('detail') as $key => $value) {
+        $tampung .= " $key = '".trim($rows->$key)."'";
+      }
+      $btnAdd = "<button type='button' href='#' $tampung class='btn btn-sm btn-primary' id='$rows->FANUMB' onclick=\"getSelectedData($rows->FANUMB)\">Select</button>";
       foreach ($this->settings('thead') as $key => $value) {
-        $row[] = $rows->$key;
+        $row[] = trim($rows->$key);
       }
       $row[] = "$btnAdd";
       $data[] = $row;

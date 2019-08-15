@@ -4,7 +4,7 @@
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-6 col-12 mb-1">
-      	<h3 class="content-header-title"><?= $title ?></h3>
+        <h3 class="content-header-title"><?= $title ?></h3>
       </div>
       <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
         <div class="breadcrumb-wrapper col-12">
@@ -15,11 +15,11 @@
       </div>
     </div>
     <div class="content-body">
-    	<section id="icon-tabs">
+      <section id="icon-tabs">
         <div class="row">
           <div class="col-12">
             <div class="card">
-            	<div class="card-content collapse show">
+              <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
                     <h6> <?= $title ?></h6>
@@ -33,6 +33,8 @@
                           <div class="form-group">
                             <label>Equipment Number</label>
                             <input class="form-control" readonly="" id="eq_number" name="eq_number">
+                            <input type="hidden" readonly="" id="faaaid" name="faaaid">
+                            <input type="hidden" readonly="" id="fanumb" name="fanumb">
                             <small><a href="#" onclick="browseEquipmentPoup()">Click Here to Browse</a></small>
                           </div>
                           <div class="form-group">
@@ -96,7 +98,7 @@
                         </div>
                       </div>
                     </fieldset>
-                	</form>
+                  </form>
                 </div>
               </div>
             </div>
@@ -153,8 +155,8 @@
   </div>
 </div>
 <script type="text/javascript">
-	$(document).ready(function(){
-		$("#frm-bled").steps({
+  $(document).ready(function(){
+    $("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -209,14 +211,29 @@
    
     });
 
-    $('#btn-filter').click(function(){ //button filter event click
+    $('.btn-filter').click(function(){ //button filter event click
       table.ajax.reload();  //just reload table
     });
-    $('#dt-equipment tbody').on( 'click', 'button', function () {
-        var data = table.row( $(this).parents('tr') ).data();
-        console.log(data);
-    } );
   });
+  function getSelectedData(id)
+  {
+    /*<button type="button" href="#" faasid="LCA21AP001" fadl01="HOT WELL PUMP" loct="" cit="" parents="LCA21AP001" dsparents="HOT WELL PUMP" eqclas="MHHP - MECH. HANDLING - HYDRAULIC OIL" eqtype="PU - PUMP" class="btn btn-sm btn-primary" id="34956" onclick="getSelectedData(34956)">Select</button>*/
+    var faaaid =$("#"+id).attr("faaaid");
+    var fanumb =$("#"+id).attr("fanumb");
+    var faasid =$("#"+id).attr("faasid");
+    var fadl01 =$("#"+id).attr("fadl01");
+    var loct =$("#"+id).attr("loct");
+    var eqtype =$("#"+id).attr("eqtype");
+    var eqclas =$("#"+id).attr("eqclas");
+    $("#faaaid").val(faaaid);
+    $("#fanumb").val(fanumb);
+    $("#eq_number").val(faasid);
+    $("#eq_desc").val(fadl01);
+    $("#eq_location").val(loct);
+    $("#eq_type").val(eqtype);
+    $("#eq_class").val(eqclas);
+    // console.log(r);
+  }
   function browseEquipmentPoup() {
     $("#myModal").modal('show')
   }

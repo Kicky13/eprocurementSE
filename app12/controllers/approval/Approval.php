@@ -1712,7 +1712,7 @@ class Approval extends CI_Controller
         JOIN m_approval main ON approval.m_approval_id = main.id
         JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
         JOIN m_user user ON approval.created_by = user.ID_USER
-        JOIN m_notic notif ON notif.ID = 63
+        JOIN m_notic notif ON notif.ID = 83
         WHERE ed.id = "' . $edid . '"
         AND roles.ID_USER_ROLES = 23');
 
@@ -1754,7 +1754,7 @@ class Approval extends CI_Controller
             JOIN m_approval main ON approval.m_approval_id = main.id
             JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
             JOIN m_user user ON approval.created_by = user.ID_USER
-            JOIN m_notic notif ON notif.ID = 65
+            JOIN m_notic notif ON notif.ID = 89
             WHERE ed.id = "' . $edid . '"
             AND roles.ID_USER_ROLES = 18');
 
@@ -1906,6 +1906,18 @@ class Approval extends CI_Controller
                 $this->M_approval->approvalEdEvaluation();
             }
 
+            if ($this->input->post('approval_ed') == 'administrative') {
+                if ($this->input->post('administrative') == 3) {
+                    $notif = 63;
+                }
+            } else if ($this->input->post('approval_ed') == 'technical') {
+                if ($this->input->post('technical') == 3) {
+                    $notif = 65;
+                } else {
+                    $notif = 66;
+                }
+            }
+
             if ($this->input->post('technical') == 0) {
                 // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                 // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
@@ -1914,12 +1926,14 @@ class Approval extends CI_Controller
                 $edid = $this->input->post('ed_id');
                 $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
                 JOIN m_user user ON ed.created_by = user.ID_USER
-                JOIN m_notic notif ON notif.ID = 89
+                JOIN m_notic notif ON notif.ID = "' . $notif . '"
                 WHERE ed.id = ' . $this->input->post('ed_id'));
 
                 $data_replace = $query->result();
 
                 $str = $data_replace[0]->open;
+                $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+
                 $data = array(
                     'img1' => $img1,
                     'img2' => $img2,

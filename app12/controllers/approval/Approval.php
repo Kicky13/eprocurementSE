@@ -362,10 +362,10 @@ class Approval extends CI_Controller
             $img2 = '';
             $query = $this->db->query('SELECT msr.msr_no, u.EMAIL, n.TITLE, n.OPEN_VALUE, n.CLOSE_VALUE FROM t_msr msr
             JOIN m_user u ON u.ID_USER = msr.create_by
-            JOIN m_notic n ON n.ID = 64
+            JOIN m_notic n ON n.ID = 86
             WHERE msr.msr_no = "' . $this->input->post('data_id') . '"');
             $data_replace = $query->result();
-            $str = str_replace('no_msr', $this->input->post('data_id'), $data_replace[0]->OPEN_VALUE);
+            $str = $data_replace[0]->OPEN_VALUE;
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,
@@ -2819,7 +2819,8 @@ class Approval extends CI_Controller
         $flag = $this->sendMail($data);
         $response = array(
             'success' => true,
-            'message' => 'Success request negotiation'
+            'message' => 'Success request negotiation',
+            'sendmail' => $flag
         );
         echo json_encode($response);
     }

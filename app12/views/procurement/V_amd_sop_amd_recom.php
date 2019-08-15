@@ -253,9 +253,19 @@
             <br>
             <input type="radio" name="bod_approval" value="0"
             <?php 
-              if(@$recom->bod_approval == 0)
+              if(isset($recom))
               {
-                echo "checked=''";
+                if($recom->bod_approval == 0)
+                {
+                  echo "checked=''";
+                }
+              }
+              else
+              {
+                if($arf->review_bod == 0 )
+                {
+                  echo "checked=''";
+                }
               }
             ?>
             >
@@ -271,14 +281,17 @@
               }
               else
               {
-                echo "checked=''";
+                if($arf->review_bod == 1)
+                {
+                  echo "checked=''";
+                }
               }
             ?>
             >
             <label style="bottom: 10px;position: relative;">Yes, BOD Review Required</label>
         </div>
         <div class="col-md-6">
-            Accumulative Amendment
+            Accumulative Amendment(s) value exceeds 30% of original Contract Value
             <br>
             <input type="radio" name="aa" value="0" 
             <?php 

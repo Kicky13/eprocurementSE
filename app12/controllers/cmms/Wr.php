@@ -261,7 +261,8 @@ class Wr extends CI_Controller {
     foreach ($list as $rows) {
       $no++;
       $row = array();
-      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' onclick=\"selectEquipmentForWr(101)\">Select</a>";
+      $jsondata = json_encode($rows);
+      $btnAdd = "<a href='#' class='btn btn-sm btn-primary' data=\"$jsondata\">Select</a>";
       foreach ($this->settings('thead') as $key => $value) {
         $row[] = $rows->$key;
       }

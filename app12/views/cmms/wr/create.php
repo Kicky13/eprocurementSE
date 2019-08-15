@@ -122,7 +122,7 @@
             <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
             <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
-            <a href="#" class="btn btn-sm btn-primary" onclick="searchEquipmentClick()">Filter</a>
+            <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Filter</a>
           </div>
         </div>
         <div class="row">
@@ -178,20 +178,7 @@
     //hide next and previous button
     $('a[href="#next"]').hide();
     $('a[href="#previous"]').hide();
-  });
-  function browseEquipmentPoup() {
-    $("#myModal").modal('show')
-  }
-  function searchEquipmentClick() {
-    /*var q = $("#q").val()
-    $.ajax({
-      type:'post',
-      data:{q:q},
-      url:"<?=base_url('cmms/wr/search_for_wr')?>",
-      success:function(e){
-        $("#tbody-equipment-search").html(e)
-      }
-    })*/
+
     table = $('#dt-equipment').DataTable({ 
       'processing': true, //Feature control the processing indicator.
       'serverSide': true, //Feature control DataTables' server-side processing mode.
@@ -221,7 +208,19 @@
       ],
    
     });
+
+    $('#btn-filter').click(function(){ //button filter event click
+      table.ajax.reload();  //just reload table
+    });
+    $('#dt-equipment tbody').on( 'click', 'button', function () {
+        var data = table.row( $(this).parents('tr') ).data();
+        console.log(data);
+    } );
+  });
+  function browseEquipmentPoup() {
+    $("#myModal").modal('show')
   }
+  
   function selectEquipmentForWr(eq_no) {
     $("#eq_number").val(eq_no)
     $("#eq_desc").val($("#eqdesc-"+eq_no).text())

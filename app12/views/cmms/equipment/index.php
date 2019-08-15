@@ -110,7 +110,7 @@
 				'url': '<?php echo base_url('cmms/equipment/ajax_list')?>',
 				'type': 'POST',
 				'data': function ( data ) {
-          data.FAASID = $('#filter_FAASID').val();
+          data.FANUMB = $('#filter_FANUMB').val();
           data.FADL01 = $('#filter_FADL01').val();
           data.LOCT = $('#filter_LOCT').val();
           data.CIT = $('#filter_CIT').val();

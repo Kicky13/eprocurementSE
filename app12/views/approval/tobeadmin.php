@@ -510,6 +510,16 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                         </div>
                                                                     </nav>
                                                                     <div class="tab-content" id="nav-tabContent">
+                                                                        <?php
+                                                                            $this->db->from('t_nego');
+                                                                            // $this->db->where(['msr_no'=>$ed->msr_no]);
+                                                                            $this->db->where(['msr_no'=>$ed->msr_no]);
+                                                                            $this->db->order_by("created_at", "desc");
+                                                                            $query = $this->db->get()->row();
+                                                                            if(!empty($query)){
+                                                                                $ed->nego_deli_time = $query->delivery_time;
+                                                                            }
+                                                                        ?>
                                                                         <div class="tab-pane fade show active"
                                                                              id="tab-original-value" role="tabpanel"
                                                                              aria-labelledby="original-value-tab"

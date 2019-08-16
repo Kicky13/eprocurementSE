@@ -424,7 +424,7 @@ body {
                     </fieldset>
 
                     <?php if ($po->completed == 1): ?>
-                    <h6><i class="step-icon icon-directions"></i>Completeness</h6>
+                    <h6><i class="step-icon icon-directions"></i>Supporting Document</h6>
                     <fieldset>
                     <?php foreach($po_required_doc as $po_rdoc): ?>
                     <div class="row">

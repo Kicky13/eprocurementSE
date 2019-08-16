@@ -1,5 +1,6 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">
@@ -28,7 +29,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>Parent WO</label>
-                            <input class="form-control" value="" id="parent_id" name="parent_id">
+                            <select class="form-control js-data-example-ajax" value="" id="parent_id" name="parent_id"></select>
                           </div>
                           <div class="form-group">
                             <label>Equipment Number</label>
@@ -214,6 +215,31 @@
     $('.btn-filter').click(function(){ //button filter event click
       table.ajax.reload();  //just reload table
     });
+	$('.js-data-example-ajax').select2({
+	  ajax: {
+		delay:250,
+		url: "<?= base_url('cmms/wr/wo_search') ?>",
+		dataType: 'json',
+		data: function (params) {
+		  var query = {
+			search: params.term,
+			//type: 'public'
+		  }
+
+		  // Query parameters will be ?search=[term]&type=public
+		  return query;
+		},
+		processResults: function (data) {
+		  // Transforms the top-level key of the response object from 'items' to 'results'
+		  return {
+			results: data
+		  };
+		}
+		// Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+	  },
+	  placeholder: 'Search ',
+		minimumInputLength: 3,
+	});
   });
   function getSelectedData(id)
   {
@@ -233,6 +259,15 @@
     $("#eq_type").val(eqtype);
     $("#eq_class").val(eqclas);
     // console.log(r);
+	//get ajax data failure analysys
+	$.ajax({
+		type:'post',
+		data:{eqclas:eqclas},
+		url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
+		success:function(e){
+			$("#failure_desc").html(e)
+		}
+	})
   }
   function browseEquipmentPoup() {
     $("#myModal").modal('show')

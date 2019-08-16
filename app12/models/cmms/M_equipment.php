@@ -201,4 +201,29 @@ class M_equipment extends CI_Model {
     $s = $this->db->query($q);
     return $s->result();
   }
+  function failure_wr($eq_class)
+  {
+	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";
+	  return $this->db->query($sql)->result();
+  }
+  function wo_search()
+  {
+	  $query = $this->input->get('query');
+	  $sql = "select WADOCO, WADL01 from f4801 where UPPER(WADOCO )like UPPER('%$query%') fetch first 5 ROWS ONLY ";
+	  $r =  $this->db->query($sql)->result();
+	  $d = [];
+	  foreach($r as $v)
+	  {
+		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADL01];
+	  }
+	  return $d;
+  }
+  public function wr_no_jde($value='')
+  {
+    $sql = "select NNN001 from crpctl.F0002 where nnsy='48'";
+    $r = $this->db->query($sql)->row();
+	$q = "update crpctl.f0002 set nnn001=nnn001+1 where nnsy='48'";
+	$this->db->query($q);
+    return $r->NNN001;
+  }
 }

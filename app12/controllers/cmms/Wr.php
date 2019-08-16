@@ -153,7 +153,7 @@ class Wr extends CI_Controller {
 
         $data = $this->input->post();
         $data['photo'] = $file_name;
-
+		$data['wr_no'] = $this->mod->wr_no_jde();
         $store = $this->wr->store($data);
 
         if($store)
@@ -311,15 +311,18 @@ class Wr extends CI_Controller {
   public function opt_ajax_failure_desc()
   {
     $p = $this->input->post();
+	$eqclas = $p['eqclas'];
+	$eqclas = explode('-', $eqclas);
+	$eqclas = trim($eqclas[0]);
     $s = "";
-    $failures = $this->failure->all();
+    $failures = $this->mod->failure_wr($eqclas);
     foreach ($failures as $failure) {
       $selected = '';
-      if(isset($p['failure_desc']))
+      /* if(isset($p['failure_desc']))
       {
         $selected = $failure->id == $p['failure_desc'] ? "selected='selected'":"";
-      }
-      $s .= "<option $selected value='$failure->id'>$failure->nama</option>";
+      } */
+      $s .= "<option $selected value='$failure->KNKBTNM'>$failure->KNDS40</option>";
     }
     echo $s;
   }
@@ -358,5 +361,10 @@ class Wr extends CI_Controller {
     }
     $opt .= "</select>";
     return $opt;
+  }
+  function wo_search()
+  {
+	  $data = $this->mod->wo_search();
+	  echo json_encode($data);
   }
 }

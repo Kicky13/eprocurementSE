@@ -104,7 +104,16 @@
 									$price_str = $price > 0 ? numIndo($price): '-';
 									$total_unit_price_str = $total_unit_price > 0 ? numIndo($total_unit_price): '-';
 
-									echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+									if(isset($nego))
+									{
+										if ($nego) {
+											echo "<td class='text-center'>$ed->nego_deli_time DAYS</td>";
+										}else{
+											echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+										}
+									}else{
+										echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+									}
 									echo "<td class='text-right'>".$price_str."</td>";
 									echo "<td class='text-right'>".$total_unit_price_str."</td>";
 								}

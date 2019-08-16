@@ -424,7 +424,7 @@ body {
                     </fieldset>
 
                     <?php if ($po->completed == 1): ?>
-                    <h6><i class="step-icon icon-directions"></i>Completeness</h6>
+                    <h6><i class="step-icon icon-directions"></i>Supporting Document</h6>
                     <fieldset>
                     <?php foreach($po_required_doc as $po_rdoc): ?>
                     <div class="row">
@@ -433,7 +433,7 @@ body {
                         <?= $po_rdoc->doc_type == $this->M_purchase_order_document::TYPE_OTHER ?
                           $po_rdoc->description :
                           $po_document_type[$po_rdoc->doc_type]
-                        ?>
+                        ?> 
                         </h6>
                         <?php if ($po_rdoc->doc_type != $this->M_purchase_order_document::TYPE_OTHER): ?>
                         <!-- <button type="button" role="button" id="Add<?= $po_rdoc->doc_type?>" data-doc_type="<?= $po_rdoc->doc_type?>" data-doc_type_name="<?= $po_document_type[$po_rdoc->doc_type] ?>" class="btn btn-success pull-right po-document-open-btn" data-toggle="modal" data-target="#po_document_modal">Add</button> -->

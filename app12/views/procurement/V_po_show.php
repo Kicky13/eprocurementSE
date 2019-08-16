@@ -433,7 +433,7 @@ body {
                         <?= $po_rdoc->doc_type == $this->M_purchase_order_document::TYPE_OTHER ?
                           $po_rdoc->description :
                           $po_document_type[$po_rdoc->doc_type]
-                        ?>
+                        ?> 
                         </h6>
                         <?php if ($po_rdoc->doc_type != $this->M_purchase_order_document::TYPE_OTHER): ?>
                         <!-- <button type="button" role="button" id="Add<?= $po_rdoc->doc_type?>" data-doc_type="<?= $po_rdoc->doc_type?>" data-doc_type_name="<?= $po_document_type[$po_rdoc->doc_type] ?>" class="btn btn-success pull-right po-document-open-btn" data-toggle="modal" data-target="#po_document_modal">Add</button> -->

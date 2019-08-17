@@ -377,15 +377,15 @@ class Wr extends CI_Controller {
   }
   public function send_wsdl($data='')
   {
-    $id = $this->session->userdata('ID_USER')
-    $r = $this->db->where('id',$id)->get('m_user')->row();
+    $id = $this->session->userdata('ID_USER');
+    $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
     $e = explode(',',$r->COMPANY);
 
     $wh = $this->db->from('m_warehouse')->select('id_warehouse')->where('id_company', $e[0])->get()->row();
     $id_warehouse = $wh->id_warehouse;
 
     $data['id_warehouse'] = $id_warehouse;
-    $xml = $this->load->view('cmms/wt/wsdl', $data, true);
+    $xml = $this->load->view('cmms/wr/wsdl', $data, true);
     $headers = array(
       "Content-Type: text/xml",
       "charset:utf-8",

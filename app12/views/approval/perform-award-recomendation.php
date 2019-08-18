@@ -123,7 +123,8 @@
 
 									$vendorRecomendation[$row->vendor_id] = $total_unit_price;
 
-									echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+									// echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+									echo "<td class='text-center'>$ed->nego_deli_time DAYS</td>";
 									echo "<td class='text-right'>".numIndo($price)."</td>";
 									echo "<td class='text-right'>".numIndo($total_unit_price)."</td>";
 								}

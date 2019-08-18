@@ -17,6 +17,7 @@ class Wr extends CI_Controller {
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
     $this->load->model('cmms/M_work_request', 'wr');
+    $this->load->model('cmms/M_wo_jde', 'wo');
     $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->model('cmms/M_failure_description', 'failure');
     $this->load->model('cmms/M_equipment','mod');
@@ -54,37 +55,37 @@ class Wr extends CI_Controller {
 
   public function ajax_list()
   {
-    $list = $this->wr->dt_get_datatables();
+    $list = $this->wo->dt_get_datatables();
     $data = array();
     $no = $_POST['start'];
     foreach ($list as $rows) {
       $no++;
       $row = array();
       $row[] = $no;
-      foreach (cmms_settings('wr_list')->get()->result() as $key => $value) {
-        $field = $value->desc1;
-        if($field == 'req_finish_date')
-        {
-          $txt = dateToIndo($rows->$field);
-        }
-        else
-        {
-          $txt = $rows->$field;
-        }
-        if($field == 'wr_no')
-        {
-          $txt = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."' class='btn btn-info btn-sm'>$txt</a>";
-        }
-        $row[] = $txt;
-      }
-      
+      $woNo = $rows->WADOCO;
+		$woDesc = $rows->WADL01;
+		$woType = $rows->WOTYPE;
+		$wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
+		@$woType = $wotype->notation;
+		$woStatus = $rows->STATUS;
+		$woDate = $rows->WO_DATE;
+		$woFailureDesc = $rows->FAILURE_DESC;
+		$woOriginator = $rows->ORIGINATOR;
+		$link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
+		$row[] = $link;
+		$row[] = $woDesc;
+		$row[] = $woType;
+		$row[] = $woStatus;
+		$row[] = $woDate;
+		$row[] = $woFailureDesc;
+		$row[] = $woOriginator;
       $data[] = $row;
     }
     // print_r($data);
     $output = array(
             'draw' => $_POST['draw'],
-            'recordsTotal' => $this->wr->dt_count_all(),
-            'recordsFiltered' => $this->wr->dt_count_filtered(),
+            'recordsTotal' => $this->wo->dt_count_all(),
+            'recordsFiltered' => $this->wo->dt_count_filtered(),
             'data' => $data,
         );
     echo json_encode($output);
@@ -375,7 +376,7 @@ class Wr extends CI_Controller {
 	  $data = $this->mod->wo_search();
 	  echo json_encode($data);
   }
-  public function send_wsdl($data='')
+  public function send_wsdl($data='', $manual= false)
   {
     $id = $this->session->userdata('ID_USER');
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
@@ -410,11 +411,20 @@ class Wr extends CI_Controller {
     curl_close($ch);
     // echo $data_curl;
     if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
-        // echo "Failed Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
-      return true;
+      if($manual == true)
+      {
+        echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
+        echo $xml;
+      }
+      return false;
     } else {
         // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
-      return false;
+      return true;
     }
+  }
+  public function send_wsdl_manual($wr_no='')
+  {
+    $wr  = $this->db->where('wr_no', $wr_no)->get('cmms_wr')->row_array();
+    $this->send_wsdl($wr, true);
   }
 }

@@ -1,4 +1,4 @@
-a<link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
+<link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">

@@ -93,9 +93,10 @@ class M_work_request extends CI_Model {
   }
   public function sql($value='')
   {
-    $sql = "select cmms_wr.*,cmms_wo_type.notation as wr_type, m_user.NAME as originator
+    $sql = "select cmms_wr.*,cmms_wo_type.notation as wr_type, m_user.NAME as originator,concat(cmms_wr.status,' - ',cmms_wo_status.wo_status_desc) status
     from $this->table
     left join cmms_wo_type on cmms_wo_type.id = cmms_wr.wo_type_id
+	left join cmms_wo_status on cmms_wo_status.wo_status = cmms_wr.status
     left join m_user on m_user.ID_USER = cmms_wr.created_by
     ";
     return $sql;  

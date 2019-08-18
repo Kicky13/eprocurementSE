@@ -6,15 +6,15 @@
       <orac:processEquipmentWorkOrder>
          <accounting>
             <!--Optional:-->
-            <businessUnit><?= $id_warehouse ?></businessUnit>
+            <businessUnit><?= trim($id_warehouse) ?></businessUnit>
             <!--Optional:-->
          </accounting>
          <!--Optional:-->
-         <assetNumber><?= $fanumb ?></assetNumber>
+         <assetNumber>*<?= $fanumb ?></assetNumber>
          <!--Optional:-->
-         <description><?= $wr_description ?></description>
+         <description><?= trim($wr_description) ?></description>
          <!--Optional:-->
-         <failureDescription><?= $failure_desc ?></failureDescription>
+         <failureDescription><?= trim($failure_desc) ?></failureDescription>
          <!-- -->
          <orderNumber><?= $wr_no ?></orderNumber>
          <orderType>WM</orderType>

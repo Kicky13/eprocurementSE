@@ -588,10 +588,10 @@ class M_bl extends CI_Model {
     $t_purchase_order = 0;
     if(count($msr_no) > 0)
     {
-//      $t_purchase_order = $this->db->where_in('msr_no',$msr_no)->where(['issued'=>1])->get('t_purchase_order')->num_rows();
+      $t_purchase_order = $this->db->where_in('msr_no',$msr_no)->where(['issued'=>1])->get('t_purchase_order')->num_rows();
 //        $t_purchase_order = $this->db->where(['t_assignment.user_id'=>$id_user])->get('t_assignment')->num_rows();
     }
-    $hitung = count($msr_no);
+    $hitung = count($msr_no) - $t_purchase_order;
     return $hitung;
   }
   public function ed_list($id_user='')

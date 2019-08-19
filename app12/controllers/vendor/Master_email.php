@@ -61,7 +61,7 @@ class Master_email extends CI_Controller {
         $dt = array();
         //$base = base_url();
         foreach ($data as $k => $v) {
-            $dt[$k][0] = ($v->EMAIL_SEQUENCE != '' || $v->EMAIL_SEQUENCE != null) ? $v->EMAIL_SEQUENCE : $k + 1; 
+            $dt[$k][0] = ($v->EMAIL_SEQUENCE != '' || $v->EMAIL_SEQUENCE != null) ? $v->EMAIL_SEQUENCE : $k + 1;
             $dt[$k][1] = stripslashes($v->TITLE);
             $dt[$k][2] = stripslashes($v->OPEN_VALUE);
             $dt[$k][3] = stripslashes($v->CLOSE_VALUE);

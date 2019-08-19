@@ -746,7 +746,7 @@ class Ed extends CI_Controller {
             // echo "<pre>";
             // print_r($newMsr);
             // exit();
-          return $msr_no;
+          return $newMsr;
         }
         else
         {

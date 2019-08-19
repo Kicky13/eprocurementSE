@@ -376,7 +376,11 @@
                             <h6><i class="step-icon icon-calculator"></i> Budget</h6>
                             <fieldset >
                                 <div class="mb-1">
+                                    <?php if($arf->currency == 'USD'): ?>
+                                    <?php else:?>
                                     <?= numIndo(1) ?> <?= base_currency_code() ?> = <?= numIndo(exchange_rate_by_id(base_currency(), $arf->currency_id, 1)) ?> <?= $arf->currency ?>
+                                    <p id="cur_exchange" style="display:none;"></p>
+                                    <?php endif;?>
                                 </div>
                                 <div class="table-responsive">
                                     <table id="budget_item-table" class="table table-no-wrap">
@@ -428,7 +432,7 @@
                                                 $roles      = explode(",", $this->session->userdata('ROLES'));
                                                 $roles      = array_values(array_filter($roles));
 
-                                                $disabled = '';
+                                                $disabled = 'disabled';
                                                 if($this->input->get('vmod'))
                                                 {
                                                     $disabled = 'disabled';
@@ -448,7 +452,7 @@
                                                     }
                                                     else
                                                     {
-                                                        $disabled = '';
+                                                        $disabled = 'disabled';
                                                     }
                                                   }
                                                   else
@@ -591,19 +595,19 @@
               if(r.status)
               {
                 var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
-                $('#po_spending_value').html(r.spending_value);
+                $('#po_spending_value').html(Localization.number(r.spending_value));
                 $('#po_remaining_value').html(Localization.number(n));
               }
               else
               {
-                $('#po_spending_value').html('0');
+                $('#po_spending_value').html(Localization.number(0));
                 var n = toFloat($("#po_latest_value").val());
                 $("#po_remaining_value").html(Localization.number(n));
                 swal('Fail','Cant Get Spending Value','warning')
               }
             },
             error:function(){
-              $('#po_spending_value').html('0');
+              $('#po_spending_value').html(Localization.number(0));
               var n = toFloat($("#po_latest_value").val());
               $("#po_remaining_value").html(Localization.number(n));
               swal('Fail','Cant Get Spending Value','warning')
@@ -656,6 +660,20 @@
             }
           })
         }
+        function cur_exchange(){
+            var base = "<?= $this->db->where('CURRENCY_BASE',1)->get('m_currency')->row()->CURRENCY ?>";
+            var to = "<?= $arf->currency ?>";
+            $.ajax({
+                url : 'https://api.exchangeratesapi.io/latest?base='+base+'&symbols='+to,
+                type : 'get',
+                success : function(data){
+                    var n = parseFloat(data.rates[to]).toFixed(2);
+                    var result = Number(n).toLocaleString('en');
+                    $('#cur_exchange').html("<?= numIndo(1)?> "+base+" = "+result+".00 "+to);
+                }
+            });
+        }
+        cur_exchange();
         get_amd("<?= $arf->po_no ?>");
         get_spending_value("<?= $arf->po_no ?>");
 

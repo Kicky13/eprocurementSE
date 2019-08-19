@@ -50,14 +50,7 @@
                                 <div class="col-sm-8">
                                 </div>
                                 <div class="col-sm-4 pull-right text-right">
-                                    <button id="cpm_btn1" class="btn btn-primary onprogress" onclick="show_prepare()" style="display: none;">
-                                        <i class="fa fa-exchange"></i>
-                                        <?=lang("Persiapan", "Preparation")?>
-                                    </button>
-                                    <button id="cpm_btn2" class="btn btn-primary onprepare" onclick="show_progress()">
-                                        <i class="fa fa-exchange"></i>
-                                        <?=lang("Progres", "On Progress")?>
-                                    </button>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -423,7 +416,7 @@
                 <div class="form-group text-right">
                     <!-- <button class="btn btn-primary btn-modif btn-prep" onclick="send_data(1)"><?= lang("Simpan Draf", "Save Draft")?></button> -->
                     <button class="btn btn-success btn-modif btn-prep" onclick="send_data(2)"><?= lang("Kirim", "Submit")?></button>
-                    <button type="button" class="btn btn-danger" onclick="cancelArf()">Cancel ARF</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelArf()">ARF Cancellation</button>
                     <button class="btn btn-success btn-modif btn-resub" data-toggle="modal" data-target="#modal_approve"><?= lang("Kirim", "Submit")?></button>
                 </div>
             </div>
@@ -432,7 +425,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">ARF Cancel</h5>
+                        <h5 class="modal-title">ARF Cancellation</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -459,7 +452,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" onclick="cancelArfSend()">Submit Cancel</button>
+                        <button type="button" class="btn btn-success" onclick="cancelArfSend()">Submit</button>
                     </div>
                 </div>
             </div>

@@ -576,6 +576,7 @@ class M_bl extends CI_Model {
       return false;
     }
   }
+
   public function getAssignmentAgreement($id_user='')
   {
 
@@ -588,8 +589,9 @@ class M_bl extends CI_Model {
     if(count($msr_no) > 0)
     {
       $t_purchase_order = $this->db->where_in('msr_no',$msr_no)->where(['issued'=>1])->get('t_purchase_order')->num_rows();
+//        $t_purchase_order = $this->db->where(['t_assignment.user_id'=>$id_user])->get('t_assignment')->num_rows();
     }
-    $hitung = count($msr_no)-$t_purchase_order;
+    $hitung = count($msr_no) - $t_purchase_order;
     return $hitung;
   }
   public function ed_list($id_user='')
@@ -622,7 +624,7 @@ class M_bl extends CI_Model {
             ) t_approval ON t_approval.data_id = approval.data_id AND t_approval.urutan = approval.urutan
             JOIN m_user_roles ON m_user_roles.ID_USER_ROLES = t_approval.role_id
         ) approval', 'approval.data_id = t_eq_data.msr_no', 'left')
-        // ->where(['t_msr.status'=>0])
+         ->where_in('t_msr.status', [0,1])
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
         return $eds;
   }

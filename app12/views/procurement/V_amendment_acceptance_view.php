@@ -14,7 +14,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-12 mb-1">
-                <h3 class="content-header-title"><?= lang("Amendment Acceptante & Supplier Document Subissions", "Amendment Acceptante & Supplier Document Subissions") ?></h3>
+                <h3 class="content-header-title"><?= lang("Amendment Acceptance & Supplier Document Submission", "Amendment Acceptance & Supplier Document Submission") ?></h3>
             </div>
             <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
                 <div class="breadcrumb-wrapper col-12">
@@ -53,7 +53,7 @@
                             <tr>
                                 <td>Amendment Value</td>
                                 <td>:</td>
-                                <td><?= numIndo($arf->estimated_value) ?></td>
+                                <td id="amendment_value"><?= numIndo($arf->estimated_value) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -104,8 +104,8 @@
                                         <?= numIndo($arf->amount_po) ?>
                                     </div>
                                     <label class="col-md-3">Additional Value</label>
-                                    <div class="col-md-3 text-right">
-                                        <?= numIndo($stt) ?>
+                                    <div class="col-md-3 text-right" id="additonal_value">
+                                        
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -131,7 +131,7 @@
                                         <?php } ?>
                                     </div>
                                     <div class="col-md-6">
-                                        Accumulative Amendment
+                                        Accumulative Amendment(s) value exceeds 30% of original Contract Value
                                         <br>
                                         <?php if ($arf->aa) { ?>
                                             <i class="fa fa-square-o"></i> No
@@ -279,7 +279,7 @@
                             <fieldset>
                                 <div class="nav nav-tabs sub-tabs" id="nav-tab" role="tablist">
                                     <a class="nav-item nav-link active" id="nav-arf-sop" data-toggle="tab" href="#tab-arf-sop" role="tab" aria-controls="nav-home" aria-selected="true">ARF</a>
-                                    <a class="nav-item nav-link" id="nav-response-sop" data-toggle="tab" href="#tab-response-sop" role="tab" aria-controls="nav-profile" aria-selected="false">Response</a>
+                                    <a class="nav-item nav-link" id="nav-response-sop" data-toggle="tab" href="#tab-response-sop" role="tab" aria-controls="nav-profile" aria-selected="false">Amendment</a>
                                 </div>
                                 <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="tab-arf-sop" role="tabpanel" aria-labelledby="original-value-tab" style="padding: 15px 0px;">
@@ -590,11 +590,24 @@
             n = n.replace(/\,/g, '');
             return n;
         }
-        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        /*var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
         $("#latest-agreement-value").html(Localization.number(latest_agreement_value))
         $("#new-agreement-value").html(new_agreement)
-
+        $("#amendment_value").text($("#additonal_value").text())*/
+		function get_ajax_last_agreement() {
+            $.ajax({
+                type:'post',
+                url:"<?= base_url('procurement/browse/last_amd_when_create_amd/'.$arf->doc_no) ?>",
+                success: function (data) {
+                    $("#latest-agreement-value").html(Localization.number(data))
+					//alert(data)
+                    var new_agreement = (toFloat(data) + toFloat(numberNormal($("#additional-value-<?=$arf->doc_no?>").text())));
+                    $("#new-agreement-value").html(Localization.number(new_agreement))
+                }
+            })
+        }
+        get_ajax_last_agreement()
     });
     function completnessClick(id) {
         $.ajax({

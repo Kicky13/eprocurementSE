@@ -19,6 +19,7 @@ class Arf_notif_preparation extends CI_Controller {
         $this->load->model('procurement/arf/m_arf');
         $this->load->model('procurement/arf/m_arf_approval');
         $this->load->model('procurement/m_arf_notif_preparation', 'manp');
+        $this->load->model('procurement/arf/m_arf_detail_revision');
     }
 
     public function index() {
@@ -793,6 +794,64 @@ class Arf_notif_preparation extends CI_Controller {
             }
         //}
         echo json_encode($approval);
+    }
+    public function view($doc_no='')
+    {
+        $get_menu = $this->mvn->menu();
+        $dt = array();
+        foreach ($get_menu as $k => $v) {
+            $dt[$v->PARENT][$v->ID_MENU]['ICON'] = $v->ICON;
+            $dt[$v->PARENT][$v->ID_MENU]['URL'] = $v->URL;
+            $dt[$v->PARENT][$v->ID_MENU]['DESKRIPSI_IND'] = $v->DESKRIPSI_IND;
+            $dt[$v->PARENT][$v->ID_MENU]['DESKRIPSI_ENG'] = $v->DESKRIPSI_ENG;
+        }
+        $data['menu'] = $dt;
+        $data['row'] = $this->manp->view($doc_no);
+        $arf = $this->db->select('t_arf.*,t_arf_notification.id as notification_id,
+            t_arf_notification.dated as notification_date,
+            t_arf_notification.response_date as close_date,
+            t_arf_notification.estimated_value_new,m_vendor.NAMA as vendor,m_user.NAME AS requestor')
+        ->join('t_arf_notification', 't_arf_notification.doc_no = t_arf.doc_no','left')
+        ->join('t_purchase_order', 't_purchase_order.po_no = t_arf.po_no')
+        ->join('m_vendor', 'm_vendor.ID = t_purchase_order.id_vendor')
+        ->join('m_user', 'm_user.ID_USER = t_arf.created_by')
+        ->where(['t_arf.doc_no'=>$doc_no])->get('t_arf')->row();
+        /*$q = $this->db->select('
+            u.NAME as ps,
+            t_arf_notification.id as notification_id,
+            t_arf_notification.dated as notification_date,
+            t_arf_notification.response_date as close_date,
+            t_arf_notification.estimated_value_new,
+            t_purchase_order.title, t_purchase_order.po_type,
+            t_msr.create_by AS id_requestor,
+            m_user.NAME AS requestor,
+            t_msr.id_company,
+            m_company.DESCRIPTION as company,
+            m_company.ABBREVIATION as abbr,
+            u.NAME as ps,
+            m_user.ID_DEPARTMENT as id_department,
+            m_departement.DEPARTMENT_DESC as department,m_vendor.NAMA as vendor,
+            currency.CURRENCY as currency,
+            currency_base.CURRENCY as currency_base')
+        ->join('t_purchase_order', 't_purchase_order.po_no = t_arf.po_no')
+        ->join('t_msr', 't_msr.msr_no = t_purchase_order.msr_no')
+        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+        ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+        ->join('m_user u', 'u.ID_USER = t_arf_assignment.user_id', 'left')
+        ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+        ->join('m_vendor', 'm_vendor.ID = t_purchase_order.id_vendor')
+        ->join('m_currency currency', 'currency.ID = t_arf.currency_id')
+        ->join('m_currency currency_base', 'currency_base.ID = t_arf.currency_base_id')
+        ->where('t_arf_notification.doc_no', $doc_no)
+        ->get('t_arf');*/
+
+        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->id)->get() as $revision) {
+            $arf->revision[$revision->type] = $revision;
+        }
+        $data['arf'] = $arf;
+        $data['po_no'] = $arf->po_no;
+        $data['title'] = 'ARF Notification';
+        $this->template->display('procurement/V_arf_notif_view', $data);
     }
 }
 ?>

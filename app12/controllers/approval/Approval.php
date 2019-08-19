@@ -3,13 +3,15 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Approval extends CI_Controller {
+class Approval extends CI_Controller
+{
     /* Part 1
     * ed administration & technical
     * administrative : 0 default & reject; 1: evaluation adm; 3: approval eva adm; 4: ackevaadm
     * technical : 0 default & reject; 1: evaluation tech; 3: approval eva tech; 4: ackevatech
     */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->helper(array('string', 'text'));
         $this->load->model('approval/M_approval');
@@ -23,7 +25,7 @@ class Approval extends CI_Controller {
         $this->load->model('user/M_view_user');
         $this->load->helper('exchange_rate_helper')->helper(array('form', 'array', 'url', 'exchange_rate'));
         $this->load->model('vn/info/M_vn', 'mvn');
-		$this->load->model('m_base');
+        $this->load->model('m_base');
         $this->load->model('procurement/arf/m_arf_assignment');
         $get_menu = $this->M_vendor->menu();
         $this->dt = array();
@@ -36,7 +38,7 @@ class Approval extends CI_Controller {
         /*$data['menu'] = $dt;*/
     }
 
-    public function greetings($value='')
+    public function greetings($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -53,101 +55,86 @@ class Approval extends CI_Controller {
         $this->template->display('approval/greetings', $data);
     }
 
-    public function list($moduleKode='', $dataId='')
+    public function list($moduleKode = '', $dataId = '')
     {
-        $rows               = $this->M_approval->list($moduleKode, $dataId);
-        $data['rows']       = $rows;
-        $userId             = $this->session->userdata('ID_USER');
-        $cek                = $this->db->where('ID_USER',$userId)->get('m_user')->row();
-        $roles              = explode(",", $cek->ROLES);
-        $data['roles']      = array_values(array_filter($roles));
-        $data['data_id']    = $dataId;
+        $rows = $this->M_approval->list($moduleKode, $dataId);
+        $data['rows'] = $rows;
+        $userId = $this->session->userdata('ID_USER');
+        $cek = $this->db->where('ID_USER', $userId)->get('m_user')->row();
+        $roles = explode(",", $cek->ROLES);
+        $data['roles'] = array_values(array_filter($roles));
+        $data['data_id'] = $dataId;
 
         $this->load->view('approval/list', $data);
     }
+
     public function approve()
     {
         $result = $this->M_approval->approve();
-        if($result)
-        {
+        if ($result) {
             $data = $this->input->post();
 
             $module_kode = $data['module_kode'];
 
-            if($module_kode == 'msr')
-            {
+            if ($module_kode == 'msr') {
                 $msg = 'MSR';
-            }
-            elseif($module_kode == 'award')
-            {
+            } elseif ($module_kode == 'award') {
                 $msg = 'AWARD';
-            }
-            else
-            {
+            } else {
                 $msg = 'ED';
             }
 
             // $msg = $data['module_kode'] == 'msr' ? 'MSR':'ED';
-            $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'],'msr');
-            if($msg == 'ED')
-            {
-                $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'],'ed');
+            $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'], 'msr');
+            if ($msg == 'ED') {
+                $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'], 'ed');
             }
-            if($msg == 'AWARD')
-            {
-                $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'],'award');
+            if ($msg == 'AWARD') {
+                $getApprovalList = $this->approval_lib->getApprovalList($data['data_id'], 'award');
             }
 
-            if($getApprovalList->num_rows() > 0){
-                $msg = $this->input->get('issued') ? $msg.' Issued' : $msg.' Approved';
-                if($module_kode == 'award')
-                {
+            if ($getApprovalList->num_rows() > 0) {
+                $msg = $this->input->get('issued') ? $msg . ' Issued' : $msg . ' Approved';
+                if ($module_kode == 'award') {
                     $process_award = $this->M_approval->process_award(true);
-                    if($process_award['status'] == 'Issued Award Notification')
-                    {
+                    if ($process_award['status'] == 'Issued Award Notification') {
                         // $msg = $process_award['status'];
                         $msg = 'Approved';
                     }
                 }
-                echo json_encode(['msg'=>$msg,'status'=>true]);
-            }
-            else
-            {
+                echo json_encode(['msg' => $msg, 'status' => true]);
+            } else {
                 /**/
-                $desc = $this->input->get('issued') ? $msg.' Issued' : $msg.' Approved';
-                $t_approval = $this->db->where(['id'=>$this->input->post('id')])->get('t_approval')->row();
-                if($this->input->post('module_kode') == 'msr_spa' and $t_approval->m_approval_id  == 7){
+                $desc = $this->input->get('issued') ? $msg . ' Issued' : $msg . ' Approved';
+                $t_approval = $this->db->where(['id' => $this->input->post('id')])->get('t_approval')->row();
+                if ($this->input->post('module_kode') == 'msr_spa' and $t_approval->m_approval_id == 7) {
                     $desc = $data['status'] == 1 ? "MSR Verified" : "Reject";
                 }
-                if($module_kode == 'award')
-                {
+                if ($module_kode == 'award') {
                     $process_award = $this->M_approval->process_award(true);
-                    if($process_award['status'] == 'Issued Award Notification')
-                    {
+                    if ($process_award['status'] == 'Issued Award Notification') {
                         $desc = 'Approved';
                         // $desc = $process_award['status'];
                     }
                 }
-                echo json_encode(['msg'=>$desc]);
+                echo json_encode(['msg' => $desc]);
             }
 
             $rs = $this->db->select('t_approval.*,m_approval.module_kode')
-            ->where(['t_approval.id'=>$data['id'],'t_approval.status'=>"1"])
-            ->join('m_approval','m_approval.id = t_approval.m_approval_id')
-            ->get('t_approval')->row();
+                ->where(['t_approval.id' => $data['id'], 't_approval.status' => "1"])
+                ->join('m_approval', 'm_approval.id = t_approval.m_approval_id')
+                ->get('t_approval')->row();
             @$module_kode = $rs->module_kode;
             @$urutan1 = $rs->urutan;
-            if($module_kode == 'msr')
-            {
-                $q = "select max(urutan) urutan from t_approval WHERE data_id = '".$data['data_id']."'";
+            if ($module_kode == 'msr') {
+                $q = "select max(urutan) urutan from t_approval WHERE data_id = '" . $data['data_id'] . "'";
                 $rs = $this->db->query($q)->row();
                 $urutan2 = $rs->urutan;
 
                 $checkAllMsrApprove = $this->M_approval->checkAllMsrApprove($data['data_id']);
 
                 // if($urutan1 == $urutan2)
-                if($checkAllMsrApprove->num_rows() == 0)
-                {
+                if ($checkAllMsrApprove->num_rows() == 0) {
                     $this->generate_msr_spa($data['data_id']);
 
                     // Send Email ke PS Untuk Verify MSR
@@ -160,51 +147,51 @@ class Approval extends CI_Controller {
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr_spa' and m.urutan=1
                         join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
                         join m_notic n on n.ID=36
-                        where t.data_id='".$data["data_id"]."'");
+                        where t.data_id='" . $data["data_id"] . "'");
                     if ($query->num_rows() > 0) {
-                      $data_role = $query->result();
-                      $count = 1;
+                        $data_role = $query->result();
+                        $count = 1;
                     } else {
-                      $count = 0;
+                        $count = 0;
                     }
 
                     if ($count === 1) {
 
-                      $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+                        $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
                         join m_user u on u.id_user=t.create_by
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where msr_no='".$data["data_id"]."' ");
+                        where msr_no='" . $data["data_id"] . "' ");
 
-                      $data_replace = $query->result();
+                        $data_replace = $query->result();
 
-                      $res = $data_role;
-                      $str = $data_role[0]->OPEN_VALUE;
-                      $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                      $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_',$data["data_id"],$str);
+                        $res = $data_role;
+                        $str = $data_role[0]->OPEN_VALUE;
+                        $str = str_replace('_var1_', $data_replace[0]->title, $str);
+                        $str = str_replace('_var2_', $data_replace[0]->NAME, $str);
+                        $str = str_replace('_var3_', $data_replace[0]->DEPARTMENT_DESC, $str);
+                        $str = str_replace('_var4_', $data["data_id"], $str);
 
-                      $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_role[0]->TITLE,
-                        'open' => $str,
-                        'close' => $data_role[0]->CLOSE_VALUE
-                      );
+                        $data = array(
+                            'img1' => $img1,
+                            'img2' => $img2,
+                            'title' => $data_role[0]->TITLE,
+                            'open' => $str,
+                            'close' => $data_role[0]->CLOSE_VALUE
+                        );
 
-                      foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->recipient;
-                      }
-                      $flag = $this->sendMail($data);
+                        foreach ($data_role as $k => $v) {
+                            $data['dest'][] = $v->recipient;
+                        }
+                        $flag = $this->sendMail($data);
 
                     }
 
                     //End Send Email
 
-                }else{
-                    $rs = $this->db->where(['t_approval.id'=>$data['id'],'t_approval.status'=>"1"])
-                    ->get('t_approval')->row();
-                    $urutannext = $rs->urutan+1;
+                } else {
+                    $rs = $this->db->where(['t_approval.id' => $data['id'], 't_approval.status' => "1"])
+                        ->get('t_approval')->row();
+                    $urutannext = $rs->urutan + 1;
 
                     //Send Email
                     ini_set('max_execution_time', 300);
@@ -216,176 +203,190 @@ class Approval extends CI_Controller {
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'
                         join m_user u on u.id_user = t.created_by
                         join m_notic n on n.ID=35
-                        where t.data_id='".$data["data_id"]."' and t.urutan=".$urutannext);
+                        where t.data_id='" . $data["data_id"] . "' and t.urutan=" . $urutannext);
                     if ($query->num_rows() > 0) {
-                      $data_role = $query->result();
-                      $count = 1;
+                        $data_role = $query->result();
+                        $count = 1;
                     } else {
-                      $count = 0;
+                        $count = 0;
                     }
 
                     if ($count === 1) {
 
-                      $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+                        $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
                         join m_user u on u.id_user=t.create_by
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where msr_no='".$data["data_id"]."' ");
+                        where msr_no='" . $data["data_id"] . "' ");
 
-                      $data_replace = $query->result();
+                        $data_replace = $query->result();
 
-                      $res = $data_role;
-                      $str = $data_role[0]->OPEN_VALUE;
-                      $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                      $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_',$data["data_id"],$str);
+                        $res = $data_role;
+                        $str = $data_role[0]->OPEN_VALUE;
+                        $str = str_replace('_var1_', $data_replace[0]->title, $str);
+                        $str = str_replace('_var2_', $data_replace[0]->NAME, $str);
+                        $str = str_replace('_var3_', $data_replace[0]->DEPARTMENT_DESC, $str);
+                        $str = str_replace('_var4_', $data["data_id"], $str);
 
-                      $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_role[0]->TITLE,
-                        'open' => $str,
-                        'close' => $data_role[0]->CLOSE_VALUE
-                      );
+                        $data = array(
+                            'img1' => $img1,
+                            'img2' => $img2,
+                            'title' => $data_role[0]->TITLE,
+                            'open' => $str,
+                            'close' => $data_role[0]->CLOSE_VALUE
+                        );
 
-                      foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->recipient;
-                      }
-                      $flag = $this->sendMail($data);
+                        foreach ($data_role as $k => $v) {
+                            $data['dest'][] = $v->recipient;
+                        }
+                        $flag = $this->sendMail($data);
 
                     }
 
                     //End Send Email
 
                 }
-            }else if ($module_kode == 'msr_spa') {
-                    $rs = $this->db->where(['t_approval.id'=>$data['id']])
+            } else if ($module_kode == 'msr_spa') {
+                $rs = $this->db->where(['t_approval.id' => $data['id']])
                     ->get('t_approval')->row();
-                    $urutannext = $rs->urutan+1;
+                $urutannext = $rs->urutan + 1;
 
-                    //Send Email
-                    ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+                //Send Email
+                ini_set('max_execution_time', 300);
+                $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+                $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-                    if ($urutannext == 2) {
-                        $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
+                if ($urutannext == 2) {
+                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr_spa'
                         join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
                         join m_notic n on n.ID=50
-                        where t.data_id='".$data["data_id"]."' and t.urutan=".$urutannext);
-                    }elseif($urutannext == 7){
-                        $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
+                        where t.data_id='" . $data["data_id"] . "' and t.urutan=" . $urutannext);
+                } elseif ($urutannext == 7) {
+                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr_spa'
                         join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
                         join m_notic n on n.ID=37
-                        where t.data_id='".$data["data_id"]."' and t.urutan=".$urutannext);
-                    }else{
-                        $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
+                        where t.data_id='" . $data["data_id"] . "' and t.urutan=" . $urutannext);
+                } else {
+                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr_spa'
                         join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
                         join m_notic n on n.ID=52
-                        where t.data_id='".$data["data_id"]."' and t.urutan=".$urutannext);
-                    }
+                        where t.data_id='" . $data["data_id"] . "' and t.urutan=" . $urutannext);
+                }
 
-                    if ($query->num_rows() > 0) {
-                      $data_role = $query->result();
-                      $count = 1;
-                    } else {
-                      $count = 0;
-                    }
+                if ($query->num_rows() > 0) {
+                    $data_role = $query->result();
+                    $count = 1;
+                } else {
+                    $count = 0;
+                }
 
-                    if ($count === 1) {
+                if ($count === 1) {
 
-                      $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+                    $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
                         join m_user u on u.id_user=t.create_by
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where msr_no='".$data["data_id"]."' ");
+                        where msr_no='" . $data["data_id"] . "' ");
 
-                      $data_replace = $query->result();
+                    $data_replace = $query->result();
 
-                      $res = $data_role;
-                      $str = $data_role[0]->OPEN_VALUE;
-                      $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                      $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_',$data["data_id"],$str);
-                      
-                      $data = array(
+                    $res = $data_role;
+                    $str = $data_role[0]->OPEN_VALUE;
+                    $str = str_replace('_var1_', $data_replace[0]->title, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->NAME, $str);
+                    $str = str_replace('_var3_', $data_replace[0]->DEPARTMENT_DESC, $str);
+                    $str = str_replace('_var4_', $data["data_id"], $str);
+
+                    $data = array(
                         'img1' => $img1,
                         'img2' => $img2,
                         'title' => $data_role[0]->TITLE,
                         'open' => $str,
                         'close' => $data_role[0]->CLOSE_VALUE
-                      );
+                    );
 
-                      foreach ($data_role as $k => $v) {
+                    foreach ($data_role as $k => $v) {
                         $data['dest'][] = $v->recipient;
-                      }
-                      $flag = $this->sendMail($data);
+                    }
+                    $flag = $this->sendMail($data);
 
-                    } else{
-                        //Notification For Bid Supplier
+                } else {
+                    //Notification For Bid Supplier
 
-                          $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,b.msr_no,m.id_vendor as recipient from t_bl_detail b
+                    $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,b.msr_no,m.id_vendor as recipient from t_bl_detail b
                             join t_msr t on t.msr_no=b.msr_no
                             join m_vendor m on m.ID=b.vendor_id
                             join m_user u on u.id_user=t.create_by
                             join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
                             join m_notic c on c.ID=38
-                            where b.msr_no='".$data["data_id"]."' ");
+                            where b.msr_no='" . $data["data_id"] . "' ");
 
-                          $data_replace = $query->result();
+                    $data_replace = $query->result();
 
-                          $str = $data_replace[0]->OPEN_VALUE;
-                          $str = str_replace('_var1_',$data_replace[0]->company_desc,$str);
-                          $str = str_replace('_var2_',$data_replace[0]->titlemsr,$str);
-                          $data = array(
-                            'img1' => $img1,
-                            'img2' => $img2,
-                            'title' => $data_replace[0]->TITLE,
-                            'open' => $str,
-                            'close' => $data_replace[0]->CLOSE_VALUE
-                          );
+                    $str = $data_replace[0]->OPEN_VALUE;
+                    $str = str_replace('_var1_', $data_replace[0]->company_desc, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->titlemsr, $str);
+                    $data = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_replace[0]->TITLE,
+                        'open' => $str,
+                        'close' => $data_replace[0]->CLOSE_VALUE
+                    );
 
-                          foreach ($data_replace as $k => $v) {
-                            $data['dest'][] = $v->recipient;
-                          }
-                          $flag = $this->sendMail($data);
+                    foreach ($data_replace as $k => $v) {
+                        $data['dest'][] = $v->recipient;
                     }
+                    $flag = $this->sendMail($data);
+                }
             }
             $this->session->set_flashdata('message', array(
                 'message' => __('success_approve'),
                 'type' => 'success'
             ));
-        }
-        else
-        {
-            echo json_encode(['msg'=>'Something Wrong, Please Try Again']);
+        } else {
+            echo json_encode(['msg' => 'Something Wrong, Please Try Again']);
         }
     }
+
     public function reject()
     {
         $result = $this->M_approval->reject();
-        if($result)
-        {
+        if ($result) {
             $this->session->set_flashdata('message', array(
                 'message' => __('success_reject'),
                 'type' => 'success'
             ));
-            echo json_encode(['msg'=>'MSR Successfully Rejected']);
-        }
-        else
-        {
-            echo json_encode(['msg'=>'Something Wrong, Please Try Again']);
+            $img1 = '';
+            $img2 = '';
+            $query = $this->db->query('SELECT msr.msr_no, u.EMAIL, n.TITLE, n.OPEN_VALUE, n.CLOSE_VALUE FROM t_msr msr
+            JOIN m_user u ON u.ID_USER = msr.create_by
+            JOIN m_notic n ON n.ID = 86
+            WHERE msr.msr_no = "' . $this->input->post('data_id') . '"');
+            $data_replace = $query->result();
+            $str = $data_replace[0]->OPEN_VALUE;
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->TITLE,
+                'open' => $str,
+                'close' => $data_replace[0]->CLOSE_VALUE
+            );
+            $data['dest'][] = $data_replace[0]->EMAIL;
+            $this->sendMail($data);
+            echo json_encode(['msg' => 'MSR Successfully Rejected']);
+        } else {
+            echo json_encode(['msg' => 'Something Wrong, Please Try Again']);
         }
     }
-    public function index($moduleKode='', $dataId='')
+
+    public function index($moduleKode = '', $dataId = '')
     {
         $rows = $this->M_approval->list($moduleKode, $dataId);
         $data['rows'] = $rows;
         $userId = $this->session->userdata('ID_USER');
-        $cek = $this->db->where('ID_USER',$userId)->get('m_user')->row();
+        $cek = $this->db->where('ID_USER', $userId)->get('m_user')->row();
         $roles = explode(",", $cek->ROLES);
         $data['roles'] = array_values(array_filter($roles));
         $data['data_id'] = $dataId;
@@ -400,26 +401,24 @@ class Approval extends CI_Controller {
         }
         $data['menu'] = $dt;
         $data['module_kode'] = $moduleKode;
-        $data['msr'] = $this->db->where('msr_no',$dataId)->get('t_msr')->row();
+        $data['msr'] = $this->db->where('msr_no', $dataId)->get('t_msr')->row();
         $this->template->display('approval/list', $data);
     }
 
-    public function check_cost_center($msr_kode='')
+    public function check_cost_center($msr_kode = '')
     {
         $check_cost_center = $this->M_approval->check_cost_center($msr_kode);
-        if($check_cost_center['msr_item_costcenter']->num_rows() > 0)
-        {
+        if ($check_cost_center['msr_item_costcenter']->num_rows() > 0) {
             /*ada yang other cost center*/
 
-        }
-        else
-        {
+        } else {
             /*tanpa other cost center
             *kalau tanpa other cost center langsung insert table approval status = 3 di level selanjutnya
             */
         }
     }
-    public function mylist($value='')
+
+    public function mylist($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -435,30 +434,28 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/mylist', $data);
     }
-    public function generate_msr_approval($msr_no='')
+
+    public function generate_msr_approval($msr_no = '')
     {
         $this->db->trans_begin();
-        $m_approval = $this->db->where(['module_kode'=>'msr','aktif'=>1])->order_by('urutan','asc')->get('m_approval');
-        $i=1;
-        $msr = $this->db->where(['msr_no'=>$msr_no])->get('t_msr')->row();
+        $m_approval = $this->db->where(['module_kode' => 'msr', 'aktif' => 1])->order_by('urutan', 'asc')->get('m_approval');
+        $i = 1;
+        $msr = $this->db->where(['msr_no' => $msr_no])->get('t_msr')->row();
 
         // $user = user();
-        $user = $this->db->where(['ID_USER'=>$msr->create_by])->get('m_user')->row();
+        $user = $this->db->where(['ID_USER' => $msr->create_by])->get('m_user')->row();
         foreach ($m_approval->result() as $r) {
             /*MSR01 MATERIAL = MSR02 SERVICE*/
-            if($r->opsi == 'bh' or $r->opsi == 'ic')
-            {
-                if($r->opsi == 'bh')
-                {
+            if ($r->opsi == 'bh' or $r->opsi == 'ic') {
+                if ($r->opsi == 'bh') {
                     /*cek ada cost center selain yang dia punya gak*/
-                    $msrItems = $this->db->select('id_costcenter')->where(['msr_no'=>$msr->msr_no])->where('id_costcenter !=',$user->COST_CENTER)->group_by('id_costcenter')->get('t_msr_item');
+                    $msrItems = $this->db->select('id_costcenter')->where(['msr_no' => $msr->msr_no])->where('id_costcenter !=', $user->COST_CENTER)->group_by('id_costcenter')->get('t_msr_item');
                     /*kalo ada insert untuk approval*/
-                    if($msrItems->num_rows() > 0)
-                    {
+                    if ($msrItems->num_rows() > 0) {
                         /*approval sebanyak yang punya budget holder*/
                         foreach ($msrItems->result() as $msrItem) {
                             // id_costcenter
-                            $m_user = $this->db->where(['cost_center'=>$msrItem->id_costcenter])->get('m_budget_holder')->row();
+                            $m_user = $this->db->where(['cost_center' => $msrItem->id_costcenter])->get('m_budget_holder')->row();
                             // echo $this->db->last_query();
                             // exit();
                             $data['m_approval_id'] = $r->id;
@@ -471,27 +468,22 @@ class Approval extends CI_Controller {
                     }
 
                 }
-                if($r->opsi == 'ic')
-                {
+                if ($r->opsi == 'ic') {
                     $sql = "select * from m_user where ROLES like '%19%'";
                     $a = $this->db->query($sql)->row();
                     $ic = $a->ID_USER;
 
-                    if($msr->id_msr_type == 'MSR01')
-                    {
+                    if ($msr->id_msr_type == 'MSR01') {
                         $data['m_approval_id'] = $r->id;
                         $data['data_id'] = $msr->msr_no;
                         $data['created_by'] = $ic;
                         // $data['deskripsi'] = 'ic MSR01';
                         $data['urutan'] = $i++;
                         $this->db->insert('t_approval', $data);
-                    }
-                    elseif($msr->id_msr_type == 'MSR02')
-                    {
+                    } elseif ($msr->id_msr_type == 'MSR02') {
                         /*cek awalau msr service kalo ada material, maka harus lewat IC*/
-                        $msrItems = $this->db->where(['msr_no'=>$msr->msr_no])->where_in('id_itemtype',['GOODS','BLANKET'])->get('t_msr_item');
-                        if($msrItems->num_rows() > 0)
-                        {
+                        $msrItems = $this->db->where(['msr_no' => $msr->msr_no])->where_in('id_itemtype', ['GOODS', 'BLANKET'])->get('t_msr_item');
+                        if ($msrItems->num_rows() > 0) {
                             $data['m_approval_id'] = $r->id;
                             $data['data_id'] = $msr->msr_no;
                             $data['created_by'] = $ic;
@@ -501,24 +493,18 @@ class Approval extends CI_Controller {
                         }
                     }
                 }
-            }
-            else
-            {
-                if($r->opsi == 'user_manager')
-                {
+            } else {
+                if ($r->opsi == 'user_manager') {
                     /*t_jabatan*/
-                    $t_jabatan = $this->db->where(['user_id'=>$msr->create_by])->get('t_jabatan')->row();
-                    $s = $this->db->where(['id'=>$t_jabatan->parent_id])->get('t_jabatan')->row();
+                    $t_jabatan = $this->db->where(['user_id' => $msr->create_by])->get('t_jabatan')->row();
+                    $s = $this->db->where(['id' => $t_jabatan->parent_id])->get('t_jabatan')->row();
                     /*cek di m_user*/
                     $msr_company = trim($msr->id_company);
                     $q = "select * from m_user where ID_USER  = $s->user_id and COMPANY like '%$msr_company%'";
-                    if($this->db->query($q)->num_rows() > 0)
-                    {
+                    if ($this->db->query($q)->num_rows() > 0) {
 
-                    }
-                    else
-                    {
-                        $s = $this->db->where(['first'=>1])->get('t_jabatan')->row();
+                    } else {
+                        $s = $this->db->where(['first' => 1])->get('t_jabatan')->row();
                     }
                     /*parent_id/atasannya untuk user yang approve*/
                     $data['m_approval_id'] = $r->id;
@@ -527,24 +513,20 @@ class Approval extends CI_Controller {
                     $data['urutan'] = $i++;
                     $this->db->insert('t_approval', $data);
                 }
-                if($r->opsi == 'aas')
-                {
+                if ($r->opsi == 'aas') {
                     $total_amount = $msr->total_amount_base;
                     /*if($msr->id_currency == 1)
                     {
                         $total_amount = $msr->total_amount/10000;
                     }*/
-                    $aas = $this->firstAas($total_amount,$msr->create_by);
+                    $aas = $this->firstAas($total_amount, $msr->create_by);
                     /*cek di m_user*/
                     $msr_company = trim($msr->id_company);
                     $q = "select * from m_user where ID_USER  = $aas->user_id and COMPANY like '%$msr_company%'";
-                    if($this->db->query($q)->num_rows() > 0)
-                    {
+                    if ($this->db->query($q)->num_rows() > 0) {
 
-                    }
-                    else
-                    {
-                        $aas = $this->db->where(['first'=>1])->get('t_jabatan')->row();
+                    } else {
+                        $aas = $this->db->where(['first' => 1])->get('t_jabatan')->row();
                     }
                     /*First AAS*/
                     $data['m_approval_id'] = $r->id;
@@ -555,17 +537,16 @@ class Approval extends CI_Controller {
                     $this->db->insert('t_approval', $data);
                     /*if($total_amount <= 5000000)
                     {*/
-                        /*Second AAS*/
-                        $data['m_approval_id'] = $r->id;
-                        $data['data_id'] = $msr->msr_no;
-                        // $data['deskripsi'] = 'AAS2';
-                        $data['created_by'] = $this->input->get_post('user_id');
-                        $data['urutan'] = $i++;
-                        $this->db->insert('t_approval', $data);
+                    /*Second AAS*/
+                    $data['m_approval_id'] = $r->id;
+                    $data['data_id'] = $msr->msr_no;
+                    // $data['deskripsi'] = 'AAS2';
+                    $data['created_by'] = $this->input->get_post('user_id');
+                    $data['urutan'] = $i++;
+                    $this->db->insert('t_approval', $data);
                     // }
                 }
-                if($r->opsi == 'bsd_staff')
-                {
+                if ($r->opsi == 'bsd_staff') {
                     $sql = "select * from m_user where ROLES like '%20%'";
                     $a = $this->db->query($sql)->row();
                     $bsdStaff = $a->ID_USER;
@@ -577,8 +558,7 @@ class Approval extends CI_Controller {
                     $data['urutan'] = $i++;
                     $this->db->insert('t_approval', $data);
                 }
-                if($r->opsi == 'vip_bsd')
-                {
+                if ($r->opsi == 'vip_bsd') {
                     $sql = "select * from m_user where ROLES like '%21%'";
                     $a = $this->db->query($sql)->row();
                     $vipBsd = $a->ID_USER;
@@ -592,32 +572,29 @@ class Approval extends CI_Controller {
                 }
             }
         }
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             return true;
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             return false;
         }
     }
-    public function generate_msr_spa($msr_no='')
+
+    public function generate_msr_spa($msr_no = '')
     {
 
         $ceking = "select * from t_approval where data_id = '$msr_no' and m_approval_id in (7,8,9,10,11,12,13)";
         $cek = $this->db->query($ceking);
-        if($cek->num_rows() > 0)
-        {
+        if ($cek->num_rows() > 0) {
             return true;
             exit();
         }
         $this->db->trans_begin();
-        $m_approval = $this->db->where(['module_kode'=>'msr_spa','aktif'=>1])->order_by('urutan','asc')->get('m_approval');
+        $m_approval = $this->db->where(['module_kode' => 'msr_spa', 'aktif' => 1])->order_by('urutan', 'asc')->get('m_approval');
         $user = user();
-        $i=1;
-        $msr = $this->db->where(['msr_no'=>$msr_no])->get('t_msr')->row();
+        $i = 1;
+        $msr = $this->db->where(['msr_no' => $msr_no])->get('t_msr')->row();
         $total_amount = $msr->total_amount_base;
         /*$total_amount = $msr->total_amount;
         if($msr->id_currency == 1)
@@ -627,10 +604,8 @@ class Approval extends CI_Controller {
         // $sos = $query->jml > 500000 ? true : false;
 
         foreach ($m_approval->result() as $r) {
-            if($r->role_id == 25)
-            {
-                if($total_amount >= 500000)
-                {
+            if ($r->role_id == 25) {
+                if ($total_amount >= 500000) {
                     /**/
                     $q = "SELECT * FROM `m_user` WHERE ROLES like '%25%'";
                     $a = $this->db->query($q)->row();
@@ -640,14 +615,11 @@ class Approval extends CI_Controller {
                     $data['urutan'] = $i++;
                     $this->db->insert('t_approval', $data);
                 }
-            }
-            elseif($r->role_id == proc_committe)
-            {
+            } elseif ($r->role_id == proc_committe) {
                 // pcApprove 1 chairman 4 member
                 $tbmsr = $this->M_bl->getTbmsr($msr_no)->row();
                 $in = false;
-                if($tbmsr->total_amount_base <= 10000)
-                {
+                if ($tbmsr->total_amount_base <= 10000) {
                     $in = true;
                 }
                 foreach (pcApprove($in) as $pcApproveUserId) {
@@ -657,9 +629,7 @@ class Approval extends CI_Controller {
                     $data['urutan'] = $i++;
                     $this->db->insert('t_approval', $data);
                 }
-            }
-            elseif($r->role_id == user_representative)
-            {
+            } elseif ($r->role_id == user_representative) {
                 /*user_representative get creator msr*/
                 $tbmsr = $this->M_bl->getTbmsr($msr_no)->row();
                 $data['m_approval_id'] = $r->id;
@@ -667,9 +637,7 @@ class Approval extends CI_Controller {
                 $data['created_by'] = $tbmsr->create_by;
                 $data['urutan'] = $i++;
                 $this->db->insert('t_approval', $data);
-            }
-            elseif($r->role_id == user_manager)
-            {
+            } elseif ($r->role_id == user_manager) {
                 /*user_manager get user manager dari t_approval msr*/
                 $approvalUserManager = $this->approval_lib->getApprovalUserManager($msr_no)->row();
                 $data['m_approval_id'] = $r->id;
@@ -677,15 +645,10 @@ class Approval extends CI_Controller {
                 $data['created_by'] = $approvalUserManager->created_by;
                 $data['urutan'] = $i++;
                 $this->db->insert('t_approval', $data);
-            }
-            else
-            {
-                if($r->role_id == 9)
-                {
+            } else {
+                if ($r->role_id == 9) {
                     $m_user = $this->db->query("select * from m_user where roles like '%,9,%'")->row();
-                }
-                else
-                {
+                } else {
                     $m_user = $this->db->query("select * from m_user where roles like '%$r->role_id%'")->row();
                 }
                 $user_id = $m_user ? $m_user->ID_USER : $user->id;
@@ -697,18 +660,16 @@ class Approval extends CI_Controller {
                 $this->db->insert('t_approval', $data);
             }
         }
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             return true;
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             return false;
         }
     }
-    public function assignment($value='')
+
+    public function assignment($value = '')
     {
         $data = $this->input->post();
         $user = user();
@@ -716,15 +677,15 @@ class Approval extends CI_Controller {
         $datax['status'] = 4;
         $datax['deskripsi'] = $data['deskripsi'];
 
-        $this->db->where('id',$data['t_approval_id']);
+        $this->db->where('id', $data['t_approval_id']);
         $result = $this->db->update('t_approval', $datax);
 
         $this->approval_lib->log([
-            'module_kode'=> 'msr',
-            'data_id'=> $data['msr_no'],
-            'description'=> 'MSR Assigned',
-            'keterangan'=> $data['deskripsi'],
-            'created_by'=> $this->session->userdata('ID_USER')
+            'module_kode' => 'msr',
+            'data_id' => $data['msr_no'],
+            'description' => 'MSR Assigned',
+            'keterangan' => $data['deskripsi'],
+            'created_by' => $this->session->userdata('ID_USER')
         ]);
 
         $assign['user_id'] = $data['user_id'];
@@ -733,7 +694,7 @@ class Approval extends CI_Controller {
         $assign['proc_method'] = $data['proc_method'];
         $assign['deskripsi'] = $data['deskripsi'];
         $assign['updated_by'] = $this->session->userdata('ID_USER');
-        $this->db->insert('t_assignment',$assign);
+        $this->db->insert('t_assignment', $assign);
         /*update t_msr*/
 
         $m_msrtype = $this->db->where(['ID_MSR' => $data['msr_type']])->get('m_msrtype')->row();
@@ -750,70 +711,68 @@ class Approval extends CI_Controller {
             'pmethod_desc'  => $pmethod_desc]
         );*/
 
-        if($result)
-        {
-            echo json_encode(['msg'=>'MSR Assigned']);
-                    //Send Email
-                    ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+        if ($result) {
+            echo json_encode(['msg' => 'MSR Assigned']);
+            //Send Email
+            ini_set('max_execution_time', 300);
+            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-                    /*get MSR*/
-                    $msr = $this->db->select('title')->where('msr_no', $data['msr_no'])->get('t_msr')->row();
+            /*get MSR*/
+            $msr = $this->db->select('title')->where('msr_no', $data['msr_no'])->get('t_msr')->row();
 
-                    $query = $this->db->query("SELECT distinct u.NAME,d.DEPARTMENT_DESC,u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM m_user u
+            $query = $this->db->query("SELECT distinct u.NAME,d.DEPARTMENT_DESC,u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM m_user u
                         join m_notic n on n.ID=51
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where  u.id_user='".$data['user_id']."' ");
-                    if ($query->num_rows() > 0) {
-                      $data_role = $query->result();
-                      $count = 1;
-                    } else {
-                      $count = 0;
-                    }
+                        where  u.id_user='" . $data['user_id'] . "' ");
+            if ($query->num_rows() > 0) {
+                $data_role = $query->result();
+                $count = 1;
+            } else {
+                $count = 0;
+            }
 
-                    if ($count === 1) {
-                      $q = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+            if ($count === 1) {
+                $q = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
                         join m_user u on u.id_user=t.create_by
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where msr_no='".$data['msr_no']."' ");
-                      $rs = $q->row();
-                      
-                      $res = $data_role;
-                      $str = $data_role[0]->OPEN_VALUE;
-                      $str = str_replace('_var1_',$msr->title,$str);
-                      $str = str_replace('_var2_',$rs->NAME,$str);
-                      $str = str_replace('_var3_',$rs->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_',$data['msr_no'],$str);
+                        where msr_no='" . $data['msr_no'] . "' ");
+                $rs = $q->row();
 
-                      $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_role[0]->TITLE,
-                        'open' => $str,
-                        'close' => $data_role[0]->CLOSE_VALUE
-                      );
+                $res = $data_role;
+                $str = $data_role[0]->OPEN_VALUE;
+                $str = str_replace('_var1_', $msr->title, $str);
+                $str = str_replace('_var2_', $rs->NAME, $str);
+                $str = str_replace('_var3_', $rs->DEPARTMENT_DESC, $str);
+                $str = str_replace('_var4_', $data['msr_no'], $str);
 
-                      foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->recipient;
-                      }
-                      $flag = $this->sendMail($data);
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_role[0]->TITLE,
+                    'open' => $str,
+                    'close' => $data_role[0]->CLOSE_VALUE
+                );
 
-                    }
+                foreach ($data_role as $k => $v) {
+                    $data['dest'][] = $v->recipient;
+                }
+                $flag = $this->sendMail($data);
 
-                    //End Send Email
-                    $this->session->set_flashdata('message', array(
-                        'message' => __('success_submit'),
-                        'type' => 'success'
-                    ));
+            }
 
-        }
-        else
-        {
-            echo json_encode(['msg'=>'Something Wrong, Please Try Again']);
+            //End Send Email
+            $this->session->set_flashdata('message', array(
+                'message' => __('success_submit'),
+                'type' => 'success'
+            ));
+
+        } else {
+            echo json_encode(['msg' => 'Something Wrong, Please Try Again']);
         }
     }
-    public function addbl($value='')
+
+    public function addbl($value = '')
     {
         $data = $this->input->post();
         $msr_no = $data['bl_msr_no'];
@@ -826,35 +785,35 @@ class Approval extends CI_Controller {
 
         $this->dtBlSession($xdata['msr_no']);
     }
-    public function removebl($id='')
+
+    public function removebl($id = '')
     {
-        $this->db->where('id',$id);
+        $this->db->where('id', $id);
         $this->db->delete('t_bl_detail');
 
         $this->dtBlSession($xdata);
     }
-    public function dtBlSession($msr_no='', $delete=1)
+
+    public function dtBlSession($msr_no = '', $delete = 1)
     {
-        $no =1;
+        $no = 1;
         $tb = '';
 
-        foreach ($this->db->where('msr_no',$msr_no)->get('t_bl_detail')->result() as $key => $value) {
-            $vendor = $this->db->where('ID',$value->vendor_id)->get('m_vendor')->row();
-            $address = $this->db->where(['BRANCH_TYPE'=>'KANTOR PUSAT','ID_VENDOR'=>$value->vendor_id])->get('m_vendor_address')->row();
+        foreach ($this->db->where('msr_no', $msr_no)->get('t_bl_detail')->result() as $key => $value) {
+            $vendor = $this->db->where('ID', $value->vendor_id)->get('m_vendor')->row();
+            $address = $this->db->where(['BRANCH_TYPE' => 'KANTOR PUSAT', 'ID_VENDOR' => $value->vendor_id])->get('m_vendor_address')->row();
             $alamatKantor = @$address->ADDRESS;
-            $contact = $this->db->where(['KEYS'=>1,'ID_VENDOR'=>$value->vendor_id])->get('m_vendor_contact')->row();
+            $contact = $this->db->where(['KEYS' => 1, 'ID_VENDOR' => $value->vendor_id])->get('m_vendor_contact')->row();
             $contactName = @$contact->NAMA;
             $contactMobile = @$contact->TELP;
             $contactEmail = @$contact->EMAIL;
-            if($vendor)
-            {
-                $tb .= "<tr><td>".$no++."</td>
+            if ($vendor) {
+                $tb .= "<tr><td>" . $no++ . "</td>
                 <td>$vendor->NAMA</td>
                 <td>$vendor->NO_SLKA</td>
                 <td>$alamatKantor</td>
                 <td>$contactName</td><td>$contactMobile</td><td>$contactEmail</td>";
-                if($delete)
-                {
+                if ($delete) {
                     $tb .= "<td class='text-center'><a href='javascript:void()' onclick='hapusBlClick($value->id)' class='btn btn-sm btn-danger'>Delete</a></td>";
                 }
                 $tb .= "</tr>";
@@ -862,35 +821,33 @@ class Approval extends CI_Controller {
         }
         echo $tb;
     }
-    public function savebl($value='')
+
+    public function savebl($value = '')
     {
         $data = $this->input->post();
         $this->db->trans_begin();
-        if($this->session->userdata('bl'))
-        {
+        if ($this->session->userdata('bl')) {
             $blData['title'] = $data['title'];
             $blData['msr_no'] = $data['msr_no'];
             $blData['created_by'] = $this->session->userdata('ID_USER');
             $this->db->insert('t_bl', $blData);
-            foreach (json_decode($this->session->userdata('bl'),true) as $key => $value) {
+            foreach (json_decode($this->session->userdata('bl'), true) as $key => $value) {
                 $blDetail['vendor_id'] = $value;
                 $blDetail['msr_no'] = $data['msr_no'];
                 $blDetail['created_by'] = $this->session->userdata('ID_USER');
                 $this->db->insert('t_bl_detail', $blDetail);
             }
         }
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             return true;
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             return false;
         }
     }
-    public function selection($msr_no='',$approval_id='')
+
+    public function selection($msr_no = '', $approval_id = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -902,7 +859,7 @@ class Approval extends CI_Controller {
         }
         $data['menu'] = $dt;
 
-        if (! ($msr = $this->msr->find($msr_no))) {
+        if (!($msr = $this->msr->find($msr_no))) {
             show_error('Document not found');
         }
 
@@ -922,18 +879,18 @@ class Approval extends CI_Controller {
         $data['idnya'] = $approval_id;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->where('t_approval.id',$approval_id)
-        ->get('t_approval')->row();
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->where('t_approval.id', $approval_id)
+            ->get('t_approval')->row();
         $data['readyIssude'] = $this->M_approval->readyIssude($msr_no);
         $data['msr_items'] = $this->M_bl->tbmi2($msr_no);
         $data['items'] = $this->msr_item->getByMsrNo($msr_no);
@@ -944,32 +901,32 @@ class Approval extends CI_Controller {
         // exit();
         $sq = "select * from t_approval where id = $approval_id";
         $a = $this->db->query($sq)->row();
-        if($a->m_approval_id == 9 or $a->m_approval_id == 23)
-        {
+        if ($a->m_approval_id == 9 or $a->m_approval_id == 23) {
             $data['note'] = false;
-        }
-        else
-        {
+        } else {
             $data['note'] = true;
         }
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
         $this->template->display('approval/selection1', $data);
     }
-    public function get_item_costcenter() {
+
+    public function get_item_costcenter()
+    {
         $id = $this->input->post('id');
         $cc = $this->M_approval->get_item_costcenter($id);
         print_r(json_encode($cc[0]));
     }
-    public function devbled($msr_no='',$approval_id='')
+
+    public function devbled($msr_no = '', $approval_id = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
         $this->load->model('vendor/M_registered_supplier', 'mrs')
-                    ->model('procurement/M_msr', 'msr')
-                    ->model('setting/M_itemtype', 'mit')
-                    ->model('setting/M_itemtype_category', 'mic')
-                    ->model('setting/M_master_acc_sub', 'mmas')
-                    ->model('setting/M_master_costcenter', 'mcc');
+            ->model('procurement/M_msr', 'msr')
+            ->model('setting/M_itemtype', 'mit')
+            ->model('setting/M_itemtype_category', 'mic')
+            ->model('setting/M_master_acc_sub', 'mmas')
+            ->model('setting/M_master_costcenter', 'mcc');
         foreach ($get_menu as $k => $v) {
             $dt[$v->PARENT][$v->ID_MENU]['ICON'] = $v->ICON;
             $dt[$v->PARENT][$v->ID_MENU]['URL'] = $v->URL;
@@ -983,23 +940,23 @@ class Approval extends CI_Controller {
         $data['idnya'] = $approval_id;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->where('t_approval.id',$approval_id)
-        ->get('t_approval')->row();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $data['ed']       = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
-        $data['tbmi2']       = $this->M_bl->tbmi2($msr_no);
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->where('t_approval.id', $approval_id)
+            ->get('t_approval')->row();
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $data['ed'] = $this->db->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
+        $data['tbmi2'] = $this->M_bl->tbmi2($msr_no);
         $data['opt_itemtype'] = array_pluck($this->mit->allActive(), 'ITEMTYPE_DESC', 'ID_ITEMTYPE');
         $data['opt_accountsub'] = array_pluck($this->mmas->allActive(), 'ACCSUB_DESC', 'ID_ACCSUB');
         $data['opt_invtype'] = array_pluck($this->msr->m_msr_inventory_type(), 'description', 'id');
@@ -1016,7 +973,7 @@ class Approval extends CI_Controller {
         }
 
         $itemtype_category = $this->mic->byParentCategory();
-        $data['opt_itemtype_category_by_parent'] = array_map(function($category) {
+        $data['opt_itemtype_category_by_parent'] = array_map(function ($category) {
             return array_pluck($category, 'description', 'id');
         }, $itemtype_category);
         $data['opt_itemtype_category'] = array_pluck($this->mic->allActive(), 'description', 'id');
@@ -1024,27 +981,27 @@ class Approval extends CI_Controller {
         /*print_r($data['ed']);
         exit();*/
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
         // $data['vendor']  = $this->mrs->show2();
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
         $this->template->display('approval/devbled', $data);
     }
-    public function bledupload($value='')
+
+    public function bledupload($value = '')
     {
-        $config['upload_path']  = './userfiles/temp/';
+        $config['upload_path'] = './userfiles/temp/';
         if (!is_dir($config['upload_path'])) {
-            mkdir($config['upload_path'],0755,TRUE);
+            mkdir($config['upload_path'], 0755, TRUE);
         }
-        $config['allowed_types']= '*';
+        $config['allowed_types'] = '*';
         // $config['max_size']      = '3000';
 
         // print_r($_FILES['upload']);
         $this->load->library('upload', $config);
-        if ( ! $this->upload->do_upload('file_path'))
-        {
-            echo $this->upload->display_errors('', '');exit;
-        }else
-        {
+        if (!$this->upload->do_upload('file_path')) {
+            echo $this->upload->display_errors('', '');
+            exit;
+        } else {
             $user = user();
             $data = $this->upload->data();
             $field = $this->input->post();
@@ -1053,17 +1010,17 @@ class Approval extends CI_Controller {
             }
             $field['file_path'] = $data['file_name'];
             $field['created_by'] = $user->ID_USER;
-            $this->db->insert('t_upload',$field);
+            $this->db->insert('t_upload', $field);
         }
 
-        $doc = $this->db->where(['module_kode'=>'bled','data_id'=>$this->input->post('data_id')])->get('t_upload')->result();
+        $doc = $this->db->where(['module_kode' => 'bled', 'data_id' => $this->input->post('data_id')])->get('t_upload')->result();
 
         foreach ($doc as $key => $value) {
             echo "<tr>
-              <td>".biduploadtype($value->tipe, true)."</td>
-              <td><a href='".base_url('userfiles/temp/'.$value->file_path)."' target='_blank'>".$value->file_name."</a></td>
-              <td>".$value->created_at."</td>
-              <td>".user($value->created_by)->NAME."</td>
+              <td>" . biduploadtype($value->tipe, true) . "</td>
+              <td><a href='" . base_url('userfiles/temp/' . $value->file_path) . "' target='_blank'>" . $value->file_name . "</a></td>
+              <td>" . $value->created_at . "</td>
+              <td>" . user($value->created_by)->NAME . "</td>
               <td class='text-center'>
                 <a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Delete</a>
               </td>
@@ -1072,24 +1029,25 @@ class Approval extends CI_Controller {
         // $referred_from = $this->session->userdata('referred_from');
         // redirect(str_replace('/index.php', '', $referred_from), 'refresh');
     }
-    public function hapusattachmentbled($value='')
+
+    public function hapusattachmentbled($value = '')
     {
-        $this->db->where('id',$value);
+        $this->db->where('id', $value);
         $upload = $this->db->get('t_upload')->row();
         $data_id = $upload->data_id;
-        @unlink('userfiles/temp/'.$upload->file_path);
+        @unlink('userfiles/temp/' . $upload->file_path);
 
-        $this->db->where('id',$value);
+        $this->db->where('id', $value);
         $this->db->delete('t_upload');
 
-        $doc = $this->db->where(['module_kode'=>'bled','data_id'=>$data_id])->get('t_upload')->result();
+        $doc = $this->db->where(['module_kode' => 'bled', 'data_id' => $data_id])->get('t_upload')->result();
 
         foreach ($doc as $key => $value) {
             echo "<tr>
-              <td>".biduploadtype($value->tipe, true)."</td>
-              <td><a href='".base_url('userfiles/temp/'.$value->file_path)."' target='_blank'>".$value->file_name."</a></td>
-              <td>".$value->created_at."</td>
-              <td>".user($value->created_by)->NAME."</td>
+              <td>" . biduploadtype($value->tipe, true) . "</td>
+              <td><a href='" . base_url('userfiles/temp/' . $value->file_path) . "' target='_blank'>" . $value->file_name . "</a></td>
+              <td>" . $value->created_at . "</td>
+              <td>" . user($value->created_by)->NAME . "</td>
               <td class='text-center'>
                 <a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Delete</a>
               </td>
@@ -1099,7 +1057,8 @@ class Approval extends CI_Controller {
         /*$referred_from = $this->session->userdata('referred_from');
         redirect(str_replace('index.php', '', $referred_from), 'refresh');*/
     }
-    public function savedraftbl($value='')
+
+    public function savedraftbl($value = '')
     {
         $user = user();
         $data = $this->input->post();
@@ -1109,31 +1068,23 @@ class Approval extends CI_Controller {
         /*DA, Hanya 1 Bidder*/
         /*DS, 2 Bidder*/
         /*TN, MIN 3 Bidder*/
-        $getBl = $this->vendor_lib->getBl(['msr_no'=>$msr_no]);
-        if($data['bl_pm'] == 'DA')
-        {
-            if($getBl->num_rows() > 1)
-            {
+        $getBl = $this->vendor_lib->getBl(['msr_no' => $msr_no]);
+        if ($data['bl_pm'] == 'DA') {
+            if ($getBl->num_rows() > 1) {
                 echo "DA, Bidder = 1";
                 return false;
             }
         }
-        if($data['bl_pm'] == 'DS')
-        {
-            if($getBl->num_rows() != 2)
-            {
+        if ($data['bl_pm'] == 'DS') {
+            if ($getBl->num_rows() != 2) {
                 echo "DS, Bidder = 2";
                 return false;
             }
         }
-        if($data['bl_pm'] == 'TN')
-        {
-            if($getBl->num_rows() >= 3)
-            {
+        if ($data['bl_pm'] == 'TN') {
+            if ($getBl->num_rows() >= 3) {
 
-            }
-            else
-            {
+            } else {
                 echo "TN, Minimum Bidder = 3";
                 return false;
             }
@@ -1145,69 +1096,57 @@ class Approval extends CI_Controller {
         $xdata['created_by'] = $user->ID_USER;
         $xdata['status'] = 0;
         $xdata['bled_no'] = str_replace('OR', 'OQ', $msr_no);
-        $bl = $this->db->where('msr_no',$data['bl_msr_no'])->get('t_bl');
+        $bl = $this->db->where('msr_no', $data['bl_msr_no'])->get('t_bl');
 
-        if($bl->num_rows() > 0)
-        {
-            $this->db->where('id',$bl->row()->id);
-            $this->db->update('t_bl',$xdata);
+        if ($bl->num_rows() > 0) {
+            $this->db->where('id', $bl->row()->id);
+            $this->db->update('t_bl', $xdata);
             /*update enquiry data*/
-            $ed = $this->db->where('msr_no',$data['bl_msr_no'])->get('t_eq_data');
-            if($ed->num_rows() > 0)
-            {
-                $this->db->where('id',$ed->row()->id);
-                $this->db->update('t_eq_data',['subject'=>$xdata['title']]);
+            $ed = $this->db->where('msr_no', $data['bl_msr_no'])->get('t_eq_data');
+            if ($ed->num_rows() > 0) {
+                $this->db->where('id', $ed->row()->id);
+                $this->db->update('t_eq_data', ['subject' => $xdata['title']]);
             }
+        } else {
+            $this->db->insert('t_bl', $xdata);
         }
-        else
-        {
-            $this->db->insert('t_bl',$xdata);
-        }
-        if($value)
-        {
+        if ($value) {
             return true;
-        }
-        else
-        {
+        } else {
             echo "Bidder List Success, Save as draft";
         }
         return false;
     }
-    public function savedrafted($value='')
+
+    public function savedrafted($value = '')
     {
         $user = user();
         $data = $this->input->post();
         $data['created_by'] = $user->ID_USER;
         $data['status'] = 0;
-        $bl = $this->db->where('msr_no',$data['msr_no'])->get('t_eq_data');
-        if($bl->num_rows() > 0)
-        {
-            $this->db->where('id',$bl->row()->id);
-            $this->db->update('t_eq_data',$data);
+        $bl = $this->db->where('msr_no', $data['msr_no'])->get('t_eq_data');
+        if ($bl->num_rows() > 0) {
+            $this->db->where('id', $bl->row()->id);
+            $this->db->update('t_eq_data', $data);
 
             /*update BL*/
-            $edbl = $this->db->where('msr_no',$data['msr_no'])->get('t_bl');
-            if($edbl->num_rows() > 0)
-            {
-                $this->db->where('id',$edbl->row()->id);
-                $this->db->update('t_bl',['title'=>$data['subject']]);
+            $edbl = $this->db->where('msr_no', $data['msr_no'])->get('t_bl');
+            if ($edbl->num_rows() > 0) {
+                $this->db->where('id', $edbl->row()->id);
+                $this->db->update('t_bl', ['title' => $data['subject']]);
             }
+        } else {
+            $this->db->insert('t_eq_data', $data);
         }
-        else
-        {
-            $this->db->insert('t_eq_data',$data);
-        }
-        if($value)
-        {
+        if ($value) {
             return true;
-        }
-        else
-        {
+        } else {
             echo "Success, Enquiry Document Save as draft";
         }
         return false;
     }
-    public function checkBlEd($msr_no='')
+
+    public function checkBlEd($msr_no = '')
     {
         /*attachment*/
         // $sql = "select count(id) jml from t_upload where module_kode='bled' and data_id = '$msr_no' group by tipe";
@@ -1227,14 +1166,13 @@ class Approval extends CI_Controller {
         $sop = $query;
 
         /*eq data*/
-        $eq = $this->db->where('msr_no',$msr_no)->get('t_eq_data')->num_rows();
+        $eq = $this->db->where('msr_no', $msr_no)->get('t_eq_data')->num_rows();
         /*bl data*/
-        $bl = $this->db->where('msr_no',$msr_no)->get('t_bl')->num_rows();
+        $bl = $this->db->where('msr_no', $msr_no)->get('t_bl')->num_rows();
         /*bl detail data*/
-        $bld = $this->db->where('msr_no',$msr_no)->get('t_bl_detail')->num_rows();
+        $bld = $this->db->where('msr_no', $msr_no)->get('t_bl_detail')->num_rows();
 
-        if($this->input->get('debug') == 1)
-        {
+        if ($this->input->get('debug') == 1) {
             echo "
                 attachment0 = $attachment0 <br>
                 attachment2 = $attachment2 <br>
@@ -1245,43 +1183,38 @@ class Approval extends CI_Controller {
                 sop = $sop <br>
             ";
         }
-        if($attachment0 > 0 and $attachment2 > 0 and $attachmentE > 0 and $eq > 0 and $bl > 0 and $bld > 0 and $sop > 0)
+        if ($attachment0 > 0 and $attachment2 > 0 and $attachmentE > 0 and $eq > 0 and $bl > 0 and $bld > 0 and $sop > 0)
             return true;
 
         return false;
     }
-    public function submitbled($msr_no='', $t_approval_id=0)
+
+    public function submitbled($msr_no = '', $t_approval_id = 0)
     {
         $this->db->trans_begin();
-        if($this->savedrafted(1))
-        {
+        if ($this->savedrafted(1)) {
 
-        }
-        else
-        {
+        } else {
             echo "Fail, Enquiry Document Fail";
             return false;
         }
-        if($this->savedraftbl(1))
-        {
+        if ($this->savedraftbl(1)) {
 
-        }
-        else
-        {
+        } else {
             echo "Fail, Enquiry Document Fail";
             return false;
         }
         $data['status'] = 1;
 
-        $this->db->where('msr_no',$msr_no);
+        $this->db->where('msr_no', $msr_no);
         $this->db->update('t_eq_data', $data);
 
-        $this->db->where('msr_no',$msr_no);
+        $this->db->where('msr_no', $msr_no);
         $this->db->update('t_bl', $data);
 
-        $t_bl       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $title      = $t_bl->title;
-        $pmethod    = $t_bl->pmethod;
+        $t_bl = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $title = $t_bl->title;
+        $pmethod = $t_bl->pmethod;
 
         /*pmethod*/
         $m_pmethod = $this->db->where(['ID_PMETHOD' => $pmethod])->get('m_pmethod')->row();
@@ -1296,46 +1229,38 @@ class Approval extends CI_Controller {
         );*/
 
         $this->approval_lib->log([
-            'module_kode'=> 'msr',
-            'data_id'=> $msr_no,
-            'description'=> 'Submitted BLED',
-            'created_by'=> $this->session->userdata('ID_USER')
+            'module_kode' => 'msr',
+            'data_id' => $msr_no,
+            'description' => 'Submitted BLED',
+            'created_by' => $this->session->userdata('ID_USER')
         ]);
-        if($this->M_approval->checkReject($msr_no)->num_rows() > 0)
-        {
+        if ($this->M_approval->checkReject($msr_no)->num_rows() > 0) {
             $checkReject = $this->M_approval->checkReject($msr_no)->row();
-            if($checkReject->m_approval_id == 8)
-            {
+            if ($checkReject->m_approval_id == 8) {
                 $d['status'] = 4;
-            }
-            else
-            {
+            } else {
                 $d['status'] = 0;
             }
-            $this->db->where('id',$checkReject->approval_id);
+            $this->db->where('id', $checkReject->approval_id);
             $this->db->update('t_approval', $d);
-        }
-        else
-        {
-            $this->db->where('id',$t_approval_id);
-            $this->db->update('t_approval', ['status'=>5]);
+        } else {
+            $this->db->where('id', $t_approval_id);
+            $this->db->update('t_approval', ['status' => 5]);
         }
 
-        $this->db->where('msr_no',$msr_no);
+        $this->db->where('msr_no', $msr_no);
         $t_bl = $this->db->get('t_bl')->row();
 
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             echo "Bidder List & Enquiry Document No. $t_bl->bled_no created";
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             echo "Fail, Try Again";
         }
     }
-    public function msrtobeverify($value='')
+
+    public function msrtobeverify($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1351,7 +1276,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/msrtobeverify', $data);
     }
-    public function msrtobeassign($value='')
+
+    public function msrtobeassign($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1367,7 +1293,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/msrtobeassign', $data);
     }
-    public function msrreceived($value='')
+
+    public function msrreceived($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1384,7 +1311,8 @@ class Approval extends CI_Controller {
         $data['titleApp'] = 'MSR Received';
         $this->template->display('approval/msrreceived', $data);
     }
-    public function edapproved($value='')
+
+    public function edapproved($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1399,7 +1327,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $this->M_approval->ed_approved();
         $this->template->display('approval/edapproved', $data);
     }
-    public function viewbled($msr_no='',$approval_id='')
+
+    public function viewbled($msr_no = '', $approval_id = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1416,48 +1345,47 @@ class Approval extends CI_Controller {
         $data['idnya'] = $approval_id;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->where('t_approval.id',$approval_id)
-        ->get('t_approval')->row();
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->where('t_approval.id', $approval_id)
+            ->get('t_approval')->row();
         // echo $this->db->last_query();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $data['ed']       = $this->M_bl->getEdFromMsr($msr_no)->row();
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $data['ed'] = $this->M_bl->getEdFromMsr($msr_no)->row();
 
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
         // $data['edapproved']  = $this->M_approval->edapproved($approval_id);
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
         $data['readyIssude'] = $this->M_approval->readyIssude($msr_no);
         $data['viewaja'] = $approval_id > 0 ? true : false;
-        $data['tbmi2']       = $this->M_bl->tbmi2($msr_no);
+        $data['tbmi2'] = $this->M_bl->tbmi2($msr_no);
         /*print_r($data['ed']);
         exit();*/
         $this->template->display('approval/viewbled', $data);
     }
+
     public function reject2()
     {
         $result = $this->M_approval->reject2();
-        if($result)
-        {
-            echo json_encode(['msg'=>'Rejected']);
-        }
-        else
-        {
-            echo json_encode(['msg'=>'Something Wrong, Please Try Again']);
+        if ($result) {
+            echo json_encode(['msg' => 'Rejected']);
+        } else {
+            echo json_encode(['msg' => 'Something Wrong, Please Try Again']);
         }
     }
-    public function revisionbled($value='')
+
+    public function revisionbled($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1473,7 +1401,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/revisionbled', $data);
     }
-    public function tobeissued($value='')
+
+    public function tobeissued($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1489,7 +1418,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/tobeissued', $data);
     }
-    public function bidopening($value='')
+
+    public function bidopening($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1506,7 +1436,8 @@ class Approval extends CI_Controller {
         $data['titleApp'] = 'Bid Openning';
         $this->template->display('approval/bidopening', $data);
     }
-    public function tobeopening($msr_no='')
+
+    public function tobeopening($msr_no = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1522,68 +1453,69 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->get('t_approval')->row();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->get('t_approval')->row();
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
         $data['blDetails'] = $this->vendor_lib->blDetail($msr_no);
         // echo $this->db->last_query();
-        $data['ed']       = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting, m_deliveryterm.DELIVERYTERM_DESC, m_deliverypoint.DPOINT_DESC')
-        ->join('m_deliveryterm', 'm_deliveryterm.ID_DELIVERYTERM = t_eq_data.incoterm', 'left')
-        ->join('m_deliverypoint', 'm_deliverypoint.ID_DPOINT = t_eq_data.delivery_point', 'left')
-        ->where(['msr_no'=>$msr_no])
-        ->get('t_eq_data')
-        ->row();
+        $data['ed'] = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting, m_deliveryterm.DELIVERYTERM_DESC, m_deliverypoint.DPOINT_DESC')
+            ->join('m_deliveryterm', 'm_deliveryterm.ID_DELIVERYTERM = t_eq_data.incoterm', 'left')
+            ->join('m_deliverypoint', 'm_deliverypoint.ID_DPOINT = t_eq_data.delivery_point', 'left')
+            ->where(['msr_no' => $msr_no])
+            ->get('t_eq_data')
+            ->row();
         /*print_r($data['ed']);
         exit();*/
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
         // $data['vendor']  = $this->mrs->show2();
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
         $this->template->display('approval/tobeopening', $data);
     }
+
     public function savebidopening()
     {
         $edid = $this->input->post('ed_id');
         $this->M_approval->updateBidOpening();
 
         ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+        $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
         $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,t.msr_no,u.email as recipient from t_eq_data q
             join t_msr t on t.msr_no=q.msr_no
             join m_user u on u.roles like CONCAT('%', 28 ,'%')
             join m_notic c on c.ID=39
-            where q.id='".$edid."' ");
+            where q.id='" . $edid . "' ");
 
-          $data_replace = $query->result();
+        $data_replace = $query->result();
 
-          $str = $data_replace[0]->OPEN_VALUE;
-          $str = str_replace('_var1_',$data_replace[0]->titlemsr,$str);
-          $str = str_replace('_var2_',$data_replace[0]->msr_no,$str);
-          $data = array(
+        $str = $data_replace[0]->OPEN_VALUE;
+        $str = str_replace('_var1_', $data_replace[0]->titlemsr, $str);
+        $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
+        $data = array(
             'img1' => $img1,
             'img2' => $img2,
             'title' => $data_replace[0]->TITLE,
             'open' => $str,
             'close' => $data_replace[0]->CLOSE_VALUE
-          );
+        );
 
-          foreach ($data_replace as $k => $v) {
+        foreach ($data_replace as $k => $v) {
             $data['dest'][] = $v->recipient;
-          }
-          $flag = $this->sendMail($data);
+        }
+        $flag = $this->sendMail($data);
 
         $referred_from = $this->session->userdata('referred_from');
         $this->session->set_flashdata('message', array(
@@ -1592,7 +1524,8 @@ class Approval extends CI_Controller {
         ));
         redirect(base_url('home'));
     }
-    public function adminevaluation($value='')
+
+    public function adminevaluation($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1609,7 +1542,8 @@ class Approval extends CI_Controller {
         $data['titleApp'] = 'Administration Evaluation';
         $this->template->display('approval/bidopening', $data);
     }
-    public function tobeadmin($msr_no='')
+
+    public function tobeadmin($msr_no = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1621,58 +1555,52 @@ class Approval extends CI_Controller {
         }
         $data['menu'] = $dt;
 
-        $userId             = $this->session->userdata('ID_USER');
-        $cek                = $this->db->where('ID_USER',$userId)->get('m_user')->row();
-        $roles              = explode(",", $cek->ROLES);
-        $data['roles']      = array_values(array_filter($roles));
+        $userId = $this->session->userdata('ID_USER');
+        $cek = $this->db->where('ID_USER', $userId)->get('m_user')->row();
+        $roles = explode(",", $cek->ROLES);
+        $data['roles'] = array_values(array_filter($roles));
         // $roles              = array_values(array_filter($roles));
 
         $greetings = $this->M_approval->greetings_msr();
         $data['greetings'] = $greetings;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->get('t_approval')->row();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $data['bled_no']    = $data['t_bl']->bled_no;
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->get('t_approval')->row();
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $data['bled_no'] = $data['t_bl']->bled_no;
         $data['blDetails'] = $this->vendor_lib->blDetail($msr_no);
-        $data['ed']       = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting')->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
+        $data['ed'] = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting')->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
 
-        if($data['ed']->administrative == 1 or $data['ed']->administrative == 3 or $data['ed']->administrative == 4)
-        {
-            if(in_array(assign_sp,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_administration'] = $this->M_approval->evaluationToBeApproved('administrative', [1,3,4])->row();
+        if ($data['ed']->administrative == 1 or $data['ed']->administrative == 3 or $data['ed']->administrative == 4) {
+            if (in_array(assign_sp, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_administration'] = $this->M_approval->evaluationToBeApproved('administrative', [1, 3, 4])->row();
                 $data['adminAttachment'] = $this->M_approval->seeAttachment('eva-administrative', $msr_no)->row();
             }
         }
-        if($data['ed']->technical == 1 or $data['ed']->technical == 3 or $data['ed']->technical == 4)
-        {
-            if(in_array(user_manager,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_technical'] = $this->M_approval->evaluationToBeApproved('technical', [1,3,4])->row();
+        if ($data['ed']->technical == 1 or $data['ed']->technical == 3 or $data['ed']->technical == 4) {
+            if (in_array(user_manager, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_technical'] = $this->M_approval->evaluationToBeApproved('technical', [1, 3, 4])->row();
                 $data['technicalAttachment'] = $this->M_approval->seeAttachment('eva-technical', $msr_no)->row();
             }
         }
-        if($data['ed']->commercial == 1 or $data['ed']->commercial == 3 or $data['ed']->commercial == 4)
-        {
-            if(in_array(assign_sp,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_commercial'] = $this->M_approval->evaluationToBeApproved('commercial', [1,3,4])->row();
+        if ($data['ed']->commercial == 1 or $data['ed']->commercial == 3 or $data['ed']->commercial == 4) {
+            if (in_array(assign_sp, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_commercial'] = $this->M_approval->evaluationToBeApproved('commercial', [1, 3, 4])->row();
                 $data['commercialAttachment'] = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
             }
         }
@@ -1680,96 +1608,85 @@ class Approval extends CI_Controller {
         /*print_r($data['ed']);
         exit();*/
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
         // $data['vendor']  = $this->mrs->show2();
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
-        $data['msrItem']  = $this->vendor_lib->msrItemTobeAdmin($msr_no);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
+        $data['msrItem'] = $this->vendor_lib->msrItemTobeAdmin($msr_no);
         /*echo $this->db->last_query();
         exit();*/
-        $commercialNum = $this->M_approval->commercial(['t_eq_data.msr_no'=>$msr_no])->num_rows();
+        $commercialNum = $this->M_approval->commercial(['t_eq_data.msr_no' => $msr_no])->num_rows();
 
-        if($commercialNum > 0)
-        {
+        if ($commercialNum > 0) {
             $data['commercial'] = 1;
         }
 
         $this->template->display('approval/tobeadmin', $data);
     }
-    public function administrative($value='')
+
+    public function administrative($value = '')
     {
         $return = $this->M_approval->administrative();
-        if($return)
-        {
+        if ($return) {
             $msg = $this->input->post('administrative') == 1 ? "Pass" : "Fail";
             $remark = $this->input->post('desc_administrative') ? $this->input->post('desc_administrative') : "";
-            if($this->input->post('technical'))
-            {
+            if ($this->input->post('technical')) {
                 $msg = $this->input->post('technical') == 1 ? "Pass" : "Fail";
                 $remark = $this->input->post('desc_technical') ? $this->input->post('desc_technical') : "";
             }
-            if($this->input->post('commercial'))
-            {
+            if ($this->input->post('commercial')) {
                 $msg = $this->input->post('commercial') == 1 ? "Pass" : "Fail";
                 $remark = $this->input->post('desc_commercial') ? $this->input->post('desc_commercial') : "";
             }
-            echo json_encode(['msg'=>$msg, 'remark'=>$remark]);
-        }
-        else
-        {
+            echo json_encode(['msg' => $msg, 'remark' => $remark]);
+        } else {
             echo "Update error, try again";
         }
     }
-    public function evaluationupload($type='')
+
+    public function evaluationupload($type = '')
     {
         /*$type = administrative & evaluation*/
         /*print_r($_FILES);
         exit();*/
-        if($_FILES['upload']['tmp_name'])
-        {
+        if ($_FILES['upload']['tmp_name']) {
             $this->db->trans_begin();
             $user = user();
-            $field['module_kode'] = 'eva-'.$type;
+            $field['module_kode'] = 'eva-' . $type;
             $field['data_id'] = $this->input->post('data_id');
             $field['file_path'] = $this->doUpload('upload');
             $field['created_by'] = $user->ID_USER;
-            $this->db->insert('t_upload',$field);
+            $this->db->insert('t_upload', $field);
 
 
-            if($this->db->trans_status() === true)
-            {
+            if ($this->db->trans_status() === true) {
                 $this->db->trans_commit();
-                echo json_encode(['status'=>true,'msg'=>'Uploaded','filename'=>$field['file_path']]);
-            }
-            else
-            {
+                echo json_encode(['status' => true, 'msg' => 'Uploaded', 'filename' => $field['file_path']]);
+            } else {
                 $this->db->trans_rollback();
-                echo json_encode(['status'=>true,'msg'=>'Fail, Try Again']);
+                echo json_encode(['status' => true, 'msg' => 'Fail, Try Again']);
             }
-        }
-        else
-        {
-            echo json_encode(['status'=>true,'msg'=>'Fail, Try Again']);
+        } else {
+            echo json_encode(['status' => true, 'msg' => 'Fail, Try Again']);
         }
     }
-    public function doUpload($file_path='')
+
+    public function doUpload($file_path = '')
     {
-        $config['upload_path']  = './upload/evaluation/';
+        $config['upload_path'] = './upload/evaluation/';
         if (!is_dir($config['upload_path'])) {
-            mkdir($config['upload_path'],0755,TRUE);
+            mkdir($config['upload_path'], 0755, TRUE);
         }
         $config['allowed_types'] = 'pdf|jpg|jpeg|doc|docx|xls|xlsx';
-        $config['encrypt_name']= true;
+        $config['encrypt_name'] = true;
         // $config['max_size']      = '3000';
 
         // print_r($_FILES['upload']);
         $this->load->library('upload', $config);
-        if ( ! $this->upload->do_upload($file_path))
-        {
+        if (!$this->upload->do_upload($file_path)) {
             echo $this->upload->display_errors('', '');
             return false;
             exit;
-        }else
-        {
+        } else {
             $user = user();
             $data = $this->upload->data();
             // $field = $this->input->post();
@@ -1777,28 +1694,85 @@ class Approval extends CI_Controller {
             return $data['file_name'];
         }
     }
-    public function administrationevaluation($value='')
+
+    public function administrationevaluation($value = '')
     {
         $referred_from = $this->session->userdata('referred_from');
         $administrationevaluation = $this->M_approval->administrationevaluation();
+        // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+        // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+        $img1 = "";
+        $img2 = "";
+
+        $edid = $this->input->post('ed_id');
+        $edid = str_replace('OQ', 'OR', $edid);
+
+        $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+        JOIN t_approval approval ON ed.msr_no = approval.data_id
+        JOIN m_approval main ON approval.m_approval_id = main.id
+        JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
+        JOIN m_user user ON approval.created_by = user.ID_USER
+        JOIN m_notic notif ON notif.ID = 83
+        WHERE ed.id = "' . $edid . '"
+        AND roles.ID_USER_ROLES = 23');
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->open;
+        $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+        $data['dest'][0] = $data_replace[0]->email;
+        $flag = $this->sendMail($data);
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
             'type' => 'success'
         ));
         redirect(base_url('home'));
     }
-    public function technicalevaluation($value='')
+
+    public function technicalevaluation($value = '')
     {
-        $this->session->set_userdata('evaluation_step','technicalevaluation');
-        if($this->input->post('ed_id'))
-        {
+        $this->session->set_userdata('evaluation_step', 'technicalevaluation');
+        if ($this->input->post('ed_id')) {
+            $edid = $this->input->post('ed_id');
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
-            // echo $this->db->last_query();
+            // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+            // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+            $img1 = "";
+            $img2 = "";
+            $edid = str_replace('OQ', 'OR', $edid);
+
+            $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+            JOIN t_approval approval ON ed.msr_no = approval.data_id
+            JOIN m_approval main ON approval.m_approval_id = main.id
+            JOIN m_user_roles roles ON main.role_id = roles.ID_USER_ROLES
+            JOIN m_user user ON approval.created_by = user.ID_USER
+            JOIN m_notic notif ON notif.ID = 89
+            WHERE ed.id = "' . $edid . '"
+            AND roles.ID_USER_ROLES = 18');
+
+            $data_replace = $query->result();
+
+            $str = $data_replace[0]->open;
+            $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+            $data['dest'][0] = $data_replace[0]->email;
+            $flag = $this->sendMail($data);
             redirect(base_url('home'));
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -1815,18 +1789,16 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
-    public function evaluationtobeapproved($value='')
+
+    public function evaluationtobeapproved($value = '')
     {
-        $this->session->set_userdata('evaluation_step','evaluationtobeapproved');
-        if($this->input->post('ed_id'))
-        {
+        $this->session->set_userdata('evaluation_step', 'evaluationtobeapproved');
+        if ($this->input->post('ed_id')) {
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
             // echo $this->db->last_query();
             redirect(str_replace('/index.php', '', $referred_from), 'refresh');
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -1843,18 +1815,16 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
-    public function techtobeapproved($value='')
+
+    public function techtobeapproved($value = '')
     {
-        $this->session->set_userdata('evaluation_step','technicalapproval');
-        if($this->input->post('ed_id'))
-        {
+        $this->session->set_userdata('evaluation_step', 'technicalapproval');
+        if ($this->input->post('ed_id')) {
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
             // echo $this->db->last_query();
             redirect(str_replace('/index.php', '', $referred_from), 'refresh');
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -1871,19 +1841,17 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
-    public function admack($value='')
+
+    public function admack($value = '')
     {
-        $this->session->set_userdata('evaluation_step','admack');
+        $this->session->set_userdata('evaluation_step', 'admack');
         $data['titleApp'] = 'Administration Evaluation Acknowledgement';
-        if($this->input->post('ed_id'))
-        {
+        if ($this->input->post('ed_id')) {
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
             // echo $this->db->last_query();
             redirect(str_replace('/index.php', '', $referred_from), 'refresh');
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -1899,19 +1867,17 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
-    public function techack($value='')
+
+    public function techack($value = '')
     {
-        $this->session->set_userdata('evaluation_step','techack');
+        $this->session->set_userdata('evaluation_step', 'techack');
         $data['titleApp'] = 'Technical Evaluation Acknowledgement';
-        if($this->input->post('ed_id'))
-        {
+        if ($this->input->post('ed_id')) {
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
             // echo $this->db->last_query();
             redirect(str_replace('/index.php', '', $referred_from), 'refresh');
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -1927,20 +1893,56 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
-    public function approvalevaluation($value='')
+
+    public function approvalevaluation($value = '')
     {
-        if($this->input->post('ed_id'))
-        {
+        if ($this->input->post('ed_id')) {
             // $referred_from = $this->session->userdata('referred_from');
             // print_r($_POST);
             // exit();
-            if($this->input->post('approval_ed'))
-            {
+            if ($this->input->post('approval_ed')) {
                 $this->M_approval->approvalEdEvaluationLog();
-            }
-            else
-            {
+            } else {
                 $this->M_approval->approvalEdEvaluation();
+            }
+
+            if ($this->input->post('approval_ed') == 'administrative') {
+                if ($this->input->post('administrative') == 3) {
+                    $notif = 63;
+                }
+            } else if ($this->input->post('approval_ed') == 'technical') {
+                if ($this->input->post('technical') == 3) {
+                    $notif = 65;
+                } else {
+                    $notif = 66;
+                }
+            }
+
+            if ($this->input->post('technical') == 0) {
+                // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+                // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+                $img1 = "";
+                $img2 = "";
+                $edid = $this->input->post('ed_id');
+                $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                JOIN m_user user ON ed.created_by = user.ID_USER
+                JOIN m_notic notif ON notif.ID = "' . $notif . '"
+                WHERE ed.id = ' . $this->input->post('ed_id'));
+
+                $data_replace = $query->result();
+
+                $str = $data_replace[0]->open;
+                $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
+                $data['dest'][0] = $data_replace[0]->email;
+                $flag = $this->sendMail($data);
             }
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit'),
@@ -1949,7 +1951,8 @@ class Approval extends CI_Controller {
             redirect(base_url('home'));
         }
     }
-    public function commercial($value='')
+
+    public function commercial($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1967,7 +1970,8 @@ class Approval extends CI_Controller {
         $data['commercial'] = 1;
         $this->template->display('approval/bidopening', $data);
     }
-    public function performnegotiation($value='')
+
+    public function performnegotiation($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -1984,7 +1988,8 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/bidopening', $data);
     }
-    public function comtobeapproved($value='')
+
+    public function comtobeapproved($value = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -2000,17 +2005,15 @@ class Approval extends CI_Controller {
         $data['greetings'] = $greetings;
         $this->template->display('approval/bidopening', $data);
     }
-    public function comack($value='')
+
+    public function comack($value = '')
     {
-        if($this->input->post('ed_id'))
-        {
+        if ($this->input->post('ed_id')) {
             $referred_from = $this->session->userdata('referred_from');
             $technicalevaluation = $this->M_approval->technicalevaluation();
             // echo $this->db->last_query();
             redirect(str_replace('/index.php', '', $referred_from), 'refresh');
-        }
-        else
-        {
+        } else {
             $get_menu = $this->M_vendor->menu();
             $dt = array();
             foreach ($get_menu as $k => $v) {
@@ -2026,6 +2029,7 @@ class Approval extends CI_Controller {
             $this->template->display('approval/bidopening', $data);
         }
     }
+
     public function vendor_items_nego()
     {
         $this->load->model('approval/M_bl');
@@ -2033,7 +2037,8 @@ class Approval extends CI_Controller {
         $data['items'] = $this->M_bl->getItemByMsr($data['msr_no']);
         $this->load->view('approval/vendor_items_nego', $data);
     }
-    public function issued_nego($value='')
+
+    public function issued_nego($value = '')
     {
         $this->load->model('approval/M_bl');
         $data = $this->input->post();
@@ -2048,18 +2053,18 @@ class Approval extends CI_Controller {
             $d['nego'] = 1;
             $d['nego_date'] = date("Y-m-d");
             $this->db->where([
-                'vendor_id'     => $data['vendor_id'],
-                'sop_id'        => $key,
+                'vendor_id' => $data['vendor_id'],
+                'sop_id' => $key,
             ]);
             $this->db->update('t_sop_bid', $d);
 
-            $t_sop = $this->db->where(['id'=>$key])->get('t_sop')->row();
+            $t_sop = $this->db->where(['id' => $key])->get('t_sop')->row();
             /**/
             // foreach ($t_sop->result() as $sop) {
-                $x['nego'] = 1;
-                $x['msr_detail_id'] = $t_sop->msr_item_id;
-                $x['vendor_id'] = $data['vendor_id'];
-                $this->M_bl->issued_nego($x);
+            $x['nego'] = 1;
+            $x['msr_detail_id'] = $t_sop->msr_item_id;
+            $x['vendor_id'] = $data['vendor_id'];
+            $this->M_bl->issued_nego($x);
             // }
         }
         /*foreach ($data['chk'] as $key => $value) {
@@ -2068,18 +2073,16 @@ class Approval extends CI_Controller {
             $data['nego_date'] = date("Y-m-d");
             $this->M_bl->issued_nego($data);
         }*/
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             echo 'Success Submited';
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             echo 'Fail, Try Again';
         }
     }
-    public function no_nego($value='')
+
+    public function no_nego($value = '')
     {
         $this->load->model('approval/M_bl');
 
@@ -2087,27 +2090,25 @@ class Approval extends CI_Controller {
 
         $this->db->trans_begin();
 
-        $t_bl = $this->db->where(['msr_no'=>$data['msr_no']])->get('t_bl')->row();
+        $t_bl = $this->db->where(['msr_no' => $data['msr_no']])->get('t_bl')->row();
 
         $bled_no = $t_bl->bled_no;
         $vendor_id = $data['vendor_id'];
 
 
-        $this->db->where(['bled_no'=>$bled_no,'created_by'=>$vendor_id]);
-        $this->db->update('t_bid_detail',['nego'=>2,'nego_date'=>date("Y-m-d")]);
+        $this->db->where(['bled_no' => $bled_no, 'created_by' => $vendor_id]);
+        $this->db->update('t_bid_detail', ['nego' => 2, 'nego_date' => date("Y-m-d")]);
 
-        if($this->db->trans_status() === true)
-        {
+        if ($this->db->trans_status() === true) {
             $this->db->trans_commit();
             echo 'Success Submited';
-        }
-        else
-        {
+        } else {
             $this->db->trans_rollback();
             echo 'Fail, Try Again';
         }
     }
-    public function issuednego($value='')
+
+    public function issuednego($value = '')
     {
         $data = $this->input->post();
         $msr_no = $data['msr_no'];
@@ -2115,12 +2116,13 @@ class Approval extends CI_Controller {
         $this->M_bl->issuednego($data);
     }
 
-    protected function sendMail($content) {
+    protected function sendMail($content)
+    {
         $mail = get_mail();
         $config = array();
         $config['protocol'] = $mail['protocol'];
         $config['smtp_crypto'] = $mail['crypto'];
-        if($mail['protocol'] == 'smtp'){
+        if ($mail['protocol'] == 'smtp') {
             $config['smtp_pass'] = $mail['password'];
         }
 
@@ -2151,89 +2153,79 @@ class Approval extends CI_Controller {
                 //$this->email->to($v);
 
                 $data_email['recipient'] = $v;
-        $data_email['subject'] = $content['title'];
-        $data_email['content'] = $ctn;
-        $data_email['ismailed'] = 0;
+                $data_email['subject'] = $content['title'];
+                $data_email['content'] = $ctn;
+                $data_email['ismailed'] = 0;
 
-                if ($this->db->insert('i_notification',$data_email)) {
+                if ($this->db->insert('i_notification', $data_email)) {
                     $flag = 1;
                 } else {
                     $flag = 0;
                 }
             }
-        }
-        else
-        {
+        } else {
             $this->load->library('email', $config);
-                $this->email->initialize($config);
-                $this->email->from($mail['email'], '[SYSTEM] EPROC SUPREME ENERGY');
-                $this->email->subject($content['title']);
-                $ctn = ' <p>' . $content['img1'] . '<p>
+            $this->email->initialize($config);
+            $this->email->from($mail['email'], '[SYSTEM] EPROC SUPREME ENERGY');
+            $this->email->subject($content['title']);
+            $ctn = ' <p>' . $content['img1'] . '<p>
                         <br>' . $content['open'] . '
                         <br>
                         ' . $content['close'] . '
                         <br>
                         ';
-                //$this->email->message();
-                //$this->email->to($content['email']);
+            //$this->email->message();
+            //$this->email->to($content['email']);
 
-                $data_email['recipient'] = $content['email'];
-        $data_email['subject'] = $content['title'];
-        $data_email['content'] = $ctn;
-        $data_email['ismailed'] = 0;
-                if ($this->db->insert('i_notification',$data_email)) {
-                     return true;
-                } else {
-                    return false;
-                }
+            $data_email['recipient'] = $content['email'];
+            $data_email['subject'] = $content['title'];
+            $data_email['content'] = $ctn;
+            $data_email['ismailed'] = 0;
+            if ($this->db->insert('i_notification', $data_email)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         if ($flag == 1)
             return true;
         else
             return false;
     }
+
     public function devbled_submit()
     {
         $data = $this->input->post();
-        $checkBlEd  = $this->checkBlEd($data['msr_no']);
-        if($checkBlEd)
-        {
-            echo json_encode(['status'=>true]);
-        }
-        else
-        {
-            echo json_encode(['status'=>false]);
+        $checkBlEd = $this->checkBlEd($data['msr_no']);
+        if ($checkBlEd) {
+            echo json_encode(['status' => true]);
+        } else {
+            echo json_encode(['status' => false]);
         }
     }
+
     public function checkbl()
     {
         $data = $this->input->post();
-        $getBl = $this->vendor_lib->getBl(['msr_no'=>$data['bl_msr_no']]);
-        $getBlVendor = $this->vendor_lib->getBl(['msr_no'=>$data['bl_msr_no'], 'vendor_id'=>$data['bl_vendor']]);
-        if($getBlVendor->num_rows() > 0)
-        {
-            echo json_encode(['status'=>false, 'msg'=>'Duplicate Vendor']);
+        $getBl = $this->vendor_lib->getBl(['msr_no' => $data['bl_msr_no']]);
+        $getBlVendor = $this->vendor_lib->getBl(['msr_no' => $data['bl_msr_no'], 'vendor_id' => $data['bl_vendor']]);
+        if ($getBlVendor->num_rows() > 0) {
+            echo json_encode(['status' => false, 'msg' => 'Duplicate Vendor']);
             return false;
         }
-        if($data['bl_pm'] == 'DA')
-        {
-            if($getBl->num_rows()+1 > 1)
-            {
-                echo json_encode(['status'=>false, 'msg'=>'DA, Bidder = 1']);
+        if ($data['bl_pm'] == 'DA') {
+            if ($getBl->num_rows() + 1 > 1) {
+                echo json_encode(['status' => false, 'msg' => 'DA, Bidder = 1']);
                 return false;
             }
         }
-        if($data['bl_pm'] == 'DS')
-        {
-            if($getBl->num_rows()+1 == 3)
-            {
-                echo json_encode(['status'=>false, 'msg'=>'DS, Bidder = 2']);
+        if ($data['bl_pm'] == 'DS') {
+            if ($getBl->num_rows() + 1 == 3) {
+                echo json_encode(['status' => false, 'msg' => 'DS, Bidder = 2']);
                 return false;
 
-            }
-            else
-            {
-                echo json_encode(['status'=>true]);
+            } else {
+                echo json_encode(['status' => true]);
                 return true;
             }
         }
@@ -2245,36 +2237,31 @@ class Approval extends CI_Controller {
                 return false;
             }
         }*/
-        echo json_encode(['status'=>true]);
+        echo json_encode(['status' => true]);
         return true;
     }
-    public function firstAas($nominal = 10000, $created_by = '', $msr_company='')
+
+    public function firstAas($nominal = 10000, $created_by = '', $msr_company = '')
     {
         // echo numIndo($nominal);
         $rs = '';
         $sqlId = "select * from t_jabatan where user_id = $created_by";
         $n = $this->db->query($sqlId)->row();
         $id = $n->id;
-        if($nominal > 5000000)
-        {
+        if ($nominal > 5000000) {
             $sql = "SELECT * FROM t_jabatan WHERE id = 1";
             $result = $this->db->query($sql);
             $row = $result->row();
             $rs = $row;
-        }
-        else
-        {
-            for ($i=0; $i < 4; $i++) {
+        } else {
+            for ($i = 0; $i < 4; $i++) {
                 $sql = "SELECT * FROM t_jabatan WHERE id = (SELECT parent_id FROM t_jabatan WHERE id = $id)";
                 $result = $this->db->query($sql);
                 $row = $result->row();
-                if($nominal <= $row->nominal)
-                {
+                if ($nominal <= $row->nominal) {
                     $rs = $row;
                     break;
-                }
-                else
-                {
+                } else {
                     $id = $row->id;
                 }
             }
@@ -2282,127 +2269,111 @@ class Approval extends CI_Controller {
         /*cek di m_user*/
         $msr_company = trim($msr_company);
         $q = "select * from m_user where ID_USER  = $rs->user_id and COMPANY like '%$msr_company%'";
-        if($this->db->query($q)->num_rows() > 0)
-        {
+        if ($this->db->query($q)->num_rows() > 0) {
 
+        } else {
+            $rs = $this->db->where(['first' => 1])->get('t_jabatan')->row();
         }
-        else
-        {
-            $rs = $this->db->where(['first'=>1])->get('t_jabatan')->row();
-        }
-        if($this->input->get('debug') == 1)
-        {
+        if ($this->input->get('debug') == 1) {
             echo "<pre>";
             print_r($rs);
             echo "</pre>";
         }
         return $rs;
     }
-    public function firstum($msr_no='')
+
+    public function firstum($msr_no = '')
     {
-        $msr = $this->db->where(['msr_no'=>$msr_no])->get('t_msr')->row();
-        $t_jabatan = $this->db->where(['user_id'=>$msr->create_by])->get('t_jabatan')->row();
-        $s = $this->db->where(['id'=>$t_jabatan->parent_id])->get('t_jabatan')->row();
+        $msr = $this->db->where(['msr_no' => $msr_no])->get('t_msr')->row();
+        $t_jabatan = $this->db->where(['user_id' => $msr->create_by])->get('t_jabatan')->row();
+        $s = $this->db->where(['id' => $t_jabatan->parent_id])->get('t_jabatan')->row();
         echo $s->user_id;
     }
-    public function get_reject_by_msr($msr_no='')
+
+    public function get_reject_by_msr($msr_no = '')
     {
         $this->approval_lib->getRejectByMsr($msr_no);
     }
-    public function resubmit($value='')
+
+    public function resubmit($value = '')
     {
-        if($this->input->get('debug'))
-        {
+        if ($this->input->get('debug')) {
             $_POST['msr_no'] = $value;
         }
         $result = $this->M_approval->resubmit();
-        if($result)
-        {
+        if ($result) {
             $this->session->set_flashdata('message', array(
                 'message' => __('success_resubmit'),
                 'type' => 'success'
             ));
-            echo json_encode(['msg'=>'Succcess']);
-        }
-        else
-        {
+            echo json_encode(['msg' => 'Succcess']);
+        } else {
             $this->session->set_flashdata('message', array(
                 'message' => __('failed_resubmit'),
                 'type' => 'success'
             ));
-            echo json_decode(['msg'=>'Fail, Please Try Again']);
+            echo json_decode(['msg' => 'Fail, Please Try Again']);
         }
     }
-    public function sop_store($value='')
+
+    public function sop_store($value = '')
     {
         /*print_r($_POST);
         exit();*/
         $this->M_bl->sop_store();
     }
-    public function sop_grid($value='')
+
+    public function sop_grid($value = '')
     {
-        $msr_no     = $this->input->post('msr_no');
-        $type       = $this->input->post('type');
-        $sop_grid   = $this->M_bl->sop_get(['t_sop.msr_no'=>$msr_no]);
-        $ed         = $this->M_bl->getEd($msr_no);
-        if($ed->num_rows() > 0)
-        {
+        $msr_no = $this->input->post('msr_no');
+        $type = $this->input->post('type');
+        $sop_grid = $this->M_bl->sop_get(['t_sop.msr_no' => $msr_no]);
+        $ed = $this->M_bl->getEd($msr_no);
+        if ($ed->num_rows() > 0) {
             $ed = $ed->row();
-            $currency   = $this->M_bl->getMc($ed->currency)->row();
+            $currency = $this->M_bl->getMc($ed->currency)->row();
             $cur = $currency->CURRENCY;
-        }
-        else
-        {
+        } else {
             $cur = '';
         }
-        $bgGrey     = "style='background:none'";
-        if($sop_grid->num_rows() > 0)
-        {
+        $bgGrey = "style='background:none'";
+        if ($sop_grid->num_rows() > 0) {
             $sop_grid = $sop_grid->result();
-            if($sop_grid[0]->sop_type == 2)
-            {
+            if ($sop_grid[0]->sop_type == 2) {
                 $qty1 = 'Qty 1';
                 $uom1 = 'UoM 1';
-            }
-            else
-            {
+            } else {
                 $qty1 = 'Qty';
                 $uom1 = 'UoM';
             }
             $tb = "<thead><tr $bgGrey><th>No</th><th>MSR Item</th><th>Item</th><th class='text-center'>$qty1</th><th class='text-center'>$uom1</th>";
-            if($sop_grid[0]->sop_type == 2)
-            {
+            if ($sop_grid[0]->sop_type == 2) {
                 $tb .= "<th class='text-center'>Qty 2</th><th class='text-center'>UoM 2</th>";
             }
             /*for view mode*/
-            if($type == 'view')
-            {
+            if ($type == 'view') {
                 $tb .= "<th class='text-center'>Currency</th><th class='text-right'>Unit Price</th><th class='text-right'>Total Value</th><th>Cost Center</th><th>Account Subsidiary</th><th>Inv Type</th><th>Item Modification</th></tr></thead>";
-            }
-            else
-            {
+            } else {
                 $tb .= "<th class='text-center'>Currency</th><th class='text-right'>Unit Price</th><th class='text-right'>Total Value</th><th>Cost Center</th><th>Account Subsidiary</th><th>Inv Type</th><th class='text-center'>Item Modification</th><th class='text-center'>Action</th></tr></thead>";
             }
             $tb .= "<tbody>";
-            $no=1;
+            $no = 1;
             foreach ($sop_grid as $r) {
                 $uom1 = $r->uom1;
-                $m_material_uom = $this->db->where(['MATERIAL_UOM'=>$uom1])->get('m_material_uom')->row();
+                $m_material_uom = $this->db->where(['MATERIAL_UOM' => $uom1])->get('m_material_uom')->row();
                 $uom1 .= " - $m_material_uom->DESCRIPTION";
                 $tb .= "<tr><td $bgGrey>$no</td><td>$r->description</td><td>$r->item</td><td class='text-center'>$r->qty1</td><td class='text-center'>$uom1</td>";
-                if($r->sop_type == 2)
-                {
-                    $m_material_uom = $this->db->where(['MATERIAL_UOM'=>$r->uom2])->get('m_material_uom')->row();
+                if ($r->sop_type == 2) {
+                    $m_material_uom = $this->db->where(['MATERIAL_UOM' => $r->uom2])->get('m_material_uom')->row();
                     $qty2 = $r->qty2 > 0 ? $r->qty2 : '-';
-                    $uom2 = $r->qty2 > 0 ? $r->uom2." - $m_material_uom->DESCRIPTION" : '-';
+                    $uom2 = $r->qty2 > 0 ? $r->uom2 . " - $m_material_uom->DESCRIPTION" : '-';
                     $tb .= "<td class='text-center'>$qty2</td><td class='text-center'>$uom2</td>";
                 }
-                $tax = $r->tax == 1 ? "Yes":"No";
+                $tax = $r->tax == 1 ? "Yes" : "No";
                 $edit = "<a href='#' class='btn btn-sm btn-warning' onclick='editSopClick($r->id)'>Edit</a>";
                 $delete = "<a href='#' class='btn btn-sm btn-danger' onclick='deleteSopClick($r->id)'>Delete</a>";
                 /*for view mode*/
-                if($type == 'view')
-                {
+                if ($type == 'view') {
                     $is_modif = $r->item_modification == 1 ? 'Yes' : 'No';
                     $tb .= "<td $bgGrey align='center'></td><td $bgGrey></td><td $bgGrey></td>
                     <td>$r->costcenter_desc</td>
@@ -2410,9 +2381,7 @@ class Approval extends CI_Controller {
                     <td>$r->inv_desc</td>
                     <td class='text-center'>$is_modif</td>
                     </tr>";
-                }
-                else
-                {
+                } else {
                     $is_modif = $r->item_modification == 1 ? 'Yes' : 'No';
                     $tb .= "<td $bgGrey align='center'></td><td $bgGrey></td><td $bgGrey></td>
                     <td>$r->costcenter_desc</td>
@@ -2426,59 +2395,61 @@ class Approval extends CI_Controller {
             }
             $tb .= "</tbody>";
             echo $tb;
-        }
-        else
-        {
+        } else {
             echo "<center>No Data</center>";
         }
     }
+
     public function edit_sop()
     {
         $id = $this->input->post('id');
-        $result = $this->M_bl->sop_get(['t_sop.id'=>$id])->row_array();
+        $result = $this->M_bl->sop_get(['t_sop.id' => $id])->row_array();
         echo json_encode($result);
     }
-    public function sop_delete($value='')
+
+    public function sop_delete($value = '')
     {
         $id = $this->input->post('id');
         $this->M_bl->sop_delete($id);
     }
+
     public function log_view()
     {
         $this->load->view('approval/log_view');
     }
-    public function get_ajax_list_approval($dataId='')
+
+    public function get_ajax_list_approval($dataId = '')
     {
         $moduleKode = 'msr';
-        if(!$dataId)
+        if (!$dataId)
             $dataId = $this->input->post('data_id');
 
-        $rows               = $this->M_approval->list($moduleKode, $dataId);
-        $data['rows']       = $rows;
-        $userId             = $this->session->userdata('ID_USER');
-        $cek                = $this->db->where('ID_USER',$userId)->get('m_user')->row();
-        $roles              = explode(",", $cek->ROLES);
-        $data['roles']      = array_values(array_filter($roles));
-        $data['data_id']    = $dataId;
-        $this->load->view('approval/approval_list_ajax',$data);
+        $rows = $this->M_approval->list($moduleKode, $dataId);
+        $data['rows'] = $rows;
+        $userId = $this->session->userdata('ID_USER');
+        $cek = $this->db->where('ID_USER', $userId)->get('m_user')->row();
+        $roles = explode(",", $cek->ROLES);
+        $data['roles'] = array_values(array_filter($roles));
+        $data['data_id'] = $dataId;
+        $this->load->view('approval/approval_list_ajax', $data);
     }
-    public function sop_copy($value='')
+
+    public function sop_copy($value = '')
     {
         $this->M_bl->sop_copy();
     }
-    public function can_perform_n_submit_admin_evaluation($msr_no='')
+
+    public function can_perform_n_submit_admin_evaluation($msr_no = '')
     {
-        $ed = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
+        $ed = $this->db->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
         $can_perform_n_submit_admin_evaluation = can_perform_n_submit_admin_evaluation($ed);
-        if($can_perform_n_submit_admin_evaluation == true)
-        {
+        if ($can_perform_n_submit_admin_evaluation == true) {
             echo 1;
-        }
-        else
-        {
+        } else {
             echo 2;
         }
     }
+
     /*public function can($msr_no='', $param='')
     {
         $ed = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
@@ -2492,7 +2463,7 @@ class Approval extends CI_Controller {
             echo 2;
         }
     }*/
-    public function sop_doc_validation($msr_no='')
+    public function sop_doc_validation($msr_no = '')
     {
         $sql = "select count(id) jml from t_upload where module_kode='bled' and data_id = '$msr_no' and tipe = 0";
         $query = $this->db->query($sql)->row();
@@ -2510,27 +2481,24 @@ class Approval extends CI_Controller {
         $sop = $query;
 
         /*msr_item*/
-        $t_msr_item = $this->db->where('msr_no',$msr_no)->get('t_msr_item')->num_rows();
+        $t_msr_item = $this->db->where('msr_no', $msr_no)->get('t_msr_item')->num_rows();
 
         $validEd = [
-            'subject'             => 'Subject',
-            'prebid_loc'          => 'Pre Bid Location',
-            'prebid_address'      => 'Pre Bid Address',
-            'closing_date'        => 'Closing Date',
-            'bid_validity'        => 'Bid Validty',
+            'subject' => 'Subject',
+            'prebid_loc' => 'Pre Bid Location',
+            'prebid_address' => 'Pre Bid Address',
+            'closing_date' => 'Closing Date',
+            'bid_validity' => 'Bid Validty',
         ];
         $d = $this->input->post();
 
-        if($attachment0 > 0 and $attachment2 > 0 and $attachmentE > 0 and $sop == $t_msr_item and $d['subject'] and $d['prebid_loc'] and $d['prebid_address'] and $d['closing_date'] and $d['bid_validity'])
-        {
+        if ($attachment0 > 0 and $attachment2 > 0 and $attachmentE > 0 and $sop == $t_msr_item and $d['subject'] and $d['prebid_loc'] and $d['prebid_address'] and $d['closing_date'] and $d['bid_validity']) {
             $status = false;
-        }
-        else
-        {
+        } else {
             $status = true;
         }
 
-        $data['html'] = $this->load->view('approval/sop_doc_validation',[
+        $data['html'] = $this->load->view('approval/sop_doc_validation', [
             'msr_no' => $msr_no,
             'validEd' => $validEd,
             'attachment0' => $attachment0,
@@ -2539,39 +2507,40 @@ class Approval extends CI_Controller {
             'sop' => $sop,
             't_msr_item' => $t_msr_item,
             'p' => $d,
-            ], true);
+        ], true);
         $data['status'] = $status;
         echo json_encode($data);
     }
-    public function ed_approved($value='')
+
+    public function ed_approved($value = '')
     {
-       $ed_approved = $this->M_approval->ed_approved();
-       return $ed_approved;
-       /*echo "<pre>";
-       print_r($ed_approved);*/
+        $ed_approved = $this->M_approval->ed_approved();
+        return $ed_approved;
+        /*echo "<pre>";
+        print_r($ed_approved);*/
     }
-    public function scoring($value='')
+
+    public function scoring($value = '')
     {
         $d = $this->input->post();
-        $this->db->where(['id'=>$d['bl_detail_id']]);
-        $this->db->update('t_bl_detail', ['scoring'=>$d['n']]);
+        $this->db->where(['id' => $d['bl_detail_id']]);
+        $this->db->update('t_bl_detail', ['scoring' => $d['n']]);
         echo $d['n'];
         // echo json_encode(['value']);
     }
+
     public function reject_award()
     {
         $result = $this->M_approval->reject_award();
-        if($result)
-        {
-            echo json_encode(['msg'=>'Rejected']);
-        }
-        else
-        {
-            echo json_encode(['msg'=>'Something Wrong, Please Try Again']);
+        if ($result) {
+            echo json_encode(['msg' => 'Rejected']);
+        } else {
+            echo json_encode(['msg' => 'Something Wrong, Please Try Again']);
         }
     }
 
-    public function addendum_bled_list() {
+    public function addendum_bled_list()
+    {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
         foreach ($get_menu as $k => $v) {
@@ -2583,31 +2552,32 @@ class Approval extends CI_Controller {
         $data['menu'] = $dt;
 
         $data['addendum'] = $this->db->select('t_eq_data.*, t_bl.bled_no, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as creator, t_eq_data.closing_date, specialist.NAME as specialist')
-        ->join('t_approval', 't_approval.data_id = t_msr.msr_no AND t_approval.status = 1 AND t_approval.m_approval_id=13')
-        ->join('t_bl', 't_bl.msr_no = t_msr.msr_no')
-        ->join('t_eq_data', 't_eq_data.msr_no = t_msr.msr_no')
-        ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
-        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
-        ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
-        ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
-        ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
-        ->join('m_user specialist', 'specialist.ID_USER = t_assignment.user_id')
-        ->where('t_eq_data.bid_opening', 0)
-        ->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
-        ->get('t_msr')
-        ->result();
+            ->join('t_approval', 't_approval.data_id = t_msr.msr_no AND t_approval.status = 1 AND t_approval.m_approval_id=13')
+            ->join('t_bl', 't_bl.msr_no = t_msr.msr_no')
+            ->join('t_eq_data', 't_eq_data.msr_no = t_msr.msr_no')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
+            ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+            ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+            ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+            ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
+            ->join('m_user specialist', 'specialist.ID_USER = t_assignment.user_id')
+            ->where('t_eq_data.bid_opening', 0)
+            ->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
+            ->get('t_msr')
+            ->result();
         $this->template->display('approval/addendum_bled_list', $data);
     }
 
-    public function addendum_bled($msr_no='',$approval_id='') {
+    public function addendum_bled($msr_no = '', $approval_id = '')
+    {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
         $this->load->model('vendor/M_registered_supplier', 'mrs')
-                    ->model('procurement/M_msr', 'msr')
-                    ->model('setting/M_itemtype', 'mit')
-                    ->model('setting/M_itemtype_category', 'mic')
-                    ->model('setting/M_master_acc_sub', 'mmas')
-                    ->model('setting/M_master_costcenter', 'mcc');
+            ->model('procurement/M_msr', 'msr')
+            ->model('setting/M_itemtype', 'mit')
+            ->model('setting/M_itemtype_category', 'mic')
+            ->model('setting/M_master_acc_sub', 'mmas')
+            ->model('setting/M_master_costcenter', 'mcc');
         foreach ($get_menu as $k => $v) {
             $dt[$v->PARENT][$v->ID_MENU]['ICON'] = $v->ICON;
             $dt[$v->PARENT][$v->ID_MENU]['URL'] = $v->URL;
@@ -2621,23 +2591,23 @@ class Approval extends CI_Controller {
         $data['idnya'] = $approval_id;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->where('t_approval.id',$approval_id)
-        ->get('t_approval')->row();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $data['ed']       = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
-        $data['tbmi2']       = $this->M_bl->tbmi2($msr_no);
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->where('t_approval.id', $approval_id)
+            ->get('t_approval')->row();
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $data['ed'] = $this->db->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
+        $data['tbmi2'] = $this->M_bl->tbmi2($msr_no);
         $data['opt_itemtype'] = array_pluck($this->mit->allActive(), 'ITEMTYPE_DESC', 'ID_ITEMTYPE');
         $data['opt_accountsub'] = array_pluck($this->mmas->allActive(), 'ACCSUB_DESC', 'ID_ACCSUB');
         $data['opt_invtype'] = array_pluck($this->msr->m_msr_inventory_type(), 'description', 'id');
@@ -2654,24 +2624,25 @@ class Approval extends CI_Controller {
         }
 
         $itemtype_category = $this->mic->byParentCategory();
-        $data['opt_itemtype_category_by_parent'] = array_map(function($category) {
+        $data['opt_itemtype_category_by_parent'] = array_map(function ($category) {
             return array_pluck($category, 'description', 'id');
         }, $itemtype_category);
         $data['opt_itemtype_category'] = array_pluck($this->mic->allActive(), 'description', 'id');
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
         $data['addendum'] = $this->db->select('t_addendum.*, m_user.NAME as creator')
-        ->join('m_user', 'm_user.ID_USER = t_addendum.created_by')
-        ->where('module', 'bled')
-        ->where('id_ref', $msr_no)
-        ->order_by('created_at', 'desc')
-        ->get('t_addendum')
-        ->result();
+            ->join('m_user', 'm_user.ID_USER = t_addendum.created_by')
+            ->where('module', 'bled')
+            ->where('id_ref', $msr_no)
+            ->order_by('created_at', 'desc')
+            ->get('t_addendum')
+            ->result();
         $this->template->display('approval/addendum_bled', $data);
     }
 
-    public function unlock_sop($msr_no) {
+    public function unlock_sop($msr_no)
+    {
         $bled_no = str_replace('OR', 'QR', $msr_no);
         $this->db->where('bled_no', $bled_no)->delete('t_bid_head');
         $this->db->where('bled_no', $bled_no)->delete('t_bid_detail');
@@ -2681,7 +2652,8 @@ class Approval extends CI_Controller {
         ));
     }
 
-    public function negotiation() {
+    public function negotiation()
+    {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
         $this->load->model('vendor/M_registered_supplier', 'mrs');
@@ -2693,24 +2665,25 @@ class Approval extends CI_Controller {
         }
         $data['menu'] = $dt;
         $data['rs_ed'] = $this->db->select('t_eq_data.*, t_msr.title, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as requestor')
-        ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
-        ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
-        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
-        ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
-        ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
-        ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
-        ->where('t_eq_data.administrative <=', 5)
-        ->where('t_eq_data.technical <=', 5)
-        ->where('t_eq_data.commercial', 0)
-        ->where('t_eq_data.award', 0)
-        ->where('t_eq_data.bid_opening', 1)
-        ->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
-        ->get('t_eq_data')
-        ->result();
+            ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
+            ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+            ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+            ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+            ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
+            ->where('t_eq_data.administrative <=', 5)
+            ->where('t_eq_data.technical <=', 5)
+            ->where('t_eq_data.commercial', 0)
+            ->where('t_eq_data.award', 0)
+            ->where('t_eq_data.bid_opening', 1)
+            ->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
+            ->get('t_eq_data')
+            ->result();
         $this->template->display('approval/negotiation', $data);
     }
 
-    public function negotiation_detail($msr_no) {
+    public function negotiation_detail($msr_no)
+    {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
         foreach ($get_menu as $k => $v) {
@@ -2722,25 +2695,25 @@ class Approval extends CI_Controller {
         $data['menu'] = $dt;
 
         $data['ed'] = $this->db->select('t_eq_data.*, t_bl.bled_no, t_msr.title, t_msr.total_amount, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as requestor, m_currency.CURRENCY as currency')
-        ->join('t_bl', 't_bl.msr_no = t_eq_data.msr_no')
-        ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
-        ->join('m_currency', 'm_currency.ID = t_eq_data.currency')
-        ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
-        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
-        ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
-        ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
-        ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
-        ->where('t_eq_data.msr_no', $msr_no)
-        ->get('t_eq_data')
-        ->row();
+            ->join('t_bl', 't_bl.msr_no = t_eq_data.msr_no')
+            ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
+            ->join('m_currency', 'm_currency.ID = t_eq_data.currency')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
+            ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+            ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+            ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+            ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
+            ->where('t_eq_data.msr_no', $msr_no)
+            ->get('t_eq_data')
+            ->row();
         $data['rs_bl'] = $this->db->select('m_vendor.*')
-        ->join('m_vendor', 'm_vendor.ID = t_bl_detail.vendor_id')
-        ->where('t_bl_detail.msr_no', $msr_no)
-        ->get('t_bl_detail')
-        ->result();
+            ->join('m_vendor', 'm_vendor.ID = t_bl_detail.vendor_id')
+            ->where('t_bl_detail.msr_no', $msr_no)
+            ->get('t_bl_detail')
+            ->result();
         $data['rs_item'] = $this->db->where('t_sop.msr_no', $msr_no)
-        ->get('t_sop')
-        ->result();
+            ->get('t_sop')
+            ->result();
         $rs_sop_bid = $this->db->select('
             t_sop_bid.*,
             CASE
@@ -2754,9 +2727,9 @@ class Approval extends CI_Controller {
                 ELSE \'1\'
             END as status
         ')
-        ->where('t_sop_bid.msr_no', $msr_no)
-        ->get('t_sop_bid')
-        ->result();
+            ->where('t_sop_bid.msr_no', $msr_no)
+            ->get('t_sop_bid')
+            ->result();
         $data['sop_bid'] = array();
         foreach ($rs_sop_bid as $r_sop_bid) {
             $data['sop_bid'][$r_sop_bid->vendor_id][$r_sop_bid->sop_id] = $r_sop_bid;
@@ -2764,7 +2737,8 @@ class Approval extends CI_Controller {
         $this->template->display('approval/negotiation_detail', $data);
     }
 
-    public function negotiation_request($msr_no) {
+    public function negotiation_request($msr_no)
+    {
         $post = $this->input->post();
         $response = array();
         if ($_FILES['supporting_document']['tmp_name']) {
@@ -2833,14 +2807,39 @@ class Approval extends CI_Controller {
                 }
             }
         }
+        $img1 = '';
+        $img2 = '';
+
+        $query = $this->db->query('SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
+        JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
+        JOIN m_notic notic ON notic.ID = 82
+        WHERE bl.msr_no = "' . $msr_no . '"');
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->open;
+
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+
+        foreach ($data_replace as $item) {
+            $data['dest'][] = $item['email'];
+        }
+        $flag = $this->sendMail($data);
         $response = array(
             'success' => true,
-            'message' => 'Success request negotiation'
+            'message' => 'Success request negotiation',
+            'sendmail' => $flag
         );
         echo json_encode($response);
     }
 
-    public function evaluation($msr_no='')
+    public function evaluation($msr_no = '')
     {
         $get_menu = $this->M_vendor->menu();
         $dt = array();
@@ -2852,59 +2851,53 @@ class Approval extends CI_Controller {
         }
         $data['menu'] = $dt;
 
-        $userId             = $this->session->userdata('ID_USER');
-        $cek                = $this->db->where('ID_USER',$userId)->get('m_user')->row();
-        $roles              = explode(",", $cek->ROLES);
-        $data['roles']      = array_values(array_filter($roles));
+        $userId = $this->session->userdata('ID_USER');
+        $cek = $this->db->where('ID_USER', $userId)->get('m_user')->row();
+        $roles = explode(",", $cek->ROLES);
+        $data['roles'] = array_values(array_filter($roles));
         // $roles              = array_values(array_filter($roles));
 
         $greetings = $this->M_approval->greetings_msr();
         $data['greetings'] = $greetings;
         $data['msr_no'] = $msr_no;
         $data['msr'] = $this->db->select('t_msr.*,m_company.DESCRIPTION company_name,m_msrtype.MSR_DESC msr_name, m_plocation.PGroup_Desc proc_location_name, t_msr.costcenter_desc cost_center_name, m_pmethod.PMETHOD_DESC proc_method_name, m_currency.CURRENCY currency')
-        ->join('m_company','m_company.ID_COMPANY=t_msr.id_company')
-        ->join('m_msrtype','m_msrtype.ID_MSR=t_msr.id_msr_type')
-        ->join('m_plocation','m_plocation.ID_Pgroup=t_msr.id_ploc')
-        ->join('m_user','m_user.ID_USER=t_msr.create_by')
-        ->join('m_costcenter','m_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
-        ->join('m_pmethod','m_pmethod.ID_PMETHOD=t_msr.id_pmethod')
-        ->join('m_currency','m_currency.ID=t_msr.id_currency')
-        ->where('msr_no',$msr_no)->get('t_msr')->row();
+            ->join('m_company', 'm_company.ID_COMPANY=t_msr.id_company')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR=t_msr.id_msr_type')
+            ->join('m_plocation', 'm_plocation.ID_Pgroup=t_msr.id_ploc')
+            ->join('m_user', 'm_user.ID_USER=t_msr.create_by')
+            ->join('m_costcenter', 'm_costcenter.ID_COSTCENTER=m_user.COST_CENTER')
+            ->join('m_pmethod', 'm_pmethod.ID_PMETHOD=t_msr.id_pmethod')
+            ->join('m_currency', 'm_currency.ID=t_msr.id_currency')
+            ->where('msr_no', $msr_no)->get('t_msr')->row();
         $data['approval'] = $this->db->select('t_approval.*,m_approval.role_id')
-        ->join('m_approval','m_approval.id=t_approval.m_approval_id')
-        ->get('t_approval')->row();
+            ->join('m_approval', 'm_approval.id=t_approval.m_approval_id')
+            ->get('t_approval')->row();
         $data['listApprovalAward'] = $this->M_approval->listApprovalAward($msr_no)->result();
-        $data['method']       = $this->db->get('m_pmethod')->result();
-        $data['doc']       = $this->db->where(['module_kode'=>'bled','data_id'=>$msr_no])->get('t_upload')->result();
-        $data['t_bl']       = $this->db->where(['msr_no'=>$msr_no])->get('t_bl')->row();
-        $data['bled_no']    = $data['t_bl']->bled_no;
+        $data['method'] = $this->db->get('m_pmethod')->result();
+        $data['doc'] = $this->db->where(['module_kode' => 'bled', 'data_id' => $msr_no])->get('t_upload')->result();
+        $data['t_bl'] = $this->db->where(['msr_no' => $msr_no])->get('t_bl')->row();
+        $data['bled_no'] = $data['t_bl']->bled_no;
         $data['blDetails'] = $this->vendor_lib->blDetail($msr_no);
-        $data['ed']       = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting')->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
+        $data['ed'] = $this->db->select('*,(CASE WHEN now() >= closing_date THEN 1 ELSE 0 END) noting')->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
 
-        if($data['ed']->administrative == 1 or $data['ed']->administrative == 3 or $data['ed']->administrative == 4)
-        {
-            if(in_array(assign_sp,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_administration'] = $this->M_approval->evaluationToBeApproved('administrative', [1,3,4])->row();
+        if ($data['ed']->administrative == 1 or $data['ed']->administrative == 3 or $data['ed']->administrative == 4) {
+            if (in_array(assign_sp, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_administration'] = $this->M_approval->evaluationToBeApproved('administrative', [1, 3, 4])->row();
                 $data['adminAttachment'] = $this->M_approval->seeAttachment('eva-administrative', $msr_no)->row();
             }
         }
-        if($data['ed']->technical == 1 or $data['ed']->technical == 3 or $data['ed']->technical == 4)
-        {
-            if(in_array(user_manager,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_technical'] = $this->M_approval->evaluationToBeApproved('technical', [1,3,4])->row();
+        if ($data['ed']->technical == 1 or $data['ed']->technical == 3 or $data['ed']->technical == 4) {
+            if (in_array(user_manager, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_technical'] = $this->M_approval->evaluationToBeApproved('technical', [1, 3, 4])->row();
                 $data['technicalAttachment'] = $this->M_approval->seeAttachment('eva-technical', $msr_no)->row();
             }
         }
-        if($data['ed']->commercial == 1 or $data['ed']->commercial == 3 or $data['ed']->commercial == 4)
-        {
-            if(in_array(assign_sp,$data['roles']))
-            {
-                $this->db->where(['msr_no'=>$msr_no]);
-                $data['approved_commercial'] = $this->M_approval->evaluationToBeApproved('commercial', [1,3,4])->row();
+        if ($data['ed']->commercial == 1 or $data['ed']->commercial == 3 or $data['ed']->commercial == 4) {
+            if (in_array(assign_sp, $data['roles'])) {
+                $this->db->where(['msr_no' => $msr_no]);
+                $data['approved_commercial'] = $this->M_approval->evaluationToBeApproved('commercial', [1, 3, 4])->row();
                 $data['commercialAttachment'] = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
             }
         }
@@ -2912,86 +2905,82 @@ class Approval extends CI_Controller {
         /*print_r($data['ed']);
         exit();*/
         $this->session->set_userdata('referred_from', current_url());
-        $data['checkBlEd']  = $this->checkBlEd($msr_no);
+        $data['checkBlEd'] = $this->checkBlEd($msr_no);
         // $data['vendor']  = $this->mrs->show2();
-        $data['js']         = $this->load->view('approval/devbledjs', array(), true);
-        $data['msrItem']  = $this->vendor_lib->msrItemTobeAdmin($msr_no);
+        $data['js'] = $this->load->view('approval/devbledjs', array(), true);
+        $data['msrItem'] = $this->vendor_lib->msrItemTobeAdmin($msr_no);
         /*echo $this->db->last_query();
         exit();*/
-        if($this->M_approval->commercial()->num_rows() > 0)
-        {
+        if ($this->M_approval->commercial()->num_rows() > 0) {
             $data['commercial'] = 1;
         }
 
         $this->template->display('approval/evaluation', $data);
     }
-    public function evaluation_checker($value='')
+
+    public function evaluation_checker($value = '')
     {
         $post = $this->input->post();
         $field = $post['field'];
         $msr_no = $post['msr_no'];
-        $blDetail = $this->db->where(['msr_no'=>$msr_no, $field => 0, 'confirmed'=>1])->get('t_bl_detail');
-        if($blDetail->num_rows() > 0)
-            echo json_encode(['msg'=>'Fail, Please Evaluation First', 'status'=>false]);
+        $blDetail = $this->db->where(['msr_no' => $msr_no, $field => 0, 'confirmed' => 1])->get('t_bl_detail');
+        if ($blDetail->num_rows() > 0)
+            echo json_encode(['msg' => 'Fail, Please Evaluation First', 'status' => false]);
         else
-            echo json_encode(['status'=>true]);
+            echo json_encode(['status' => true]);
     }
-    public function sumawardtotalvalue($msr_no='')
+
+    public function sumawardtotalvalue($msr_no = '')
     {
         $sumawardtotalvalue = $this->M_approval->sumawardtotalvalue($msr_no);
         echo $sumawardtotalvalue;
     }
-    public function pc_approve($value='')
+
+    public function pc_approve($value = '')
     {
         echo "<pre>";
         print_r(pcApprove(false));
     }
+
     public function assign_reject()
     {
         $assignReject = $this->M_approval->assign_reject();
-        if($assignReject)
-        {
+        if ($assignReject) {
             $this->session->set_flashdata('message', array(
                 'message' => __('success_reject'),
                 'type' => 'success'
             ));
-            echo json_encode(['status'=>true,'msg'=>'Success, Assignment Rejected']);
-        }
-        else
-        {
-            echo json_encode(['status'=>false]);
+            echo json_encode(['status' => true, 'msg' => 'Success, Assignment Rejected']);
+        } else {
+            echo json_encode(['status' => false]);
         }
     }
-    public function will_cancel($msr_no='')
+
+    public function will_cancel($msr_no = '')
     {
         $data['menu'] = $this->dt;
         $user = user();
-        $roles              = explode(",", $user->ROLES);
-        $roles      = array_values(array_filter($roles));
+        $roles = explode(",", $user->ROLES);
+        $roles = array_values(array_filter($roles));
         $myroles = implode(',', $roles);
 
-        if($msr_no)
-        {
-            $data['msr'] = $this->db->where(['msr_no'=>$msr_no])->get('t_msr')->row();
-            $data['ed'] = $this->db->where(['msr_no'=>$msr_no])->get('t_eq_data')->row();
-            $data['currency'] = $this->db->where(['ID'=>$data['msr']->id_currency])->get('m_currency')->row();
+        if ($msr_no) {
+            $data['msr'] = $this->db->where(['msr_no' => $msr_no])->get('t_msr')->row();
+            $data['ed'] = $this->db->where(['msr_no' => $msr_no])->get('t_eq_data')->row();
+            $data['currency'] = $this->db->where(['ID' => $data['msr']->id_currency])->get('m_currency')->row();
             $data['supplier'] = $this->M_bl->tbld($msr_no);
-            $data['doc'] = $this->db->where(['module_kode'=>'msr-reject','data_id'=>$msr_no])->get('t_upload')->result();
+            $data['doc'] = $this->db->where(['module_kode' => 'msr-reject', 'data_id' => $msr_no])->get('t_upload')->result();
             $data['approval_list'] = $this->M_approval->approval_list_cancel_msr($msr_no);
 
-            if(in_array(assign_sp,$roles))
-            {
+            if (in_array(assign_sp, $roles)) {
                 $data['approval_list'] = $this->M_approval->cancel_msr_list_approver($msr_no);
                 $data['head'] = true;
             }
-        }
-        else
-        {
-            $data['msr'] = $this->db->query("select t_msr.* from t_msr where status != ? and msr_no not in (select msr_no from t_eq_data where award = ?)", [2,9]);
+        } else {
+            $data['msr'] = $this->db->query("select t_msr.* from t_msr where status != ? and msr_no not in (select msr_no from t_eq_data where award = ?)", [2, 9]);
 
-            if(in_array(assign_sp,$roles))
-            {
-                $data['msr'] = $this->db->where(['status'=>1])->get('t_msr');
+            if (in_array(assign_sp, $roles)) {
+                $data['msr'] = $this->db->where(['status' => 1])->get('t_msr');
                 $data['head'] = true;
 
             }
@@ -2999,62 +2988,53 @@ class Approval extends CI_Controller {
         }
         $this->template->display('approval/will_cancel_list', $data);
     }
-    public function cancel_msr_doc($value='')
+
+    public function cancel_msr_doc($value = '')
     {
-        if($this->input->get('delete'))
-        {
+        if ($this->input->get('delete')) {
             $data_id = $this->T_upload->hapus($value);
-            $doc = $this->T_upload->getByKey(['module_kode'=>'msr-reject','data_id'=>$data_id])->result();
-        }
-        elseif($this->input->get('submit-cancel-msr'))
-        {
+            $doc = $this->T_upload->getByKey(['module_kode' => 'msr-reject', 'data_id' => $data_id])->result();
+        } elseif ($this->input->get('submit-cancel-msr')) {
             $this->M_approval->cancel_msr($value);
             exit();
-        }
-        elseif($this->input->get('release'))
-        {
+        } elseif ($this->input->get('release')) {
             $this->M_approval->release_msr($value);
             exit();
-        }
-        elseif($this->input->get('approve'))
-        {
+        } elseif ($this->input->get('approve')) {
             $this->M_approval->approval_cancel_msr($value);
             exit();
-        }
-        else
-        {
-            $config['upload_path']  = './upload/cancel_msr/';
+        } else {
+            $config['upload_path'] = './upload/cancel_msr/';
             if (!is_dir($config['upload_path'])) {
-                mkdir($config['upload_path'],0755,TRUE);
+                mkdir($config['upload_path'], 0755, TRUE);
             }
-            $config['allowed_types']= '*';
+            $config['allowed_types'] = '*';
 
             $this->load->library('upload', $config);
-            if ( ! $this->upload->do_upload('file_path'))
-            {
-                echo $this->upload->display_errors('', '');exit;
-            }else
-            {
+            if (!$this->upload->do_upload('file_path')) {
+                echo $this->upload->display_errors('', '');
+                exit;
+            } else {
                 $user = user();
                 $data = $this->upload->data();
                 $field = $this->input->post();
                 $field['file_path'] = $data['file_name'];
                 $field['created_by'] = $user->ID_USER;
-                $this->db->insert('t_upload',$field);
+                $this->db->insert('t_upload', $field);
             }
             // echo "<pre>";
-            $doc = $this->T_upload->getByKey(['module_kode'=>'msr-reject','data_id'=>$this->input->post('data_id')])->result();
+            $doc = $this->T_upload->getByKey(['module_kode' => 'msr-reject', 'data_id' => $this->input->post('data_id')])->result();
             // echo $this->db->last_query();
             // print_r($doc);
         }
         foreach ($doc as $key => $value) {
             echo "<tr>
-              <td>".$value->tipe."</td>
-              <td>".$value->file_path."</td>
-              <td>".$value->created_at."</td>
-              <td>".user($value->created_by)->NAME."</td>
+              <td>" . $value->tipe . "</td>
+              <td>" . $value->file_path . "</td>
+              <td>" . $value->created_at . "</td>
+              <td>" . user($value->created_by)->NAME . "</td>
               <td>
-                <a href='".base_url('upload/cancel_msr/'.$value->file_path)."' target='_blank' class='btn btn-sm btn-primary'>Download</a>
+                <a href='" . base_url('upload/cancel_msr/' . $value->file_path) . "' target='_blank' class='btn btn-sm btn-primary'>Download</a>
                 <a href='#' class='btn btn-sm btn-danger' onclick='hapusFile($value->id)'>Hapus</a>
               </td>
             </tr>";

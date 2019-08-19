@@ -43,7 +43,7 @@
             <tr>
                 <td style="width: 150px;">MSR Value (Excl. VAT)</td>
                 <td class="no-padding-lr">:</td>
-                <td class="text-right">
+                <td class="text-left">
                     <?=$msr->currency?> <?=numIndo($msr->total_amount)?>
                     <?=equal_to($msr)?>
                 </td>

@@ -29,6 +29,7 @@ class Arf_nego extends CI_Controller {
         $this->load->model('procurement/arf/T_arf_recommendation_preparation');
         $this->load->model('procurement/arf/m_arf_nego');
         $this->load->model('vn/info/M_vn', 'mvn');
+        $this->load->model('M_sendmail');
         $this->load->library('form');
         $this->load->helper('data_builder_helper');
         $this->load->helper('exchange_rate_helper');
@@ -46,7 +47,8 @@ class Arf_nego extends CI_Controller {
 
     public function index($value='')
     {
-        $data['list'] = $this->m_arf_response->view('arf_response')->scope(['not_amd'])->where('t_arf_response.id not in (select arf_response_id from t_arf_nego where status = 0 group by arf_response_id)')->get();
+        $data['list'] = $this->m_arf_response->view('arf_response')->scope(['not_amd'])->get();
+        // $data['list'] = $this->m_arf_response->view('arf_response')->scope(['not_amd'])->where('t_arf_response.id not in (select arf_response_id from t_arf_nego where status = 0 group by arf_response_id)')->get();
         $data['title'] = 'Negotiation Amendment';
         $data['menu'] = $this->menu;
         $data['add_link'] = $this->input->get('close') ? "?close=1" : '';
@@ -69,8 +71,31 @@ class Arf_nego extends CI_Controller {
         if($nego)
         {
             $arf_nego_store = $this->m_arf_response->arf_nego_store();
-            if($arf_nego_store)
+            if($arf_nego_store !== false)
             {
+                $img1 = "";
+                $img2 = "";
+
+                $query = $this->db->query('SELECT arfr.doc_no AS doc_no, arf.po_no AS po_no, arf.po_title as po_title, arf.company AS company, vnd.ID_VENDOR AS email, vnd.NAMA AS nama, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_arf_response arfr
+                JOIN t_arf arf ON arf.doc_no = arfr.doc_no
+                JOIN t_purchase_order po ON po.po_no = arf.po_no
+                JOIN m_vendor vnd ON vnd.ID = po.id_vendor
+                JOIN m_notic notif ON notif.ID = 91
+                WHERE arfr.id = ' . $this->input->post('arf_response_id'));
+
+                $data_replace = $query->result();
+
+                $str = $data_replace[0]->open;
+                $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
+                $data['dest'][0] = $data_replace[0]->email;
+                $flag = $this->M_sendMail->sendMail($data);
                 echo json_encode(['status'=>true,'msg'=>'Negotiation Submitted']);
             }
             else

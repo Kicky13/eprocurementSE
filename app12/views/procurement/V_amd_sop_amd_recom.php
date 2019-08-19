@@ -243,7 +243,7 @@
         <label class="col-md-3">Latest Agreement Value</label>
         <div class="col-md-3" ><input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>"></div>
         <label class="col-md-3">New Agreement Value</label>
-        <div class="col-md-3" ><input id="new-agreement-value" class="form-control" disabled value="<?=numIndo($total+$arf->amount_po_arf)?>"></div>
+        <div class="col-md-3" ><input id="new-agreement-value" class="form-control" disabled value=""></div>
     </div>
     <?php if(isset($issued)): ?>
     <?php else:?>
@@ -253,9 +253,19 @@
             <br>
             <input type="radio" name="bod_approval" value="0"
             <?php 
-              if(@$recom->bod_approval == 0)
+              if(isset($recom))
               {
-                echo "checked=''";
+                if($recom->bod_approval == 0)
+                {
+                  echo "checked=''";
+                }
+              }
+              else
+              {
+                if($arf->review_bod == 0 )
+                {
+                  echo "checked=''";
+                }
               }
             ?>
             >
@@ -271,14 +281,17 @@
               }
               else
               {
-                echo "checked=''";
+                if($arf->review_bod == 1)
+                {
+                  echo "checked=''";
+                }
               }
             ?>
             >
             <label style="bottom: 10px;position: relative;">Yes, BOD Review Required</label>
         </div>
         <div class="col-md-6">
-            Accumulative Amendment
+            Accumulative Amendment(s) value exceeds 30% of original Contract Value
             <br>
             <input type="radio" name="aa" value="0" 
             <?php 

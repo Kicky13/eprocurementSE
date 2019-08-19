@@ -175,6 +175,22 @@ font-weight: normal;
               <td class="no-padding-lr">:</td>
               <td><span><?= $_POST['creator_department_name'] ?></span></td>
             </tr>
+            <?php
+              if(!empty($_POST['msr_no'])){
+                $this->db->select("ee_value");
+                $this->db->where("msr_no",$_POST['msr_no']);
+                $review_ee = $this->db->get("t_eq_data")->row();
+                if(!empty($review_ee) && $review_ee->ee_value != 0){
+            ?>
+            <tr>
+              <td width="20%">Rev. MSR Value</td>
+              <td class="no-padding-lr">:</td>
+              <td>IDR <?= numIndo($review_ee->ee_value) ?></span></td>
+            </tr>
+            <?php
+                }
+              }
+            ?>
           </table>
         </div>
 		<div class="col-md-5">
@@ -578,14 +594,23 @@ font-weight: normal;
                         <?= function_exists('list_approval') ? list_approval('msr', @$_POST['msr_no']) : '' ?>
                       </fieldset>
                       <?php endif; ?>
-					  
+                      <?php
+                      	// if(!empty($_POST['msr_no'])){
+                      	// 	$this->db->select("*");
+                      	// 	$this->db->where("msr_no",$msr_no);
+	                      //   $data["ed"] = $this->db->get("t_eq_data")->row();
+	                      //   if(!empty($data)){
+	                      //       $this->load->view('approval/review_ee_tab', $data);  
+	                      //   }
+                      	// }
+                      ?>
 					  
 					  <?php 
 //						if($msr->status < 2 and isProcurementSpecialist() and isCreatorEd($ed) and notInLoi($ed)): 
 						if($_POST['msr_stts'] == 2): 
 					  ?>
 					  <?php /* Attachment Reject*/ ?>
-                      <h6><i class="step-icon icon-paper-clip"></i> Cancel MSR</h6>
+                      <h6><i class="step-icon icon-paper-clip"></i> MSR Cancellation</h6>
                       <fieldset>
 						<div class="row">
                           <div class="col-md-12">
@@ -604,7 +629,7 @@ font-weight: normal;
                               </div>
                               <hr>
 
-                              <?php if (isset($_POST['attachment_cancel'])): ?>
+                              <?php if (isset($_POST['cancellation_attachment'])): ?>
 
 								  <div class="row form-group">
 									<div class="col-md-2"><?php /* type */ ?>
@@ -612,8 +637,8 @@ font-weight: normal;
 									</div>
 
 									<div class="col-md-4">
-									  <?php $href = base_url().'/upload/cancel_msr/'.$_POST['attachment_cancel']; ?>
-									  <a href="<?= $href ?>" target="_blank"><?= $_POST['attachment_cancel'] ?></a>
+									  <?php $href = base_url().'/upload/cancel_msr/'.$_POST['cancellation_attachment']; ?>
+									  <a href="<?= $href ?>" target="_blank"><?= $_POST['cancellation_attachment'] ?></a>
 									</div>
 																		
 									<div class="col-md-4">

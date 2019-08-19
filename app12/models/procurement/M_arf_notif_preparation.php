@@ -438,5 +438,15 @@ class M_arf_notif_preparation extends CI_Model {
         else
             return false;
     }
+    public function view($doc_no='')
+    {
+        $arf_notification = $this->db->where(['doc_no'=>$doc_no])->get('t_arf_notification')->row();
+        $detail_arf_notification = $this->db->where(['doc_id'=>$arf_notification->id])->get('t_arf_notification_detail_revision')->result();
+        $arf_notification_upload = $this->db->where(['doc_id'=>$arf_notification->id])->get('t_arf_notification_upload')->result();
+        $data['arf_notification'] = $arf_notification;
+        $data['detail_arf_notification'] = $detail_arf_notification;
+        $data['arf_notification_upload'] = $arf_notification_upload;
+        return $data;
+    }
 }
 ?>

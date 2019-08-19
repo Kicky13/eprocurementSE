@@ -55,7 +55,7 @@ $countAllResult = count($findAllResult);
 </div>
 <div class="form-group row">
   <label class="offset-md-6 col-md-3">Total</label>
-  <div class="col-md-3 text-right">
+  <div class="col-md-3 text-right" id="additional-value-<?=$key?>">
       <?= numIndo($total) ?>
   </div>
 </div>
@@ -76,3 +76,8 @@ $countAllResult = count($findAllResult);
 </div>
 <?php $i++ ?>
 <?php endforeach;?>
+<script>
+$(document).ready(function(){
+	$("#additonal_value").html($("#additional-value-<?=$key?>").text());
+})
+</script>

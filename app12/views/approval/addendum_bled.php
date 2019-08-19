@@ -113,7 +113,7 @@
                               <?=optMethod('bl_pm', $pmethod, 'disabled')?>
                             </div>
                           </div>
-              <div class="col-md-4">
+                          <div class="col-md-4">
                             <div class="form-group vendor-select">
                               <label for="date2" style="display:block;">Supplier :</label>
                               <select class="form-control" id="bl_vendor" name="bl_vendor" disabled style="width:100%;">

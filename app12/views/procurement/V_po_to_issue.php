@@ -518,6 +518,7 @@ $('#purchase_order_form').steps({
   {
     swalConfirm('Agreement Issuance', '<?= __('confirm_submit') ?>', function() {
       $(form).submit();
+      
     });
   }
 });

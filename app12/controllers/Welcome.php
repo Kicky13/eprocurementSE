@@ -66,7 +66,7 @@ class Welcome extends CI_Controller {
             #lebih dari 1 pemenang pakai code baru, kalo 1 pemenang pakai code lama
             #cek di po dan loi msr tersebut ada gak, kalo ada cari angka maksimalnya 190 atau 191 atau 192
             $bidder = $this->db->where(['awarder'=>1, 'msr_no'=>$bl->msr_no])->get('t_bl_detail');
-            if($bidder->num_rows() > 0)
+            if($bidder->num_rows() > 1)
             {
                 $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
                 $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
@@ -107,7 +107,7 @@ class Welcome extends CI_Controller {
                     $po_code = $po_type == $this->M_purchase_order_type::TYPE_GOODS ? $this->M_purchase_order::module_kode : $this->M_service_order::module_kode;
                     $doc_no = new DocNumber();
                     $po_code = $doc_no->getDocTypeCode($po_code);
-                    $po_no = str_replace('OR', $po_code, $newNumber).'sasd';
+                    $po_no = str_replace('OR', $po_code, $newNumber);
                 }
             }
             else
@@ -129,7 +129,7 @@ class Welcome extends CI_Controller {
             }
             else
             {
-                if($bidder->num_rows() > 0)
+                if($bidder->num_rows() > 1)
                 {
                     $po  = $this->db->where('msr_no', $bl->msr_no)->get('t_purchase_order')->result();
                     $loi = $this->db->where('msr_no', $bl->msr_no)->get('t_letter_of_intent')->result();
@@ -181,6 +181,22 @@ class Welcome extends CI_Controller {
             }
         }
         echo strtoupper($po_no);
+    }
+    public function value_award($msr_no='', $vendor_id='')
+    {
+        $q = "select vendor_id, sum(new_price * qty) amount, sum(new_price_base * qty) amount_base from
+        (select sop_id, vendor_id, (case 
+            when nego_price > 0 then nego_price
+            else unit_price
+        end) new_price,  (case 
+            when nego_price_base > 0 then nego_price_base
+            else unit_price_base
+        end) new_price_base, (case when t_sop.qty2 > 0 then t_sop.qty1 * t_sop.qty2 else t_sop.qty1 end) qty 
+                from t_sop_bid 
+                left join t_sop on t_sop.id = t_sop_bid.sop_id
+                where t_sop_bid.msr_no = '$msr_no' and award = 1) a where vendor_id = '$vendor_id' group by vendor_id";
+        $return = $this->db->query($q)->row();
+        print_r($return);
     }
 }
 

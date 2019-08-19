@@ -1,33 +1,39 @@
 <form method="post" enctype="multipart/form-data" action="<?= base_url('approval/award/review_ee_store') ?>" id="frm-review-ee">
-	<input type="hidden" name="msr_no" value="<?=$msr_no?>">
-	<div class="form-group row">
-		<label class="col-md-3">Attachment</label>
-		<div class="col-md-9">
-			<input type="file" name="ee_file" class="form-control" required="">
+	<div class="modal-body">
+		<input type="hidden" name="msr_no" value="<?=$msr_no?>">
+		<div class="form-group row">
+			<label class="col-md-3">Attachment</label>
+			<div class="col-md-9">
+				<input type="file" name="ee_file" class="form-control" required="">
+			</div>
 		</div>
+		<div class="form-group row">
+			<label class="col-md-3">Value EE</label>
+			<div class="col-md-9">
+				<input min="<?=$total?>" name="ee_value" id="ee_value" class="form-control" required="">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-3">Currency</label>
+			<div class="col-md-9">
+				<input disabled="" class="form-control" value="<?= $currency->CURRENCY ?>">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-md-3">Description</label>
+			<div class="col-md-9">
+				<textarea class="form-control" name="ee_desc" required=""></textarea>
+			</div>
+		</div>
+		<!-- <div class="form-group row">
+			<div class="col-md-12">
+				<button class="btn btn-primary">Submit</button>
+			</div>
+		</div> -->
 	</div>
-	<div class="form-group row">
-		<label class="col-md-3">Value EE</label>
-		<div class="col-md-9">
-			<input min="<?=$total?>" name="ee_value" id="ee_value" class="form-control" required="">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-md-3">Currency</label>
-		<div class="col-md-9">
-			<input disabled="" class="form-control" value="<?= $currency->CURRENCY ?>">
-		</div>
-	</div>
-	<div class="form-group row">
-		<label class="col-md-3">Description</label>
-		<div class="col-md-9">
-			<textarea class="form-control" name="ee_desc" required=""></textarea>
-		</div>
-	</div>
-	<div class="form-group row">
-		<div class="col-md-12">
-			<button class="btn btn-primary">Submit</button>
-		</div>
+	<div class="modal-footer" style="display: block !important;">
+	    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	    <button class="btn btn-primary pull-right">Submit</button>
 	</div>
 </form>
 <script type="text/javascript">

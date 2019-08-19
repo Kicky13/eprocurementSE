@@ -41,6 +41,8 @@
                           <tbody>
                             <?php
                               $no = 1;
+                              // echo json_encode($data->result());
+                              // die();
                               foreach ($data->result() as $ed) :
                                 $log = $this->approval_lib->getLog(['data_id'=>$ed->msr_no,'module_kode'=>'msr_spa']);
                                 if($log->num_rows() > 0)
@@ -73,7 +75,12 @@
                               <td><?= $ed->department ?></td>
                               <td><?= $ed->specialist ?></td>
                               <td><?= $ed->CURRENCY ?></td>
-                              <td class="text-right"><?= numIndo($ed->total_amount) ?></td>
+                              <td class="text-right">
+                                <?php
+                                  if($ed->ee_value > 0) echo numIndo($ed->ee_value);
+                                  else echo numIndo($ed->total_amount);
+                                ?>
+                              </td>
                               <td><?= dateToIndo($ed->closing_date, false, true) ?></td>
                               <td>
                                 <?php if($log->num_rows() > 0): ?>

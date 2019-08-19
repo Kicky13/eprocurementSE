@@ -44,7 +44,7 @@
             <tr>
                 <td style="width: 150px;">MSR Value  (Excl. VAT</i>)</td>
                 <td class="no-padding-lr">:</td>
-                <td class="text-right">
+                <td class="text-left">
                   <?=$msr->currency?> <?=numIndo($msr->total_amount)?>
                   <?=equal_to($msr)?>
                 </td>
@@ -63,6 +63,19 @@
                 <td class="no-padding-lr">:</td>
                 <td><label id="msr_title"></label></td>
             </tr>
+            <?php if($ed->ee_value > 0): ?>
+            <tr>
+                <td style="width: 125px;">Rev. MSR Value</td>
+                <td class="no-padding-lr">:</td>
+                <td>
+                  <?php
+                    $edc = $this->db->where(['ID'=>$ed->currency])->get('m_currency')->row();
+                    echo $edc->CURRENCY;
+                  ?>
+                  <?=numIndo($ed->ee_value)?>
+                </td>
+            </tr>
+            <?php endif;?>
           </table>
         </div>
 	  </div>
@@ -419,7 +432,7 @@
 						?>
 					  
 					   <?php /* Attachment Reject*/ ?>
-                      <h6><i class="step-icon icon-paper-clip"></i> Cancel MSR</h6>
+                      <h6><i class="step-icon icon-paper-clip"></i> MSR Cancellation</h6>
                       <fieldset>
 						<div class="row">
                           <div class="col-md-12">
@@ -438,16 +451,16 @@
                               </div>
                               <hr>
 
-                              <?php if (isset($msr->attachment_cancel)): ?>
+                              <?php if (isset($msr->cancellation_attachment)): ?>
 
 								  <div class="row form-group">
 									<div class="col-md-2"><?php /* type */ ?>
-									  Attachment Cancel
+									  Cancellation Attachment
 									</div>
 									
 									<div class="col-md-4">
-									  <?php $href = base_url().'/upload/cancel_msr/'.$msr->attachment_cancel; ?>
-									  <a href="<?= $href ?>" target="_blank"><?= $msr->attachment_cancel ?></a>
+									  <?php $href = base_url().'/upload/cancel_msr/'.$msr->cancellation_attachment; ?>
+									  <a href="<?= $href ?>" target="_blank"><?= $msr->cancellation_attachment ?></a>
 									</div>
 
 									<div class="col-md-4">

@@ -21,6 +21,7 @@ class Loi extends CI_Controller
             ->model('procurement/M_purchase_order_type')
             ->model('approval/M_approval')
             ->model('other_master/M_currency')
+            ->model('M_sendmail')
             ->helper(['exchange_rate', 'form', 'array'])
             ->library(['upload', 'DocNumber']);
 
@@ -272,6 +273,29 @@ class Loi extends CI_Controller
                     $this->M_loi->issue($loi_id);
 
                     log_history($this->M_loi::module_kode, $loi_id, 'Issued');
+
+                    $img1 = "";
+                    $img2 = "";
+                    $edid = $this->input->post('ed_id');
+                    $query = $this->db->query('SELECT bl.msr_no AS msr_no, vendor.ID_VENDOR AS email, vendor.NAMA AS nama, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl_detail bl
+                    JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
+                    JOIN m_notic notif ON notif.ID = 84
+                    WHERE bl.id = ' . $bl_detail_id);
+
+                    $data_replace = $query->result();
+
+                    $str = $data_replace[0]->open;
+                    $data = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_replace[0]->title,
+                        'open' => $str,
+                        'close' => $data_replace[0]->close
+                    );
+                    foreach ($data_replace as $item) {
+                        $data['dest'][] = $item->email;
+                    }
+                    $flag = $this->M_sendmail->sendMail($data);
 
 	                $this->session->set_flashdata('message', array(
 	                    'message' => __('success_submit_with_no', array('no' => $loi_id)),

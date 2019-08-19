@@ -295,11 +295,35 @@ class M_purchase_order extends MY_Model {
 
 	public function issue($doc_id)
 	{
-		return $this->db->set('issued', 1)
+		$issued = $this->db->set('issued', 1)
             ->set('issued_date', today_sql())
             ->set('issued_by', $this->session->userdata('ID_USER'))
 			->where('id', $doc_id)
 			->update($this->table);
+
+		$img1 = '';
+		$img2 = '';
+		$query = $this->db->query("SELECT * FROM m_notic WHERE ID = 40");
+		$data_replace = $query->result();
+
+		$str = str_replace('[no]', $doc_id, $data_replace[0]->OPEN_VALUE);
+
+        $ctn = ' <p>' . $img1 . '<p>
+                        <br>' . $str . '
+                        <br>
+                        ' . $data_replace[0]->CLOSE_VALUE . '
+                        <br>
+                        ';
+        $data = array(
+            'recipient' => 'kicky120@gmail.com',
+            'subject' => $data_replace[0]->TITLE,
+            'content' => $ctn,
+            'ismailed' => 0
+        );
+
+        $this->db->insert('i_notification', $data);
+
+		return $issued;
 	}
 
 

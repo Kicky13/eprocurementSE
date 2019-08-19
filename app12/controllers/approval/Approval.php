@@ -2806,31 +2806,31 @@ class Approval extends CI_Controller
                     ));
                 }
             }
+            $img1 = '';
+            $img2 = '';
+
+            $query = $this->db->query('SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
+            JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
+            JOIN m_notic notic ON notic.ID = 82
+            WHERE bl.msr_no = "' . $msr_no . '"');
+
+            $data_replace = $query->result();
+
+            $str = $data_replace[0]->open;
+
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item['email'];
+            }
+            $flag = $this->sendMail($data);
         }
-        $img1 = '';
-        $img2 = '';
-
-        $query = $this->db->query('SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
-        JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
-        JOIN m_notic notic ON notic.ID = 82
-        WHERE bl.msr_no = "' . $msr_no . '"');
-
-        $data_replace = $query->result();
-
-        $str = $data_replace[0]->open;
-
-        $data = array(
-            'img1' => $img1,
-            'img2' => $img2,
-            'title' => $data_replace[0]->title,
-            'open' => $str,
-            'close' => $data_replace[0]->close
-        );
-
-        foreach ($data_replace as $item) {
-            $data['dest'][] = $item['email'];
-        }
-        $flag = $this->sendMail($data);
         $response = array(
             'success' => true,
             'message' => 'Success request negotiation',

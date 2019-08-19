@@ -178,7 +178,7 @@ class Clarification extends CI_Controller {
         $img1 = '';
         $img2 = '';
 
-        $content = $this->db->where('ID', '88')->get('m_notic')->result();
+        $content = $this->db->where('ID', '81')->get('m_notic')->result();
         $str = $content[0]->OPEN_VALUE;
 
         $emailData = array(

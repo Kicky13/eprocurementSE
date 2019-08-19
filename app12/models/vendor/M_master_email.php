@@ -19,7 +19,7 @@ class M_master_email extends CI_Model {
         if ($idx != null) {
             $this->db->where("CATEGORY_ID", $idx);
             if ($idx == 3) {
-                $this->db->where("SEQUENCE IS NOT NULL");
+                $this->db->where("EMAIL_SEQUENCE IS NOT NULL");
             }
         }
         $this->db->where("IS_DEL", "1");

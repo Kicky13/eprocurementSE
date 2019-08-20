@@ -418,7 +418,9 @@ body {
                                       <!-- <i class="icon-cloud-download"></i> -->
                                       Download
                                     </button>
-                                    <!-- <a href="#" onclick="updateAgreementDocClick('<?= $po_attachment_type[$attachment->tipe]?>', <?= $attachment->id ?>)" class="btn btn-sm btn-primary">Update</a> -->
+                                    <?php if($attachment->tipe == "CSIGNED_PO"): ?>
+                                      <a href="#" onclick="updateAgreementDocClick('<?= $po_attachment_type[$attachment->tipe]?>', <?= $attachment->id ?>)" class="btn btn-sm btn-primary">Update</a>
+                                    <?php endif; ?>
                                   </a>
                                 </div>
                               </div>

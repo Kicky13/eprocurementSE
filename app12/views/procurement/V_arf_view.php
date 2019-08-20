@@ -439,7 +439,11 @@
                                                 }
                                                 else
                                                 {
-                                                  if(in_array($this->m_arf_approval->vp_bsd_id, $roles) or in_array($this->m_arf_approval->bsd_staf_id, $roles) or !$allowed_approve)
+													if(in_array($this->m_arf_approval->vp_bsd_id, $roles) or in_array($this->m_arf_approval->bsd_staf_id, $roles))
+													{
+														$disabled = '';
+													}
+                                                  /* if(in_array($this->m_arf_approval->vp_bsd_id, $roles) or in_array($this->m_arf_approval->bsd_staf_id, $roles) or !$allowed_approve)
                                                   {
                                                     if (strpos($this->session->userdata('ROLES'), ','.$procurement_head_id.',') !== FALSE) {
                                                         if (!$this->m_arf_assignment->where('doc_id', $arf->id)->first()) {
@@ -458,7 +462,7 @@
                                                   else
                                                   {
                                                         $disabled = 'disabled';
-                                                  }
+                                                  } */
                                                 }
                                                 echo $this->form->checkbox('review_bod', 1, $arf->review_bod, 'id="review_bod" '.$disabled);
                                             ?>

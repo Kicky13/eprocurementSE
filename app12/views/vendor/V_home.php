@@ -10,6 +10,11 @@
 
     });
 </script>
+<style type="text/css">
+    footer{
+        margin-left: 0px !important;
+    }
+</style>
 <link rel="stylesheet" type="text/css" href="<?=base_url('ast11')?>/app-assets/fonts/simple-line-icons/style.css">
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom-home.css">
 <div class="app-content content">

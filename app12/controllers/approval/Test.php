@@ -43,8 +43,8 @@ class Test extends CI_Controller {
           foreach ($data_role as $k => $v) {
             $data['dest'][] = $v->recipient;
           }
-          /*echo "<pre>";
-          print_r($data);*/
+          echo "<pre>";
+          print_r($data);
         }
     }
 }

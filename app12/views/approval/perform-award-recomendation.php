@@ -123,8 +123,25 @@
 
 									$vendorRecomendation[$row->vendor_id] = $total_unit_price;
 
+									$deli_time = $this->db->where(['msr_no'=>$ed->msr_no,'vendor_id'=>$row->vendor_id])->get('t_nego');
+                                    if($deli_time->num_rows() > 0){
+                                    	$dt = $deli_time->row();
+                                    	$nego_detail = $this->db->where(['msr_no'=>$ed->msr_no,'nego_id'=>$dt->id,'sop_id'=>$r->id])->get('t_nego_detail');
+                                    	if($nego_detail->num_rows() > 0){
+                                    		$nd = $nego_detail->row();
+                                    		if(!is_null($nd->negotiated_price) && $nd->nego == 1){
+                                    			echo "<td class='text-center'>$dt->delivery_time DAYS</td>";
+                                    		}else{
+                                    			echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+                                    		}
+                                    	}else{
+                                    		echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+                                    	}
+                                    }else{
+                                    	echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
+                                    }
 									// echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
-									echo "<td class='text-center'>$ed->nego_deli_time DAYS</td>";
+									// echo "<td class='text-center'>$ed->nego_deli_time DAYS</td>";
 									echo "<td class='text-right'>".numIndo($price)."</td>";
 									echo "<td class='text-right'>".numIndo($total_unit_price)."</td>";
 								}

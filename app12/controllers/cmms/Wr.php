@@ -387,7 +387,7 @@ class Wr extends CI_Controller {
 
     $data['id_warehouse'] = $id_warehouse;
     $data['originator'] = $r->USERNAME;
-    $xml = $this->load->view('cmms/wr/wsdl', $data, true);
+    $xml = $this->load->view('cmms/wr/wsdl-v2', $data, true);
     $headers = array(
       "Content-Type: text/xml",
       "charset:utf-8",

@@ -67,7 +67,7 @@
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <select class="form-control" name="failure_desc" id="failure_desc"></select>
+                            <input class="form-control" name="failure_desc" name="failure_desc">
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
@@ -260,14 +260,14 @@
     $("#eq_class").val(eqclas);
     // console.log(r);
 	//get ajax data failure analysys
-	$.ajax({
-		type:'post',
-		data:{eqclas:eqclas},
-		url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
-		success:function(e){
-			$("#failure_desc").html(e)
-		}
-	})
+  	/*$.ajax({
+  		type:'post',
+  		data:{eqclas:eqclas},
+  		url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
+  		success:function(e){
+  			$("#failure_desc").html(e)
+  		}
+  	})*/
   }
   function browseEquipmentPoup() {
     $("#myModal").modal('show')
@@ -279,14 +279,14 @@
     $("#eq_type").val($("#eqtype-"+eq_no).text())
     $("#eq_class").val($("#eqclass-"+eq_no).text())
     $("#eq_location").val($("#eqlocation-"+eq_no).text())
-    $.ajax({
+    /*$.ajax({
       type:'post',
       data:{eq_number:eq_no},
       url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
       success:function(q){
         $("#failure_desc").html(q)
       }
-    })
+    })*/
     $("#myModal").modal('hide')
   }
   function creaeteWrClick(argument) {

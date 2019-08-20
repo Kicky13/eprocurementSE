@@ -728,7 +728,7 @@ class Approval extends CI_Controller {
         if (($seq >= 1 && $seq < 4) && $status == 13) {
           // email reject sequence 1 - 3
           $content2 = $this->map->get_email_reject($seq, $id);
-          $var_link = "<br><br>Klik link berikut untuk memproses <a href='http:" . base_url() . "in' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
+          $var_link = "<br><br>Klik link berikut untuk memproses <a href='" . base_url() . "in' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
           $note_reject = '<br> Supplier : '.$content2[0]->VENDOR.'
                           <br> Dengan catatan :  '.$this->input->post('note').'. <br> Mohon untuk melakukan perbaikan data, ';
           $data = array(
@@ -749,11 +749,11 @@ class Approval extends CI_Controller {
             if ($seq == 3 && $status == 9) {
               $var_link = ' ';
             } else {
-              $var_link = "<br><br>Klik link berikut untuk memproses <a href='http:" . base_url() . "' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
+              $var_link = "<br><br>Klik link berikut untuk memproses <a href='" . base_url() . "' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
             }
           } else{
             $res = $this->map->get_email_rec($rec);
-            $var_link = "<br><br>Klik link berikut untuk memproses <a href='http:" . base_url() . "in' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
+            $var_link = "<br><br>Klik link berikut untuk memproses <a href='" . base_url() . "in' class='btn btn-primary btn-lg'>Link Portal</a><br><br>";
           }
 
           $note = '<br> Supplier : '.$content[0]['NAMA'].'

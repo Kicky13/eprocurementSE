@@ -6,7 +6,7 @@
       <orac:processEquipmentWorkOrder>
          <accounting>
             <!--Optional:-->
-            <businessUnit><?= trim($id_warehouse) ?></businessUnit>
+            <businessUnit>10101WH02</businessUnit>
             <!--Optional:-->
          </accounting>
          <!--Optional:-->
@@ -16,7 +16,7 @@
             <!--Optional:-->
             <categoryCodes>
                <!--Optional:-->
-               <categoryCode003></categoryCode003>
+               <categoryCode003>RPR</categoryCode003>
             </categoryCodes>
          </classification>
          <description><?= trim($wr_description) ?></description>
@@ -42,11 +42,11 @@
             <priority><?= $priority ?></priority>
             <!--Optional:-->
            <status>01</status>
-            <statusComment></statusComment>
+            <statusComment><?= $hazard ?></statusComment>
          </planning>        
          <processing>
             <!--Optional:-->
-            <actionType></actionType>
+            <actionType>1</actionType>
             <!--Optional:-->
             <processingVersion>ZJDE0001</processingVersion>
          </processing>

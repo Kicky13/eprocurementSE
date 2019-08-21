@@ -213,7 +213,7 @@ class Approval extends CI_Controller {
 					$hyperlink = base_url();
 			}
 		
-            $url = "<a href='http:" . $hyperlink . "log_in/index/" . $content['URL'] . "'>Invitation Link</a>";
+            $url = "<a href='" . $hyperlink . "log_in/index/" . $content['URL'] . "'>Invitation Link</a>";
             $ctn = ' <p>' . $content['img1'] . '<p>
                             <p>' . $content['open'] . '<p>
                             <br>

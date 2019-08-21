@@ -540,6 +540,9 @@ class Arf extends CI_Controller
     {
         $this->db->trans_begin();
         $post = $this->input->post();
+        // echo "<pre>";
+        // print_r($post);
+        // exit();
         $this->load->library('form_validation');
         if ($this->input->post('submit') == 1) {
             $this->form_validation->set_rules('po_id', 'PO', 'required');
@@ -749,6 +752,27 @@ class Arf extends CI_Controller
                 'review_bod' => $review_bod
             ));
             $this->m_arf_approval->approve($allowed_approve->id, 1, $post['submit_note']);
+
+            if (isset($post['budget'])) {
+                $this->m_arf_budget->where('doc_id', $arf->id)->delete();
+                foreach ($post['budget'] as $id_costcenter => $account_subsidiary) {
+                    foreach ($account_subsidiary as $id_account_subsidiary => $row) {
+                        $this->m_arf_budget->insert(array(
+                            'doc_id' => $arf->id,
+                            'id_costcenter' => $row['id_costcenter'],
+                            'costcenter' => $row['costcenter'],
+                            'id_account_subsidiary' => $row['id_account_subsidiary'],
+                            'account_subsidiary' => $row['account_subsidiary'],
+                            'id_currency' => $row['id_currency'],
+                            'booking_amount' => $row['booking_amount'],
+                            'costcenter_value' => $row['costcenter_amount'],
+                            'account_subsidiary_value' => $row['id_account_subsidiary'] ? $row['amount'] : null,
+                            'budget_value' => $row['amount']
+                        ));
+                    }
+                }
+            }
+
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit'),
                 'type' => 'success'

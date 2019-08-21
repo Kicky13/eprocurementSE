@@ -691,7 +691,7 @@ class Amendment_recommendation extends CI_Controller {
         // $arf->item = $this->m_arf_detail->view('response_item')->where('doc_id', $arf->doc_id)->get();
         $arf->item = $this->m_arf_sop->view('response')->select('t_arf_nego_detail.unit_price new_price')
         ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->get();
+        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
 
         $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id < '=> $t_arf_notification->id])->get('t_arf_notification');
         
@@ -702,7 +702,7 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
             }
         }
 
@@ -744,7 +744,7 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
             }
         }
 

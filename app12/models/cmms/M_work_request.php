@@ -26,11 +26,11 @@ class M_work_request extends CI_Model {
   {
     $sql = $this->_get_datatables_query();
     $sql .= " where 1=1  ";
-    if($this->input->post('wr_no') == 2)
+    if($this->input->post('wr_no'))
     {
       $sql .= " and wr_no =  '".$this->input->post('wr_no')."'";
     }
-    if($this->input->post('wo_type_id') == 1)
+    if($this->input->post('wo_type_id'))
     {
       $sql .= " and wo_type_id =  '".$this->input->post('wo_type_id')."'";
     }
@@ -72,7 +72,7 @@ class M_work_request extends CI_Model {
     }
     if($this->input->post('status'))
     {
-      $sql .= " and status like '%".$this->input->post('status')."%'";
+      $sql .= " and cmms_wr.status like '%".$this->input->post('status')."%'";
     }
     if(in_array(user_primary,$this->roles))
     {

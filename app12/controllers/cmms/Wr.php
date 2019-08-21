@@ -47,9 +47,13 @@ class Wr extends CI_Controller {
   public function index()
   {
     $thead = cmms_settings('wr_list')->get()->result();
+    $filter = cmms_settings('wr_list')->where('desc2',1)->get()->result();
     $data['menu'] = $this->menu;
     $data['thead'] = $thead;
     $data['title'] = 'Work Request Tracking - CMMS16';
+    $data['filter'] = $filter;
+    $data['optWoType'] = $this->optWoType('','filter_wr_type',true);
+    $data['optWoStatus'] = $this->optWoStatus('','filter_status',true);
     $this->template->display($this->view .'/index', $data);
   }
 
@@ -63,22 +67,22 @@ class Wr extends CI_Controller {
       $row = array();
       $row[] = $no;
       $woNo = $rows->WADOCO;
-		$woDesc = $rows->WADL01;
-		$woType = $rows->WOTYPE;
-		$wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
-		@$woType = $wotype->notation;
-		$woStatus = $rows->STATUS;
-		$woDate = $rows->WO_DATE;
-		$woFailureDesc = $rows->FAILURE_DESC;
-		$woOriginator = $rows->ORIGINATOR;
-		$link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
-		$row[] = $link;
-		$row[] = $woDesc;
-		$row[] = $woType;
-		$row[] = $woStatus;
-		$row[] = $woDate;
-		$row[] = $woFailureDesc;
-		$row[] = $woOriginator;
+    $woDesc = $rows->WADL01;
+    $woType = $rows->WOTYPE;
+    $wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
+    @$woType = $wotype->notation;
+    $woStatus = $rows->STATUS;
+    $woDate = $rows->WO_DATE;
+    $woFailureDesc = $rows->FAILURE_DESC;
+    $woOriginator = $rows->ORIGINATOR;
+    $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
+    $row[] = $link;
+    $row[] = $woDesc;
+    $row[] = $woType;
+    $row[] = $woStatus;
+    $row[] = $woDate;
+    $row[] = $woFailureDesc;
+    $row[] = $woOriginator;
       $data[] = $row;
     }
     // print_r($data);
@@ -86,6 +90,40 @@ class Wr extends CI_Controller {
             'draw' => $_POST['draw'],
             'recordsTotal' => $this->wo->dt_count_all(),
             'recordsFiltered' => $this->wo->dt_count_filtered(),
+            'data' => $data,
+        );
+    echo json_encode($output);
+  }
+
+  public function ajax_list_portal()
+  {
+    $list = $this->wr->dt_get_datatables();
+    $data = array();
+    $no = $_POST['start'];
+    foreach ($list as $rows) {
+      $no++;
+      $row = array();
+      $row[] = $no;
+      foreach ($this->db->where('module','wr_list')->get('cmms_settings')->result() as $key => $value) {
+        $v = $value->desc1;
+        $x = $rows->$v;
+        if($value->desc1 == 'req_finish_date')
+        {
+          $x = dateToIndo($x);
+        }
+        if($value->desc1 == 'wr_no')
+        {
+          $x = "<a href='#'>$x</a>";
+        }
+        $row[] = $x;
+      }
+      $data[] = $row;
+    }
+    // print_r($data);
+    $output = array(
+            'draw' => $_POST['draw'],
+            'recordsTotal' => $this->wr->dt_count_all(),
+            'recordsFiltered' => $this->wr->dt_count_filtered(),
             'data' => $data,
         );
     echo json_encode($output);
@@ -221,13 +259,30 @@ class Wr extends CI_Controller {
       echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
     }
   }
-  public function optWoType($wo_type_selected = '')
+  public function optWoType($wo_type_selected = '', $name='wo_type_id', $search=false)
   {
     $wotype = $this->wo_type->all();
-    $s = "<select name='wo_type_id' id='wo_type_id' class='form-control'>";
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
     foreach ($wotype as $r) {
       $selected = $wo_type_selected == $r->id ? "selected=''":"";
       $s .= "<option $selected value='$r->id'>$r->code_alpha - $r->notation</option>";
+    }
+    $s .= "</select>";
+    return $s;
+  }
+  public function optWoStatus($wo_type_selected = '', $name='status', $search=false)
+  {
+    $wotype = $this->db->get('cmms_wo_status')->result();
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
+    foreach ($wotype as $r) {
+      $selected = $wo_type_selected == $r->wo_status ? "selected=''":"";
+      $s .= "<option $selected value='$r->wo_status'>$r->wo_status - $r->wo_status_desc</option>";
     }
     $s .= "</select>";
     return $s;

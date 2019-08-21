@@ -22,6 +22,33 @@
               <div class="card-content collapse show">
                 <div class="card-body card-dashboard">
                   <div class="row">
+                    <div class="col-md-12" style="margin-bottom:10px">
+                      <a href="#filter-view" class="btn btn-info" data-toggle="collapse">Filter View</a>
+                      <div class="panel panel-default collapse" id="filter-view" style="margin-top: 10px">
+                        <div class="panel-body">
+                          <?php foreach ($filter as $key => $value) : ?>
+                          <div class="form-group row">
+                            <label class="col-md-3"><?=$value->desc?></label>
+                            <div class="col-md-6">
+                              <?php if($value->desc1 == 'wr_type'): ?>
+                                <?= $optWoType ?>
+                              <?php elseif($value->desc1 == 'status'): ?>
+                                <?= $optWoStatus ?>
+                              <?php else:?>
+                              <input class="form-control" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
+                              <?php endif;?>
+                            </div>
+                          </div>
+                          <?php endforeach;?>
+                          <div class="form-group row">
+                            <div class="col-md-6">
+                            <button type='button' id='btn-filter' class='btn btn-primary'>Filter</button>
+                            </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div class="col-md-12">
                       <div class="table-responsive">
                         <table id="tbl" class="table table-striped table-bordered table-fixed-column order-column dataex-lr-fixedcolumns table-hover table-no-wrap">
@@ -65,10 +92,13 @@
       'bFilter':false,
 			// Load data for the table's content from an Ajax source
 			'ajax': {
-				'url': '<?php echo base_url('cmms/wr/ajax_list')?>',
+				'url': '<?php echo base_url('cmms/wr/ajax_list_portal')?>',
 				'type': 'POST',
 				'data': function ( data ) {
-          
+          data.wr_no = $('#filter_wr_no').val();
+          data.wo_type_id = $('#filter_wr_type').val();
+          data.wr_description = $('#filter_wr_description').val();
+          data.status = $('#filter_status').val();
 				}
 			},
 	 

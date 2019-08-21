@@ -1927,42 +1927,58 @@ class Approval extends CI_Controller
 
             if ($this->input->post('approval_ed') == 'administrative') {
                 if ($this->input->post('administrative') == 3) {
-                    $notif = 63;
+                    $query = $this->db->query('SELECT ed.subject, ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                    JOIN t_msr msr ON msr.msr_no = ed.msr_no
+                    JOIN m_user user ON msr.create_by = user.ID_USER
+                    JOIN m_notic notif ON notif.ID = 83
+                    WHERE ed.id = ' . $this->input->post('ed_id'));
+
+                    $data_replace = $query->result();
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('_var1_', $data_replace[0]->subject, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
                 }
             } else if ($this->input->post('approval_ed') == 'technical') {
                 if ($this->input->post('technical') == 3) {
-                    $notif = 65;
+                    $query = $this->db->query('SELECT ed.subject, ed.msr_no, us.EMAIL as email, us.NAME as nama, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                    JOIN t_approval tp ON tp.data_id = ed.msr_no
+                    JOIN m_approval mp ON mp.id = tp.m_approval_id
+                    JOIN m_user us ON us.ID_USER = tp.created_by
+                    JOIN m_notic notif ON notif.ID = 65
+                    WHERE mp.module_kode = "msr" AND tp.urutan = 1 AND ed.id = ' . $this->input->post('ed_id'));
+
+                    $data_replace = $query->result();
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('_var1_', $data_replace[0]->subject, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
                 } else {
-                    $notif = 66;
+                    $query = $this->db->query('SELECT ed.subject, ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                    JOIN t_msr msr ON msr.msr_no = ed.msr_no
+                    JOIN m_user user ON msr.create_by = user.ID_USER
+                    JOIN m_notic notif ON notif.ID = 66
+                    WHERE ed.id = ' . $this->input->post('ed_id'));
+
+                    $data_replace = $query->result();
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('_var1_', $data_replace[0]->subject, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
                 }
             }
 
-            if ($this->input->post('technical') == 0) {
-                // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-                $img1 = "";
-                $img2 = "";
-                $edid = $this->input->post('ed_id');
-                $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
-                JOIN m_user user ON ed.created_by = user.ID_USER
-                JOIN m_notic notif ON notif.ID = "' . $notif . '"
-                WHERE ed.id = ' . $this->input->post('ed_id'));
+            // $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+            // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+            $img1 = "";
+            $img2 = "";
 
-                $data_replace = $query->result();
-
-                $str = $data_replace[0]->open;
-                $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
-
-                $data = array(
-                    'img1' => $img1,
-                    'img2' => $img2,
-                    'title' => $data_replace[0]->title,
-                    'open' => $str,
-                    'close' => $data_replace[0]->close
-                );
-                $data['dest'][0] = $data_replace[0]->email;
-                $flag = $this->sendMail($data);
-            }
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+            $data['dest'][0] = $data_replace[0]->email;
+            $flag = $this->sendMail($data);
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit'),
                 'type' => 'success'

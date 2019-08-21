@@ -1275,7 +1275,7 @@ class Arf extends CI_Controller
         $this->db->trans_begin();
         $arf = $this->db->where('doc_no', $arf_no)->get('t_arf')->row();
         $id = $arf->id;
-
+        // exit();
         $sql = "insert into t_arf_trash select *,'null' as attachment from t_arf where t_arf.id = $id";
         $this->db->query($sql);
 
@@ -1293,14 +1293,16 @@ class Arf extends CI_Controller
         $this->db->where('doc_no', $arf_no);
         $this->db->delete('t_arf_notification');
 
-        $this->db->where('doc_id', $t_arf_notification->id);
-        $this->db->delete('t_arf_notification_detail_revision');
+        if($t_arf_notification)
+        {
+        	$this->db->where('doc_id', $t_arf_notification->id);
+        	$this->db->delete('t_arf_notification_detail_revision');
+        	$t_arf_notification_upload = $this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_upload')->row();
+	        @unlink($t_arf_notification_upload->file_path);
 
-        $t_arf_notification_upload = $this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_upload')->row();
-        @unlink($t_arf_notification_upload->file_path);
-
-        $this->db->where('doc_id', $t_arf_notification->id);
-        $this->db->delete('t_arf_notification_upload');
+	        $this->db->where('doc_id', $t_arf_notification->id);
+	        $this->db->delete('t_arf_notification_upload');
+        }
 
         $this->db->where('doc_id', $id);
         $this->db->delete('t_arf_attachment');

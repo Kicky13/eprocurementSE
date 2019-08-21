@@ -2216,7 +2216,7 @@
         $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
-            url:"<?= base_url('procurement/arf/cancel_arf') ?>/"+$("#arf_no").val(),
+            url:"<?= base_url('procurement/arf/cancel_arf') ?>/"+$("#head_amend").text(),
             data: data,
             processData: false,
             contentType: false,

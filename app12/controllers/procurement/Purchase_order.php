@@ -1648,7 +1648,8 @@ class Purchase_order extends CI_Controller
 
         if ($po_type == $this->M_purchase_order_type::TYPE_GOODS) {
             $module_kode = $this->M_purchase_order::module_kode;
-            $shipping_term = $bl->incoterm;
+            // $shipping_term = $bl->incoterm;
+            $shipping_term = isset($post['shipping_term']) ? $post['shipping_term'] : $bl->incoterm;
             $master_list = isset($post['master_list']) ? 1 : 0;
         }
         else {

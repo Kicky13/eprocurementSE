@@ -232,7 +232,7 @@
                     $.ajax({
                         url : '<?= base_url('procurement/arf/update/'.$arf->id) ?>',
                         type : 'post',
-                        data : data+'&'+$.param({item : arf_item})+'&submit_note='+$('#submit_note').val(),
+                        data : data+'&'+$.param({item : arf_item, budget : budget_item})+'&submit_note='+$('#submit_note').val(),
                         dataType : 'json',
                         success : function(response) {
                             if (response.success) {

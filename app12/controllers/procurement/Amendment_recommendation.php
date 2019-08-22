@@ -416,9 +416,16 @@ class Amendment_recommendation extends CI_Controller {
         $time_issued = $this->T_approval_arf_recom->time_issued($id)->num_rows();
         if($time_issued > 0)
         {
-            $data['issued'] = $time_issued;
-            $data['title'] = 'Amendment Issuance';
-            $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
+            if($this->input->get('amd_view'))
+            {
+
+            }
+            else
+            {
+                $data['issued'] = $time_issued;
+                $data['title'] = 'Amendment Issuance';
+                $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
+            }
         }
         $data['is_reject'] = $this->T_approval_arf_recom->is_reject($id);
         $data['findAllResult'] = $findAllResult;

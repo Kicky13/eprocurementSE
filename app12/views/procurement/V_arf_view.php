@@ -151,7 +151,7 @@
                                         <div class="form-group row">
                                             <label class="col-md-5">Amended Date<br><small class="text-primary">(as amended by previous amendment)</small></label>
                                             <div class="col-md-7">
-                                                <?= dateToIndo(getLastTimeAmd($arf->doc_no, $po->prev_date)) ?>
+                                                <?= dateToIndo(getLastTimeAmd($arf->doc_no, $po->delivery_date)) ?>
                                             </div>
                                         </div>
                                     </div>

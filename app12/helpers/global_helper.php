@@ -1172,3 +1172,32 @@ function notInLoi($ed)
   }
   return true;
 }
+function thead($value='')
+{
+  foreach ($value as $k => $v) {
+    echo "<th>$v</th>";
+  }
+}
+function cmms_settings($value='')
+{
+  $ci = &get_instance();
+  $rs = $ci->db->where('module', $value)->from('cmms_settings');
+  return $rs;
+}
+function getLastTimeAmd($amdNumber='', $po_date='')
+{
+  $ci = &get_instance();
+  $poNo = substr($amdNumber, 0, 17);;
+  $q = "select * from `t_arf` where `po_no` = '$poNo' and doc_no != '$amdNumber'order by id desc";
+  $rs = $ci->db->query($q);
+  foreach ($rs->result() as $r) {
+    $q = "select * from `t_arf_detail_revision` where doc_id = $r->id and `type` = 'time'";
+    $time = $ci->db->query($q);
+    if($time->num_rows() > 0)
+    {
+      return $time->row()->value;
+      break;
+    }
+  }
+  return $po_date;
+}

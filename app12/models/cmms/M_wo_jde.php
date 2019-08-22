@@ -1,82 +1,83 @@
 <?php if (!defined('BASEPATH')) exit('Anda tidak masuk dengan benar');
 
-class M_equipment extends CI_Model {
+class M_wo_jde extends CI_Model {
 
   public function __construct() {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
+    $this->dbm = $this->load->database('default', true);
   }
   public function _get_datatables_query($value='')
   {
     $sql = $this->sql();
     $sql .= " where 1=1  ";
-    if($this->input->post('ALLOWANCE') == 2)
+    
+    if($this->input->post('status'))
     {
-      $sql .= " and FAWOYN =  '0'";
+      $sql .= " and UPPER(status) = UPPER('".$this->input->post('status')."')";
     }
-    if($this->input->post('ALLOWANCE') == 1)
+    if($this->input->post('wotype'))
     {
-      $sql .= " and FAWOYN =  '".$this->input->post('ALLOWANCE')."'";
+      $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
     }
-    if($this->input->post('FAASID'))
+    if($this->input->post('wadoco'))
     {
-      $sql .= " and UPPER(FAASID) = UPPER('".$this->input->post('FAASID')."')";
+      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('wadoco')."%')";
     }
-    if($this->input->post('FADL01'))
+    if($this->input->post('wadl01'))
     {
-      $sql .= " and UPPER(FADL01) like UPPER('%".$this->input->post('FADL01')."%')";
+      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('wadl01')."%')";
     }
-    if($this->input->post('LOCT'))
+    if($this->input->post('wasrst'))
     {
-      $sql .= " and UPPER(LOCT) like UPPER('%".$this->input->post('LOCT')."%')";
+      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('wasrst')."%')";
     }
-    if($this->input->post('CIT'))
+    if($this->input->post('wanumb'))
     {
-      $sql .= " and UPPER(CIT) like UPPER('%".$this->input->post('CIT')."%')";
+      $sql .= " and UPPER(wanumb) like UPPER('%".$this->input->post('wanumb')."%')";
     }
-    $addParents = '';
-    if($this->input->post('PARENTS'))
+    if($this->input->post('failure_desc'))
     {
-      // $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
-    	$findFANUMB = $this->db->query("select FANUMB from F1201 where TRIM(UPPER(FAASID)) = UPPER('".$this->input->post('PARENTS')."')")->row();
-    	if($findFANUMB)
-    	{
-    		$fanumb = $findFANUMB->FANUMB;
-    		/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
-    		$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
-    	}
-    	/*get FANUMB*/
+      $sql .= " and UPPER(failure_desc) like UPPER('%".$this->input->post('failure_desc')."%')";
     }
-    if($this->input->post('DSPARENTS'))
-    {
-      $sql .= " and UPPER(DSPARENTS) like UPPER('%".$this->input->post('DSPARENTS')."%')";
-    }
-    if($this->input->post('EQCLAS'))
-    {
-      $sql .= " and UPPER(EQCLAS) like UPPER('%".$this->input->post('EQCLAS')."%')";
-    }
-    if($this->input->post('EQTYPE'))
-    {
-      $sql .= " and UPPER(EQTYPE) like UPPER('%".$this->input->post('EQTYPE')."%')";
-    }
-    $sql .= $addParents;
+	
+	$q = "select * from m_user where id_user = ".$this->session->userdata('ID_USER');
+	$u = $this->dbm->query($q)->row();
+	if (isset($u->ROLES)) {
+		$roles = explode(",", $u->ROLES);
+	} else {
+		$roles = array();
+	}
+	$roles      = array_values(array_filter($roles));
+	//print_r($roles);
+	if(in_array(100008,$roles) or in_array(100010,$roles))
+	{
+		$sql .= " and ABAN8 = $u->USERNAME ";
+	}
+	if(in_array(100009,$roles))
+	{
+		$q = "select user_id from t_jabatan where parent_id = (select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').")";
+		$j = $this->dbm->query($q);
+		$sql .= " and ABAN8 in (xx,yy,xx) ";
+		if($j->num_rows() > 0)
+		{
+			$users_id = [];
+			foreach($j->result() as $v)
+			{
+				$users_id[] = $v->user_id;
+			}
+			$implode = implode(',',$users_id);
+			$sql .= " and ABAN8 in ($implode)";
+		}
+	}
     return $sql;
 
   }
   public function dt_get_datatables()
   {
     $sql = $this->_get_datatables_query();
-    /*'FAASID' => 'Equipment Number',
-      'FADL01' => 'Equipment Description',
-      'LOCT' => 'Location',
-      'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
-      'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',*/
     
-    
-    $sql .= " order by faaaid asc";
+    $sql .= " order by wadoco asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
@@ -87,18 +88,12 @@ class M_equipment extends CI_Model {
   }
   public function sql($value='')
   {
-    $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb, concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01, faasid, (select faasid from f1201 where fanumb=a.faaaid ) parents, 
-        (select concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01 from f1201 where fanumb=a.faaaid ) dsparents, 
-        nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PA' and trim(drky)=trim(b.wrprodf) ),' ') as eqtype,
-        nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PM' and trim(drky)=trim(b.wrPRODM) ),' ') as eqclas,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C3' and trim(drky)=trim(a.faacl3) ) as manuf,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C4' and trim(drky)=trim(a.faacl4) ) as years,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C1' and trim(drky)=trim(a.faacl1) ) as mjacclass,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C2' and trim(drky)=trim(a.faacl2) ) as majorequiclass,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(a.faacl6) ) as loct,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C7' and trim(drky)=trim(a.faacl7) ) as cit,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages
-        from f1201 a inner join f1217 b on a.fanumb=b.wrnumb) x";
+	  $sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8
+	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M')) a 
+	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
+	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
+	left join f0101 on f0101.ABAN8 = a.WAANO";
+    $sql = "select * from ($sql) x";
     return $sql;  
   }
   public function dt_count_all()
@@ -140,9 +135,6 @@ class M_equipment extends CI_Model {
   }
   public function wo($id='')
   {
-    /*$sql = "select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status
-    from (select * from f4801 where  watyps not in ('M')  and wanumb='$id' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
-    inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";*/
 	$sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC
 	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M') and f4801.wanumb='$id') a 
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 

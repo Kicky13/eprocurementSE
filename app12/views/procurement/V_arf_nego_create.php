@@ -89,6 +89,7 @@
                                                     <th class="text-center">UoM</th>
                                                     <th class="text-center">Currency</th>
                                                     <th class="text-center">Original/Latest</th>
+                                                    <th class="text-center">Total</th>
                                                     <th class="text-center">Negotiated</th>
                                                 </tr>
                                             </thead>
@@ -113,7 +114,9 @@
                                                         $qty = "QTY 1 = $v->qty1 <br> QTY 2 = $v->qty2";
                                                         $uom = "UoM 1 = $v->uom2 <br> UoM 2 = $v->uom2";
                                                     }
+                                                    $xQty = $v->qty2 > 0 ? $v->qty2 * $v->qty1 : $v->qty1;
                                                     $key = $k+1;
+                                                    $total = $price * $xQty;
                                                     echo "<tr>
                                                     <td>$key</td>
                                                     <td>$v->item</td>
@@ -121,6 +124,7 @@
                                                     <td class='text-center'>$uom</td>
                                                     <td class='text-center'>$currency</td>
                                                     <td class='text-right'>".numIndo($price)."</td>
+                                                    <td class='text-right'>".numIndo($total)."</td>
                                                     <td class='text-center'><input type='checkbox' name='nego[$v->id]' value='$v->id'></td>
                                                     </tr>";
                                                 $subtotal += $price;

@@ -12,6 +12,7 @@ class Award extends CI_Controller {
         $this->load->model('vendor/M_send_invitation')->model('vendor/M_vendor');
         $this->load->helper('exchange_rate_helper');
         $this->load->model('vn/info/M_vn', 'mvn');
+        $this->load->model('M_sendmail');
     }
 
     /*
@@ -105,6 +106,33 @@ class Award extends CI_Controller {
     public function recomendation()
     {
         $this->M_approval->approvalEdEvaluation();
+        $query = $this->db->query('SELECT t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL email, m_notic.TITLE title, m_notic.OPEN_VALUE open, m_notic.CLOSE_VALUE close FROM t_approval
+        LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
+        LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+        LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+        JOIN m_notic ON m_notic.ID = 67
+        WHERE data_id = "' . $this->input->post('msr_no') . '" AND m_approval.module_kode = "award"  
+        ORDER BY `user_nama` ASC');
+
+        $data_replace = $query->result();
+
+        $img1 = '';
+        $img2 = '';
+
+        $str = $data_replace[0]->open;
+        $str = str_replace('no_msr', $data_replace[0]->data_id, $str);
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+        foreach ($data_replace as $val) {
+            $data['dest'][] = $val->email;
+        }
+        $flag = $this->M_sendmail->sendMail($data);
+
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
             'type' => 'success'

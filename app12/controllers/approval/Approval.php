@@ -1728,7 +1728,6 @@ class Approval extends CI_Controller
         $img2 = "";
 
         $edid = $this->input->post('ed_id');
-        $edid = str_replace('OQ', 'OR', $edid);
 
         $query = $this->db->query('SELECT approval.data_id as msr_no, user.NAME as name, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
         JOIN t_approval approval ON ed.msr_no = approval.data_id
@@ -1738,6 +1737,11 @@ class Approval extends CI_Controller
         JOIN m_notic notif ON notif.ID = 83
         WHERE ed.id = "' . $edid . '"
         AND roles.ID_USER_ROLES = 23');
+
+        $creator = $this->db->query('SELECT * FROM t_eq_data ed
+        JOIN t_msr msr ON ed.msr_no = msr.msr_no
+        JOIN m_user user ON user.ID_USER = msr.create_by
+        WHERE ed.id = ' . $edid)->row();
 
         $data_replace = $query->result();
 
@@ -1750,7 +1754,8 @@ class Approval extends CI_Controller
             'open' => $str,
             'close' => $data_replace[0]->close
         );
-        $data['dest'][0] = $data_replace[0]->email;
+        $data['dest'][] = $data_replace[0]->email;
+        $data['dest'][] = $creator->EMAIL;
         $flag = $this->sendMail($data);
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
@@ -1770,17 +1775,19 @@ class Approval extends CI_Controller
             // $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
             $img1 = "";
             $img2 = "";
-            $edid = str_replace('OQ', 'OR', $edid);
 
-            $query = $this->db->query('SELECT ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
-                JOIN m_user user ON ed.created_by = user.ID_USER
-                JOIN m_notic notif ON notif.ID = 65
-                WHERE ed.id = ' . $this->input->post('ed_id'));;
+            $query = $this->db->query('SELECT ed.msr_no, ed.subject, us.NAME as nama, us.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+            JOIN t_approval tp ON ed.msr_no = tp.data_id
+            JOIN m_approval mp ON tp.m_approval_id = mp.id
+            JOIN m_user us ON tp.created_by = us.ID_USER
+            JOIN m_notic notif ON notif.ID = 89
+            WHERE mp.module_kode = "msr_spa" AND tp.urutan = 2 AND ed.id = ' . $this->input->post('ed_id'));;
 
             $data_replace = $query->result();
 
             $str = $data_replace[0]->open;
-            $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+            $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
+            $str = str_replace('_var1_', $data_replace[0]->subject, $str);
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,
@@ -1788,7 +1795,9 @@ class Approval extends CI_Controller
                 'open' => $str,
                 'close' => $data_replace[0]->close
             );
-            $data['dest'][0] = $data_replace[0]->email;
+            foreach ($data_replace as $val) {
+                $data['dest'][] = $val->email;
+            }
             $flag = $this->sendMail($data);
             redirect(base_url('home'));
         } else {
@@ -1930,7 +1939,7 @@ class Approval extends CI_Controller
                     $query = $this->db->query('SELECT ed.subject, ed.msr_no as msr_no, user.EMAIL as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
                     JOIN t_msr msr ON msr.msr_no = ed.msr_no
                     JOIN m_user user ON msr.create_by = user.ID_USER
-                    JOIN m_notic notif ON notif.ID = 83
+                    JOIN m_notic notif ON notif.ID = 63
                     WHERE ed.id = ' . $this->input->post('ed_id'));
 
                     $data_replace = $query->result();
@@ -1940,14 +1949,22 @@ class Approval extends CI_Controller
                 }
             } else if ($this->input->post('approval_ed') == 'technical') {
                 if ($this->input->post('technical') == 3) {
-                    $query = $this->db->query('SELECT ed.subject, ed.msr_no, us.EMAIL as email, us.NAME as nama, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                    $query = $this->db->query('SELECT ed.subject, ed.msr_no, us.EMAIL as email, us.ID_USER as id, us.NAME as nama, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
                     JOIN t_approval tp ON tp.data_id = ed.msr_no
                     JOIN m_approval mp ON mp.id = tp.m_approval_id
                     JOIN m_user us ON us.ID_USER = tp.created_by
                     JOIN m_notic notif ON notif.ID = 65
                     WHERE mp.module_kode = "msr" AND tp.urutan = 1 AND ed.id = ' . $this->input->post('ed_id'));
-
                     $data_replace = $query->result();
+
+                    if ($this->session->userdata('ID_USER') == $data_replace[0]->id) {
+                        $query = $this->db->query('SELECT ed.subject, ed.msr_no, us.EMAIL as email, us.NAME as nama, us.ID_USER as id, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_eq_data ed
+                        JOIN m_user us ON us.ID_USER = ed.created_by
+                        JOIN m_notic notif ON notif.ID = 89
+                        WHERE ed.id = ' . $this->input->post('ed_id'));
+                        $data_replace = $query->result();
+                    }
+
                     $str = $data_replace[0]->open;
                     $str = str_replace('_var1_', $data_replace[0]->subject, $str);
                     $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
@@ -1960,8 +1977,7 @@ class Approval extends CI_Controller
 
                     $data_replace = $query->result();
                     $str = $data_replace[0]->open;
-                    $str = str_replace('_var1_', $data_replace[0]->subject, $str);
-                    $str = str_replace('_var2_', $data_replace[0]->msr_no, $str);
+                    $str = str_replace('no_ed', $data_replace[0]->msr_no, $str);
                 }
             }
 
@@ -1977,7 +1993,9 @@ class Approval extends CI_Controller
                 'open' => $str,
                 'close' => $data_replace[0]->close
             );
-            $data['dest'][0] = $data_replace[0]->email;
+            foreach ($data_replace as $val) {
+                $data['dest'][] = $val->email;
+            }
             $flag = $this->sendMail($data);
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit'),

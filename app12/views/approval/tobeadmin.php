@@ -281,7 +281,7 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                                 <th class="text-center">Result</th>
                                                                                 <th>Remark</th>
                                                                                 <th>
-                                                                                    
+
                                                                                 </th>
                                                                             </tr>
                                                                             </thead>
@@ -399,7 +399,7 @@ $t_assignment = $this->db->where(['msr_no' => $msr_no])->get('t_assignment')->ro
                                                                                 </th>
                                                                                 <th class="text-right">Latest Value</th>
                                                                                 <th>
-                                                                                   
+
                                                                                 </th>
                                                                             </tr>
                                                                             </thead>

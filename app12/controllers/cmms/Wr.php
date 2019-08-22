@@ -17,10 +17,10 @@ class Wr extends CI_Controller {
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
     $this->load->model('cmms/M_work_request', 'wr');
-    $this->load->model('cmms/M_wo_jde', 'wo');
+    // $this->load->model('cmms/M_wo_jde', 'wo');
     $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->model('cmms/M_failure_description', 'failure');
-    $this->load->model('cmms/M_equipment','mod');
+    // $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
@@ -113,7 +113,7 @@ class Wr extends CI_Controller {
         }
         if($value->desc1 == 'wr_no')
         {
-          $x = "<a href='#'>$x</a>";
+          $x = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."'>$x</a>";
         }
         $row[] = $x;
       }
@@ -200,11 +200,11 @@ class Wr extends CI_Controller {
           $send_wsdl = $this->send_wsdl($data);
           if($send_wsdl)
           {
-            echo json_encode(['status'=>true,'msg'=>'WR Has Been Created & Send to JDE is Success']);
+            echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
           }
           else
           {
-            echo json_encode(['status'=>true,'msg'=>'WR Has Been Created & Send JDE is Failed, you can try in another moment']);
+            echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment']);
           }
         }
         else
@@ -218,7 +218,7 @@ class Wr extends CI_Controller {
         echo json_encode(['status'=>false,'msg'=>'Image is Required']);
     }
   }
-  public function update_and_approve($value='')
+  public function update($value='')
   {
     $data = $this->input->post();
     /*echo "<pre>";
@@ -249,10 +249,23 @@ class Wr extends CI_Controller {
         $data['photo'] = $file_name;
       }
     }
+    $data['status'] = '05';
+    if(isset($data['parent_id']))
+    {
+      unset($data['parent_id']);
+    }
     $update = $this->wr->update_and_approve($data);
     if($update)
     {
-      echo json_encode(['status'=>true,'msg'=>'WR Has Been Created']);
+      $send_wsdl = $this->send_wsdl_update($data);
+      if($send_wsdl)
+      {
+        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE']);
+      }
+      else
+      {
+        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE is Failed, you can try in another moment']);
+      }
     }
     else
     {
@@ -482,5 +495,48 @@ class Wr extends CI_Controller {
   {
     $wr  = $this->db->where('wr_no', $wr_no)->get('cmms_wr')->row_array();
     $this->send_wsdl($wr, true);
+  }
+  public function send_wsdl_update($data='', $manual= false)
+  {
+    $wr = $this->wr->findByWrNo($data['wr_no']);
+    $id = $wr->created_by;
+    $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
+
+    $data['originator'] = $r->USERNAME;
+    $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+    $headers = array(
+      "Content-Type: text/xml",
+      "charset:utf-8",
+      "Accept: application/xml",
+      "Cache-Control: no-cache",
+      "Pragma: no-cache",
+      "Content-length: " . strlen($xml),
+    );
+    $ch = curl_init('https://10.1.1.94:89/PY910/EquipmentWorkOrderManager?WSDL');
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSLVERSION, 'all');
+
+    curl_setopt($ch, CURLOPT_VERBOSE, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,300);
+    curl_setopt($ch, CURLOPT_TIMEOUT,360);
+    $data_curl = curl_exec($ch);
+    curl_close($ch);
+    // echo $data_curl;
+    if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
+      if($manual == true)
+      {
+        echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
+        echo $xml;
+      }
+      return false;
+    } else {
+        // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+      return true;
+    }
   }
 }

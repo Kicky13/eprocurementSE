@@ -1,10 +1,11 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-6 col-12 mb-1">
-      	<h3 class="content-header-title"><?= $title ?></h3>
+        <h3 class="content-header-title"><?= $title ?></h3>
       </div>
       <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
         <div class="breadcrumb-wrapper col-12">
@@ -15,11 +16,11 @@
       </div>
     </div>
     <div class="content-body">
-    	<section id="icon-tabs">
+      <section id="icon-tabs">
         <div class="row">
           <div class="col-12">
             <div class="card">
-            	<div class="card-content collapse show">
+              <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
                     <h6> <?= $title ?></h6>
@@ -27,12 +28,15 @@
                       <div class="row">
                         <div class="col-md-6">
                           <div class="form-group">
-                            <label>Parent WO</label>
-                            <input class="form-control" value="" id="parent_id" name="parent_id">
+                            <label>Priority</label>
+                            <?= $optPriority ?>
                           </div>
                           <div class="form-group">
                             <label>Equipment Number</label>
                             <input class="form-control" readonly="" id="eq_number" name="eq_number" value="<?=$row->eq_number?>">
+                            <input type="hidden" readonly="" id="wr_no" name="wr_no" value="<?=$row->wr_no?>">
+                            <input type="hidden" readonly="" id="faaaid" name="faaaid" value="<?=$row->faaaid?>">
+                            <input type="hidden" readonly="" id="fanumb" name="fanumb" value="<?=$row->fanumb?>">
                           </div>
                           <div class="form-group">
                             <label>Equipment Description</label>
@@ -41,6 +45,7 @@
                           <div class="form-group">
                             <label>Equipment Class</label>
                             <input class="form-control" readonly="" id="eq_class" name="eq_class" value="<?=$row->eq_class?>">
+                            <div style="height: 23px">&nbsp;</div>
                           </div>
                           <div class="form-group">
                             <label>Equipment Type</label>
@@ -58,45 +63,40 @@
                           </div>
                           <div class="form-group">
                             <label>WR Description</label>
-                            <input class="form-control" id="wr_description" name="wr_description" value="<?=$row->wr_description?>">
+                            <input class="form-control" id="wr_description" name="wr_description" maxlength="30" value="<?=$row->wr_description?>">
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <select class="form-control" name="failure_desc" id="failure_desc"></select>
+                            <input class="form-control" name="failure_desc" name="failure_desc" maxlength="80" value="<?=$row->failure_desc?>">
                           </div>
                           <div class="form-group">
-                            <label><a href="<?=base_url('upload/wr/'.$row->photo)?>" target="_blank" title="Click to View">Photo (Click to View) </a></label>
+                            <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo">
+                            <a class="btn btn-info btn-sm" target="_blank" href="<?= base_url('upload/wr/'.$row->photo) ?>">View Photo</a>
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
                             <input class="form-control" id="req_finish_date" name="req_finish_date" value="<?=$row->req_finish_date?>">
                           </div>
                           <div class="form-group">
-                            <label>Priority</label>
-                            <?= $optPriority ?>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label>Additional Description</label>
-                            <input class="form-control" name="additional_description" id="additional_description" value="<?=$row->additional_description?>">
+                            <label>Parent WO</label>
+                            <select class="form-control js-data-example-ajax" id="parent_id" name="parent_id"></select>
+                            <span class="btn-info">WO Parent : <?= $row->parent_id ?></span>
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <textarea class="form-control" name="hazard" id="hazard" rows="5"><?=$row->hazard?></textarea>
+                            <input class="form-control" name="hazard" id="hazard" maxlength="30" value="<?=$row->hazard?>">
                           </div>
                         </div>
-                        <?php if($approval): ?>
                         <div class="col-md-12">
-                          <button class="btn btn-primary" type="button" onclick="updateAndApprove()">Approve/Reject</button>
+                          <button class="btn btn-primary" type="button" onclick="updateWrClick()">Update & Approve</button>
+                          <button class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button>
                         </div>
-                        <?php endif;?>
                       </div>
                     </fieldset>
-                	</form>
+                  </form>
                 </div>
               </div>
             </div>
@@ -106,39 +106,9 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Approval</h4>
-      </div>
-      <div class="modal-body">
-        <form class="form-horizontal" id="frm-approval" method="post">
-          <input type="hidden" name="wr_no" value="<?=$row->wr_no?>">
-          <input type="hidden" name="id" value="<?=$approval->approval_id?>">
-          <div class="form-group">
-            <label>Approval</label>
-            <select class="form-control" name="status" id="status">
-              <option value="1">Approve</option>
-              <option value="2">Reject</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" name="description" id="description"></textarea>
-          </div>
-          <div class="form-group">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button class="btn btn-primary" type="button" onclick="submitApproval()">Submit</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 <script type="text/javascript">
-	$(document).ready(function(){
-		$("#frm-bled").steps({
+  $(document).ready(function(){
+    $("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -162,72 +132,82 @@
     //hide next and previous button
     $('a[href="#next"]').hide();
     $('a[href="#previous"]').hide();
-    function selectEquipmentForWr() {
-      var eq_no = $("#eq_number").val()
-      $.ajax({
-        type:'post',
-        data:{eq_number:eq_no,failure_desc:"<?= $row->failure_desc ?>"},
-        url:"<?=base_url('cmms/wr/opt_ajax_failure_desc')?>",
-        success:function(q){
-          $("#failure_desc").html(q)
-        }
-      })
+
+  $('.js-data-example-ajax').select2({
+    ajax: {
+    delay:250,
+    url: "<?= base_url('cmms/wr/wo_search') ?>",
+    dataType: 'json',
+    data: function (params) {
+      var query = {
+      search: params.term,
+      //type: 'public'
+      }
+
+      // Query parameters will be ?search=[term]&type=public
+      return query;
+    },
+    processResults: function (data) {
+      // Transforms the top-level key of the response object from 'items' to 'results'
+      return {
+      results: data
+      };
     }
-    selectEquipmentForWr()
+    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+    },
+    placeholder: 'Search ',
+    minimumInputLength: 3,
   });
-  function updateAndApprove() {
-    $("#myModal").modal('show')
-  }
-  function submitApproval() {
-    var status = $("#status").val()
-    if(parseInt(status) == 2)
+  });
+  
+  function updateWrClick(argument) {
+    var eq_number = $("#eq_number").val()
+    if(eq_number)
     {
-      var description = $("#description").val()
-      if(!description)
+      var req_finish_date = $("#req_finish_date").val()
+      if(!req_finish_date)
       {
-        swal('Reject','Description is Required','warning')
+        swal('Info','Requested Finish Date is Required','warning')
         return false
       }
-    }
-    var req_finish_date = $("#req_finish_date").val()
-    if(!req_finish_date)
-    {
-      swal('Info','Requested Finish Date is Required','warning')
-      return false
-    }
-
-    var form = $("#frm-bled")[0];
-    var data = new FormData(form);
-    var poData = jQuery(document.forms['frm-approval']).serializeArray();
-    for (var i=0; i<poData.length; i++)
-      data.append(poData[i].name, poData[i].value);
-
-    $.ajax({
-        type: "POST",
-        enctype: 'multipart/form-data',
-        url: "<?=base_url('cmms/wr/update_and_approve')?>",
-        data: data,
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 600000,
-        beforeSend:function(){
-          start($('#icon-tabs'));
-        },
-        success: function (e) {
-          var r = eval("("+e+")");
-          if(r.status){
-            swal('Success',r.msg,'success')
-            window.open("<?=base_url('home')?>","_self")
-          }else{
-            swal('<?= __('warning') ?>',r.msg,'warning')
+      swalConfirm('Approval & Update', 'Are you sure?', function() {
+        var form = $("#frm-bled")[0];
+        var data = new FormData(form);
+        $.ajax({
+          type: "POST",
+          enctype: 'multipart/form-data',
+          url: "<?=base_url('cmms/wr/update')?>",
+          data: data,
+          processData: false,
+          contentType: false,
+          cache: false,
+          timeout: 600000,
+          beforeSend:function(){
+            start($('#icon-tabs'));
+          },
+          success: function (e) {
+            var r = eval("("+e+")");
+            if(r.status){
+              swal('Success',r.msg,'success')
+              window.open("<?=base_url('home')?>","_self")
+            }else{
+              swal('<?= __('warning') ?>',r.msg,'warning')
+            }
+            stop($('#icon-tabs'));
+          },
+          error: function (e) {
+            swal('<?= __('warning') ?>','Something went wrong!','warning')
+            stop($('#icon-tabs'));
           }
-          stop($('#icon-tabs'));
-        },
-        error: function (e) {
-          swal('<?= __('warning') ?>','Something went wrong!','warning')
-          stop($('#icon-tabs'));
-        }
-    });
+        });
+      });
+    }
+    else
+    {
+      swal('Info','Please Select Equipment First','warning')
+    }
+  }
+  function rejectClick() {
+    alert('Under Construction')
   }
 </script>

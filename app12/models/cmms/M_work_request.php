@@ -163,9 +163,9 @@ class M_work_request extends CI_Model {
   public function update_and_approve($data='')
   {
     $this->db->trans_begin();
-    unset($data['status'],$data['id'],$data['description']);
+    //unset($data['status'],$data['id'],$data['description']);
     $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
-    $this->approve($this->input->post());
+    //$this->approve($this->input->post());
     if($this->db->trans_status() === true)
     {
       $this->db->trans_commit();

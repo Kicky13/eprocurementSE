@@ -101,7 +101,7 @@
                             <tr>
                                 <td>Amendment Value</td>
                                 <td>:</td>
-                                <td id="amd-value-header"><?= numIndo($arf->estimated_value) ?></td>
+                                <td><?= $arf->currency?> <span id="amd-value-header"><?= numIndo($arf->estimated_value) ?></span></td>
                             </tr>
                         </tbody>
                     </table>

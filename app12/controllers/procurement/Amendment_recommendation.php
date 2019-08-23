@@ -271,7 +271,7 @@ class Amendment_recommendation extends CI_Controller {
             );
 
             foreach ($data_replace as $item) {
-                $data['dest'][] = $item['email'];
+                $data['dest'][] = $item->email;
             }
             $flag = $this->M_sendmail->sendMail($data);
             echo json_encode(['status'=>true,'msg'=>'Amendment Submitted']);
@@ -502,7 +502,7 @@ class Amendment_recommendation extends CI_Controller {
         );
 
         foreach ($data_replace as $item) {
-            $data['dest'][] = $item['email'];
+            $data['dest'][] = $item->email;
         }
         $flag = $this->M_sendmail->sendMail($data);
         $this->T_approval_arf_recom->approve();

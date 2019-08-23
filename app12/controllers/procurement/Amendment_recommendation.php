@@ -28,6 +28,7 @@ class Amendment_recommendation extends CI_Controller {
         $this->load->model('procurement/arf/T_approval_arf_recom');
         $this->load->model('procurement/arf/T_arf_recommendation_preparation');
         $this->load->model('procurement/arf/m_arf_acceptance_document');
+        $this->load->model('M_sendmail');
 
         $this->load->library('form');
         $this->load->helper('data_builder_helper');
@@ -251,6 +252,28 @@ class Amendment_recommendation extends CI_Controller {
         if($this->db->trans_status() === true)
         {
             $this->db->trans_commit();
+            $img1 = '';
+            $img2 = '';
+
+            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence = 2 AND rec.id_ref = " . $data['arf_response_id']);
+            $data_replace = $query->result();
+            $str = $data_replace[0]->open;
+
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item['email'];
+            }
+            $flag = $this->M_sendmail->sendMail($data);
             echo json_encode(['status'=>true,'msg'=>'Amendment Submitted']);
         }
         else
@@ -444,11 +467,68 @@ class Amendment_recommendation extends CI_Controller {
     }
     public function approve($value='')
     {
+        $app_id = $this->input->post('approval_id');
+        $recom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_id)->row();
+        if ($recom->sequence == 4) {
+            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence > 4 AND rec.id_ref = " . $recom->id_ref);
+        } else {
+            $seq = $recom->sequence + 1;
+            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence = " . $seq . " AND rec.id_ref = " . $recom->id_ref);
+        }
+        $data_replace = $query->result();
+        $str = $data_replace[0]->open;
+        $img1 = '';
+        $img2 = '';
+
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+
+        foreach ($data_replace as $item) {
+            $data['dest'][] = $item['email'];
+        }
+        $flag = $this->M_sendmail->sendMail($data);
         $this->T_approval_arf_recom->approve();
     }
     public function issued($value='')
     {
         $this->T_approval_arf_recom->issued();
+        $img1 = '';
+        $img2 = '';
+
+        $query = $this->db->query('SELECT tar.doc_no, arf.po_title AS po_title, vnd.NAMA AS vendor, vnd.ID_VENDOR AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_arf_response tar
+        LEFT JOIN t_arf arf ON arf.doc_no = tar.doc_no
+        LEFT JOIN t_purchase_order po ON po.po_no = arf.po_no
+        JOIN m_vendor vnd ON vnd.ID = po.id_vendor
+        LEFT JOIN m_notic n ON n.ID = 90
+        WHERE tar.id = ' . $this->input->post('arf_response_id'));
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->open;
+
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+
+        foreach ($data_replace as $item) {
+            $data['dest'][] = $item['email'];
+        }
+        $flag = $this->M_sendmail->sendMail($data);
         echo json_encode(['status'=>true, 'msg'=>"Issued"]);
     }
     public function newAgreementPeriodTo($arf='')

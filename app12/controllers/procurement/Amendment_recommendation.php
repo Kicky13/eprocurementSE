@@ -476,35 +476,37 @@ class Amendment_recommendation extends CI_Controller {
     {
         $app_id = $this->input->post('approval_id');
         $recom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_id)->row();
-        if ($recom->sequence == 4) {
-            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+        if ($recom->sequence <= 4) {
+            if ($recom->sequence == 4) {
+                $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
             JOIN m_user usr ON usr.ID_USER = rec.id_user
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence > 4 AND rec.id_ref = " . $recom->id_ref);
-        } else {
-            $seq = $recom->sequence + 1;
-            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            } else {
+                $seq = $recom->sequence + 1;
+                $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
             JOIN m_user usr ON usr.ID_USER = rec.id_user
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence = " . $seq . " AND rec.id_ref = " . $recom->id_ref);
-        }
-        $data_replace = $query->result();
-        $str = $data_replace[0]->open;
-        $img1 = '';
-        $img2 = '';
+            }
+            $data_replace = $query->result();
+            $str = $data_replace[0]->open;
+            $img1 = '';
+            $img2 = '';
 
-        $data = array(
-            'img1' => $img1,
-            'img2' => $img2,
-            'title' => $data_replace[0]->title,
-            'open' => $str,
-            'close' => $data_replace[0]->close
-        );
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
 
-        foreach ($data_replace as $item) {
-            $data['dest'][] = $item->email;
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item->email;
+            }
+            $flag = $this->M_sendmail->sendMail($data);
         }
-        $flag = $this->M_sendmail->sendMail($data);
         $this->T_approval_arf_recom->approve();
     }
     public function issued($value='')

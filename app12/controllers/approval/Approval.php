@@ -2933,7 +2933,7 @@ class Approval extends CI_Controller
             );
 
             foreach ($data_replace as $item) {
-                $data['dest'][] = $item['email'];
+                $data['dest'][] = $item->email;
             }
             $flag = $this->sendMail($data);
         }

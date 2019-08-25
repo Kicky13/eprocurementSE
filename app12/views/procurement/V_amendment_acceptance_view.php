@@ -53,7 +53,7 @@
                             <tr>
                                 <td>Amendment Value</td>
                                 <td>:</td>
-                                <td id="amendment_value"><?= numIndo($arf->estimated_value) ?></td>
+                                <td><?= $arf->currency?> <span id="amendment_value"><?= numIndo($arf->estimated_value) ?></span></td>
                             </tr>
                         </tbody>
                     </table>

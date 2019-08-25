@@ -41,11 +41,11 @@ class T_approval_arf_recom extends CI_Model {
     $q = $this->db->query("SELECT o.id_ref id,o.id_user_role,o.id_user from (
                         SELECT m.id_ref,min(m.sequence) as sequence
                         FROM t_approval_arf_recom m 
-                        where m.status!=1 and m.sequence < 7 group by m.id_ref
+                        where m.status=0 and m.sequence < 7 group by m.id_ref
                 ) n JOIN
                 t_approval_arf_recom o on o.id_ref=n.id_ref and o.sequence=n.sequence
                 JOIN t_arf_recommendation_preparation p on p.arf_response_id=o.id_ref
-                 where o.id_user=$id_user and o.sequence < 7");
+                 where o.id_user=$id_user and o.sequence < 7 and o.status = 0");
     $tarf = $q;
     /*$tarf = $this->db->query('
             SELECT DISTINCT r.po_no,p.arf_response_id, g.doc_no,r.po_title title, r.department department_desc, c.response_date, g.responsed_at, u.NAME, g.id,o.id_ref,o.id_user_role,o.id_user from (

@@ -19,12 +19,6 @@ class M_work_request extends CI_Model {
   public function _get_datatables_query($value='')
   {
     $sql = $this->sql();
-    return $sql;
-
-  }
-  public function dt_get_datatables()
-  {
-    $sql = $this->_get_datatables_query();
     $sql .= " where 1=1  ";
     if($this->input->post('wr_no'))
     {
@@ -74,14 +68,27 @@ class M_work_request extends CI_Model {
     {
       $sql .= " and cmms_wr.status like '%".$this->input->post('status')."%'";
     }
-    if(in_array(user_primary,$this->roles))
+    if(in_array(operator_cmms,$this->roles))
     {
       $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
     }
-    if(in_array(user_manager, $this->roles))
+    if(in_array(department_cmms,$this->roles))
     {
-      $sql .= " and cmms_wr.wr_no in (select wr_no from cmms_wr_approval where sequence = 2 and status = 0 and user_assign_id = {$this->user->ID_USER})";
+      $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
     }
+    if(in_array(supervior_cmms, $this->roles))
+    {
+      $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
+      $q = "select user_id from t_jabatan where parent_id = ($q) ";
+      $sql .= " and cmms_wr.created_by in ($q)";
+    }
+    return $sql;
+
+  }
+  public function dt_get_datatables()
+  {
+    $sql = $this->_get_datatables_query();
+
     $sql .= " order by cmms_wr.id asc";
     if($_POST['length'] != -1)
     {
@@ -96,14 +103,14 @@ class M_work_request extends CI_Model {
     $sql = "select cmms_wr.*,cmms_wo_type.notation as wr_type, m_user.NAME as originator,concat(cmms_wr.status,' - ',cmms_wo_status.wo_status_desc) status
     from $this->table
     left join cmms_wo_type on cmms_wo_type.id = cmms_wr.wo_type_id
-	left join cmms_wo_status on cmms_wo_status.wo_status = cmms_wr.status
+	 left join cmms_wo_status on cmms_wo_status.wo_status = cmms_wr.status
     left join m_user on m_user.ID_USER = cmms_wr.created_by
     ";
     return $sql;  
   }
   public function dt_count_all()
   {
-    return $this->db->query($this->sql())->num_rows();
+    return $this->db->query($this->_get_datatables_query())->num_rows();
   }
   public function dt_count_filtered()
   {

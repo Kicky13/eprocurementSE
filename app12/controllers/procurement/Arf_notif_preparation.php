@@ -856,8 +856,12 @@ class Arf_notif_preparation extends CI_Controller {
         ->where('t_arf_notification.doc_no', $doc_no)
         ->get('t_arf');*/
 
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $arf->notification_id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $data['arf'] = $arf;
         $data['po_no'] = $arf->po_no;

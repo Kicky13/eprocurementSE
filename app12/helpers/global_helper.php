@@ -1184,11 +1184,31 @@ function cmms_settings($value='')
   $rs = $ci->db->where('module', $value)->from('cmms_settings');
   return $rs;
 }
-function getLastTimeAmd($amdNumber='', $po_date='')
+function getLastTimeAmd($amdNumber='', $po_date='', $equal = '<')
 {
   $ci = &get_instance();
   $poNo = substr($amdNumber, 0, 17);;
-  $q = "select * from `t_arf` where `po_no` = '$poNo' and doc_no < '$amdNumber'order by id desc";
+  $q = "select * from `t_arf_notification` where `po_no` = '$poNo' and doc_no $equal '$amdNumber'order by id desc";
+  $rs = $ci->db->query($q);
+  if($rs->num_rows())
+  {
+    foreach ($rs->result() as $r) {
+      $q = "select * from `t_arf_notification_detail_revision` where doc_id = $r->id and `type` = 2";
+      $time = $ci->db->query($q);
+      if($time->num_rows() > 0)
+      {
+        return $time->row()->value;
+        break;
+      }
+    }
+  }
+  return $po_date;
+}
+function getLastTimeArf($amdNumber='', $po_date='', $equal = '<')
+{
+  $ci = &get_instance();
+  $poNo = substr($amdNumber, 0, 17);;
+  $q = "select * from `t_arf` where `po_no` = '$poNo' and doc_no $equal '$amdNumber'order by id desc";
   $rs = $ci->db->query($q);
   if($rs->num_rows())
   {

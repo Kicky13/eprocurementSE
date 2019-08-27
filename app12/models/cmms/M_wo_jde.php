@@ -201,7 +201,7 @@ class M_wo_jde extends CI_Model {
   function wo_search()
   {
 	  $query = $this->input->get('query');
-	  $sql = "select WADOCO, WADL01 from f4801 where UPPER(WADOCO )like UPPER('%$query%') fetch first 5 ROWS ONLY ";
+	  $sql = "select WADOCO, WADL01 from f4801 where UPPER(WADOCO)like UPPER('%$query%') fetch first 5 ROWS ONLY ";
 	  $r =  $this->db->query($sql)->result();
 	  $d = [];
 	  foreach($r as $v)

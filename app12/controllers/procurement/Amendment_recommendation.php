@@ -92,8 +92,12 @@ class Amendment_recommendation extends CI_Controller {
             }
         }
 
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $arf->response_attachment = $this->m_arf_response_attachment->where('t_arf_response_attachment.doc_id', $arf->doc_id)
         ->get();

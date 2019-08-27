@@ -86,7 +86,7 @@ class M_work_request extends CI_Model {
       {
         $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
         $q = "select user_id from t_jabatan where parent_id = ($q) ";
-        $sql .= " and cmms_wr.created_by in ($q)";
+        $sql .= " and cmms_wr.created_by in ($q) and cmms_wr.status = '01'";
       }
     }
     return $sql;

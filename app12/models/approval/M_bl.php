@@ -577,9 +577,8 @@ class M_bl extends CI_Model {
     }
   }
 
-  public function getAssignmentAgreement($id_user='')
+  public function getAssignmentAgreementold($id_user='')
   {
-
     $msr_no = [];
     foreach ($this->ed_list($id_user)->result() as $key => $value) {
       $msr_no[$value->msr_no] = $value->msr_no;
@@ -594,9 +593,43 @@ class M_bl extends CI_Model {
     $hitung = count($msr_no) - $t_purchase_order;
     return $hitung;
   }
+
+    public function getAssignmentAgreement($id_user='')
+    {
+
+        $msr_no = $this->ed_list($id_user)->result();
+        $hitung = count($msr_no);
+        return $hitung;
+    }
+
   public function ed_list($id_user='')
   {
-    $this->db->where(['t_assignment.user_id'=>$id_user]);
+      $user       = user($id_user);
+      $roles      = explode(",", $user->ROLES);
+      $roles      = array_values(array_filter($roles));
+
+      if($user->ID_USER == 164 or $user->ID_USER == 165 or $user->ID_USER == 166 or  $user->ID_USER == 167 or in_array(bled, $roles) or in_array(proc_committe, $roles))
+      {
+          if($id_user)
+          {
+              $this->db->where('t_assignment.user_id = '.$id_user);
+              // echo "<pre>";
+              $getAssignmentAgreement = $this->getAssignmentAgreementcount($id_user);
+              // echo count($getAssignmentAgreement);
+              // echo "<br>";
+              /*exit();*/
+              if(is_array($getAssignmentAgreement))
+              {
+                  $this->db->where_in('t_msr.msr_no',$getAssignmentAgreement);
+              }
+
+          }
+      }
+      else
+      {
+          $eds =$this->db->where('t_msr.ID_DEPARTMENT = '.$user->ID_DEPARTMENT);
+      }
+//    $this->db->where(['t_assignment.user_id'=>$id_user]);
     $eds = $this->db->select("t_eq_data.*,replace(t_eq_data.msr_no,'OR','OQ') ed_no, m_departement.DEPARTMENT_DESC as department, specialist.NAME as specialist, (CASE WHEN approval.approval_posisition IS NULL THEN 'Completed' ELSE approval.approval_posisition END) as approval_posisition")
         ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no', 'left')
         ->join('m_user', 'm_user.ID_USER = t_msr.create_by', 'left')
@@ -628,6 +661,44 @@ class M_bl extends CI_Model {
         ->order_by('msr_no','desc')->get('(select * from t_eq_data where status = 1) t_eq_data');
         return $eds;
   }
+
+    public function getAssignmentAgreementcount($id_user='')
+    {
+        $this->db->select('t_assignment.*');
+        $this->db->where(['t_assignment.user_id'=>$id_user]);
+        $t_assignment = $this->db->get('t_assignment');
+        $msr_no = [];
+        foreach ($t_assignment->result() as $key => $value) {
+            $msr_no[] = $value->msr_no;
+        }
+        $t_purchase_order = 0;
+
+        if(count($msr_no) > 0)
+        {
+            $t_purchase_order = $this->db->where_in('msr_no',$msr_no)->where(['issued'=>1])->get('t_purchase_order');
+            $msrArray = [];
+            foreach ($t_purchase_order->result() as $key => $value) {
+                $msrArray[] = $value->msr_no;
+            }
+            $newMsr = [];
+            foreach ($msr_no as $key => $value) {
+                if(!in_array($value, $msrArray))
+                {
+                    $newMsr[] = $value;
+                }
+            }
+            // echo count($newMsr);
+            // echo "<pre>";
+            // print_r($newMsr);
+            // exit();
+            return $newMsr;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
   public function getMsrAssignment($id_user='')
   {
     return $this->db->select('t_msr.*')

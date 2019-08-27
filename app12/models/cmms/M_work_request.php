@@ -68,19 +68,26 @@ class M_work_request extends CI_Model {
     {
       $sql .= " and cmms_wr.status like '%".$this->input->post('status')."%'";
     }
-    if(in_array(operator_cmms,$this->roles))
+    if($this->input->post('all'))
     {
-      $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
+
     }
-    if(in_array(department_cmms,$this->roles))
+    else
     {
-      $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
-    }
-    if(in_array(supervior_cmms, $this->roles))
-    {
-      $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
-      $q = "select user_id from t_jabatan where parent_id = ($q) ";
-      $sql .= " and cmms_wr.created_by in ($q)";
+      if(in_array(operator_cmms,$this->roles))
+      {
+        $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
+      }
+      if(in_array(department_cmms,$this->roles))
+      {
+        $sql .= " and cmms_wr.created_by = {$this->user->ID_USER}";
+      }
+      if(in_array(supervior_cmms, $this->roles))
+      {
+        $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
+        $q = "select user_id from t_jabatan where parent_id = ($q) ";
+        $sql .= " and cmms_wr.created_by in ($q)";
+      }
     }
     return $sql;
 
@@ -173,6 +180,21 @@ class M_work_request extends CI_Model {
     //unset($data['status'],$data['id'],$data['description']);
     $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
     //$this->approve($this->input->post());
+    if($this->db->trans_status() === true)
+    {
+      $this->db->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->db->trans_rollback();
+      return false;
+    }
+  }
+  public function reject($data='')
+  {
+    $this->db->trans_begin();
+    $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
     if($this->db->trans_status() === true)
     {
       $this->db->trans_commit();

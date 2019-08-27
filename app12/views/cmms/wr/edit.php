@@ -34,7 +34,7 @@
                           <div class="form-group">
                             <label>Equipment Number</label>
                             <input class="form-control" readonly="" id="eq_number" name="eq_number" value="<?=$row->eq_number?>">
-                            <input type="hidden" readonly="" id="wr_no" name="wr_no" value="<?=$row->wr_no?>">
+                            <input type="hidden" readonly="" id="wr_no" name="wr_no" value="">
                             <input type="hidden" readonly="" id="faaaid" name="faaaid" value="<?=$row->faaaid?>">
                             <input type="hidden" readonly="" id="fanumb" name="fanumb" value="<?=$row->fanumb?>">
                           </div>
@@ -91,8 +91,10 @@
                           </div>
                         </div>
                         <div class="col-md-12">
-                          <button class="btn btn-primary" type="button" onclick="updateWrClick()">Update & Approve</button>
-                          <button class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button>
+                          <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Kembali</a>
+                          <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Update & Approve</button>
+                          <!-- <button id="btn-reject" class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button> -->
+                          <a id="btn-reject" href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModalReject">Reject</a>
                         </div>
                       </div>
                     </fieldset>
@@ -106,8 +108,34 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="myModalReject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Reject Work Request</h4>
+      </div>
+      <div class="modal-body">
+        <form id="form-attachment-bled" method="post" action="<?=base_url('approval/approval/bledupload')?>" class="form-horizontal" enctype="multipart/form-data">
+          <div class="form-group">
+            <label>Description</label>
+            <input class="form-control" name="comment_supervisor" id="comment_supervisor" maxlength="30" />
+          </div>
+          <div class="form-group text-right">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" onclick="rejectClick()" class="btn btn-danger">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
   $(document).ready(function(){
+    $("#wo_type_id").attr("disabled",'')
+    <?php if($row->status == '05' or $row->status == '91' or isset($user_creator) or $this->input->get('all')): ?>
+      $("#btn-approve,#btn-reject").hide()
+      $("#hazard,#priority,#wr_description,#photo,#req_finish_date,#parent_id").attr("disabled","")
+    <?php endif;?>
     $("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
@@ -189,7 +217,10 @@
             var r = eval("("+e+")");
             if(r.status){
               swal('Success',r.msg,'success')
-              window.open("<?=base_url('home')?>","_self")
+              setTimeout(function(){ 
+                window.open("<?=base_url('home')?>","_self")
+              }, 3000);
+              
             }else{
               swal('<?= __('warning') ?>',r.msg,'warning')
             }
@@ -207,7 +238,61 @@
       swal('Info','Please Select Equipment First','warning')
     }
   }
+  function validationReject() {
+    var comment_supervisor = $("#comment_supervisor").val()
+    if(comment_supervisor)
+    {
+      return true;
+    }
+    else
+    {
+      swal({ title: "Warning", text: "Description is Required", type: "warning" }, function(){
+        location = "<?= base_url() ?>";
+      });
+      return false;
+    }
+  }
+  function rejectSubmit() {
+    swalConfirm('Reject', 'Are you sure?', function() {
+      $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "<?=base_url('cmms/wr/reject/'.$row->wr_no)?>",
+        data: {comment_supervisor:$("#comment_supervisor")},
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        beforeSend:function(){
+          start($('#icon-tabs'));
+        },
+        success: function (e) {
+          var r = eval("("+e+")");
+          if(r.status){
+            swal({ 
+              title: "Success",
+              text: r.msg,
+              type: "success",
+              },
+              function(){
+                location = "<?= base_url() ?>";
+            });
+          }else{
+            swal('<?= __('warning') ?>',r.msg,'warning')
+          }
+          stop($('#icon-tabs'));
+        },
+        error: function (e) {
+          swal('<?= __('warning') ?>','Something went wrong!','warning')
+          stop($('#icon-tabs'));
+        }
+      });
+    });
+  }
   function rejectClick() {
-    alert('Under Construction')
+    if(validationReject())
+    {
+      rejectSubmit()
+    }
   }
 </script>

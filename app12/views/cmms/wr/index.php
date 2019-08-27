@@ -99,6 +99,7 @@
           data.wo_type_id = $('#filter_wr_type').val();
           data.wr_description = $('#filter_wr_description').val();
           data.status = $('#filter_status').val();
+          data.all = <?= $all ?>;
 				}
 			},
 	 

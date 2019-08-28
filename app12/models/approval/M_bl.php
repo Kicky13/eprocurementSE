@@ -703,7 +703,7 @@ class M_bl extends CI_Model {
   {
     return $this->db->select('t_msr.*')
     ->join('t_assignment','t_assignment.msr_no=t_msr.msr_no','left')
-    ->where(['t_assignment.user_id'=>$id_user])
+    ->where(['t_assignment.user_id'=>$id_user, 't_msr.status <>'=>2])
 	->where('t_msr.msr_no not in (select msr_no from t_purchase_order where issued = 1)')
     ->get('t_msr');
   }

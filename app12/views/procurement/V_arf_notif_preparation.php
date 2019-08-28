@@ -742,6 +742,7 @@
     var iit = JSON.parse('<?= @json_encode($opt_invtype, JSON_HEX_QUOT | JSON_HEX_APOS) ?>');
 
     $(document).ready(function() {
+        $('#notif_time_input').datetimepicker({ format : 'YYYY-MM-DD' });
         $(".onprogress").hide();
         $('#notif_value_input').number(true, 2);
         accounting.settings = {

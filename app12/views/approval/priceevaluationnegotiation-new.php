@@ -114,7 +114,7 @@
 		                                    	if($nego_detail->num_rows() > 0){
 		                                    		$nd = $nego_detail->row();
 		                                    		if(!is_null($nd->negotiated_price) && $nd->nego == 1){
-		                                    			echo "<td class='text-center'>$dt->delivery_time DAYS</td>";
+		                                    			echo "<td class='text-center'>$dt->delivery_time</td>";
 		                                    		}else{
 		                                    			echo "<td class='text-center'>$v->unit_value $v->unit_uom</td>";
 		                                    		}

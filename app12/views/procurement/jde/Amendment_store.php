@@ -27,9 +27,10 @@
                 </buyer>
                 <currencyCodeTo><?= $po->currency ?></currencyCodeTo>
                 <dates>
-                    <dateOrdered><?= date('m/d/Y', strtotime($po->po_date)) ?></dateOrdered>
-                    <datePromisedDelivery><?= date('m/d/Y', strtotime($date_promised_delivery)) ?></datePromisedDelivery>
-                    <dateRequested><?= date('m/d/Y') ?></dateRequested>
+                    <!-- substr($res[$i]->dateRequested,0,4).'-'.substr($res[$i]->dateRequested,5,2).'-'.substr($res[$i]->dateRequested,8,2).'T00:00:00-06:00 -->
+                    <dateOrdered><?= substr($po->po_date,0,4).'-'.substr($po->po_date,5,2).'-'.substr($po->po_date,8,2) ?>T00:00:00-06:00</dateOrdered>
+                    <datePromisedDelivery><?= substr($date_promised_delivery,0,4).'-'.substr($date_promised_delivery,5,2).'-'.substr($date_promised_delivery,8,2) ?>T00:00:00-06:00</datePromisedDelivery>
+                    <dateRequested><?= date('Y-m-d') ?>T00:00:00-06:00</dateRequested>
                 </dates>
                 <!--PO Description:-->
                 <description1><?= substr($po->title, 0, 30) ?></description1>
@@ -42,11 +43,11 @@
                                 <entityId><?= $po->username_procurement_specialist ?></entityId>
                             </buyer>
                             <datesDetail>
-                                <dateAccounting><?= date('m/d/Y', strtotime($acceptance->accepted_user_at)) ?></dateAccounting>
+                                <dateAccounting><?= substr($acceptance->accepted_user_at,0,4).'-'.substr($acceptance->accepted_user_at,5,2).'-'.substr($acceptance->accepted_user_at,8,2) ?>T00:00:00-06:00</dateAccounting>
                                 <dateCancel></dateCancel>
                                 <dateEffectiveLot></dateEffectiveLot>
-                                <datePromisedDelivery><?= date('m/d/Y', strtotime($date_promised_delivery)) ?></datePromisedDelivery>
-                                <dateRequested><?= date('m/d/Y', strtotime($acceptance->accepted_user_at)) ?></dateRequested>
+                                <datePromisedDelivery><?= substr($date_promised_delivery,0,4).'-'.substr($date_promised_delivery,5,2).'-'.substr($date_promised_delivery,8,2) ?>T00:00:00-06:00</datePromisedDelivery>
+                                <dateRequested><?= substr($acceptance->accepted_user_at,0,4).'-'.substr($acceptance->accepted_user_at,5,2).'-'.substr($acceptance->accepted_user_at,8,2) ?>T00:00:00-06:00</dateRequested>
                             </datesDetail>
                             <costUnitPurchasing><?= $item['cost_unit'] ?></costUnitPurchasing>
                             <deliveryDetail>

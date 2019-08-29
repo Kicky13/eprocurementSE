@@ -101,7 +101,7 @@
                             <tr>
                                 <td>Amendment Value</td>
                                 <td>:</td>
-                                <td id="amd-value-header"><?= numIndo($arf->estimated_value) ?></td>
+                                <td><?= $arf->currency?> <span id="amd-value-header"><?= numIndo($arf->estimated_value) ?></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -196,25 +196,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h4><b>Amendment Process</b></h4>
-                                <div class="form-group row">
-                                    <label class="col-md-3">ARF Received</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->assignment_date, false, true) ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3">Amendment Notification Issued</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->notification_date) ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3">Contractor Response Received</label>
-                                    <div class="col-md-3">
-                                        <?= dateToIndo($arf->responsed_at, false, true) ?>
-                                    </div>
-                                </div>
+                                
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -246,6 +228,26 @@
                                     <?php endforeach;?>
                                     </tbody>
                                 </table>
+                                <h4><b>Amendment Process</b></h4>
+                                <div class="form-group row">
+                                    <label class="col-md-3">ARF Received</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->assignment_date, false, true) ?>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3">Amendment Notification Issued</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->notification_date) ?>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3">Contractor Response Received</label>
+                                    <div class="col-md-3">
+                                        <?= dateToIndo($arf->responsed_at, false, true) ?>
+                                    </div>
+                                </div>
+                                
                             </fieldset>
                             <?php endif;?>
                             <?php if(isset($issued)): ?>

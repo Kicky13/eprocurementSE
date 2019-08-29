@@ -688,28 +688,39 @@ class Arf_notif_preparation extends CI_Controller {
                 $response = array("status" => "Success", "msg" => "Draft has been saved!");
             } else {
                 $res = $this->manp->get_email_dest($po, $notif);
-                if ($res != false) {
+//                if ($res != false) {
                     $rec = $res[0]['recipients'];
                     $rec_role = $res[0]['rec_role'];
                     $user = $this->manp->get_email_rec($rec, $rec_role);
-                    if ($user != null) {
+//                    if ($user != null) {
                         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+                        $querymail = $this->db->query("SELECT po.po_no po_no, po.company_desc company, po.msr_no msr_no, vnd.NAMA nama, vnd.ID_VENDOR email, notif.TITLE title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
+                        LEFT JOIN t_bl_detail bl ON po.msr_no = bl.msr_no
+                        LEFT JOIN m_vendor vnd ON bl.vendor_id = vnd.ID
+                        JOIN m_notic notif ON notif.ID = 90
+                        WHERE po.po_no = '" . $po . "'")->result();
+                        $str = $querymail[0]->open;
+                        $str = str_replace('no_amendment', $amd, $str);
+
                         $dt = array(
                             'dest' => $user,
                             'img1' => $img1,
                             'po' => $po,
                             'amd' => $amd,
                             'img2' => $img2,
-                            'title' => $res[0]['TITLE'],
-                            'open' => $res[0]['OPEN_VALUE'],
-                            'close' => $res[0]['CLOSE_VALUE']
+                            'title' => $querymail[0]->title,
+                            'open' => $str,
+                            'close' => $querymail[0]->close
                         );
+                        foreach ($querymail as $val){
+                            $dt['dest'][] = $val->email;
+                        }
                         $email = $this->send_mail($dt);
                         if ($email == false)
                             $response = array("status" => "Failed", "msg" => "Oops, something went wrong 3!");
-                    }
-                }
+//                    }
+//                }
 
                 $log = array(
                     "module_kode" => "arfn",
@@ -845,8 +856,12 @@ class Arf_notif_preparation extends CI_Controller {
         ->where('t_arf_notification.doc_no', $doc_no)
         ->get('t_arf');*/
 
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $arf->notification_id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $data['arf'] = $arf;
         $data['po_no'] = $arf->po_no;

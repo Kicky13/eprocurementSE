@@ -28,6 +28,7 @@ class Amendment_recommendation extends CI_Controller {
         $this->load->model('procurement/arf/T_approval_arf_recom');
         $this->load->model('procurement/arf/T_arf_recommendation_preparation');
         $this->load->model('procurement/arf/m_arf_acceptance_document');
+        $this->load->model('M_sendmail');
 
         $this->load->library('form');
         $this->load->helper('data_builder_helper');
@@ -255,6 +256,28 @@ class Amendment_recommendation extends CI_Controller {
         if($this->db->trans_status() === true)
         {
             $this->db->trans_commit();
+            $img1 = '';
+            $img2 = '';
+
+            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence = 2 AND rec.id_ref = " . $data['arf_response_id']);
+            $data_replace = $query->result();
+            $str = $data_replace[0]->open;
+
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item->email;
+            }
+            $flag = $this->M_sendmail->sendMail($data);
             echo json_encode(['status'=>true,'msg'=>'Amendment Submitted']);
         }
         else
@@ -391,8 +414,12 @@ class Amendment_recommendation extends CI_Controller {
             }
         }
         
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $arf->response_attachment = $this->m_arf_response_attachment->where('t_arf_response_attachment.doc_id', $arf->doc_id)
         ->get();
@@ -420,9 +447,16 @@ class Amendment_recommendation extends CI_Controller {
         $time_issued = $this->T_approval_arf_recom->time_issued($id)->num_rows();
         if($time_issued > 0)
         {
-            $data['issued'] = $time_issued;
-            $data['title'] = 'Amendment Issuance';
-            $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
+            if($this->input->get('amd_view'))
+            {
+
+            }
+            else
+            {
+                $data['issued'] = $time_issued;
+                $data['title'] = 'Amendment Issuance';
+                $data['doc'] = $this->db->where(['data_id'=>$arf->doc_no])->where_in('module_kode', ['arf-recom-prep', 'arf-issued'])->get('t_upload')->result();
+            }
         }
         $data['is_reject'] = $this->T_approval_arf_recom->is_reject($id);
         $data['findAllResult'] = $findAllResult;
@@ -448,16 +482,75 @@ class Amendment_recommendation extends CI_Controller {
     }
     public function approve($value='')
     {
+        $app_id = $this->input->post('approval_id');
+        $recom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_id)->row();
+        if ($recom->sequence <= 4) {
+            if ($recom->sequence == 4) {
+                $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence > 4 AND rec.id_ref = " . $recom->id_ref);
+            } else {
+                $seq = $recom->sequence + 1;
+                $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN m_user usr ON usr.ID_USER = rec.id_user
+            JOIN m_notic n ON n.ID = 93
+            WHERE rec.sequence = " . $seq . " AND rec.id_ref = " . $recom->id_ref);
+            }
+            $data_replace = $query->result();
+            $str = $data_replace[0]->open;
+            $img1 = '';
+            $img2 = '';
+
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item->email;
+            }
+            $flag = $this->M_sendmail->sendMail($data);
+        }
         $this->T_approval_arf_recom->approve();
     }
     public function issued($value='')
     {
         $this->T_approval_arf_recom->issued();
+        $img1 = '';
+        $img2 = '';
+
+        $query = $this->db->query('SELECT tar.doc_no, arf.po_title AS po_title, vnd.NAMA AS vendor, vnd.ID_VENDOR AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_arf_response tar
+        LEFT JOIN t_arf arf ON arf.doc_no = tar.doc_no
+        LEFT JOIN t_purchase_order po ON po.po_no = arf.po_no
+        JOIN m_vendor vnd ON vnd.ID = po.id_vendor
+        LEFT JOIN m_notic n ON n.ID = 90
+        WHERE tar.id = ' . $this->input->post('arf_response_id'));
+
+        $data_replace = $query->result();
+
+        $str = $data_replace[0]->open;
+
+        $data = array(
+            'img1' => $img1,
+            'img2' => $img2,
+            'title' => $data_replace[0]->title,
+            'open' => $str,
+            'close' => $data_replace[0]->close
+        );
+
+        foreach ($data_replace as $item) {
+            $data['dest'][] = $item['email'];
+        }
+        $flag = $this->M_sendmail->sendMail($data);
         echo json_encode(['status'=>true, 'msg'=>"Issued"]);
     }
     public function newAgreementPeriodTo($arf='')
     {
-        $doc_date = $this->db->where(['po_no'=>$arf->po_no])->order_by('doc_date','desc')->get('t_arf')->row();
+        /*$doc_date = $this->db->where(['po_no'=>$arf->po_no])->order_by('doc_date','desc')->get('t_arf')->row();
         $doc_date = $arf->amended_date;
 
         $detail_revision = $this->m_arf_detail_revision->detail_revision($arf);
@@ -465,15 +558,16 @@ class Amendment_recommendation extends CI_Controller {
         {
             echo $this->db->last_query();
         }
-        $myDate = $doc_date;
+        $myDate = $doc_date;*/
 
-        if($detail_revision->num_rows() > 0)
+        /*if($detail_revision->num_rows() > 0)
         {
           $detail_revision = $detail_revision->row();
           $dariArf = date('Y-m-d', strtotime($doc_date));
           $dariDetail = date('Y-m-d', strtotime($detail_revision->value));
           $myDate = $dariArf > $dariDetail ? $doc_date :$detail_revision->value;
-        }
+        }*/
+        $myDate = getLastTimeAmd($arf->doc_no, $arf->amended_date,"<=");
         return $myDate;
     }
     public function addTime($arf='',$po='')
@@ -636,8 +730,12 @@ class Amendment_recommendation extends CI_Controller {
             }
         }
 
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $arf->response_attachment = $this->m_arf_response_attachment->where('t_arf_response_attachment.doc_id', $arf->doc_id)->get();
         $arf->performance_bond = $this->m_arf_acceptance_document->view('document')->scope('performance_bond')->where('doc_no', $arf->doc_no)->get();
@@ -695,7 +793,7 @@ class Amendment_recommendation extends CI_Controller {
         // $arf->item = $this->m_arf_detail->view('response_item')->where('doc_id', $arf->doc_id)->get();
         $arf->item = $this->m_arf_sop->view('response')->select('t_arf_nego_detail.unit_price new_price')
         ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->get();
+        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
 
         $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id < '=> $t_arf_notification->id])->get('t_arf_notification');
         
@@ -706,12 +804,16 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
             }
         }
 
-        foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
+        /*foreach ($this->m_arf_detail_revision->where('doc_id', $arf->doc_id)->get() as $revision) {
             $arf->revision[$revision->type] = $revision;
+        }*/
+        $markingType = [1=>'value', 2=>'time', 3=>'scope', 4=>'other'];
+        foreach ($this->db->where('doc_id', $t_arf_notification->id)->get('t_arf_notification_detail_revision')->result() as $revision) {
+            $arf->revision[$markingType[$revision->type]] = $revision;
         }
         $arf->response_attachment = $this->m_arf_response_attachment->where('t_arf_response_attachment.doc_id', $arf->doc_id)
         ->get();
@@ -748,7 +850,7 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->where('t_arf_nego.id = t_arf_nego_detail.arf_nego_id')->get();
             }
         }
 

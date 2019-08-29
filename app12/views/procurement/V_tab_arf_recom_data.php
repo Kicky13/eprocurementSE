@@ -123,7 +123,7 @@
                         kondisi ammendment
                         max date di t_arf_detail_revision kolom tipe per doc_id
                      -->
-                    <input class="form-control" disabled value="<?=dateToIndo($arf->amended_date,false,false)?>">
+                    <input class="form-control" disabled value="<?=dateToIndo(getLastTimeAmd($arf->doc_no, $po->delivery_date),false,false)?>">
                 </div>
             </div>
         </div>

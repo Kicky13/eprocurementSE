@@ -445,11 +445,17 @@ class Msr extends CI_Controller {
                     $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
 
-                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
-                        join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'
-                        join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
-                        join m_notic n on n.ID=35
-                        where t.data_id='".$msr_no."' and t.urutan=1");
+//                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
+//                        join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'
+//                        join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
+//                        join m_notic n on n.ID=35
+//                        where t.data_id='".$msr_no."' and t.urutan=1");
+                    $query = $this->db->query("SELECT t.data_id AS msr_no, u.EMAIL AS email, u.NAME AS name, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval t
+                    LEFT JOIN m_approval m ON t.m_approval_id = m.id
+                    LEFT JOIN m_user_roles ur ON m.role_id = ur.ID_USER_ROLES
+                    LEFT JOIN m_user u ON u.ID_USER = t.created_by
+                    JOIN m_notic n ON n.ID = 35
+                    WHERE t.data_id = '" . $msr_no . "' AND m.module_kode = 'msr' AND t.urutan = 1");
                     if ($query->num_rows() > 0) {
                       $data_role = $query->result();
                       $count = 1;
@@ -466,8 +472,7 @@ class Msr extends CI_Controller {
 
                       $data_replace = $query->result();
 
-                      $res = $data_role;
-                      $str = $data_role[0]->OPEN_VALUE;
+                      $str = $data_role[0]->open;
                       $str = str_replace('_var1_',$data_replace[0]->title,$str);
                       $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
                       $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
@@ -476,13 +481,13 @@ class Msr extends CI_Controller {
                       $data = array(
                         'img1' => $img1,
                         'img2' => $img2,
-                        'title' => $data_role[0]->TITLE,
+                        'title' => $data_role[0]->title,
                         'open' => $str,
-                        'close' => $data_role[0]->CLOSE_VALUE
+                        'close' => $data_role[0]->close
                       );
 
                       foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->recipient;
+                        $data['dest'][] = $v->email;
                       }
                       $flag = $this->sendMail($data);
 

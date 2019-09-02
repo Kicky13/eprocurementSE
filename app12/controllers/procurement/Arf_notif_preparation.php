@@ -20,6 +20,7 @@ class Arf_notif_preparation extends CI_Controller {
         $this->load->model('procurement/arf/m_arf_approval');
         $this->load->model('procurement/m_arf_notif_preparation', 'manp');
         $this->load->model('procurement/arf/m_arf_detail_revision');
+        $this->load->model('M_sendmail');
     }
 
     public function index() {
@@ -695,28 +696,28 @@ class Arf_notif_preparation extends CI_Controller {
 //                    if ($user != null) {
                         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-                        $querymail = $this->db->query("SELECT po.po_no po_no, po.company_desc company, po.msr_no msr_no, vnd.NAMA nama, vnd.ID_VENDOR email, notif.TITLE title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
+                        $querymail = $this->db->query("SELECT arf.doc_no, arf.po_title, po.po_no AS po_no, po.company_desc AS company, po.msr_no AS msr_no, vnd.NAMA AS nama, vnd.ID_VENDOR AS email, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
                         LEFT JOIN t_bl_detail bl ON po.msr_no = bl.msr_no
                         LEFT JOIN m_vendor vnd ON bl.vendor_id = vnd.ID
+                        LEFT JOIN t_arf arf ON po.po_no = arf.po_no
                         JOIN m_notic notif ON notif.ID = 90
-                        WHERE po.po_no = '" . $po . "'")->result();
+                        WHERE po.po_no = '" . $po . "' AND bl.awarder = 1")->result();
                         $str = $querymail[0]->open;
-                        $str = str_replace('no_amendment', $amd, $str);
+                        $str = str_replace('_var1_', $querymail[0]->nama, $str);
+                        $str = str_replace('title_agreement', $querymail[0]->po_title, $str);
+                        $str = str_replace('no_arf', $querymail[0]->doc_no, $str);
 
                         $dt = array(
-                            'dest' => $user,
                             'img1' => $img1,
-                            'po' => $po,
-                            'amd' => $amd,
                             'img2' => $img2,
                             'title' => $querymail[0]->title,
                             'open' => $str,
                             'close' => $querymail[0]->close
                         );
-                        foreach ($querymail as $val){
-                            $dt['dest'][] = $val->email;
+                        foreach ($querymail as $val => $k){
+                            $dt['dest'][] = $k->email;
                         }
-                        $email = $this->send_mail($dt);
+                        $email = $this->M_sendmail->sendMail($dt);
                         if ($email == false)
                             $response = array("status" => "Failed", "msg" => "Oops, something went wrong 3!");
 //                    }

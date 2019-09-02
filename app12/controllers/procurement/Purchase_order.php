@@ -196,6 +196,7 @@ class Purchase_order extends CI_Controller
                 $this->db->trans_complete();
 
 
+
                 if ($this->db->trans_status() !== FALSE) {
                     // generate approval flow!!!
                     try {
@@ -222,17 +223,18 @@ class Purchase_order extends CI_Controller
 //                        join m_notic n on n.id=42
 //                        join t_msr t on t.msr_no=b.msr_no
 //                        where b.id=".$po_id);
-                    $query = $this->db->query("SELECT po.po_no, po.msr_no, po.title as subject, us.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_purchase_order po
-                    JOIN t_approval ap ON po.msr_no = ap.data_id
+                    $query = $this->db->query("SELECT ed.msr_no, us.EMAIL as email, us.NAME AS user, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, ed.subject AS subject FROM t_bl_detail bl
+                    JOIN t_approval ap ON ap.data_id = bl.msr_no
+                    JOIN t_eq_data ed ON bl.msr_no = ed.msr_no
                     JOIN m_user us ON us.ID_USER = ap.created_by
                     JOIN m_notic n ON n.ID = 42
-                    WHERE ap.m_approval_id = 1 AND po.id = " . $po_id);
+                    WHERE bl.id = " . $bl_detail_id . " AND ap.m_approval_id = 8");
 
                     $data_role = $query->result();
 					
                     $res = $data_role[0]->open;
                     $res = str_replace('[title]', $data_role[0]->subject, $res);
-                    $res = str_replace('[no]', $data_role[0]->po_no, $res);
+                    $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
 
                     $data2 = array(
                         'img1' => $img1,

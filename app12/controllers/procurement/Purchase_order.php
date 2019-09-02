@@ -222,27 +222,17 @@ class Purchase_order extends CI_Controller
 //                        join m_notic n on n.id=42
 //                        join t_msr t on t.msr_no=b.msr_no
 //                        where b.id=".$po_id);
-                    $query = $this->db->query("SELECT tp.urutan urutan, mp.module_kode, msr.title subject, tp.data_id msr_no, us.EMAIL email, us.NAME nama, notif.TITLE title, notif.OPEN_VALUE open, notif.CLOSE_VALUE close
-                    FROM t_approval tp
-                    LEFT JOIN t_purchase_order po ON po.msr_no = tp.data_id
-                    LEFT JOIN t_msr msr ON msr.msr_no = po.msr_no
-                    LEFT JOIN m_approval mp ON tp.m_approval_id = mp.id
-                    LEFT JOIN m_user_roles usr ON mp.role_id = usr.ID_USER_ROLES
-                    LEFT JOIN m_user us ON us.ID_USER = tp.created_by
-                    LEFT JOIN m_notic notif ON notif.ID = 42
-                    WHERE po.id = " . $po_id . " AND ((tp.urutan = 1 AND mp.module_kode = 'msr') OR (tp.urutan = 2 AND mp.module_kode = 'msr_spa'))
-                    GROUP BY urutan, mp.module_kode, subject, msr_no, email, nama, title, open, close");
-
-                    $primary = $this->db->query("SELECT * from t_purchase_order po
-                    JOIN t_msr msr ON po.msr_no = msr.msr_no
-                    JOIN m_user us ON us.ID_USER = msr.create_by
-                    WHERE po.id = " . $po_id)->row();
+                    $query = $this->db->query("SELECT po.po_no, po.msr_no, po.title as subject, us.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_purchase_order po
+                    JOIN t_approval ap ON po.msr_no = ap.data_id
+                    JOIN m_user us ON us.ID_USER = ap.created_by
+                    JOIN m_notic n ON n.ID = 42
+                    WHERE ap.m_approval_id = 1 AND po.id = " . $po_id);
 
                     $data_role = $query->result();
 					
                     $res = $data_role[0]->open;
                     $res = str_replace('[title]', $data_role[0]->subject, $res);
-                    $res = str_replace('[no]', $data_role[0]->msr_no, $res);
+                    $res = str_replace('[no]', $data_role[0]->po_no, $res);
 
                     $data2 = array(
                         'img1' => $img1,
@@ -255,7 +245,6 @@ class Purchase_order extends CI_Controller
                     foreach ($res as $k => $v) {
                         $data2['dest'][] = $v->email;
                     }
-                    $data2['dest'][] = $primary->EMAIL;
 
                     $flag = $this->M_sendmail->sendMail($data2);
                     // End Email

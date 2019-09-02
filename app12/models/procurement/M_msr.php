@@ -85,6 +85,113 @@ class M_Msr extends CI_Model {
   /**
    * TODO: add various dynamic parameters to filter data
    */
+    public function inquirynew($dept)
+    {
+        if($dept == '101013800'){
+            $dept = '%';
+        }
+
+        $sql = <<<SQL
+select msr.msr_no
+    , mapp.module_kode, mapp.id mapp_id, mapp.role_id
+    , tapp.id tapp_id, tapp.m_approval_id, tapp.status, tapp.urutan
+    , mapp_prev.module_kode prev_module_kode, mapp_prev.role_id prev_role_id
+    , tapp_prev.id prev_tapp_id, tapp_prev.status prev_status, tapp_prev.urutan prev_urutan
+    , case
+        when
+            (tapp.status = 0 and tapp_prev.status = 1)
+        then 'WAITING_APPROVAL' -- in approval
+        when
+            (mapp.module_kode = 'msr' and tapp.status = 0 and tapp_prev.status is null)
+        then 'NEW'  -- first approval
+        when
+            (tapp.status = 2)
+            or (mapp.module_kode = 'msr_spa' and tapp.status = 3)
+        then'REJECT'-- reject
+        when
+            (mapp.module_kode = 'msr_spa' and tapp.status = 1 and tapp.urutan = 1 and tapp_prev.status is null) -- verified
+        then 'VERIFIED'
+        when
+            (mapp.module_kode = 'msr_spa' and tapp.status != 0 and tapp.urutan = 2 and tapp_prev.status = 1) -- assigned
+        then 'ASSIGNED'
+        when
+            (mapp.module_kode = 'msr_spa' and tapp.status in (0, 1) and tapp_prev.status is null)
+        then 'COMPLETE' -- complete
+        else 'UNKNOWN'
+    end as status_code
+    , urole.DESCRIPTION as action_to_role_description
+from t_msr msr
+join t_approval tapp on tapp.data_id = msr.msr_no
+join m_approval mapp on mapp.id = tapp.m_approval_id
+left join t_approval tapp_prev on tapp_prev.data_id = tapp.data_id
+    and tapp_prev.urutan = tapp.urutan - 1
+left join m_approval mapp_prev on mapp_prev.module_kode = mapp.module_kode
+    and tapp_prev.m_approval_id = mapp_prev.id
+left join m_user_roles urole on case
+  when
+    (tapp.status = 2) -- reject
+    or (mapp.module_kode = 'msr_spa' and tapp.status = 3)
+    or (tapp.status = 0 and tapp_prev.status = 1) -- waiting approval
+  then urole.ID_USER_ROLES = mapp.role_id
+  when
+    (tapp.status = 1 and tapp_prev.status is null)
+  then urole.ID_USER_ROLES = ''
+  when
+    (tapp.status = 0 and tapp_prev.status is null) -- first approver
+   then urole.ID_USER_ROLES = mapp.role_id
+  else
+    urole.ID_USER_ROLES = '' -- mapp.role_id
+  end
+where true
+    and ( mapp.module_kode = 'msr' or (mapp.module_kode = 'msr_spa' and tapp.urutan in (1,2)))
+    and if (mapp.module_kode = 'msr' and tapp.urutan != 1, mapp_prev.module_kode is not null and tapp_prev.id is not null, true)
+    -- and msr.msr_no in ( '18000202-OR-10101' , '18000210-OR-10101' )
+    and (
+        -- (tapp.status is null)
+        if (mapp.module_kode = 'msr',
+            (mapp.module_kode = 'msr' and tapp.status = 0 and tapp_prev.status is null) -- first approval
+            or (tapp.status = 0 and tapp_prev.status = 1) -- waiting approval
+            -- or (tapp.status = 0 and tapp_prev.status = 2) -- reject
+            or (tapp.status = 2 ) -- reject
+            or (mapp.module_kode = 'msr_spa' and tapp.status in (0,1,2) and tapp_prev.status is null) -- complete
+            ,
+            (mapp.module_kode = 'msr_spa' and tapp.status = 0 and tapp_prev.status is null) -- complete
+            or (mapp.module_kode = 'msr_spa' and tapp.status = 2 ) -- reject verified
+            or (mapp.module_kode = 'msr_spa' and tapp.status = 3 ) -- reject assigned
+            or (mapp.module_kode = 'msr_spa' and tapp.status = 1 and tapp.urutan = 1 and mapp_prev.module_kode is null and tapp_prev.status is null) -- verified
+            or (mapp.module_kode = 'msr_spa' and mapp_prev.module_kode = 'msr_spa' and tapp.status != 0 and tapp.urutan = 2 and tapp_prev.status = 1) -- assigned
+        )
+    )
+    and msr.id_department like '$dept'
+order by msr.msr_no, mapp.module_kode, tapp.urutan
+SQL;
+
+        // TODO: refine above SQL to only get ASSIGNED data if exists
+        // as workaround we do filter here out of Query
+        $res = $this->db->query($sql);
+        $result = array();
+        $i = 0;
+        $last_msr_no = '';
+
+        while ($row = $res->unbuffered_row()) {
+            if ($last_msr_no == $row->msr_no && ($row->status_code == 'ASSIGNED' || $row->status_code == 'REJECT')) {
+                // find row before
+                $key = $i - 1;
+                if ($key >= 0 && $result[$key]->status_code == 'VERIFIED') {
+                    // Replace prior (VERIFIED) data with this one
+                    $result[$key] = $row;
+                }
+                $last_msr_no = $row->msr_no;
+                continue;
+            }
+
+            $last_msr_no = $row->msr_no;
+            $result[$i] = $row;
+            $i++;
+        }
+
+        return $result;
+    }
   public function inquiry($dept)
   {
     if($dept == '101013800'){

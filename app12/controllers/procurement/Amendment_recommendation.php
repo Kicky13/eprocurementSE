@@ -523,16 +523,18 @@ class Amendment_recommendation extends CI_Controller {
         $img1 = '';
         $img2 = '';
 
-        $query = $this->db->query('SELECT tar.doc_no, arf.po_title AS po_title, vnd.NAMA AS vendor, vnd.ID_VENDOR AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_arf_response tar
-        LEFT JOIN t_arf arf ON arf.doc_no = tar.doc_no
-        LEFT JOIN t_purchase_order po ON po.po_no = arf.po_no
+        $query = $this->db->query('SELECT arf.doc_no, arf.po_title AS po_title, po.company_desc AS company, vnd.NAMA AS vendor, vnd.ID_VENDOR AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_purchase_order po
+        LEFT JOIN t_arf arf ON arf.po_no = po.po_no
         JOIN m_vendor vnd ON vnd.ID = po.id_vendor
-        LEFT JOIN m_notic n ON n.ID = 90
-        WHERE tar.id = ' . $this->input->post('arf_response_id'));
+        LEFT JOIN m_notic n ON n.ID = 92
+        WHERE po.po_no = "' . $this->input->post('po_no') . '"');
 
         $data_replace = $query->result();
 
         $str = $data_replace[0]->open;
+        $str = str_replace('_var1_', $data_replace[0]->company, $str);
+        $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+        $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
 
         $data = array(
             'img1' => $img1,
@@ -543,7 +545,7 @@ class Amendment_recommendation extends CI_Controller {
         );
 
         foreach ($data_replace as $item) {
-            $data['dest'][] = $item['email'];
+            $data['dest'][] = $item->email;
         }
         $flag = $this->M_sendmail->sendMail($data);
         echo json_encode(['status'=>true, 'msg'=>"Issued"]);

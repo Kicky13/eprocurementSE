@@ -587,6 +587,8 @@ class Arf_notif_preparation extends CI_Controller {
     }
 
     public function send_data() {
+        echo json_encode($this->input->post());
+        die();
         $po = stripslashes($this->input->post('po'));
         $amd = stripslashes($this->input->post('amd'));
         $notif = stripslashes($this->input->post('notif'));
@@ -697,13 +699,12 @@ class Arf_notif_preparation extends CI_Controller {
                         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
                         $querymail = $this->db->query("SELECT arf.doc_no, arf.po_title, po.po_no AS po_no, po.company_desc AS company, po.msr_no AS msr_no, vnd.NAMA AS nama, vnd.ID_VENDOR AS email, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
-                        LEFT JOIN t_bl_detail bl ON po.msr_no = bl.msr_no
-                        LEFT JOIN m_vendor vnd ON bl.vendor_id = vnd.ID
+                        LEFT JOIN m_vendor vnd ON po.id_vendor = vnd.ID
                         LEFT JOIN t_arf arf ON po.po_no = arf.po_no
                         JOIN m_notic notif ON notif.ID = 90
-                        WHERE po.po_no = '" . $po . "' AND bl.awarder = 1")->result();
+                        WHERE po.po_no = '" . $po . "'")->result();
                         $str = $querymail[0]->open;
-                        $str = str_replace('_var1_', $querymail[0]->nama, $str);
+                        $str = str_replace('_var1_', $querymail[0]->company, $str);
                         $str = str_replace('title_agreement', $querymail[0]->po_title, $str);
                         $str = str_replace('no_arf', $querymail[0]->doc_no, $str);
 

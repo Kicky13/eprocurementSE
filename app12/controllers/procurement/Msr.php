@@ -876,7 +876,7 @@ class Msr extends CI_Controller {
         $msrs = $this->msr->alldept($this->session->userdata('DEPARTMENT'));
         $menu = get_main_menu();
 
-        $msr_status = $this->msr->inquiry($this->session->userdata('DEPARTMENT'));
+        $msr_status = $this->msr->inquirynew($this->session->userdata('DEPARTMENT'));
 
         $msr_status_search = [];
         foreach($msr_status as $msr) {

@@ -512,8 +512,38 @@ class Ed extends CI_Controller {
             ], true);
         $data['status'] = $status;
         $ed_no = str_replace('OR', 'OQ', $msr_no);
+
         if($status === true)
         {
+            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+
+            $query = $this->db->query("SELECT t_approval.*, t_msr.title as msr_title, (SELECT m_departement.DEPARTMENT_DESC FROM m_user JOIN m_departement ON m_user.ID_DEPARTMENT = m_departement.ID_DEPARTMENT WHERE m_user.ID_USER = t_msr.create_by ) AS departement, (SELECT m_user.NAME FROM m_user WHERE m_user.ID_USER = t_msr.create_by ) AS requestor, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL as email, m_notic.TITLE AS title_email, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close
+            FROM t_approval
+            LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
+            LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+            LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+            LEFT JOIN m_notic ON m_notic.ID = 52
+            LEFT JOIN t_msr ON t_msr.msr_no = t_approval.data_id
+            WHERE data_id = '" . $msr_no . "' AND m_approval_id in (8,9,10,11,12) AND m_approval.urutan = 2");
+
+            $data_replace = $query->result();
+
+            $str = $data_replace[0]->open;
+            $str = str_replace('_var1_', $data_replace[0]->msr_title, $str);
+            $str = str_replace('_var4_', $data_replace[0]->data_id, $str);
+            $str = str_replace('_var2_', $data_replace[0]->requestor, $str);
+            $str = str_replace('_var3_', $data_replace[0]->departement, $str);
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title_email,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+
+            $data['dest'][] = $data_replace[0]->email;
+            $flag = $this->M_sendmail->sendMail($data);
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit_with_number', array('no' => $ed_no)),
                 'type' => 'success'
@@ -600,22 +630,28 @@ class Ed extends CI_Controller {
         if($this->db->trans_status() === true)
         {
             $this->db->trans_commit();
-            $template = $this->db->where('ID', 87)->get('m_notic')->result();
+            $template = $this->db->query("SELECT ed.msr_no, ed.subject, vnd.ID_VENDOR, vnd.NAMA, n.TITLE, n.OPEN_VALUE, n.CLOSE_VALUE FROM t_bl_detail bl
+            JOIN t_eq_data ed ON ed.msr_no = bl.msr_no
+            JOIN m_vendor vnd ON vnd.ID = bl.vendor_id
+            JOIN m_notic n ON n.ID = 87
+            WHERE bl.msr_no = '" . $data['msr_no'] . "'")->result();
             $img1 = '';
             $img2 = '';
+            $ed = str_replace('R', 'Q', $template[0]->msr_no);
+            $str = $template[0]->OPEN_VALUE;
+            $str = str_replace('_var1_', $template[0]->subject, $str);
+            $str = str_replace('_var2_', $ed, $str);
+
             $emailData = array(
                 'img1' => $img1,
                 'img2' => $img2,
                 'title' => $template[0]->TITLE,
-                'open' => $template[0]->OPEN_VALUE,
+                'open' => $str,
                 'close' => $template[0]->CLOSE_VALUE
             );
-            foreach($this->db->where('msr_no',$data['msr_no'])->get('t_bl_detail')->result() as $key => $value){
-                $vendor = $this->db->where('ID',$value->vendor_id)->get('m_vendor')->row();
-                $lastquery = $this->db->last_query();
-                $emailData['dest'][] = $vendor->ID_VENDOR;
+            foreach($template as $key => $value){
+                $emailData['dest'][] = $value->ID_VENDOR;
             }
-            $call = $this->db->where('msr_no',$data['msr_no'])->get('t_bl_detail')->result();
             $flag = $this->M_sendmail->sendMail($emailData);
             $response = array(
                 'query' => $flag,

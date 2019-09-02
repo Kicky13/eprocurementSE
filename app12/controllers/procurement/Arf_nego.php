@@ -88,7 +88,7 @@ class Arf_nego extends CI_Controller {
                 $data_replace = $query->result();
 
                 $str = $data_replace[0]->open;
-                $str = str_replace('no_arf', $data_replace[0]->po_no, $str);
+                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
                 $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
                 $data = array(
                     'img1' => $img1,
@@ -97,8 +97,8 @@ class Arf_nego extends CI_Controller {
                     'open' => $str,
                     'close' => $data_replace[0]->close
                 );
-                $data['dest'][0] = $data_replace[0]->email;
-                $flag = $this->M_sendMail->sendMail($data);
+                $data['dest'][] = $data_replace[0]->email;
+                $flag = $this->M_sendmail->sendMail($data);
                 echo json_encode(['status'=>true,'msg'=>'Negotiation Submitted']);
             }
             else

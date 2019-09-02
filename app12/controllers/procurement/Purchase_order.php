@@ -2402,8 +2402,8 @@ class Purchase_order extends CI_Controller
     soapenv:mustUnderstand="1">
         <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
         xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:Username>SCM</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
+            <wsse:Username>BSV01</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">interop</wsse:Password>
         </wsse:UsernameToken>
     </wsse:Security>
 </soapenv:Header>
@@ -2506,6 +2506,7 @@ class Purchase_order extends CI_Controller
               echo "Execution Berhasil - insert PO ".$req_no." at ".date("Y-m-d H:i:s");
               $query_update = $this->db->query("update i_sync set isclosed=1,updatedate=now() where doc_type='po' and doc_no='".$req_no."' and isclosed=0");
             }else{
+                echo $xml_post_string;
               echo "Execution Gagal - insert PO at ".date("Y-m-d H:i:s").'-'.$error_msg.'-'.$curl_errno.'-'.$http_status;
             }
     }

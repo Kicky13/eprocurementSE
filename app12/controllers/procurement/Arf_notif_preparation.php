@@ -587,8 +587,6 @@ class Arf_notif_preparation extends CI_Controller {
     }
 
     public function send_data() {
-        echo json_encode($this->input->post());
-        die();
         $po = stripslashes($this->input->post('po'));
         $amd = stripslashes($this->input->post('amd'));
         $notif = stripslashes($this->input->post('notif'));

@@ -91,6 +91,12 @@
                           </div>
                         </div>
                         <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Long Description</label>
+                            <textarea class="form-control" name="long_description" id="long_description" rows="3"><?=$row->long_description?></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
                           <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Kembali</a>
                           <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Update & Approve</button>
                           <!-- <button id="btn-reject" class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button> -->
@@ -134,7 +140,7 @@
     $("#wo_type_id").attr("disabled",'')
     <?php if($row->status == '05' or $row->status == '91' or isset($user_creator) or $this->input->get('all')): ?>
       $("#btn-approve,#btn-reject").hide()
-      $("#hazard,#priority,#wr_description,#photo,#req_finish_date,#parent_id").attr("disabled","")
+      $("#hazard,#priority,#wr_description,#photo,#req_finish_date,#parent_id,#long_description").attr("disabled","")
     <?php endif;?>
     $("#frm-bled").steps({
       headerTag: "h6",

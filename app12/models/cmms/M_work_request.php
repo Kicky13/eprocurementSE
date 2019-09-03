@@ -4,9 +4,13 @@ class M_work_request extends CI_Model {
   
   protected $table = 'cmms_wr';
   protected $table_approval = 'cmms_wr_approval';
-
+  protected $long_desc_table = 'F00165';
+  protected $long_desc_column = "gdobnm, gdtxky, gdmoseqn, gdgtmotype, gduser, gdupmj, gdgtitnm, gdtxft, gdgtfilenm, gdgtfutm1, gdgtfutm2, gdgtfuts1, gdgtfuts2, gdgtfuts3, gdgtfuts4, gdlngp, gdqunam, gdtday";
+  protected $long_desc_values = "'GT4801A',wr_no,1,0,'BSV01',119240,'Text1',
+utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line}'";
   public function __construct() {
     parent::__construct();
+    $this->dbo = $this->load->database('oracle', true);
     $user = user();
     $this->user = $user;
     if (isset($user->ROLES)) {
@@ -209,5 +213,46 @@ class M_work_request extends CI_Model {
   public function approve($data='')
   {
     $this->db->where("id",$data['id'])->update($this->table_approval, ['status'=>$data['status'], 'description'=>$data['description'], 'user_approval_id'=>$this->session->userdata('ID_USER'), 'updated_by'=>$this->session->userdata('ID_USER')]);
+  }
+  /*insert into F00165(gdobnm, gdtxky, gdmoseqn, gdgtmotype, gduser, gdupmj, gdgtitnm, gdtxft, gdgtfilenm, gdgtfutm1, gdgtfutm2, gdgtfuts1, gdgtfuts2, gdgtfuts3, gdgtfuts4, gdlngp, gdqunam, gdtday ) 
+values ('GT4801A',19000056,1,0,'BSV01',119240,'Text1',
+utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line1\par deskripsi_line2\par deskripsi_line3\par deskripsi_line_seterusnya\par}')
+,' ',0,0,' ',' ',' ', ' ',' ',' ',112236);*/
+  public function insert_long_desc_jde($data='')
+  {
+    $this->dbo->trans_begin();
+    $long_desc_values = $this->long_desc_values;
+    $long_desc_values = str_replace('wr_no', $data['wr_no'], $long_desc_values);
+    $long_desc_values = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']), $long_desc_values);
+    $query = "insert into {$this->long_desc_table} ({$this->long_desc_column}) values ($long_desc_values)";
+    $this->dbo->query($query);
+    if($this->dbo->trans_status() === true)
+    {
+      $this->dbo->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->dbo->trans_rollback();
+      return false;
+    }
+  }
+  public function update_long_desc_jde($data='')
+  {
+    $this->dbo->trans_begin();
+    $sets = "gdtxft = utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line}'";
+    $sets = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']), $sets);
+    $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' ";
+    $this->dbo->query($query);
+    if($this->dbo->trans_status() === true)
+    {
+      $this->dbo->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->dbo->trans_rollback();
+      return false;
+    }
   }
 }

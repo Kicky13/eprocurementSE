@@ -16,11 +16,11 @@ class Wr extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    $this->load->model('cmms/M_work_request', 'wr');
-    $this->load->model('cmms/M_wo_jde', 'wo');
+    // $this->load->model('cmms/M_work_request', 'wr');
+    // $this->load->model('cmms/M_wo_jde', 'wo');
     $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->model('cmms/M_failure_description', 'failure');
-    $this->load->model('cmms/M_equipment','mod');
+    // $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
@@ -133,10 +133,10 @@ class Wr extends CI_Controller {
 
   public function create($FAAAID='')
   {
-    if(!can_create_msr())
+    if(!company_cmms())
     {
       $this->session->set_flashdata('message', array(
-          'message' => "You dont have permission to create this WR",
+          'message' => "Please setup company first",
           'type' => 'danger'
       ));
       redirect(base_url('home'));
@@ -205,7 +205,16 @@ class Wr extends CI_Controller {
           $send_wsdl = $this->send_wsdl($data);
           if($send_wsdl)
           {
-            echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+            /*insert long desc*/
+            $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
+            if($insert_long_desc_jde)
+            {
+              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+            }
+            else
+            {
+              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+            }
           }
           else
           {
@@ -265,7 +274,16 @@ class Wr extends CI_Controller {
       $send_wsdl = $this->send_wsdl_update($data);
       if($send_wsdl)
       {
-        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE']);
+        /*update long desc*/
+        $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
+        if($update_long_desc_jde)
+        {
+          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE']);
+        }
+        else
+        {
+          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+        }
       }
       else
       {

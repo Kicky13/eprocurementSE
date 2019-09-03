@@ -89,6 +89,12 @@
                           </div>
                         </div>
                         <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Long Description</label>
+                            <textarea class="form-control" name="long_description" id="long_description" rows="3"></textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-12">
                           <button class="btn btn-primary" type="button" onclick="creaeteWrClick()">Create</button>
                         </div>
                       </div>

@@ -354,19 +354,21 @@ class Approval extends CI_Controller
                     }
                 } else {
                     //Notification For Bid Supplier
-                    $query = $this->db->query("SELECT DISTINCT c.TITLE,c.OPEN_VALUE,c.CLOSE_VALUE,t.company_desc,t.title as titlemsr,b.msr_no,m.id_vendor as recipient from t_bl_detail b
-                            join t_msr t on t.msr_no=b.msr_no
-                            join m_vendor m on m.ID=b.vendor_id
-                            join m_user u on u.id_user=t.create_by
-                            join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                            join m_notic c on c.ID=38
-                            where b.msr_no='" . $data["data_id"] . "' ");
+                    $query = $this->db->query("SELECT DISTINCT notif.OPEN_VALUE, notif.CLOSE_VALUE, notif.TITLE, msr.company_desc, ed.subject AS titlemsr, ed.msr_no, vnd.ID_VENDOR AS recipient FROM t_bl_detail bl
+                    JOIN t_eq_data ed ON bl.msr_no = ed.msr_no
+                    JOIN t_msr msr ON msr.msr_no = ed.msr_no
+                    JOIN m_user us ON us.ID_USER = ed.created_by
+                    JOIN m_vendor vnd ON vnd.ID = bl.vendor_id
+                    JOIN m_notic notif ON notif.ID = 38
+                    WHERE ed.msr_no = '" . $data["data_id"] . "' ");
 
                     $data_replace = $query->result();
 
                     $str = $data_replace[0]->OPEN_VALUE;
                     $str = str_replace('_var1_', $data_replace[0]->company_desc, $str);
                     $str = str_replace('_var2_', $data_replace[0]->titlemsr, $str);
+                    $str = str_replace('_var3_', str_replace('R', 'Q', $data_replace[0]->msr_no), $str);
+
                     $data = array(
                         'img1' => $img1,
                         'img2' => $img2,

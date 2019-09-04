@@ -98,23 +98,31 @@
       var form = $("#frm-bled")[0];
       var data = new FormData(form);
       var url = '<?=base_url('cmms/equipment/store_image')?>';
-      $.ajax({
-        type: "POST",
-        enctype: 'multipart/form-data',
-        url: url,
-        data: data,
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 600000,
-        success: function (data) {
-          $("#dt-picture").html(data)
-        },
-        error: function (e) {
-          alert('fail, try again')
-        }
-      });
-      return false; // avoid to execute the actual submit of the form.*/
+      if($("#image_picture").val())
+      {
+        $.ajax({
+          type: "POST",
+          enctype: 'multipart/form-data',
+          url: url,
+          data: data,
+          processData: false,
+          contentType: false,
+          cache: false,
+          timeout: 600000,
+          success: function (data) {
+            $("#dt-picture").html(data)
+            $("#image_picture").val('')
+          },
+          error: function (e) {
+            alert('fail, try again')
+          }
+        });
+        return false; // avoid to execute the actual submit of the form.*/
+      }
+      else
+      {
+        alert('Attachment required')
+      }
     });
 	})
   function deleteImageClick(ud){

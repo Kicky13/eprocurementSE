@@ -16,11 +16,11 @@ class Wr extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    // $this->load->model('cmms/M_work_request', 'wr');
-    // $this->load->model('cmms/M_wo_jde', 'wo');
+    $this->load->model('cmms/M_work_request', 'wr');
+    $this->load->model('cmms/M_wo_jde', 'wo');
     $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->model('cmms/M_failure_description', 'failure');
-    // $this->load->model('cmms/M_equipment','mod');
+    $this->load->model('cmms/M_equipment','mod');
     $this->load->model('cmms/M_equipment_picture','picture');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();

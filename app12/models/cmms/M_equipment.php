@@ -45,6 +45,10 @@ class M_equipment extends CI_Model {
     		/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
     		$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
     	}
+      else
+      {
+        $addParents = " START WITH FANUMB = 123 CONNECT BY PRIOR FANUMB = FAAAID ";
+      }
     	/*get FANUMB*/
     }
     if($this->input->post('DSPARENTS'))

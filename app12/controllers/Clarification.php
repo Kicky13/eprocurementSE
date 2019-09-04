@@ -180,12 +180,12 @@ class Clarification extends CI_Controller {
         $msr = str_replace('Q', 'R', $this->input->post('thread_id'));
 
         $content = $this->db->where('ID', '81')->get('m_notic')->result();
-        $content = $this->db->query("SELECT m_notic.TITLE, m_notic.OPEN_VALUE, m_notic.CLOSE_VALUE, t_eq_data.subject AS edtitle FROM t_eq_data
+        $content = $this->db->query("SELECT t_eq_data.msr_no, m_notic.TITLE, m_notic.OPEN_VALUE, m_notic.CLOSE_VALUE, t_eq_data.subject AS edtitle FROM t_eq_data
         JOIN m_notic ON m_notic.ID = 81
         WHERE t_eq_data.msr_no = '" . $msr . "'")->result();
         $str = $content[0]->OPEN_VALUE;
         $str = str_replace('_var1_', $content[0]->edtitle, $str);
-        $str = str_replace('_var2_', $this->input->post('thread_id'), $str);
+        $str = str_replace('_var2_', str_replace('R', 'Q', $content[0]->msr_no), $str);
 
         $emailData = array(
             'img1' => $img1,

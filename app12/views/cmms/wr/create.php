@@ -71,7 +71,7 @@
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
-                            <input class="form-control" type="file" id="photo" name="photo">
+                            <input type="file" id="photo" name="photo">
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>

@@ -3,7 +3,7 @@
 	<label class="col-md-2">Picture</label>
 	<div class="col-md-3">
 		
-	<input type="file" name="image" id="image_picture" class="form-control">
+	<input type="file" name="image" id="image_picture">
 	</div>
 	<div class="col-md-2">
 		

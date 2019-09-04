@@ -71,7 +71,7 @@
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
-                            <input type="file" id="photo" name="photo">
+                            <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
                             <a class="btn btn-info btn-sm" target="_blank" href="<?= base_url('upload/wr/'.$row->photo) ?>">View Photo</a>
                           </div>
                           <div class="form-group">

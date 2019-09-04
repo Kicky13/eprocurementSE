@@ -246,7 +246,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     $hazard = " HAZARD:".$data['hazard']."\par";
     $long_desc_values .= $hazard;
     $sets = str_replace('deskripsi_line', $long_description, $sets);
-    $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' ";
+    $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' and gdobnm = 'GT4801A' and gdgtitnm = 'Text1' ";
     $this->dbo->query($query);
     if($this->dbo->trans_status() === true)
     {

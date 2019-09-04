@@ -233,7 +233,7 @@ class Purchase_order extends CI_Controller
                     $data_role = $query->result();
 					
                     $res = $data_role[0]->open;
-                    $res = str_replace('[title]', $data_role[0]->subject, $res);
+                    $res = str_replace('[title]', $this->input->post("title"), $res);
                     $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
 
                     $data2 = array(

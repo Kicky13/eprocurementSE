@@ -42,7 +42,7 @@
             <priority><?= $priority ?></priority>
             <!--Optional:-->
            <status>05</status>
-            <statusComment><?= $hazard ?></statusComment>
+            <statusComment></statusComment>
          </planning>        
          <processing>
             <!--Optional:-->

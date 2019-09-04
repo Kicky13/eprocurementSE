@@ -224,6 +224,8 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     $long_desc_values = $this->long_desc_values;
     $long_desc_values = str_replace('wr_no', $data['wr_no'], $long_desc_values);
     $long_desc_values = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']), $long_desc_values);
+    $hazard = " HAZARD:".$data['hazard']."\par";
+    $long_desc_values .= $hazard;
     $query = "insert into {$this->long_desc_table} ({$this->long_desc_column}) values ($long_desc_values)";
     $this->dbo->query($query);
     if($this->dbo->trans_status() === true)
@@ -241,7 +243,10 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
   {
     $this->dbo->trans_begin();
     $sets = "gdtxft = utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line}'";
-    $sets = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']), $sets);
+    $long_description = cmms_long_desc_extract($data['long_description']);
+    $hazard = " HAZARD:".$data['hazard']."\par";
+    $long_desc_values .= $hazard;
+    $sets = str_replace('deskripsi_line', $long_description, $sets);
     $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' ";
     $this->dbo->query($query);
     if($this->dbo->trans_status() === true)

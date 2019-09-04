@@ -85,7 +85,7 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <input class="form-control" name="hazard" id="hazard" maxlength="30">
+                            <input class="form-control" name="hazard" id="hazard" maxlength="100">
                           </div>
                         </div>
                         <div class="col-md-12">

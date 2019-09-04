@@ -98,3 +98,6 @@ define('t_jabatan_user_primary', 2); // field user_role di tabel t_jabatan
 define('t_jabatan_user_secondary', 3); // field user_role di tabel t_jabatan
 define('user_primary', 26); // field user_role di tabel t_jabatan
 define('user', 41); // user as usual 
+define('operator_cmms', 100008);
+define('department_cmms', 100010);
+define('supervior_cmms', 100009);

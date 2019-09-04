@@ -223,9 +223,8 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     $this->dbo->trans_begin();
     $long_desc_values = $this->long_desc_values;
     $long_desc_values = str_replace('wr_no', $data['wr_no'], $long_desc_values);
-    $long_desc_values = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']), $long_desc_values);
     $hazard = " HAZARD:".$data['hazard']."\par";
-    $long_desc_values .= $hazard;
+    $long_desc_values = str_replace('deskripsi_line', cmms_long_desc_extract($data['long_description']).$hazard, $long_desc_values);
     $query = "insert into {$this->long_desc_table} ({$this->long_desc_column}) values ($long_desc_values)";
     $this->dbo->query($query);
     if($this->dbo->trans_status() === true)

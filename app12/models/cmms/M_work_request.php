@@ -7,7 +7,7 @@ class M_work_request extends CI_Model {
   protected $long_desc_table = 'F00165';
   protected $long_desc_column = "gdobnm, gdtxky, gdmoseqn, gdgtmotype, gduser, gdupmj, gdgtitnm, gdtxft, gdgtfilenm, gdgtfutm1, gdgtfutm2, gdgtfuts1, gdgtfuts2, gdgtfuts3, gdgtfuts4, gdlngp, gdqunam, gdtday";
   protected $long_desc_values = "'GT4801A',wr_no,1,0,'BSV01',119240,'Text1',
-utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line}'),' ',0,0,' ',' ',' ', ' ',' ',' ',112236";
+utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_line}'),' ',0,0,' ',' ',' ', ' ',' ',' ',112236";
   public function __construct() {
     parent::__construct();
     $this->dbo = $this->load->database('oracle', true);
@@ -241,7 +241,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
   public function update_long_desc_jde($data='')
   {
     $this->dbo->trans_begin();
-    $sets = "gdtxft = utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswiss\fprq2\fcharset0 Courier New;}} deskripsi_line}'";
+    $sets = "gdtxft = utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl deskripsi_line}'";
     $long_description = cmms_long_desc_extract($data['long_description']);
     $hazard = " HAZARD:".$data['hazard']."\par";
     $long_desc_values .= $hazard;

@@ -622,6 +622,10 @@ class M_bl extends CI_Model {
               {
                   $this->db->where_in('t_msr.msr_no',$getAssignmentAgreement);
               }
+              else
+              {
+                $this->db->where('t_msr.msr_no','abrakadabra');
+              }
 
           }
       }

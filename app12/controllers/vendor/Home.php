@@ -208,14 +208,14 @@ class Home extends CI_Controller {
 			array_push($get_task_baru,$row->id);
 		} 
         /*cmms tasks start*/
-        $msrVerify['outstanding_wo_report'] = $this->db->where('status','01')->get('cmms_wr')->num_rows();
+        /*$msrVerify['outstanding_wo_report'] = $this->db->where('status','01')->get('cmms_wr')->num_rows();
         if(in_array(supervior_cmms, $roles))
         {
           $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
           $q = "select user_id from t_jabatan where parent_id = ($q) ";
           $sql = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
           $msrVerify['suprevisor_task'] = $this->db->query($sql)->num_rows();
-        }
+        }*/
         /*cmms tasks end*/
         $menu_task = array();
         foreach ($this->db->where('parent', 0)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_group_menu_task) {

@@ -117,6 +117,10 @@ class Wr extends CI_Controller {
         {
           $x = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
         }
+        if($value->desc1 == 'status')
+        {
+          $x = "<a href='#' onclick=\"getCmmsLogHistory('".$x."')\">$x</a>";
+        }
         $row[] = $x;
       }
       $data[] = $row;
@@ -203,23 +207,29 @@ class Wr extends CI_Controller {
         if($store)
         {
           $send_wsdl = $this->send_wsdl($data);
+          $msg = '';
           if($send_wsdl)
           {
             /*insert long desc*/
             $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
             if($insert_long_desc_jde)
             {
-              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+              $msg = 'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success';
+              echo json_encode(['status'=>true,'msg'=>$msg]);
             }
             else
             {
-              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+              $msg = 'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success, Long Description Is Failed to JDE';
+              echo json_encode(['status'=>true,'msg'=>$msg, 'sql'=>$this->db->last_query()]);
             }
           }
           else
           {
-            echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment']);
+            $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment';
+            echo json_encode(['status'=>true,'msg'=>$msg]);
           }
+          /*$module_kode, $data_id, $description, $keterangan = ''*/
+          cmms_log_history('wr',$data['wr_no'],'create',$msg);
         }
         else
         {
@@ -271,6 +281,7 @@ class Wr extends CI_Controller {
     $update = $this->wr->update_and_approve($data);
     if($update)
     {
+      $msg = '';
       $send_wsdl = $this->send_wsdl_update($data);
       if($send_wsdl)
       {
@@ -278,17 +289,21 @@ class Wr extends CI_Controller {
         $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
         if($update_long_desc_jde)
         {
-          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE']);
+          $msg = 'WR '.$data['wr_no'].' Has Been Update & Send JDE';
+          echo json_encode(['status'=>true,'msg'=>$msg]);
         }
         else
         {
-          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+          $msg = 'WR '.$data['wr_no'].' Has Been Update & Send JDE, Long Description Is Failed to JDE';
+          echo json_encode(['status'=>true,'msg'=>$msg, 'sql'=>$this->db->last_query()]);
         }
       }
       else
       {
-        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE is Failed, you can try in another moment']);
+        $msg = 'WR '.$data['wr_no'].' Has Been Update & Send JDE is Failed, you can try in another moment';
+        echo json_encode(['status'=>true,'msg'=>$msg]);
       }
+      cmms_log_history('wr',$data['wr_no'],'update-approve',$msg);
     }
     else
     {
@@ -571,15 +586,19 @@ class Wr extends CI_Controller {
     $store  = $this->wr->reject($data);
     if($store)
     {
+      $msg = '';
       $send_wsdl = $this->send_wsdl_reject($data);
       if($send_wsdl)
       {
-        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+        $msg = 'WR '.$data['wr_no'].'  Has Been Rejected & Send to JDE is Success';
+        echo json_encode(['status'=>true,'msg'=>$msg]);
       }
       else
       {
-        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment']);
+        $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE is Failed, you can try in another moment';
+        echo json_encode(['status'=>true,'msg'=>$msg]);
       }
+      cmms_log_history('wr',$data['wr_no'],'reject',$msg);
     }
     else
     {

@@ -111,8 +111,7 @@ class Award extends CI_Controller {
         LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
         LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
         JOIN m_notic ON m_notic.ID = 67
-        WHERE data_id = "' . $this->input->post('msr_no') . '" AND m_approval.module_kode = "award"  
-        ORDER BY `user_nama` ASC');
+        WHERE t_approval.data_id = "' . $this->input->post('msr_no') . '" AND t_approval.m_approval_id = 8');
 
         $data_replace = $query->result();
 

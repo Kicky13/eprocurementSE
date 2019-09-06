@@ -586,11 +586,11 @@
             n = n.replace(/\,/g, '');
             return n;
         }
-        /*var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
         $("#latest-agreement-value").html(Localization.number(latest_agreement_value))
         $("#new-agreement-value").html(new_agreement)
-        $("#amendment_value").text($("#additonal_value").text())*/
+        $("#amendment_value").text($("#additonal_value").text())
 		function get_ajax_last_agreement() {
             $.ajax({
                 type:'post',

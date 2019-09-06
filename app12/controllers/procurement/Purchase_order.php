@@ -196,6 +196,7 @@ class Purchase_order extends CI_Controller
                 $this->db->trans_complete();
 
 
+
                 if ($this->db->trans_status() !== FALSE) {
                     // generate approval flow!!!
                     try {
@@ -222,27 +223,18 @@ class Purchase_order extends CI_Controller
 //                        join m_notic n on n.id=42
 //                        join t_msr t on t.msr_no=b.msr_no
 //                        where b.id=".$po_id);
-                    $query = $this->db->query("SELECT tp.urutan urutan, mp.module_kode, msr.title subject, tp.data_id msr_no, us.EMAIL email, us.NAME nama, notif.TITLE title, notif.OPEN_VALUE open, notif.CLOSE_VALUE close
-                    FROM t_approval tp
-                    LEFT JOIN t_purchase_order po ON po.msr_no = tp.data_id
-                    LEFT JOIN t_msr msr ON msr.msr_no = po.msr_no
-                    LEFT JOIN m_approval mp ON tp.m_approval_id = mp.id
-                    LEFT JOIN m_user_roles usr ON mp.role_id = usr.ID_USER_ROLES
-                    LEFT JOIN m_user us ON us.ID_USER = tp.created_by
-                    LEFT JOIN m_notic notif ON notif.ID = 42
-                    WHERE po.id = " . $po_id . " AND ((tp.urutan = 1 AND mp.module_kode = 'msr') OR (tp.urutan = 2 AND mp.module_kode = 'msr_spa'))
-                    GROUP BY urutan, mp.module_kode, subject, msr_no, email, nama, title, open, close");
-
-                    $primary = $this->db->query("SELECT * from t_purchase_order po
-                    JOIN t_msr msr ON po.msr_no = msr.msr_no
-                    JOIN m_user us ON us.ID_USER = msr.create_by
-                    WHERE po.id = " . $po_id)->row();
+                    $query = $this->db->query("SELECT ed.msr_no, us.EMAIL as email, us.NAME AS user, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, ed.subject AS subject FROM t_bl_detail bl
+                    JOIN t_approval ap ON ap.data_id = bl.msr_no
+                    JOIN t_eq_data ed ON bl.msr_no = ed.msr_no
+                    JOIN m_user us ON us.ID_USER = ap.created_by
+                    JOIN m_notic n ON n.ID = 42
+                    WHERE bl.id = " . $bl_detail_id . " AND ap.m_approval_id = 8");
 
                     $data_role = $query->result();
 					
                     $res = $data_role[0]->open;
-                    $res = str_replace('[title]', $data_role[0]->subject, $res);
-                    $res = str_replace('[no]', $data_role[0]->msr_no, $res);
+                    $res = str_replace('[title]', $this->input->post("title"), $res);
+                    $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
 
                     $data2 = array(
                         'img1' => $img1,
@@ -255,7 +247,6 @@ class Purchase_order extends CI_Controller
                     foreach ($res as $k => $v) {
                         $data2['dest'][] = $v->email;
                     }
-                    $data2['dest'][] = $primary->EMAIL;
 
                     $flag = $this->M_sendmail->sendMail($data2);
                     // End Email
@@ -811,13 +802,12 @@ class Purchase_order extends CI_Controller
 
                     $data_succes = $query->result();
 
-                    $query2 = $this->db->query('SELECT bl.bled_no AS doc_no, bl.title AS doc_title, bl.msr_no AS msr_no, msr.dpoint_desc AS company, vnd.ID_VENDOR AS email, vnd.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl bl
-                    JOIN t_bl_detail bld ON bl.msr_no = bld.msr_no
-                    JOIN t_msr msr ON bl.msr_no = msr.msr_no
-                    JOIN m_vendor vnd ON bld.vendor_id = vnd.ID
-                    JOIN m_notic notif ON notif.ID = 41
-                    WHERE bl.msr_no = "' . $data_succes[0]->msr_no . '"
-                    AND bld.awarder = 0');
+                    $query2 = $this->db->query('SELECT vnd.NAMA, vnd.ID_VENDOR AS email, ed.msr_no, ed.subject, n.TITLE AS title, n.CLOSE_VALUE AS close, n.OPEN_VALUE AS open FROM t_purchase_order po
+                    JOIN t_bl_detail bl ON bl.msr_no = po.msr_no
+                    JOIN t_eq_data ed ON ed.msr_no = po.msr_no
+                    JOIN m_vendor vnd ON vnd.ID = bl.vendor_id
+                    JOIN m_notic n ON n.ID = 41
+                    WHERE bl.awarder = 0 AND po.id = ' . $id);
 
                     $data_unsuccess = $query2->result();
 
@@ -837,9 +827,8 @@ class Purchase_order extends CI_Controller
 
                     if (count($data_unsuccess) > 0) {
                         $rep = $data_unsuccess[0]->open;
-                        $rep = str_replace('[_var1_]', $data_unsuccess[0]->company, $rep);
-                        $rep = str_replace('[title]', $data_unsuccess[0]->doc_title, $rep);
-                        $rep = str_replace('[no]', $data_unsuccess[0]->doc_no, $rep);
+                        $rep = str_replace('[ed_no]', str_replace('R', 'Q', $data_unsuccess[0]->msr_no), $rep);
+                        $rep = str_replace('[ed_title]', $data_unsuccess[0]->subject, $rep);
 
                         $unsuccess = array(
                             'img1' => $img1,
@@ -856,7 +845,7 @@ class Purchase_order extends CI_Controller
                         $unsuccessmail = $this->M_sendmail->sendMail($unsuccess);
                     }
 
-                    $successmail = $this->M_sendmail->sendMail($success);
+//                    $successmail = $this->M_sendmail->sendMail($success);
 
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit'),
@@ -2411,8 +2400,8 @@ class Purchase_order extends CI_Controller
     soapenv:mustUnderstand="1">
         <wsse:UsernameToken xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
         xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-            <wsse:Username>SCM</wsse:Username>
-                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">abpberjaya</wsse:Password>
+            <wsse:Username>BSV01</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">interop</wsse:Password>
         </wsse:UsernameToken>
     </wsse:Security>
 </soapenv:Header>
@@ -2515,6 +2504,7 @@ class Purchase_order extends CI_Controller
               echo "Execution Berhasil - insert PO ".$req_no." at ".date("Y-m-d H:i:s");
               $query_update = $this->db->query("update i_sync set isclosed=1,updatedate=now() where doc_type='po' and doc_no='".$req_no."' and isclosed=0");
             }else{
+                echo $xml_post_string;
               echo "Execution Gagal - insert PO at ".date("Y-m-d H:i:s").'-'.$error_msg.'-'.$curl_errno.'-'.$http_status;
             }
     }

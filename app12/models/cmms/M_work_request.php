@@ -241,10 +241,10 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
   public function update_long_desc_jde($data='')
   {
     $this->dbo->trans_begin();
-    $sets = "gdtxft = utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl deskripsi_line}'";
+    $sets = "gdtxft = utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_line}')";
     $long_description = cmms_long_desc_extract($data['long_description']);
     $hazard = " HAZARD:".$data['hazard']."\par";
-    $long_desc_values .= $hazard;
+    $long_description .= $hazard;
     $sets = str_replace('deskripsi_line', $long_description, $sets);
     $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' and gdobnm = 'GT4801A' and gdgtitnm = 'Text1' ";
     $this->dbo->query($query);

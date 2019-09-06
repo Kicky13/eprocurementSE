@@ -34,7 +34,7 @@
                           <div class="form-group">
                             <label>Equipment Number</label>
                             <input class="form-control" readonly="" id="eq_number" name="eq_number" value="<?=$row->eq_number?>">
-                            <input type="hidden" readonly="" id="wr_no" name="wr_no" value="">
+                            <input type="hidden" readonly="" id="wr_no" name="wr_no" value="<?=$row->wr_no?>">
                             <input type="hidden" readonly="" id="faaaid" name="faaaid" value="<?=$row->faaaid?>">
                             <input type="hidden" readonly="" id="fanumb" name="fanumb" value="<?=$row->fanumb?>">
                           </div>

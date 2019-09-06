@@ -1246,13 +1246,13 @@ function company_cmms($param=0)
 }
 if (!function_exists('cmms_log_history'))
 {
-    function cmms_log_history($module_kode, $data_id, $description, $keterangan = '') {
+    function cmms_log_history($module_kode, $data_id, $description1, $description2 = '') {
         $ci =& get_instance();
         $ci->load->model('cmms/M_log');
         $created_at = today_sql();
         $created_by = $ci->session->userdata('ID_USER') ?: $ci->session->userdata('ID');
 
-        $ci->M_log->store(compact('module_kode', 'data_id', 'description', 'keterangan',
+        $ci->M_log->store(compact('module_kode', 'data_id', 'description1', 'description2',
             'created_at', 'created_by'));
     }
 }

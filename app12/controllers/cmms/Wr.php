@@ -119,7 +119,7 @@ class Wr extends CI_Controller {
         }
         if($value->desc1 == 'status')
         {
-          $x = "<a href='#' onclick=\"getCmmsLogHistory('".$x."')\">$x</a>";
+          $x = "<a href='#' onclick=\"getCmmsLogHistory('".$rows->wr_no."')\">$x</a>";
         }
         $row[] = $x;
       }

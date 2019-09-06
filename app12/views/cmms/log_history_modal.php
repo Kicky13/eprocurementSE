@@ -5,7 +5,7 @@
       <div class="modal-header">
         <h4 class="modal-title" id="myModalLabel">Log History</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body row" style="font-size: 13px">
         <div class="table-responsive">
         	<table class="table">
 						<thead>
@@ -47,7 +47,7 @@
 	$no = 1;
 	foreach ($rows as $row) {
 		$user = user($row->created_by);
-		$date = dateToIndo($row->created_at);
+		$date = dateToIndo($row->created_at, false, true);
 		$action = $row->description1;
 		$desc = $row->description2;
 		echo "<tr><td>$no</td><td>$user->NAME</td><td>$date</td><td>$action</td><td>$desc</td></tr>";

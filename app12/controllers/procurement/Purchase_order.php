@@ -233,7 +233,7 @@ class Purchase_order extends CI_Controller
                     $data_role = $query->result();
 					
                     $res = $data_role[0]->open;
-                    $res = str_replace('[title]', $data_role[0]->subject, $res);
+                    $res = str_replace('[title]', $this->input->post("title"), $res);
                     $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
 
                     $data2 = array(
@@ -802,13 +802,12 @@ class Purchase_order extends CI_Controller
 
                     $data_succes = $query->result();
 
-                    $query2 = $this->db->query('SELECT bl.bled_no AS doc_no, bl.title AS doc_title, bl.msr_no AS msr_no, msr.dpoint_desc AS company, vnd.ID_VENDOR AS email, vnd.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl bl
-                    JOIN t_bl_detail bld ON bl.msr_no = bld.msr_no
-                    JOIN t_msr msr ON bl.msr_no = msr.msr_no
-                    JOIN m_vendor vnd ON bld.vendor_id = vnd.ID
-                    JOIN m_notic notif ON notif.ID = 41
-                    WHERE bl.msr_no = "' . $data_succes[0]->msr_no . '"
-                    AND bld.awarder = 0');
+                    $query2 = $this->db->query('SELECT vnd.NAMA, vnd.ID_VENDOR AS email, ed.msr_no, ed.subject, n.TITLE AS title, n.CLOSE_VALUE AS close, n.OPEN_VALUE AS open FROM t_purchase_order po
+                    JOIN t_bl_detail bl ON bl.msr_no = po.msr_no
+                    JOIN t_eq_data ed ON ed.msr_no = po.msr_no
+                    JOIN m_vendor vnd ON vnd.ID = bl.vendor_id
+                    JOIN m_notic n ON n.ID = 41
+                    WHERE bl.awarder = 0 AND po.id = ' . $id);
 
                     $data_unsuccess = $query2->result();
 
@@ -828,9 +827,8 @@ class Purchase_order extends CI_Controller
 
                     if (count($data_unsuccess) > 0) {
                         $rep = $data_unsuccess[0]->open;
-                        $rep = str_replace('[_var1_]', $data_unsuccess[0]->company, $rep);
-                        $rep = str_replace('[title]', $data_unsuccess[0]->doc_title, $rep);
-                        $rep = str_replace('[no]', $data_unsuccess[0]->doc_no, $rep);
+                        $rep = str_replace('[ed_no]', str_replace('R', 'Q', $data_unsuccess[0]->msr_no), $rep);
+                        $rep = str_replace('[ed_title]', $data_unsuccess[0]->subject, $rep);
 
                         $unsuccess = array(
                             'img1' => $img1,
@@ -847,7 +845,7 @@ class Purchase_order extends CI_Controller
                         $unsuccessmail = $this->M_sendmail->sendMail($unsuccess);
                     }
 
-                    $successmail = $this->M_sendmail->sendMail($success);
+//                    $successmail = $this->M_sendmail->sendMail($success);
 
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit'),

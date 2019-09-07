@@ -1256,3 +1256,18 @@ if (!function_exists('cmms_log_history'))
             'created_at', 'created_by'));
     }
 }
+function wr_priority($value='',$all=false)
+{
+  $list = 
+    [
+      1 => 'Uregent Immediate',
+      2 => 'Within 24 Hours',
+      3 => 'Within 3 - 7 Days',
+      4 => 'Requirment Shutdown Work',
+      5 => 'Preventive Maintenance',
+      6 => 'Outage Work',
+    ];
+    if($all)
+      return $list;
+    return $list[$value];
+}

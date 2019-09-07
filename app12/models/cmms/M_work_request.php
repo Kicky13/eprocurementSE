@@ -10,7 +10,7 @@ class M_work_request extends CI_Model {
 utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_line}'),' ',0,0,' ',' ',' ', ' ',' ',' ',112236";
   public function __construct() {
     parent::__construct();
-    $this->dbo = $this->load->database('oracle', true);
+    // $this->dbo = $this->load->database('oracle', true);
     $user = user();
     $this->user = $user;
     if (isset($user->ROLES)) {
@@ -138,6 +138,11 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
 
     $wr_no = $this->find($this->db->insert_id())->wr_no;
     // $this->generate_approval($wr_no);
+    $findSupervisor = $this->findSupervisor();
+    if($findSupervisor)
+    {
+      $this->sendEmail($findSupervisor->EMAIL, $data);
+    }
 
     if($this->db->trans_status() === true)
     {
@@ -256,6 +261,69 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     else
     {
       $this->dbo->trans_rollback();
+      return false;
+    }
+  }
+  public function findSupervisor()
+  {
+    $q = "SELECT EMAIL from m_user where m_user.ID_USER = (select user_id from t_jabatan where id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER')."))";
+    return $this->db->query($q)->row();
+  }
+  public function sendEmail($email='',$data='')
+  {
+    $wr = $this->db->where('CATEGORY','wr_supervisor_approval')->get('cmms_email_notification_setting')->row();
+    if($wr)
+    {
+      if(is_array($data))
+      {
+
+      }
+      else
+      {
+        $data = $this->db->where('wr_no',$data)->get('cmms_wr')->row_array();
+      }
+      if($data)
+      {
+        $userCreated = user()->NAME;
+        $createdAt = dateToIndo($data['created_at']);
+        $wr_priority = wr_priority($data['priority']);
+        $open = $wr->OPEN_VALUE;
+        $close = $wr->CLOSE_VALUE;
+        $title = $wr->TITLE;
+        $open = str_replace('__wrno__', $data['wr_no'], $open);
+        $open = str_replace('__createdby__', $userCreated, $open);
+        $open = str_replace('__createdat__', $createdAt, $open);
+        $open = str_replace('__wrpriority__', $wr_priority, $open);
+        $content['open'] = $open;
+        $content['close'] = $close;
+        $content['title'] = $title;
+        $ctn = '<br>' . $content['open'] . '
+                <br>
+                ' . $content['close'] . '
+                <br>';
+        $data_email['recipient'] = $email;
+        $data_email['subject'] = $content['title'];
+        $data_email['content'] = $ctn;
+        $data_email['ismailed'] = 0;
+        $this->db->trans_begin();
+        $this->db->insert('i_notification', $data_email);
+        if ($this->db->trans_status() === true) {
+          $this->db->trans_commit();
+          return true;
+        } else {
+          $this->db->trans_rollback();
+          return false;
+        }
+      }
+      else
+      {
+        echo "<pre>";
+        echo $this->db->last_query();
+        print_r($data);
+      }
+    }
+    else
+    {
       return false;
     }
   }

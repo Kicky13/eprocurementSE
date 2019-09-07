@@ -198,5 +198,18 @@ class Welcome extends CI_Controller {
         $return = $this->db->query($q)->row();
         print_r($return);
     }
+    public function testing_send_email_cmms($wr_no='19000048')
+    {
+        $this->load->model('cmms/M_work_request', 'mwr');
+        $email = $this->mwr->findSupervisor()->EMAIL;
+        if($this->mwr->sendEmail($email,$wr_no))
+        {
+            echo "Store";
+        }
+        else
+        {
+            echo "Fail";
+        }
+    }
 }
 

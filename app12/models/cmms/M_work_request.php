@@ -11,6 +11,7 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
   public function __construct() {
     parent::__construct();
     $this->dbo = $this->load->database('oracle', true);
+    $this->db_dev_user = $this->load->database('dev_user', true);
     $user = user();
     $this->user = $user;
     if (isset($user->ROLES)) {
@@ -305,20 +306,20 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
         $data_email['subject'] = $content['title'];
         $data_email['content'] = $ctn;
         $data_email['ismailed'] = 0;
-        $this->db->trans_begin();
-        $this->db->insert('i_notification', $data_email);
-        if ($this->db->trans_status() === true) {
-          $this->db->trans_commit();
+        $this->db_dev_user->trans_begin();
+        $this->db_dev_user->insert('i_notification', $data_email);
+        if ($this->db_dev_user->trans_status() === true) {
+          $this->db_dev_user->trans_commit();
           return true;
         } else {
-          $this->db->trans_rollback();
+          $this->db_dev_user->trans_rollback();
           return false;
         }
       }
       else
       {
         echo "<pre>";
-        echo $this->db->last_query();
+        echo $this->db_dev_user->last_query();
         print_r($data);
       }
     }

@@ -292,6 +292,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
         $close = $wr->CLOSE_VALUE;
         $title = $wr->TITLE;
         $open = str_replace('__wrno__', $data['wr_no'], $open);
+        $open = str_replace('__wrdesc__', $data['wr_description'], $open);
         $open = str_replace('__createdby__', $userCreated, $open);
         $open = str_replace('__createdat__', $createdAt, $open);
         $open = str_replace('__wrpriority__', $wr_priority, $open);

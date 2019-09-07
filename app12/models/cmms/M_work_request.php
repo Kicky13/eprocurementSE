@@ -10,7 +10,7 @@ class M_work_request extends CI_Model {
 utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_line}'),' ',0,0,' ',' ',' ', ' ',' ',' ',112236";
   public function __construct() {
     parent::__construct();
-    // $this->dbo = $this->load->database('oracle', true);
+    $this->dbo = $this->load->database('oracle', true);
     $user = user();
     $this->user = $user;
     if (isset($user->ROLES)) {

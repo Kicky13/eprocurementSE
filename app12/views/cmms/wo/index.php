@@ -72,6 +72,33 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="my-modal-wo-detail" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>WO Detail - CMMS08</h4>
+      </div>
+      <div id="result-modal-wo-detail" class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function openModalWoDetail(wono) {
+    $.ajax({
+      type:'post',
+      url:"<?= base_url('cmms/equipment/wo_detail') ?>/"+wono,
+      success:function(e){
+        $("#result-modal-wo-detail").html(e)
+        $("#my-modal-wo-detail").modal('show')
+      }
+    })
+  }
+</script>
 <SCRIPT LANGUAGE='JavaScript'>
   var table
   $(document).ready(function() {

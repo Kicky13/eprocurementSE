@@ -8,6 +8,7 @@ class Wo extends CI_Controller {
   Status 10, 20, 30, 40, 50, 60, review by Maintenance Planner
   Status 70, 80, update by PIC
   Status 90 review by supervisor
+  f4801.WASHNO is not null cara ambil wo yang ada task instructionnya untuk bahan maintenance task list
   */
   protected $view = 'cmms/wo';
   protected $menu;
@@ -16,12 +17,7 @@ class Wo extends CI_Controller {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    $this->load->model('cmms/M_work_request', 'wr');
     $this->load->model('cmms/M_wo_jde', 'wo');
-    $this->load->model('cmms/M_wo_type', 'wo_type');
-    $this->load->model('cmms/M_failure_description', 'failure');
-    $this->load->model('cmms/M_equipment','mod');
-    $this->load->model('cmms/M_equipment_picture','picture');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -44,10 +40,12 @@ class Wo extends CI_Controller {
 
   public function index()
   {
+    $thead = cmms_settings('woe_list')->get()->result();
+    $filter = cmms_settings('woe_list')->where('desc2',1)->get()->result();
+    $data['thead'] = $thead;
+    $data['filter'] = $filter;
     $data['menu'] = $this->menu;
     $data['title'] = 'Maintenance Task List - CMMSXX';
-    $data['optWoType'] = $this->optWoType('','filter_wr_type',true);
-    $data['optWoStatus'] = $this->optWoStatus('','filter_status',true);
     $this->template->display($this->view .'/index', $data);
   }
 
@@ -62,21 +60,23 @@ class Wo extends CI_Controller {
       $row[] = $no;
       $woNo = $rows->WADOCO;
       $woDesc = $rows->WADL01;
-      $woType = $rows->WOTYPE;
-      $wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
-      @$woType = $wotype->notation;
-      $woStatus = $rows->STATUS;
-      $woDate = $rows->WO_DATE;
-      $woFailureDesc = $rows->FAILURE_DESC;
-      $woOriginator = $rows->ORIGINATOR;
+      $eqNo = $rows->EQNO;
+      $eqDesc = $rows->EQDESC;
+      $labor = $rows->LABOR;
+      $actHour = $rows->ACTHOUR;
+      $actFinishDate = $rows->ACTFINISHDATE;
+      $analysisDesc = $rows->ANALYSISDESC;
+      $resDesc = $rows->RESDESC;
       $link = "<a href='".base_url('wo/show/'.$woNo)."'>$woNo</a>";
       $row[] = $link;
       $row[] = $woDesc;
-      $row[] = $woType;
-      $row[] = $woStatus;
-      $row[] = $woDate;
-      $row[] = $woFailureDesc;
-      $row[] = $woOriginator;
+      $row[] = $eqNo;
+      $row[] = $eqDesc;
+      $row[] = $labor;
+      $row[] = $actHour;
+      $row[] = $actFinishDate;
+      $row[] = $analysisDesc;
+      $row[] = $resDesc;
       $data[] = $row;
     }
     // print_r($data);

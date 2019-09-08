@@ -20,13 +20,13 @@ class M_wo_jde extends CI_Model {
     {
       $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
     }
-    if($this->input->post('wadoco'))
+    if($this->input->post('WONO'))
     {
-      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('wadoco')."%')";
+      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('WONO')."%')";
     }
-    if($this->input->post('wadl01'))
+    if($this->input->post('WODESC'))
     {
-      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('wadl01')."%')";
+      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('WODESC')."%')";
     }
     if($this->input->post('wasrst'))
     {
@@ -39,6 +39,18 @@ class M_wo_jde extends CI_Model {
     if($this->input->post('failure_desc'))
     {
       $sql .= " and UPPER(failure_desc) like UPPER('%".$this->input->post('failure_desc')."%')";
+    }
+    if($this->input->post('EQNO'))
+    {
+      $sql .= " and UPPER(EQNO) like UPPER('%".$this->input->post('EQNO')."%')";
+    }
+    if($this->input->post('EQDESC'))
+    {
+      $sql .= " and UPPER(EQDESC) like UPPER('%".$this->input->post('EQDESC')."%')";
+    }
+    if($this->input->post('washno'))
+    {
+      $sql .= " and a.WASHNO is not null";
     }
 	
 	$q = "select * from m_user where id_user = ".$this->session->userdata('ID_USER');
@@ -88,11 +100,12 @@ class M_wo_jde extends CI_Model {
   }
   public function sql($value='')
   {
-	  $sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8
+	  $sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8, f1201.FAASID as EQNO, f1201.FADL01 as EQDESC,'Under Consturction' as LABOR, 'Under Consturction' as ACTHOUR,'Under Consturction' as ACTFINISHDATE, 'Under Consturction' as ANALYSISDESC,'Under Consturction' as RESDESC  
 	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M')) a 
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
 	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
-	left join f0101 on f0101.ABAN8 = a.WAANO";
+	left join f0101 on f0101.ABAN8 = a.WAANO
+  left join f1201 on f1201.fanumb = a.WANUMB";
     $sql = "select * from ($sql) x";
     return $sql;  
   }

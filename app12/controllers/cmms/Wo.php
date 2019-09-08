@@ -64,6 +64,9 @@ class Wo extends CI_Controller {
       $eqDesc = $rows->EQDESC;
       $labor = $rows->LABOR;
       $actHour = $rows->ACTHOUR;
+	  $laba = substr($actHour, 0, 2);
+	  $labb = substr($actHour, 2, 2);
+	  $actHour = $laba.'.'.$labb;
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;

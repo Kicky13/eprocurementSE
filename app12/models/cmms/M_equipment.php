@@ -161,10 +161,12 @@ class M_equipment extends CI_Model {
     (case when WADRQJ > 0 then (to_date(concat(to_char(to_number(substr(WADRQJ,1,3)+1900)),substr(WADRQJ,4,3)),'YYYYDDD')) else null end) PLANNED_FINISH_DATE,
     (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) ACTUAL_FINISH_DATE";
 
-    $sql = "select c.dta201 as wotype,a.washno as taskinstruction, a.*,
+    $sql = "select c.dta201 as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,
     concat(trim(drky),concat(' - ',drdl01)) as status
     from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
-    inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
+    inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
+	left join f0101 on f0101.ABAN8 = a.WAANO
+	";
     return $this->db->query($sql)->row();
   }
   public function task_instruction($cfky='')

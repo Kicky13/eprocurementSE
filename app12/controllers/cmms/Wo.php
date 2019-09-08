@@ -75,7 +75,7 @@ class Wo extends CI_Controller {
       $row[] = $woDesc;
       $row[] = $eqNo;
       $row[] = $eqDesc;
-      $row[] = $labor;
+      //$row[] = $labor;
       $row[] = $actHour;
       $row[] = $actFinishDate;
       $row[] = $analysisDesc;

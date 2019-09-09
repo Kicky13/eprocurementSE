@@ -1260,8 +1260,8 @@ function wr_priority($value='',$all=false)
 {
   $list = 
     [
-      1 => 'Uregent Immediate',
-      2 => 'Within 24 Hours',
+      1 => 'Urgent ',
+      2 => 'Immediate',
       3 => 'Within 3 - 7 Days',
       4 => 'Requirment Shutdown Work',
       5 => 'Preventive Maintenance',

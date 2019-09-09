@@ -342,8 +342,8 @@ class Wr extends CI_Controller {
   {
     $list = 
     [
-      1 => 'Uregent Immediate',
-      2 => 'Within 24 Hours',
+      1 => 'Urgent',
+      2 => 'Immediate',
       3 => 'Within 3 - 7 Days',
       4 => 'Requirment Shutdown Work',
       5 => 'Preventive Maintenance',

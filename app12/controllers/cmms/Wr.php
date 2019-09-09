@@ -536,10 +536,11 @@ class Wr extends CI_Controller {
   }
   public function send_wsdl_update($data='', $manual= false)
   {
-    $wr = $this->wr->findByWrNo($data['wr_no']);
-    $id = $wr->created_by;
+    //$wr = $this->wr->findByWrNo($data['wr_no']);
+	$data = $this->db->where('wr_no',$data['wr_no'])->get('cmms_wr')->row_array();
+    $id = $wr['created_by'];
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
-
+	
     $data['originator'] = $r->USERNAME;
     $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
     $headers = array(

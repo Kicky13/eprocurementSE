@@ -117,7 +117,11 @@
           data.WODESC = $('#filter_WODESC').val();
           data.EQNO = $('#filter_EQNO').val();
           data.EQDESC = $('#filter_EQDESC').val();
-          data.washno = 1;
+		  <?php if($param == 'outstanding'):?>
+          data.wasrst = '70';
+		  <?php else:?>
+		  data.washno = 1;
+		  <?php endif;?>
         }
       },
    

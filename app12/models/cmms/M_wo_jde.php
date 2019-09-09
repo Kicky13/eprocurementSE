@@ -98,11 +98,15 @@ class M_wo_jde extends CI_Model {
   }
   public function sql($value='')
   {
-	  $washno = '';
-	  // if($this->input->post('washno'))
-    // {
-      $washno = " WHERE a.WASHNO is not null";
-    // }
+	  $where = ' where 1=1 ';
+	  if($this->input->post('washno'))
+    {
+      $where .= " and a.WASHNO is not null";
+    }
+	if($this->input->post('wasrst'))
+    {
+      $where .= " and a.wasrst = '".$this->input->post('wasrst')."'";
+    }
 	  $sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8, f1201.FAASID as EQNO, f1201.FADL01 as EQDESC,'Under Consturction' as LABOR, a.WAHRSA as ACTHOUR,
 	  (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) as ACTFINISHDATE, 
 	  a.KBDS01 as ANALYSISDESC,'Under Consturction' as RESDESC, a.WAANSA as CREWID
@@ -110,7 +114,7 @@ class M_wo_jde extends CI_Model {
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
 	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
   left join f0101 on f0101.ABAN8 = a.WAANO
-  left join f1201 on f1201.fanumb = a.WANUMB $washno";
+  left join f1201 on f1201.fanumb = a.WANUMB $where";
     $sql = "select x.*,crew.ABALPH as CREWNAME from ($sql) x left join f0101 crew  on crew.ABAN8 = x.CREWID ";
     return $sql;  
   }
@@ -238,7 +242,7 @@ class M_wo_jde extends CI_Model {
   }
   public function outstanding_wo_report()
   {
-    $sql = $this->db->where('WASRST','70')->get($this->wo_table);
+    $sql = $this->db->query("select * from {$this->wo_table} where WASRST = ?", ['70']);
     return $sql;
   }
 }

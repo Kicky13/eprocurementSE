@@ -38,14 +38,25 @@ class Wo extends CI_Controller {
     $this->roles      = array_values(array_filter($roles));
   }
 
-  public function index()
+  public function index($param='')
   {
+	if($param == 'outstanding')
+	{
+		$title = 'Outstanding Work Order';
+	}
+	else
+	{
+		$title = 'Maintenance Task List - CMMSXX';
+	}
+	
     $thead = cmms_settings('woe_list')->get()->result();
     $filter = cmms_settings('woe_list')->where('desc2',1)->get()->result();
     $data['thead'] = $thead;
     $data['filter'] = $filter;
     $data['menu'] = $this->menu;
-    $data['title'] = 'Maintenance Task List - CMMSXX';
+	$data['title'] = $title;
+	$data['param'] = $param;
+    
     $this->template->display($this->view .'/index', $data);
   }
 
@@ -70,7 +81,7 @@ class Wo extends CI_Controller {
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
-      $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\" >$woNo</a>";
+      $link = "<a href='".base_url('wo/show/'.$woNo)."'>$woNo</a>";
       $row[] = $link;
       $row[] = $woDesc;
       $row[] = $eqNo;

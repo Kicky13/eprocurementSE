@@ -72,6 +72,7 @@
                           <div class="form-group">
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
+							<span id="photo_preview"></span>
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
@@ -342,4 +343,13 @@
       swal('Info','Please Select Equipment First','warning')
     }
   }
+  $(function() {
+	$("#photo").change(function(event){
+        var tmppath = URL.createObjectURL(event.target.files[0]);
+        previewFile('photo', tmppath);
+    })
+    function previewFile(param, tmppath) {
+        $("#"+param+"_preview").html("<a href='"+tmppath+"' target='_blank'>Preview Here</a>");
+    }
+	});
 </script>

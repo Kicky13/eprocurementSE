@@ -63,11 +63,11 @@
                           </div>
                           <div class="form-group">
                             <label>WR Description</label>
-                            <input class="form-control" id="wr_description" name="wr_description" maxlength="30" value="<?=$row->wr_description?>">
+                            <input class="form-control toupper" id="wr_description" name="wr_description" maxlength="30" value="<?=$row->wr_description?>">
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <input class="form-control" name="failure_desc" name="failure_desc" maxlength="80" value="<?=$row->failure_desc?>">
+                            <input class="form-control toupper" name="failure_desc" name="failure_desc" maxlength="80" value="<?=$row->failure_desc?>">
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
@@ -88,13 +88,13 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <input class="form-control" name="hazard" id="hazard" maxlength="100" value="<?=$row->hazard?>">
+                            <input class="form-control toupper" name="hazard" id="hazard" maxlength="100" value="<?=$row->hazard?>">
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Long Description</label>
-                            <textarea class="form-control" name="long_description" id="long_description" rows="3"><?=$row->long_description?></textarea>
+                            <textarea class="form-control toupper" name="long_description" id="long_description" rows="3"><?=$row->long_description?></textarea>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -310,5 +310,8 @@
     function previewFile(param, tmppath) {
         $("#"+param+"_preview").html("<a href='"+tmppath+"' target='_blank'>Preview Here</a>");
     }
+    $('.toupper').keyup(function(){
+        this.value = this.value.toUpperCase();
+    });
 	});
 </script>

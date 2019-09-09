@@ -538,7 +538,7 @@ class Wr extends CI_Controller {
   {
     //$wr = $this->wr->findByWrNo($data['wr_no']);
 	$data = $this->db->where('wr_no',$data['wr_no'])->get('cmms_wr')->row_array();
-    $id = $wr['created_by'];
+    $id = $data['created_by'];
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
 	
     $data['originator'] = $r->USERNAME;

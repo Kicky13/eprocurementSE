@@ -31,6 +31,7 @@ class Home extends CI_Controller {
             ->model('procurement/arf/m_arf_acceptance')
             ->model('procurement/arf/m_arf_nego')
             ->model('vendor/M_approval_verification')
+            ->model('cmms/M_wo_jde','wo')
             ->helper(['permission', 'form']);
     }
 
@@ -208,7 +209,7 @@ class Home extends CI_Controller {
 			array_push($get_task_baru,$row->id);
 		} 
         /*cmms tasks start*/
-        $msrVerify['outstanding_wo_report'] = $this->db->where('status','01')->get('cmms_wr')->num_rows();
+        $msrVerify['outstanding_wo_report'] = $this->wo->outstanding_wo_report()->num_rows();
         if(in_array(supervior_cmms, $roles))
         {
           $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');

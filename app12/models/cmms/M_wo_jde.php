@@ -6,6 +6,7 @@ class M_wo_jde extends CI_Model {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
     $this->dbm = $this->load->database('default', true);
+    $this->wo_table = 'f4801';
   }
   public function _get_datatables_query($value='')
   {
@@ -234,5 +235,10 @@ class M_wo_jde extends CI_Model {
 	$q = "update crpctl.f0002 set nnn001=nnn001+1 where nnsy='48'";
 	$this->db->query($q);
     return $r->NNN001;
+  }
+  public function outstanding_wo_report()
+  {
+    $sql = $this->db->where('WASRST','70')->get($this->wo_table);
+    return $sql;
   }
 }

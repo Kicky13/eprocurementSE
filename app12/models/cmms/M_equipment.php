@@ -91,6 +91,15 @@ class M_equipment extends CI_Model {
   }
   public function sql($value='')
   {
+	  $addSql='';
+	  $addColumn='';
+	  
+	if($this->input->post('reprentitive'))
+	{
+		$reprentitive = $this->reprentitive();
+		$addSql = $reprentitive['join'];
+		$addColumn = ", ".$reprentitive['column_db'];
+	}
     $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb, concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01, faasid, (select faasid from f1201 where fanumb=a.faaaid ) parents, 
         (select concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01 from f1201 where fanumb=a.faaaid ) dsparents, 
         nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PA' and trim(drky)=trim(b.wrprodf) ),' ') as eqtype,
@@ -101,8 +110,11 @@ class M_equipment extends CI_Model {
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C2' and trim(drky)=trim(a.faacl2) ) as majorequiclass,
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(a.faacl6) ) as loct,
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C7' and trim(drky)=trim(a.faacl7) ) as cit,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages
-        from f1201 a inner join f1217 b on a.fanumb=b.wrnumb) x";
+        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages $addColumn
+        from f1201 a 
+		inner join f1217 b on a.fanumb=b.wrnumb 
+		$addSql
+		) x";
     return $sql;  
   }
   public function dt_count_all()
@@ -232,5 +244,12 @@ class M_equipment extends CI_Model {
 	$q = "update crpctl.f0002 set nnn001=nnn001+1 where nnsy='48'";
 	$this->db->query($q);
     return $r->NNN001;
+  }
+  public function reprentitive()
+  {
+	  $addSql['join'] = "inner join (select WANUMB, count(*) jml from f4801 group by wanumb) c on a.FANUMB = c.WANUMB";
+	  $addSql['column_db'] = "JML";
+	  $addSql['column_tb'] = "TOTAL";
+	  return $addSql;
   }
 }

@@ -39,10 +39,19 @@ class Equipment extends CI_Controller {
     $data['thead'] = $head;
     return $data[$value];
   }
-  public function index() {
+  public function index($param='') {
     $data['menu'] = $this->menu;
-    $data['title'] = 'Equipment List - CMMS01';
-    $data['thead'] = $this->settings('thead');
+	$data['thead'] = $this->settings('thead');
+	
+	$title = 'Equipment List - CMMS01';
+	if($param=='repretitive')
+	{
+		$title = 'Equipment Repretitive Failure';
+		$data['thead']['JML'] = 'Total';
+	}
+	
+    $data['param'] = $param;
+	$data['title'] = $title;
     $data['optCriticality'] = $this->optCriticality('filter_CIT');
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
     $this->template->display($this->view .'/index', $data);
@@ -72,11 +81,18 @@ class Equipment extends CI_Controller {
       $row[] = $no;
       $detailLink = "<a href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
       $wrLink = $rows->FAWOYN == 1 ? "<a href='".base_url('cmms/wr/create/'.$rows->FANUMB)."' target='_blank' class='btn btn-primary btn-sm'>Create WR</a>" : "";
+	  if($this->input->post('reprentitive'))
+	  {
+		  $wrLink = '';
+	  }
       $row[] = "$detailLink $wrLink";
       foreach ($this->settings('thead') as $key => $value) {
         $row[] = $rows->$key;
       }
-      
+      if($this->input->post('reprentitive'))
+	  {
+		  $row[] = "<span style='float:right'>".$rows->JML."</span>";
+	  }
       $data[] = $row;
     }
  

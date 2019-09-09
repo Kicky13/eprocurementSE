@@ -26,7 +26,7 @@
 		      $btnDelete = "<a href='#' onclick='deleteImageClick($value->id)' class='btn btn-sm btn-danger'>Delete</a>";
 		      $img = "<img class='img-thumbnail' src='".base_url('upload/cmms/equipment_picture/'.$value->picture)."' style='height:100px;width:auto;' />";
 			$btnDownload = "<a href='".base_url('upload/cmms/equipment_picture/'.$value->picture)."' target='_blank' class='btn btn-sm btn-info'>$img</a>";
-		      echo "<tr><td>$no</td><td>".dateToIndo($value->created_at)."</td><td>$btnDownload</td><td>$btnDelete</td><tr>";
+		      echo "<tr><td>$no</td><td>".dateToIndo($value->created_at,false,true)."</td><td>$btnDownload</td><td>$btnDelete</td><tr>";
 		      $no++;
 		}?>
 	</tbody>

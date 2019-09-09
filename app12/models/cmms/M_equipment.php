@@ -38,12 +38,19 @@ class M_equipment extends CI_Model {
     if($this->input->post('PARENTS'))
     {
       // $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
-    	$findFANUMB = $this->db->query("select FANUMB from F1201 where TRIM(UPPER(FAASID)) = UPPER('".$this->input->post('PARENTS')."')")->row();
+    	$findFANUMB = $this->db->query("select FAAAID,FANUMB from F1201 where TRIM(UPPER(FAASID)) = UPPER('".$this->input->post('PARENTS')."')")->row();
     	if($findFANUMB)
     	{
-    		$fanumb = $findFANUMB->FANUMB;
-    		/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
-    		$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
+			if($findFANUMB->FAAAID == $findFANUMB->FANUMB)
+			{
+				
+			}
+			else
+			{
+				$fanumb = $findFANUMB->FANUMB;
+				/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
+				$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
+			}
     	}
       else
       {
@@ -227,13 +234,13 @@ class M_equipment extends CI_Model {
   function wo_search()
   {
 	  $query = $this->input->get('search');
-	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '60' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('&$query%') fetch first 5 ROWS ONLY ";
+	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '60' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 5 ROWS ONLY ";
 	  $r =  $this->db->query($sql)->result();
 	  
 	  $d = [];
 	  foreach($r as $v)
 	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO];
+		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO.' - '.$v->WADL01];
 	  }
 	  return $d;
   }

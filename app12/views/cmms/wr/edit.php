@@ -73,6 +73,7 @@
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
                             <a class="btn btn-info btn-sm" target="_blank" href="<?= base_url('upload/wr/'.$row->photo) ?>">View Photo</a>
+							<span id="photo_preview"></span>
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
@@ -301,4 +302,13 @@
       rejectSubmit()
     }
   }
+  $(function() {
+	$("#photo").change(function(event){
+        var tmppath = URL.createObjectURL(event.target.files[0]);
+        previewFile('photo', tmppath);
+    })
+    function previewFile(param, tmppath) {
+        $("#"+param+"_preview").html("<a href='"+tmppath+"' target='_blank'>Preview Here</a>");
+    }
+	});
 </script>

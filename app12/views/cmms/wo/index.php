@@ -119,8 +119,10 @@
           data.EQDESC = $('#filter_EQDESC').val();
 		  <?php if($param == 'outstanding'):?>
           data.wasrst = '70';
-		  <?php else:?>
-		  data.washno = 1;
+		  <?php elseif($param == 'wr'):?>
+		  
+      <?php else:?>
+      data.washno = 1;
 		  <?php endif;?>
         }
       },

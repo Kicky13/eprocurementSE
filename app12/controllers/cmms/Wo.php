@@ -85,7 +85,7 @@ class Wo extends CI_Controller {
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
-      $link = "<a href='".base_url('wo/show/'.$woNo)."'>$woNo</a>";
+      $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
       $row[] = $woDesc;
       $row[] = $eqNo;

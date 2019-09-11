@@ -286,7 +286,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
       if($data)
       {
         $userCreated = user()->NAME;
-        $createdAt = dateToIndo($data['created_at']);
+        $createdAt = dateToIndo($data['created_at'], false, true);
         $wr_priority = wr_priority($data['priority']);
         $open = $wr->OPEN_VALUE;
         $close = $wr->CLOSE_VALUE;

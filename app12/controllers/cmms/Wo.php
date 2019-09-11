@@ -46,7 +46,7 @@ class Wo extends CI_Controller {
 	}
 	elseif($param == 'wr')
   { 
-    $title = 'Work Order Tracking - CMMS16';
+    $title = 'WR List & Tracking - CMMS16';
   }
   else
 	{

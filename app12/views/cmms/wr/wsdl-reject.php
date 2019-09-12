@@ -41,12 +41,12 @@
             <!--Optional:-->
             <priority><?= $priority ?></priority>
             <!--Optional:-->
-           <status>01</status>
-            <statusComment></statusComment>
+           <status>91</status>
+            <statusComment><?= $hazard ?></statusComment>
          </planning>        
          <processing>
             <!--Optional:-->
-            <actionType>1</actionType>
+            <actionType>2</actionType>
             <!--Optional:-->
             <processingVersion>ZJDE0001</processingVersion>
          </processing>

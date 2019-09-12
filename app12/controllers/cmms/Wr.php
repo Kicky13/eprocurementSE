@@ -47,9 +47,14 @@ class Wr extends CI_Controller {
   public function index()
   {
     $thead = cmms_settings('wr_list')->get()->result();
+    $filter = cmms_settings('wr_list')->where('desc2',1)->get()->result();
     $data['menu'] = $this->menu;
     $data['thead'] = $thead;
     $data['title'] = 'Work Request Tracking - CMMS16';
+    $data['filter'] = $filter;
+    $data['optWoType'] = $this->optWoType('','filter_wr_type',true);
+    $data['optWoStatus'] = $this->optWoStatus('','filter_status',true);
+    $data['all'] = $this->input->get('all') ? 1 : 0;
     $this->template->display($this->view .'/index', $data);
   }
 
@@ -63,22 +68,22 @@ class Wr extends CI_Controller {
       $row = array();
       $row[] = $no;
       $woNo = $rows->WADOCO;
-		$woDesc = $rows->WADL01;
-		$woType = $rows->WOTYPE;
-		$wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
-		@$woType = $wotype->notation;
-		$woStatus = $rows->STATUS;
-		$woDate = $rows->WO_DATE;
-		$woFailureDesc = $rows->FAILURE_DESC;
-		$woOriginator = $rows->ORIGINATOR;
-		$link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
-		$row[] = $link;
-		$row[] = $woDesc;
-		$row[] = $woType;
-		$row[] = $woStatus;
-		$row[] = $woDate;
-		$row[] = $woFailureDesc;
-		$row[] = $woOriginator;
+    $woDesc = $rows->WADL01;
+    $woType = $rows->WOTYPE;
+    $wotype = $cmms_wo_type = $this->db->where('id', $rows->WOTYPE)->get('cmms_wo_type')->row();
+    @$woType = $wotype->notation;
+    $woStatus = $rows->STATUS;
+    $woDate = $rows->WO_DATE;
+    $woFailureDesc = $rows->FAILURE_DESC;
+    $woOriginator = $rows->ORIGINATOR;
+    $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
+    $row[] = $link;
+    $row[] = $woDesc;
+    $row[] = $woType;
+    $row[] = $woStatus;
+    $row[] = $woDate;
+    $row[] = $woFailureDesc;
+    $row[] = $woOriginator;
       $data[] = $row;
     }
     // print_r($data);
@@ -91,12 +96,47 @@ class Wr extends CI_Controller {
     echo json_encode($output);
   }
 
+  public function ajax_list_portal()
+  {
+    $list = $this->wr->dt_get_datatables();
+    $data = array();
+    $no = $_POST['start'];
+    $all = $this->input->post('all') ? "?all=1" : "";
+    foreach ($list as $rows) {
+      $no++;
+      $row = array();
+      $row[] = $no;
+      foreach ($this->db->where('module','wr_list')->get('cmms_settings')->result() as $key => $value) {
+        $v = $value->desc1;
+        $x = $rows->$v;
+        if($value->desc1 == 'req_finish_date')
+        {
+          $x = dateToIndo($x);
+        }
+        if($value->desc1 == 'wr_no')
+        {
+          $x = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
+        }
+        $row[] = $x;
+      }
+      $data[] = $row;
+    }
+    // print_r($data);
+    $output = array(
+            'draw' => $_POST['draw'],
+            'recordsTotal' => $this->wr->dt_count_all(),
+            'recordsFiltered' => $this->wr->dt_count_filtered(),
+            'data' => $data,
+        );
+    echo json_encode($output);
+  }
+
   public function create($FAAAID='')
   {
-    if(!can_create_msr())
+    if(!company_cmms())
     {
       $this->session->set_flashdata('message', array(
-          'message' => "You dont have permission to create this WR",
+          'message' => "Please setup company first",
           'type' => 'danger'
       ));
       redirect(base_url('home'));
@@ -123,7 +163,10 @@ class Wr extends CI_Controller {
     $data['row'] = $wr;
     $data['optWoType'] = $this->optWoType($wr->wo_type_id);
     $data['optPriority'] = $this->optPriority($wr->priority);
-
+    if(in_array(operator_cmms, $this->roles) or in_array(department_cmms, $this->roles))
+    {
+      $data['user_creator'] = true;
+    }
     $this->template->display($this->view .'/edit', $data);
   }
   public function store()
@@ -162,11 +205,20 @@ class Wr extends CI_Controller {
           $send_wsdl = $this->send_wsdl($data);
           if($send_wsdl)
           {
-            echo json_encode(['status'=>true,'msg'=>'WR Has Been Created & Send to JDE is Success']);
+            /*insert long desc*/
+            $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
+            if($insert_long_desc_jde)
+            {
+              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+            }
+            else
+            {
+              echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+            }
           }
           else
           {
-            echo json_encode(['status'=>true,'msg'=>'WR Has Been Created & Send JDE is Failed, you can try in another moment']);
+            echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment']);
           }
         }
         else
@@ -180,7 +232,7 @@ class Wr extends CI_Controller {
         echo json_encode(['status'=>false,'msg'=>'Image is Required']);
     }
   }
-  public function update_and_approve($value='')
+  public function update($value='')
   {
     $data = $this->input->post();
     /*echo "<pre>";
@@ -211,23 +263,62 @@ class Wr extends CI_Controller {
         $data['photo'] = $file_name;
       }
     }
+    $data['status'] = '05';
+    if(isset($data['parent_id']))
+    {
+      unset($data['parent_id']);
+    }
     $update = $this->wr->update_and_approve($data);
     if($update)
     {
-      echo json_encode(['status'=>true,'msg'=>'WR Has Been Created']);
+      $send_wsdl = $this->send_wsdl_update($data);
+      if($send_wsdl)
+      {
+        /*update long desc*/
+        $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
+        if($update_long_desc_jde)
+        {
+          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE']);
+        }
+        else
+        {
+          echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE, Long Description Is Failed to JDE', 'sql'=>$this->db->last_query()]);
+        }
+      }
+      else
+      {
+        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Update & Send JDE is Failed, you can try in another moment']);
+      }
     }
     else
     {
       echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
     }
   }
-  public function optWoType($wo_type_selected = '')
+  public function optWoType($wo_type_selected = '', $name='wo_type_id', $search=false)
   {
     $wotype = $this->wo_type->all();
-    $s = "<select name='wo_type_id' id='wo_type_id' class='form-control'>";
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
     foreach ($wotype as $r) {
       $selected = $wo_type_selected == $r->id ? "selected=''":"";
       $s .= "<option $selected value='$r->id'>$r->code_alpha - $r->notation</option>";
+    }
+    $s .= "</select>";
+    return $s;
+  }
+  public function optWoStatus($wo_type_selected = '', $name='status', $search=false)
+  {
+    $wotype = $this->db->get('cmms_wo_status')->result();
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
+    foreach ($wotype as $r) {
+      $selected = $wo_type_selected == $r->wo_status ? "selected=''":"";
+      $s .= "<option $selected value='$r->wo_status'>$r->wo_status - $r->wo_status_desc</option>";
     }
     $s .= "</select>";
     return $s;
@@ -427,5 +518,115 @@ class Wr extends CI_Controller {
   {
     $wr  = $this->db->where('wr_no', $wr_no)->get('cmms_wr')->row_array();
     $this->send_wsdl($wr, true);
+  }
+  public function send_wsdl_update($data='', $manual= false)
+  {
+    $wr = $this->wr->findByWrNo($data['wr_no']);
+    $id = $wr->created_by;
+    $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
+
+    $data['originator'] = $r->USERNAME;
+    $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+    $headers = array(
+      "Content-Type: text/xml",
+      "charset:utf-8",
+      "Accept: application/xml",
+      "Cache-Control: no-cache",
+      "Pragma: no-cache",
+      "Content-length: " . strlen($xml),
+    );
+    $ch = curl_init('https://10.1.1.94:89/PY910/EquipmentWorkOrderManager?WSDL');
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSLVERSION, 'all');
+
+    curl_setopt($ch, CURLOPT_VERBOSE, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,300);
+    curl_setopt($ch, CURLOPT_TIMEOUT,360);
+    $data_curl = curl_exec($ch);
+    curl_close($ch);
+    // echo $data_curl;
+    if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
+      if($manual == true)
+      {
+        echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
+        echo $xml;
+      }
+      return false;
+    } else {
+        // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+      return true;
+    }
+  }
+  public function reject($wr_no='')
+  {
+    $data['wr_no'] = $wr_no;
+    $data['comment_supervisor'] = $this->input->post('comment_supervisor');
+    $data['status'] = '91'; #reject status
+
+    $store  = $this->wr->reject($data);
+    if($store)
+    {
+      $send_wsdl = $this->send_wsdl_reject($data);
+      if($send_wsdl)
+      {
+        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success']);
+      }
+      else
+      {
+        echo json_encode(['status'=>true,'msg'=>'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment']);
+      }
+    }
+    else
+    {
+      echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+    }
+  }
+  public function send_wsdl_reject($data='', $manual= false)
+  {
+    $wr = $this->wr->findByWrNo($data['wr_no']);
+    $id = $wr->created_by;
+    $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
+
+    $data['originator'] = $r->USERNAME;
+    $xml = $this->load->view('cmms/wr/wsdl-reject', $data, true);
+    $headers = array(
+      "Content-Type: text/xml",
+      "charset:utf-8",
+      "Accept: application/xml",
+      "Cache-Control: no-cache",
+      "Pragma: no-cache",
+      "Content-length: " . strlen($xml),
+    );
+    $ch = curl_init('https://10.1.1.94:89/PY910/EquipmentWorkOrderManager?WSDL');
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSLVERSION, 'all');
+
+    curl_setopt($ch, CURLOPT_VERBOSE, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,300);
+    curl_setopt($ch, CURLOPT_TIMEOUT,360);
+    $data_curl = curl_exec($ch);
+    curl_close($ch);
+    // echo $data_curl;
+    if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
+      if($manual == true)
+      {
+        echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
+        echo $xml;
+      }
+      return false;
+    } else {
+        // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+      return true;
+    }
   }
 }

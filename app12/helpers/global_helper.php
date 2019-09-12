@@ -1224,3 +1224,23 @@ function getLastTimeArf($amdNumber='', $po_date='', $equal = '<')
   }
   return $po_date;
 }
+function cmms_long_desc_extract($long_description='')
+{
+  /*deskripsi_line1\par deskripsi_line2\par deskripsi_line3\par deskripsi_line_seterusnya\par*/
+  $long_description = nl2br($long_description);
+  $explode = explode("<br />", $long_description);
+  $im = [];
+  foreach ($explode as $key => $value) {
+    $im[] = trim($value)."\par";
+  }
+  $implode = implode(' ', $im);
+  return $implode;
+}
+function company_cmms($param=0)
+{
+  $ci = &get_instance();
+  $result = $ci->db->where('is_cmms',1)->get('m_warehouse');
+  if($param == 1)
+    return $result;
+  return $result->num_rows() > 0 ? true : false ;
+}

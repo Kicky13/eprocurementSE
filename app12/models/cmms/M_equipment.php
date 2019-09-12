@@ -45,6 +45,10 @@ class M_equipment extends CI_Model {
     		/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
     		$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
     	}
+      else
+      {
+        $addParents = " START WITH FANUMB = 123 CONNECT BY PRIOR FANUMB = FAAAID ";
+      }
     	/*get FANUMB*/
     }
     if($this->input->post('DSPARENTS'))
@@ -208,13 +212,14 @@ class M_equipment extends CI_Model {
   }
   function wo_search()
   {
-	  $query = $this->input->get('query');
-	  $sql = "select WADOCO, WADL01 from f4801 where UPPER(WADOCO )like UPPER('%$query%') fetch first 5 ROWS ONLY ";
+	  $query = $this->input->get('search');
+	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '60' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('&$query%') fetch first 5 ROWS ONLY ";
 	  $r =  $this->db->query($sql)->result();
+	  
 	  $d = [];
 	  foreach($r as $v)
 	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADL01];
+		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO];
 	  }
 	  return $d;
   }

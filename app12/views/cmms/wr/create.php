@@ -27,9 +27,9 @@
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">
-                          <div class="form-group">
-                            <label>Parent WO</label>
-                            <select class="form-control js-data-example-ajax" value="" id="parent_id" name="parent_id"></select>
+						  <div class="form-group">
+                            <label>Priority</label>
+                            <?= $optPriority ?>
                           </div>
                           <div class="form-group">
                             <label>Equipment Number</label>
@@ -62,36 +62,36 @@
                           </div>
                           <div class="form-group">
                             <label>WR Description</label>
-                            <input class="form-control" id="wr_description" name="wr_description">
+                            <input class="form-control" id="wr_description" name="wr_description" maxlength="30">
                             <small>&nbsp;</small>
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <input class="form-control" name="failure_desc" name="failure_desc">
+                            <input class="form-control" name="failure_desc" name="failure_desc" maxlength="80">
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
-                            <input class="form-control" type="file" id="photo" name="photo">
+                            <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
                             <input class="form-control" id="req_finish_date" name="req_finish_date">
                           </div>
                           <div class="form-group">
-                            <label>Priority</label>
-                            <?= $optPriority ?>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            <label>Additional Description</label>
-                            <input class="form-control" name="additional_description" id="additional_description">
+                            <label>Parent WO</label>
+                            <select class="form-control js-data-example-ajax" value="" id="parent_id" name="parent_id"></select>
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <textarea class="form-control" name="hazard" id="hazard" rows="5"></textarea>
+                            <input class="form-control" name="hazard" id="hazard" maxlength="100">
+                          </div>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label>Long Description</label>
+                            <textarea class="form-control" name="long_description" id="long_description" rows="3"></textarea>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -268,6 +268,7 @@
   			$("#failure_desc").html(e)
   		}
   	})*/
+	$("#myModal").modal('hide')
   }
   function browseEquipmentPoup() {
     $("#myModal").modal('show')
@@ -317,8 +318,14 @@
           success: function (e) {
             var r = eval("("+e+")");
             if(r.status){
-              swal('Success',r.msg,'success')
-              window.open("<?=base_url('home')?>","_self")
+              swal({ 
+                title: "Success",
+                text: r.msg,
+                type: "success",
+                },
+                function(){
+                  location = "<?= base_url() ?>";
+              });
             }else{
               swal('<?= __('warning') ?>',r.msg,'warning')
             }

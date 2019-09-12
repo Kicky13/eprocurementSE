@@ -143,11 +143,12 @@ class Approval extends CI_Controller
                     $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
 
-                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
-                        join m_approval m on m.id=t.m_approval_id and m.module_kode='msr_spa' and m.urutan=1
-                        join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
-                        join m_notic n on n.ID=36
-                        where t.data_id='" . $data["data_id"] . "'");
+                    $query = $this->db->query("SELECT us.EMAIL AS recipient, us.NAME, ntf.TITLE, ntf.OPEN_VALUE, ntf.CLOSE_VALUE FROM t_approval ta
+                    JOIN m_approval ma ON ma.id = ta.m_approval_id AND ma.urutan = 1
+                    JOIN m_user us ON us.ID_USER = ta.created_by
+                    JOIN m_notic ntf ON ntf.ID = 36
+                    WHERE ma.module_kode = 'msr_spa' AND ta.data_id = '" . $data["data_id"] . "'");
+
                     if ($query->num_rows() > 0) {
                         $data_role = $query->result();
                         $count = 1;
@@ -164,7 +165,6 @@ class Approval extends CI_Controller
 
                         $data_replace = $query->result();
 
-                        $res = $data_role;
                         $str = $data_role[0]->OPEN_VALUE;
                         $str = str_replace('_var1_', $data_replace[0]->title, $str);
                         $str = str_replace('_var2_', $data_replace[0]->NAME, $str);

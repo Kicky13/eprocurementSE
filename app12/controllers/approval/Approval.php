@@ -448,6 +448,8 @@ class Approval extends CI_Controller
             WHERE msr.msr_no = "' . $this->input->post('data_id') . '"');
             $data_replace = $query->result();
             $str = $data_replace[0]->OPEN_VALUE;
+            $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
+
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,

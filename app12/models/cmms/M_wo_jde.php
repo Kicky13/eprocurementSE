@@ -101,7 +101,8 @@ class M_wo_jde extends CI_Model {
 	  $where = ' where 1=1 ';
 	  if($this->input->post('washno'))
     {
-      $where .= " and a.WASHNO is not null";
+      // $where .= " and a.WASHNO is not null";
+      $where .= " and a.wadoco in (".$this->maintenance_task_list().")";
     }
 	if($this->input->post('wasrst'))
     {
@@ -243,6 +244,20 @@ class M_wo_jde extends CI_Model {
   public function outstanding_wo_report()
   {
     $sql = $this->db->query("select * from {$this->wo_table} where WASRST = ?", ['70']);
+    return $sql;
+  }
+  public function maintenance_task_list($id_user='')
+  {
+    $user = $this->session->userdata('ID_USER');
+    
+    if($id_user)
+      $user = $id_user;
+
+    $columnDefault = "a.RATSKID, a.RADOCO, a.RADSC1, a.RADSC2, b.ABAN8, b.ABAN81, b.ABALPH";
+    $sql = "select a.RADOCO
+    from F48311 a 
+    left join F0101 b on a.RARSCN = b.ABAN81 
+    where b.ABAN8 = $user";
     return $sql;
   }
 }

@@ -248,10 +248,10 @@ class M_wo_jde extends CI_Model {
   }
   public function maintenance_task_list($id_user='')
   {
-    $user = $this->session->userdata('ID_USER');
+    $user = user()->USERNAME;
     
     if($id_user)
-      $user = $id_user;
+      $user = user($id_user)->USERNAME;
 
     $columnDefault = "a.RATSKID, a.RADOCO, a.RADSC1, a.RADSC2, b.ABAN8, b.ABAN81, b.ABALPH";
     $sql = "select a.RADOCO

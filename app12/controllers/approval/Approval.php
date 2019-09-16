@@ -394,42 +394,39 @@ class Approval extends CI_Controller
             } else if ($module_kode == 'award') {
                 $rs = $this->db->where(['t_approval.id' => $data['id']])
                     ->get('t_approval')->row();
+                $listApproval = $this->M_approval->listApprovalAward($data['data_id'])->num_rows();
+                $listApproved = $this->M_approval->listApprovedAward($data['data_id'])->num_rows();
+                $urutan = $rs->urutan;
                 $urutannext = $rs->urutan + 1;
-                if ($urutannext <= 4) {
-                    if ($urutannext == 4) {
-                        $query = $this->db->query("SELECT t_approval.*,m_user_roles.DESCRIPTION AS role_name, m_user.NAME AS user_nama, m_user.EMAIL AS email, m_notic.TITLE AS title, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close FROM t_approval
-                        LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
-                        LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
-                        LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
-                        JOIN m_notic ON m_notic.ID = 67
-                        WHERE t_approval.data_id = '" . $data["data_id"] . "' AND m_approval.module_kode = 'award' AND m_approval.urutan >= " . $urutannext);
-                    } else if ($urutannext < 4) {
-                        $query = $this->db->query("SELECT t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL email, m_notic.TITLE title, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close FROM t_approval
-                        LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
-                        LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
-                        LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
-                        JOIN m_notic ON m_notic.ID = 67
-                        WHERE t_approval.data_id = '" . $data["data_id"] . "' AND m_approval.module_kode = 'award' AND m_approval.urutan = " . $urutannext);
+                if ($listApproved < $listApproval) {
+                    if ($urutan != $urutannext) {
+                        $query = $this->db->query("SELECT ed.msr_no, ed.subject, us.EMAIL as recipient, us.NAME, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval ap
+                        JOIN m_approval mp ON ap.m_approval_id = mp.id
+                        JOIN t_eq_data ed ON ap.data_id = ed.msr_no
+                        JOIN m_user us ON us.ID_USER = ap.created_by
+                        JOIN m_notic n ON n.ID = 68
+                        WHERE ap.data_id = '" . $data['data_id'] . "' AND mp.module_kode = 'award' AND mp.urutan = " . $urutannext);
+                        $data_replace = $query->result();
+                        $img1 = '';
+                        $img2 = '';
+
+                        $str = $data_replace[0]->open;
+                        $str = str_replace('_var1_', str_replace('R', 'Q', $data_replace[0]->msr_no), $str);
+                        $str = str_replace('_var2_', $data_replace[0]->subject, $str);
+
+                        $data = array(
+                            'img1' => $img1,
+                            'img2' => $img2,
+                            'title' => $data_replace[0]->title,
+                            'open' => $str,
+                            'close' => $data_replace[0]->close
+                        );
+
+                        foreach ($data_replace as $v) {
+                            $data['dest'][] = $v->recipient;
+                        }
+                        $flag = $this->sendMail($data);
                     }
-
-                    $data_replace = $query->result();
-                    $img1 = '';
-                    $img2 = '';
-
-                    $str = $data_replace[0]->open;
-                    $str = str_replace('no_msr', $data_replace[0]->data_id, $str);
-                    $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_replace[0]->title,
-                        'open' => $str,
-                        'close' => $data_replace[0]->close
-                    );
-
-                    foreach ($data_replace as $k => $v) {
-                        $data['dest'][] = $v->email;
-                    }
-                    $flag = $this->sendMail($data);
                 }
             }
             $this->session->set_flashdata('message', array(
@@ -3007,14 +3004,15 @@ class Approval extends CI_Controller
             $img1 = '';
             $img2 = '';
 
-            $query = $this->db->query('SELECT bl.vendor_id as vendor, bl.msr_no as msr, vendor.ID_VENDOR as email, notif.TITLE as title, notif.OPEN_VALUE as open, notif.CLOSE_VALUE as close FROM t_bl_detail bl
-            JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
-            JOIN m_notic notif ON notif.ID = 82
-            WHERE bl.msr_no = "' . $msr_no . '"');
+            $query = $this->db->query('SELECT ed.msr_no, ed.subject as ed_title, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_eq_data ed
+            JOIN m_notic n ON n.ID = 82
+            WHERE ed.msr_no = "' . $msr_no . '"');
 
             $data_replace = $query->result();
 
             $str = $data_replace[0]->open;
+            $str = str_replace('_var1_', $data_replace[0]->ed_title, $str);
+            $str = str_replace('_var2_', str_replace('R', 'Q', $data_replace[0]->msr_no), $str);
 
             $data = array(
                 'img1' => $img1,
@@ -3024,8 +3022,9 @@ class Approval extends CI_Controller
                 'close' => $data_replace[0]->close
             );
 
-            foreach ($data_replace as $item) {
-                $data['dest'][] = $item->email;
+            foreach ($post['nego'] as $vendID => $item) {
+                $data_vnd = $this->db->query('SELECT * FROM m_vendor WHERE ID = ' . $vendID)->row();
+                $data['dest'][] = $data_vnd->ID_VENDOR;
             }
             $flag = $this->sendMail($data);
         }

@@ -22,11 +22,23 @@ class Validatejde extends CI_Controller {
         $costcenter = "   " . $postcc[0];
         $material = $this->input->post("material");
         $uom = $postUom[0];
+        $itemType = $this->input->post("itemType");
 
         $checkCC = $this->checkCostcenter($costcenter, $gmobj, $gmsub);
         $checkMaterial = $this->checkMaterial($material, $uom);
+        $matchCheck = false;
 
-        if ($checkCC && $checkMaterial) {
+        if ($itemType == "GOODS") {
+            if ($checkCC && $checkMaterial) {
+                $matchCheck = true;
+            }
+        } else {
+            if ($checkCC) {
+                $matchCheck = true;
+            }
+        }
+
+        if ($matchCheck) {
             $data = array(
                 "status" => "success",
                 "msg" => "Material and Costcenter Valid According to JDE"

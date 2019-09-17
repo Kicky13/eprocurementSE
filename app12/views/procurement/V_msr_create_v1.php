@@ -2588,14 +2588,14 @@ $('#item-add12').click(function () {
     };
     var modal = $('#msr-development-item-modal');
     console.log(validate_msr_item(modal.find('form')[0]));
-    //$.ajax({
-    //    method: "POST",
-    //    url: "<?//= base_url().'/Validatejde/checkItem' ?>//",
-    //    dataType: "JSON",
-    //    data: datapos
-    //}).done(function (res) {
-    //    console.log(res);
-    //});
+    $.ajax({
+        method: "POST",
+        url: "<?= base_url().'/Validatejde/checkItem' ?>",
+        dataType: "JSON",
+        data: datapos
+    }).done(function (res) {
+        console.log(res);
+    });
 });
 
 $('#item-add').click(function() {

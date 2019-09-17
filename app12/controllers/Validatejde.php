@@ -16,21 +16,30 @@ class Validatejde extends CI_Controller {
         $postcc = explode(' - ', $this->input->post("costcenter"));
         $postAcc = explode('-', $this->input->post("account"));
         $postUom = explode(' - ', $this->input->post("uomItem"));
+        $invType = $this->input->post("invType");
+        $itemType = $this->input->post("itemType");
 
-        $gmobj = $postAcc[0];
-        $gmsub = $postAcc[1];
+        if ($itemType == "GOODS" && $invType !== 1) {
+            $gmobj = $postAcc[0];
+            $gmsub = $postAcc[1];
+        }
         $costcenter = "   " . $postcc[0];
         $material = $this->input->post("material");
         $uom = $postUom[0];
-        $itemType = $this->input->post("itemType");
 
         $checkCC = $this->checkCostcenter($costcenter, $gmobj, $gmsub);
         $checkMaterial = $this->checkMaterial($material, $uom);
         $matchCheck = false;
 
         if ($itemType == "GOODS") {
-            if ($checkCC && $checkMaterial) {
-                $matchCheck = true;
+            if ($invType == 1) {
+                if ($checkMaterial) {
+                    $matchCheck = true;
+                }
+            } else {
+                if ($checkCC && $checkMaterial) {
+                    $matchCheck = true;
+                }
             }
         } else {
             if ($checkCC) {

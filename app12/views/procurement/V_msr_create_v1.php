@@ -1306,6 +1306,7 @@ function validate_msr_item(form) {
       var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
       var itemType = $('#item-item_type').val();
       var uom = $('#item-uom_name').val();
+      var invType = $('#item-inv_type').val();
       var material = $('#item-material_id').val();
       var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
       var account_subsidiary_name = '';
@@ -1320,6 +1321,7 @@ function validate_msr_item(form) {
           account: account_subsidiary_value,
           material: material,
           uomItem: uom,
+          invType: invType,
           itemType: itemType
       };
       $.ajax({
@@ -1329,13 +1331,13 @@ function validate_msr_item(form) {
           data: datapos
       }).done(function (res) {
           console.log(res);
-          if (res.status == "success") {
+          if (res.status = true) {
               return true;
-          } else if(res.status == "error") {
+          } else if(res.status = false) {
               swal("FAILED", res.msg, "warning");
               return false;
           }
-      }).fail(function (err) {
+      }).fail(function () {
           swal("FAILED", "Something Went Wrong", "warning")
           return false;
       });

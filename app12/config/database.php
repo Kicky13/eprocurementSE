@@ -160,3 +160,26 @@ $db['oracle'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$dbstr ="(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.1.65)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=jdese)))";
+$db['oracledev'] = array(
+    'dsn'	=> '',
+    'hostname' => $dbstr,
+    'username' => 'crpdta',
+    'password' => 'crpdta',
+    'database' => '',
+    'dbdriver' => 'oci8',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'dev'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);

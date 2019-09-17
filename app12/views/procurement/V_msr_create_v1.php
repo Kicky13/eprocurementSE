@@ -1302,9 +1302,18 @@ function validate_msr_item(form) {
     },
   });
 
+  $.ajax({
+      method: "POST",
+      url: "<?= base_url().'/Validatejde/checkItem' ?>",
+      dataType: "JSON",
+  }).done(function (res) {
+      data = res;
+  });
+
 
   // validated!!
-  return form.valid();
+  // return form.valid();
+    return data;
 }
 
 <?php
@@ -2531,8 +2540,33 @@ function uom_name_parse(text)
   }
 }
 
+$('#item-add').click(function () {
+    var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
+    var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : ''
+    var account_subsidiary_name = ''
+    if (account_subsidiary_value) {
+        account_subsidiary_name = $('#item-account_subsidiary option:selected').text()
+        account_subsidiary_name = account_subsidiary_name.split(' - ')
+        account_subsidiary_name.shift()
+        account_subsidiary_name = account_subsidiary_name.join(' - ')
+    }
+    var datapos = {
+        costcenter: costcenter,
+        account: account_subsidiary_value
+    };
+    console.log(datapos);
+    $.ajax({
+        method: "POST",
+        url: "<?= base_url().'/Validatejde/checkItem' ?>",
+        dataType: "JSON",
+        data: datapos
+    }).done(function (res) {
+        data = res;
+    });
+    console.log(data)
+});
 
-$('#item-add').click(function() {
+$('#item-add12').click(function() {
 	console.log('item-add');
   var modal = $('#msr-development-item-modal')
 
@@ -2603,7 +2637,7 @@ $('#item-add').click(function() {
     cost_center_name.shift()
     cost_center_name = cost_center_name.join(' - ')
   }
-  
+
   //replace costcenter
   var cost_center_value = $('#item-cost_center_slc2').val() ? $('#item-cost_center_slc2').val() : ''
   var cost_center_name = ''

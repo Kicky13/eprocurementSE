@@ -515,14 +515,13 @@ class Ed extends CI_Controller {
         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-        $query = $this->db->query("SELECT t_approval.*, t_eq_data.subject as msr_title, (SELECT m_departement.DEPARTMENT_DESC FROM m_user JOIN m_departement ON m_user.ID_DEPARTMENT = m_departement.ID_DEPARTMENT WHERE m_user.ID_USER = t_msr.create_by ) AS departement, (SELECT m_user.NAME FROM m_user WHERE m_user.ID_USER = t_msr.create_by ) AS requestor, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL as email, m_notic.TITLE AS title_email, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close
+        $query = $this->db->query("SELECT t_approval.*, t_msr.title as msr_title, (SELECT m_departement.DEPARTMENT_DESC FROM m_user JOIN m_departement ON m_user.ID_DEPARTMENT = m_departement.ID_DEPARTMENT WHERE m_user.ID_USER = t_msr.create_by ) AS departement, (SELECT m_user.NAME FROM m_user WHERE m_user.ID_USER = t_msr.create_by ) AS requestor, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL as email, m_notic.TITLE AS title_email, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close
             FROM t_approval
             LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
             LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
             LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
             LEFT JOIN m_notic ON m_notic.ID = 52
             LEFT JOIN t_msr ON t_msr.msr_no = t_approval.data_id
-            LEFT JOIN t_eq_data ON t_eq_data.msr_no = t_approval.data_id
             WHERE data_id = '" . $msr_no . "' AND m_approval.module_kode = 'msr_spa' AND m_approval.urutan = 2");
 
         $data_replace = $query->result();

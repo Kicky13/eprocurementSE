@@ -233,6 +233,7 @@ class Msr extends CI_Controller {
         exit();*/
 
         if ($post && $this->validateCreate($post)) {
+
             // translate for second AAS approval
             $post['user_id'] = $_GET['user_id'] = $_POST['user_id'] = $_POST['submit-second-aas-approver-id'];
 

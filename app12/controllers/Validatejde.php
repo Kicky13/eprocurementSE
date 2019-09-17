@@ -40,7 +40,7 @@ class Validatejde extends CI_Controller {
 
         if ($matchCheck) {
             $data = array(
-                "status" => "success",
+                "status" => true,
                 "msg" => "Material and Costcenter Valid According to JDE"
             );
         } else {
@@ -50,7 +50,7 @@ class Validatejde extends CI_Controller {
                 $msg = "Material not avaible for JDE";
             }
             $data = array(
-                "status" => "error",
+                "status" => false,
                 "msg" => $msg
             );
         }

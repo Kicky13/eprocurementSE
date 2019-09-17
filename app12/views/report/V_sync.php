@@ -54,7 +54,18 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="modal-result-jde" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Result</h4>
+        </div>
+        <div class="modal-body" id="result-jde">
+          
+        </div>
+      </div>
+    </div>
+  </div>
 <script>
     var dataTable;
     $(function() {
@@ -117,7 +128,9 @@
                 url : url,                
                 success : function(response) {   
                     $('#sync-time-'+doc_type).html(Localization.datetime(new Date()));
-                    alert(response);
+                    // alert(response);
+                    $("#result-jde").html(response)
+                    $("#modal-result-jde").modal('show')
                 },
                 error: function(jqXHR, status){
                     if(status === 'timeout') {     

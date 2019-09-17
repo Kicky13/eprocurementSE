@@ -1301,19 +1301,45 @@ function validate_msr_item(form) {
       error.insertBefore($(element).parents('.form-group'));
     },
   });
-
-  $.ajax({
-      method: "POST",
-      url: "<?= base_url().'/Validatejde/checkItem' ?>",
-      dataType: "JSON",
-  }).done(function (res) {
-      data = res;
-  });
-
-
   // validated!!
-  // return form.valid();
-    return data;
+  if (form.valid()) {
+      var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
+      var itemType = $('#item-item_type').val();
+      var uom = $('#item-uom_name').val();
+      var material = $('#item-material_id').val();
+      var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
+      var account_subsidiary_name = '';
+      if (account_subsidiary_value) {
+          account_subsidiary_name = $('#item-account_subsidiary option:selected').text();
+          account_subsidiary_name = account_subsidiary_name.split(' - ');
+          account_subsidiary_name.shift();
+          account_subsidiary_name = account_subsidiary_name.join(' - ');
+      }
+      var datapos = {
+          costcenter: costcenter,
+          account: account_subsidiary_value,
+          material: material,
+          uomItem: uom,
+          itemType: itemType
+      };
+      $.ajax({
+          method: "POST",
+          url: "<?= base_url().'/Validatejde/checkItem' ?>",
+          dataType: "JSON",
+          data: datapos
+      }).done(function (res) {
+          console.log(res);
+          if (res.status == "success") {
+              return true;
+          } else if(res.status == "error") {
+              swal("FAILED", res.msg, "warning");
+              return false;
+          }
+      }).fail(function (err) {
+          swal("FAILED", "Something Went Wrong", "warning")
+          return false;
+      });
+  }
 }
 
 <?php
@@ -2540,35 +2566,41 @@ function uom_name_parse(text)
   }
 }
 
-$('#item-add').click(function () {
+$('#item-add12').click(function () {
     var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
-    var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : ''
-    var account_subsidiary_name = ''
+    var itemType = $('#item-item_type').val();
+    var uom = $('#item-uom_name').val();
+    var material = $('#item-material_id').val();
+    var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
+    var account_subsidiary_name = '';
     if (account_subsidiary_value) {
-        account_subsidiary_name = $('#item-account_subsidiary option:selected').text()
-        account_subsidiary_name = account_subsidiary_name.split(' - ')
-        account_subsidiary_name.shift()
-        account_subsidiary_name = account_subsidiary_name.join(' - ')
+        account_subsidiary_name = $('#item-account_subsidiary option:selected').text();
+        account_subsidiary_name = account_subsidiary_name.split(' - ');
+        account_subsidiary_name.shift();
+        account_subsidiary_name = account_subsidiary_name.join(' - ');
     }
     var datapos = {
         costcenter: costcenter,
-        account: account_subsidiary_value
+        account: account_subsidiary_value,
+        material: material,
+        uomItem: uom,
+        itemType: itemType
     };
-    console.log(datapos);
+    var modal = $('#msr-development-item-modal');
+    console.log(validate_msr_item(modal.find('form')[0]));
     $.ajax({
         method: "POST",
         url: "<?= base_url().'/Validatejde/checkItem' ?>",
         dataType: "JSON",
         data: datapos
     }).done(function (res) {
-        data = res;
+        console.log(res);
     });
-    console.log(data)
 });
 
-$('#item-add12').click(function() {
+$('#item-add').click(function() {
 	console.log('item-add');
-  var modal = $('#msr-development-item-modal')
+  var modal = $('#msr-development-item-modal');
 
   if (!validate_msr_item(modal.find('form')[0])) {
     return false;

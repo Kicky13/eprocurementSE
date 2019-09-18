@@ -2691,7 +2691,7 @@ $('#item-add').click(function() {
         data: datapos
     }).done(function (res) {
         console.log(res);
-        if (res.status = true) {
+        if (res.status === true) {
             msr_development_detail_list.row.add({
                 "id": index,
 
@@ -2776,7 +2776,7 @@ $('#item-add').click(function() {
             display_total_value_header_section()
 
             modal.modal('hide')
-        } else if(res.status = false) {
+        } else if(res.status === false) {
             swal("FAILED", res.msg, "warning");
         }
     }).fail(function () {

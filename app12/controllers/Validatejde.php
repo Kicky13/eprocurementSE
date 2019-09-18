@@ -66,6 +66,16 @@ class Validatejde extends CI_Controller {
         echo json_encode($data);
     }
 
+    public function testAlert()
+    {
+        $data = array(
+            "msg" => "Material is not avaible for JDE",
+            "status" => true
+        );
+
+        echo json_encode($data);
+    }
+
     public function checkCostcenter($costcenter = '', $gmobj = '', $gmsub = '')
     {
 //      Format Costcenter = '   101031200' => '<spasi><spasi><spasi>No_Costcenter'

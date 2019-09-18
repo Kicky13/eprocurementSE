@@ -1302,46 +1302,7 @@ function validate_msr_item(form) {
     },
   });
   // validated!!
-  if (form.valid()) {
-      var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
-      var itemType = $('#item-item_type').val();
-      var uom = $('#item-uom_name').val();
-      var invType = $('#item-inv_type').val();
-      var material = $('#item-material_id').val();
-      var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
-      var account_subsidiary_name = '';
-      if (account_subsidiary_value) {
-          account_subsidiary_name = $('#item-account_subsidiary option:selected').text();
-          account_subsidiary_name = account_subsidiary_name.split(' - ');
-          account_subsidiary_name.shift();
-          account_subsidiary_name = account_subsidiary_name.join(' - ');
-      }
-      var datapos = {
-          costcenter: costcenter,
-          account: account_subsidiary_value,
-          material: material,
-          uomItem: uom,
-          invType: invType,
-          itemType: itemType
-      };
-      $.ajax({
-          method: "POST",
-          url: "<?= base_url().'/Validatejde/checkItem' ?>",
-          dataType: "JSON",
-          data: datapos
-      }).done(function (res) {
-          console.log(res);
-          if (res.status = true) {
-              return true;
-          } else if(res.status = false) {
-              swal("FAILED", res.msg, "warning");
-              return false;
-          }
-      }).fail(function () {
-          swal("FAILED", "Something Went Wrong", "warning")
-          return false;
-      });
-  }
+  return form.valid()
 }
 
 <?php
@@ -2572,24 +2533,17 @@ $('#item-add12').click(function () {
     var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
     var itemType = $('#item-item_type').val();
     var uom = $('#item-uom_name').val();
+    var invType = $('#item-inv_type').val();
     var material = $('#item-material_id').val();
-    var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
-    var account_subsidiary_name = '';
-    if (account_subsidiary_value) {
-        account_subsidiary_name = $('#item-account_subsidiary option:selected').text();
-        account_subsidiary_name = account_subsidiary_name.split(' - ');
-        account_subsidiary_name.shift();
-        account_subsidiary_name = account_subsidiary_name.join(' - ');
-    }
+    var account_subsidiary = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
     var datapos = {
         costcenter: costcenter,
-        account: account_subsidiary_value,
+        account: account_subsidiary,
         material: material,
         uomItem: uom,
+        invType: invType,
         itemType: itemType
     };
-    var modal = $('#msr-development-item-modal');
-    console.log(validate_msr_item(modal.find('form')[0]));
     $.ajax({
         method: "POST",
         url: "<?= base_url().'/Validatejde/checkItem' ?>",
@@ -2597,6 +2551,15 @@ $('#item-add12').click(function () {
         data: datapos
     }).done(function (res) {
         console.log(res);
+        if (res.status = true) {
+            return true;
+        } else if(res.status = false) {
+            swal("FAILED", res.msg, "warning");
+            return false;
+        }
+    }).fail(function () {
+        swal("FAILED", "Something Went Wrong", "warning")
+        return false;
     });
 });
 
@@ -2707,92 +2670,119 @@ $('#item-add').click(function() {
     material.description = $('#item-semic_no_name').val()
   }
 
+    var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
+    var itemType = $('#item-item_type').val();
+    var uom = $('#item-uom_name').val();
+    var invType = $('#item-inv_type').val();
+    var material = $('#item-material_id').val();
+    var account_subsidiary = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
+    var datapos = {
+        costcenter: costcenter,
+        account: account_subsidiary,
+        material: material,
+        uomItem: uom,
+        invType: invType,
+        itemType: itemType
+    };
+    $.ajax({
+        method: "POST",
+        url: "<?= base_url().'/Validatejde/checkItem' ?>",
+        dataType: "JSON",
+        data: datapos
+    }).done(function (res) {
+        console.log(res);
+        if (res.status === true) {
+            msr_development_detail_list.row.add({
+                "id": index,
 
-  msr_development_detail_list.row.add({
-    "id": index,
+                "item_type": modal.find('#item-item_type option:selected').text()
+                    + hidden_input(item_namespace + '[item_type_value]', item_type_value)
+                    + hidden_input(item_namespace + '[item_type_name]', item_type_name)
+                    + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
+                    + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
 
-    "item_type": modal.find('#item-item_type option:selected').text()
-      + hidden_input(item_namespace + '[item_type_value]', item_type_value)
-      + hidden_input(item_namespace + '[item_type_name]', item_type_name)
-      + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
-      + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
+                "itemtype_category": itemtype_category_name
+                    + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
+                    + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
 
-    "itemtype_category": itemtype_category_name
-      + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
-      + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
+                "semic_no": material.semic_no
+                    + hidden_input(item_namespace + '[material_id]', material_id)
+                    + hidden_input(item_namespace + '[semic_no_value]', material.semic_no),
 
-    "semic_no": material.semic_no
-      + hidden_input(item_namespace + '[material_id]', material_id)
-      + hidden_input(item_namespace + '[semic_no_value]', material.semic_no),
+                "description_of_unit": material.description
+                    + hidden_input(item_namespace + '[semic_no_name]', material.description),
 
-    "description_of_unit": material.description
-      + hidden_input(item_namespace + '[semic_no_name]', material.description),
+                "group": modal.find('#item-group').val()
+                    + hidden_input(item_namespace + '[group_value]', group_value)
+                    + hidden_input(item_namespace + '[group_name]', group_name),
 
-    "group": modal.find('#item-group').val()
-      + hidden_input(item_namespace + '[group_value]', group_value)
-      + hidden_input(item_namespace + '[group_name]', group_name),
+                "subgroup": modal.find('#item-subgroup').val()
+                    + hidden_input(item_namespace + '[subgroup_value]', subgroup_value)
+                    + hidden_input(item_namespace + '[subgroup_name]', subgroup_name),
 
-    "subgroup": modal.find('#item-subgroup').val()
-      + hidden_input(item_namespace + '[subgroup_value]', subgroup_value)
-      + hidden_input(item_namespace + '[subgroup_name]', subgroup_name),
+                "qty_required": modal.find('#item-qty_required').val()
+                    + hidden_input(item_namespace + '[qty_required_value]', qty_required_value),
 
-    "qty_required": modal.find('#item-qty_required').val()
-      + hidden_input(item_namespace + '[qty_required_value]', qty_required_value),
+                "qty_onhand": accounting.format(qty_onhand_value)
+                    + hidden_input(item_namespace + '[qty_onhand_value]', qty_onhand_value),
 
-    "qty_onhand": accounting.format(qty_onhand_value)
-      + hidden_input(item_namespace + '[qty_onhand_value]', qty_onhand_value),
+                "qty_ordered": accounting.format(qty_ordered_value)
+                    + hidden_input(item_namespace + '[qty_ordered_value]', qty_ordered_value),
 
-    "qty_ordered": accounting.format(qty_ordered_value)
-      + hidden_input(item_namespace + '[qty_ordered_value]', qty_ordered_value),
+                "uom": uom_name_format(uom_name, uom_description)
+                    + hidden_input(item_namespace + '[uom_name]', uom_name)
+                    + hidden_input(item_namespace + '[uom_value]', uom_value)
+                    + hidden_input(item_namespace + '[uom_description]', uom_description),
 
-    "uom": uom_name_format(uom_name, uom_description)
-      + hidden_input(item_namespace + '[uom_name]', uom_name)
-      + hidden_input(item_namespace + '[uom_value]', uom_value)
-      + hidden_input(item_namespace + '[uom_description]', uom_description),
+                "unit_price": accounting.format(unit_price_value)
+                    + hidden_input(item_namespace + '[unit_price_value]', unit_price_value),
 
-    "unit_price": accounting.format(unit_price_value)
-      + hidden_input(item_namespace + '[unit_price_value]', unit_price_value),
+                "total_value": accounting.format(total_value_value)
+                    + hidden_input(item_namespace + '[total_value]', total_value_value),
 
-    "total_value": accounting.format(total_value_value)
-      + hidden_input(item_namespace + '[total_value]', total_value_value),
+                "currency": currency_name
+                    + hidden_input(item_namespace + '[currency_value]', currency_value)
+                    + hidden_input(item_namespace + '[currency_name]', currency_name),
 
-    "currency": currency_name
-      + hidden_input(item_namespace + '[currency_value]', currency_value)
-      + hidden_input(item_namespace + '[currency_name]', currency_name),
+                "importation": importation_name
+                    + hidden_input(item_namespace + '[importation_value]', importation_value)
+                    + hidden_input(item_namespace + '[importation_name]', importation_name),
 
-    "importation": importation_name
-      + hidden_input(item_namespace + '[importation_value]', importation_value)
-      + hidden_input(item_namespace + '[importation_name]', importation_name),
+                "delivery_point": delivery_point_name
+                    + hidden_input(item_namespace + '[delivery_point_value]', delivery_point_value)
+                    + hidden_input(item_namespace + '[delivery_point_name]', delivery_point_name),
 
-    "delivery_point": delivery_point_name
-      + hidden_input(item_namespace + '[delivery_point_value]', delivery_point_value)
-      + hidden_input(item_namespace + '[delivery_point_name]', delivery_point_name),
+                "cost_center": cost_center_name
+                    + hidden_input(item_namespace + '[cost_center_value]', cost_center_value)
+                    + hidden_input(item_namespace + '[cost_center_name]', cost_center_name),
 
-    "cost_center": cost_center_name
-      + hidden_input(item_namespace + '[cost_center_value]', cost_center_value)
-      + hidden_input(item_namespace + '[cost_center_name]', cost_center_name),
+                "account_subsidiary": account_subsidiary_value+" - "+account_subsidiary_name
+                    + hidden_input(item_namespace + '[account_subsidiary_value]', account_subsidiary_value)
+                    + hidden_input(item_namespace + '[account_subsidiary_name]', account_subsidiary_name),
 
-    "account_subsidiary": account_subsidiary_value+" - "+account_subsidiary_name
-      + hidden_input(item_namespace + '[account_subsidiary_value]', account_subsidiary_value)
-      + hidden_input(item_namespace + '[account_subsidiary_name]', account_subsidiary_name),
+                /*"is_asset": is_asset_name
+                  + hidden_input(item_namespace + '[is_asset]', is_asset_value),*/
 
-    /*"is_asset": is_asset_name
-      + hidden_input(item_namespace + '[is_asset]', is_asset_value),*/
+                "inv_type": inv_type_name
+                    + hidden_input(item_namespace + '[inv_type_value]', inv_type_value)
+                    + hidden_input(item_namespace + '[inv_type_name]', inv_type_name),
 
-    "inv_type": inv_type_name
-      + hidden_input(item_namespace + '[inv_type_value]', inv_type_value)
-      + hidden_input(item_namespace + '[inv_type_name]', inv_type_name),
+                "item_modification": item_modification_name
+                    + hidden_input(item_namespace + '[item_modification_value]', item_modification_value),
 
-    "item_modification": item_modification_name
-      + hidden_input(item_namespace + '[item_modification_value]', item_modification_value),
+                "action": ""
+            }).draw();
 
-    "action": ""
-  }).draw()
+            display_total_value_header_section()
 
-  display_total_value_header_section()
-
-  modal.modal('hide')
-})
+            modal.modal('hide')
+        } else if(res.status === false) {
+            swal("FAILED", res.msg, "warning");
+        }
+    }).fail(function () {
+        swal("FAILED", "Something Went Wrong", "warning");
+    });
+});
 
 $('#item-qty_required').change(function(e) {
   var qty_required = $(this).val()

@@ -19,7 +19,7 @@ class Validatejde extends CI_Controller {
         $invType = $this->input->post("invType");
         $itemType = $this->input->post("itemType");
 
-        if ($itemType == "GOODS" && $invType !== 1) {
+        if ($invType !== 1) {
             $gmobj = $postAcc[0];
             $gmsub = $postAcc[1];
         }
@@ -50,19 +50,29 @@ class Validatejde extends CI_Controller {
         if ($matchCheck) {
             $data = array(
                 "status" => true,
-                "msg" => "Material and Costcenter Valid According to JDE"
+                "msg" => "Material and Costcenter is Avaible"
             );
         } else {
             if ($checkCC === false) {
-                $msg = "Costcenter not avaible for JDE";
+                $msg = "Costcenter is not avaible for JDE";
             } else if ($checkMaterial === false) {
-                $msg = "Material not avaible for JDE";
+                $msg = "Material is not avaible for JDE";
             }
             $data = array(
                 "status" => false,
                 "msg" => $msg
             );
         }
+        echo json_encode($data);
+    }
+
+    public function testAlert()
+    {
+        $data = array(
+            "msg" => "Material is not avaible for JDE",
+            "status" => true
+        );
+
         echo json_encode($data);
     }
 

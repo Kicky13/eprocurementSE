@@ -19,7 +19,7 @@ class Validatejde extends CI_Controller {
         $invType = $this->input->post("invType");
         $itemType = $this->input->post("itemType");
 
-        if ($invType !== 1) {
+        if ($invType != 1) {
             $gmobj = $postAcc[0];
             $gmsub = $postAcc[1];
         }

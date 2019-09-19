@@ -317,7 +317,69 @@ class Amendment_acceptance extends CI_Controller {
             }*/
             // getLastTimeAmd($amdNumber='', $po_date='', $equal = '<')
             $date_promised_delivery = getLastTimeAmd($acceptance->doc_no, $po->delivery_date,"<=");
-            if ($notification_revision_value) {
+            if($notification_revision_time and !$notification_revision_value)
+            {
+              $documentTypeCode = substr($po->po_no, 9, 2);
+              $documentNumber = substr($po->po_no, 0, 8);
+              $tQueryJde = "SELECT PDLNID FROM F4311 WHERE PDKCOO = $po->id_company AND PDDCTO = '$documentTypeCode' AND PDDOCO = $documentNumber AND PDNXTR NOT IN (999,980)";
+              $rJde = $this->db->query($q);
+              if($rJde->num_rows() > 0)
+              {
+                $results = $rJde->result();
+                $xml = $this->load->view('procurement/jde/Amendment_time_store', array(
+                    'po' => $po,
+                    'arf' => $arf,
+                    'notification' => $notification,
+                    'acceptance' => $acceptance,
+                    'date_promised_delivery' => $date_promised_delivery,
+                    'results' => $results
+                ), TRUE);
+
+                $headers = array(
+                    #"Content-type: application/soap+xml;charset=\"utf-8\"",
+                    "Content-Type: text/xml",
+                    "charset:utf-8",
+                    "Accept: application/xml",
+                    "Cache-Control: no-cache",
+                    "Pragma: no-cache",
+                    "Content-length: " . strlen($xml),
+                );
+                if ($this->input->get('action') == 'get_xml_code') {
+                    $this->output->set_content_type('xml')->set_output($xml);
+                } else {
+                    $ch = curl_init('https://10.1.1.94:89/PY910/ProcurementManager?WSDL');
+                    curl_setopt($ch, CURLOPT_HEADER, true);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                    curl_setopt($ch, CURLOPT_SSLVERSION, 'all');
+
+                    curl_setopt($ch, CURLOPT_VERBOSE, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT,300);
+                    curl_setopt($ch, CURLOPT_TIMEOUT,360);
+                    $data_curl = curl_exec($ch);
+                    curl_close($ch);
+          
+                    if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
+                        echo "<pre>".$data_curl."</pre>";
+                        // echo "Failed Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+                    } else {
+                        $this->db->where('id', $sync->id)
+                        ->update('i_sync', array(
+                            'isclosed' => 1
+                        ));
+                        echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+                    }
+                }
+              }
+              else
+              {
+                echo "Nothing Item";
+              }
+            }
+            elseif ($notification_revision_value) {
                 $rs_sop = $this->m_arf_sop->view('response')
                 ->where('t_arf_sop.doc_id', $notification->id)
                 ->get();

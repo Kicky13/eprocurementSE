@@ -1266,7 +1266,7 @@ class Arf extends CI_Controller
 
             $data_replace = $query->row();
 
-            if (count($data_replace) > 0) {
+            if (isset($data_replace)) {
                 $str = $data_replace->open;
                 $str = str_replace('no_arf', $data_replace->doc_no, $str);
 

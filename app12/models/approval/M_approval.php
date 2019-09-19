@@ -1222,12 +1222,29 @@ class M_approval extends CI_Model {
         $sqlId = "select * from t_jabatan where user_id = $created_by";
         $n = $this->db->query($sqlId)->row();
         $id = @$n->id;
-        if($nominal > 5000000)
+        // echo $id;
+        if($nominal > 1000000)
         {
-            $sql = "SELECT * FROM t_jabatan WHERE id = 1";
+            /*$sql = "SELECT * FROM t_jabatan WHERE nominal = 1000000 and operand = '>'";
             $result = $this->db->query($sql);
             $row = $result->row();
-            $rs = $row;
+            $rs = $row;*/
+            for ($i=0; $i <9; $i++) {
+                $sql = "SELECT * FROM t_jabatan WHERE id = (SELECT parent_id FROM t_jabatan WHERE id = '$id')";
+                $result = $this->db->query($sql);
+                $row = $result->row();
+                if(@$row->nominal == 1000000 and @$row->operand == '>')
+                {
+                    $rs = $row;
+                    break;
+                }
+                else
+                {
+                    $id = @$row->id;
+                }
+            }
+            // echo $this->db->last_query();
+            // exit();
         }
         else
         {

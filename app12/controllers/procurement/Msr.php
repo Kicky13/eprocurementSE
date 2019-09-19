@@ -1354,8 +1354,8 @@ class Msr extends CI_Controller {
         if ($draft) {
             $this->M_msr_draft->update($draft_id, $input_data['header']);
         } else {
-			$this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
-			$this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
+			// $this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
+			// $this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
 		
 			$this->M_msr_draft->add($input_data['header']);
 			$draft_id = $input_data['header']['id'] = $this->db->insert_id();

@@ -302,7 +302,7 @@ class Amendment_acceptance extends CI_Controller {
             $po = $this->m_arf_po->view('po')
             ->where('t_purchase_order.po_no', $arf->po_no)
             ->first();
-            $amended_date = $this->m_arf->select_max('amended_date')
+            /*$amended_date = $this->m_arf->select_max('amended_date')
             ->join('t_arf_acceptance', 't_arf_acceptance.doc_no = t_arf.doc_no')
             ->where('t_arf_acceptance.accepted_user_at IS NOT NULL')
             ->first();
@@ -314,7 +314,9 @@ class Amendment_acceptance extends CI_Controller {
                 }
             } else {
                 $date_promised_delivery = $po->delivery_date;
-            }
+            }*/
+            // getLastTimeAmd($amdNumber='', $po_date='', $equal = '<')
+            $date_promised_delivery = getLastTimeAmd($acceptance->doc_no, $po->delivery_date,"<=");
             if ($notification_revision_value) {
                 $rs_sop = $this->m_arf_sop->view('response')
                 ->where('t_arf_sop.doc_id', $notification->id)
@@ -454,9 +456,10 @@ class Amendment_acceptance extends CI_Controller {
                     curl_setopt($ch, CURLOPT_TIMEOUT,360);
                     $data_curl = curl_exec($ch);
                     curl_close($ch);
-					echo $data_curl;
+					
                     if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
-                        echo "Failed Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
+                        echo "<pre>".$data_curl."</pre>";
+                        // echo "Failed Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
                     } else {
                         $this->db->where('id', $sync->id)
                         ->update('i_sync', array(

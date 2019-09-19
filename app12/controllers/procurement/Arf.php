@@ -1201,7 +1201,7 @@ class Arf extends CI_Controller
             if ($approved < $approval) {
                 if ($rc->sequence != $rn->sequence) {
                     if ($rn->sequence == 6) {
-                        $query = $this->db->query("SELECT aa.*, a.company_id n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
+                        $query = $this->db->query("SELECT aa.*, a.company_id, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
                         JOIN t_arf a ON aa.id_ref = a.id
                         JOIN m_notic n ON n.ID = aa.email_approve
                         WHERE aa.id_ref = " . $rn->id_ref . " AND aa.sequence = " . $rn->sequence);

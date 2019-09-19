@@ -490,6 +490,35 @@ class Arf extends CI_Controller
             }
             $response = array('success' => true, 'data' => $arf);
             $this->db->trans_commit();
+            $notifquery = $this->db->query('SELECT arf.doc_no, arf.po_title, u.EMAIL as recipient, n.TITLE as title, n.OPEN_VALUE as open, n.CLOSE_VALUE as close, n.CATEGORY as category FROM t_arf arf
+                                            JOIN t_purchase_order po ON arf.po_no = po.po_no
+                                            JOIN t_approval_arf aa ON arf.id = aa.id_ref
+                                            JOIN m_user u ON aa.id_user = u.ID_USER
+                                            JOIN m_notic n ON n.ID = 57
+                                            WHERE arf.doc_no = "' . $arf->doc_no . '" AND sequence = 2');
+            $data_replace = $notifquery->result();
+            $img1 = '';
+            $img2 = '';
+
+            if (count($data_replace) > 0) {
+                $str = $data_replace[0]->open;
+                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
+
+                foreach($data_replace as $v => $item) {
+                    $data['dest'][] = $item->recipient;
+                }
+            }
+            if (isset($data)) {
+                $flag = $this->sendMail($data);
+            }
         } else {
             if ($this->input->post('submit') == 1) {
                 $response = array(
@@ -835,32 +864,37 @@ class Arf extends CI_Controller
                 'success' => true,
                 'message' => 'Data is successfully submitted'
             );
-            $notifquery = $this->db->query('SELECT po.msr_no as msr_no, u.EMAIL as recipient, n.TITLE as title, n.OPEN_VALUE as open, n.CLOSE_VALUE as close, n.CATEGORY as category FROM t_arf arf
+
+            $this->db->trans_commit();
+            $notifquery = $this->db->query('SELECT arf.doc_no, arf.po_title, u.EMAIL as recipient, n.TITLE as title, n.OPEN_VALUE as open, n.CLOSE_VALUE as close, n.CATEGORY as category FROM t_arf arf
                                             JOIN t_purchase_order po ON arf.po_no = po.po_no
                                             JOIN t_approval_arf aa ON arf.id = aa.id_ref
                                             JOIN m_user u ON aa.id_user = u.ID_USER
                                             JOIN m_notic n ON n.ID = 57
                                             WHERE aa.id_ref = "' . $id . '" AND sequence = 2');
             $data_replace = $notifquery->result();
-
             $img1 = '';
             $img2 = '';
-            $str = $data_replace[0]->open;
-            $str = str_replace('no_msr', $data_replace[0]->msr_no, $str);
-            $data = array(
-                'img1' => $img1,
-                'img2' => $img2,
-                'title' => $data_replace[0]->title,
-                'open' => $str,
-                'close' => $data_replace[0]->close
-            );
 
-            foreach($data_replace as $v => $item) {
-                $data['dest'][] = $item->recipient;
+            if (count($data_replace) > 0) {
+                $str = $data_replace[0]->open;
+                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
+
+                foreach($data_replace as $v => $item) {
+                    $data['dest'][] = $item->recipient;
+                }
             }
-
-            $this->db->trans_commit();
-            $flag = $this->sendMail($data);
+            if (isset($data)) {
+                $flag = $this->sendMail($data);
+            }
         } else {
             $response = array(
                 'success' => true,
@@ -1155,8 +1189,8 @@ class Arf extends CI_Controller
     public function prepare_mail_send($arfId = '', $status = '')
     {
         ini_set('max_execution_time', 300);
-        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-        $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+        $img1 = "";
+        $img2 = "";
         $rc = $this->db->query("SELECT * FROM t_approval_arf WHERE id = " . $arfId)->row();
         $rn = $this->db->query("SELECT * FROM t_approval_arf WHERE id_ref = " . $rc->id_ref . " AND status = 0 ORDER BY sequence ASC")->row();
 
@@ -1166,7 +1200,7 @@ class Arf extends CI_Controller
         if ($status == 1) {
             if ($approved < $approval) {
                 if ($rc->sequence != $rn->sequence) {
-                    if ($rn->sequence = 6) {
+                    if ($rn->sequence == 6) {
                         $query = $this->db->query("SELECT aa.*, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
                         JOIN t_arf a ON aa.id_ref = a.id
                         JOIN m_notic n ON n.ID = aa.email_approve
@@ -1174,21 +1208,25 @@ class Arf extends CI_Controller
 
                         $data_replace = $query->result();
 
-                        $str = $data_replace[0]->open;
-                        $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
-                        $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                        if (count($data_replace) > 0) {
+                            $str = $data_replace[0]->open;
+                            $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                            $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
 
-                        $data = array(
-                            'img1' => $img1,
-                            'img2' => $img2,
-                            'title' => $data_replace[0]->title,
-                            'open' => $str,
-                            'close' => $data_replace[0]->close
-                        );
+                            $data = array(
+                                'img1' => $img1,
+                                'img2' => $img2,
+                                'title' => $data_replace[0]->title,
+                                'open' => $str,
+                                'close' => $data_replace[0]->close
+                            );
 
-                        foreach ($data_replace as $item) {
-                            $user = $this->db->query("SELECT * FROM m_user WHERE ROLES LIKE '%" . $item->id_user_role . "%'")->row();
-                            $data['dest'][] = $user->EMAIL;
+                            foreach ($data_replace as $item) {
+                                $users = $this->db->query("SELECT * FROM m_user WHERE ROLES LIKE '%" . $item->id_user_role . "%'")->result();
+                                foreach ($users as $user) {
+                                    $data['dest'][] = $user->EMAIL;
+                                }
+                            }
                         }
                     } else {
                         $query = $this->db->query("SELECT aa.*, u.NAME, u.EMAIL AS recipient, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
@@ -1199,20 +1237,22 @@ class Arf extends CI_Controller
 
                         $data_replace = $query->result();
 
-                        $str = $data_replace[0]->open;
-                        $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
-                        $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                        if (count($data_replace) > 0) {
+                            $str = $data_replace[0]->open;
+                            $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                            $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
 
-                        $data = array(
-                            'img1' => $img1,
-                            'img2' => $img2,
-                            'title' => $data_replace[0]->title,
-                            'open' => $str,
-                            'close' => $data_replace[0]->close
-                        );
+                            $data = array(
+                                'img1' => $img1,
+                                'img2' => $img2,
+                                'title' => $data_replace[0]->title,
+                                'open' => $str,
+                                'close' => $data_replace[0]->close
+                            );
 
-                        foreach ($data_replace as $item) {
-                            $data['dest'][] = $item->recipient;
+                            foreach ($data_replace as $item) {
+                                $data['dest'][] = $item->recipient;
+                            }
                         }
                     }
                 }
@@ -1227,22 +1267,29 @@ class Arf extends CI_Controller
 
             $data_replace = $query->result();
 
-            $str = $data_replace[0]->open;
-            $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+            if (count($data_replace) > 0) {
+                $str = $data_replace[0]->open;
+                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
 
-            $data = array(
-                'img1' => $img1,
-                'img2' => $img2,
-                'title' => $data_replace[0]->title,
-                'open' => $str,
-                'close' => $data_replace[0]->close
-            );
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
 
-            foreach ($data_replace as $item) {
-                $data['dest'][] = $item->recipient;
+                foreach ($data_replace as $item) {
+                    $data['dest'][] = $item->recipient;
+                }
             }
         }
-        $flag = $this->M_sendmail->sendMail($data);
+
+        $flag = false;
+
+        if (isset($data)) {
+            $flag = $this->M_sendmail->sendMail($data);
+        }
         return $flag;
     }
 

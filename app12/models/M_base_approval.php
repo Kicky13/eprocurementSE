@@ -207,24 +207,24 @@ class M_base_approval extends CI_Model {
                         $this->on_reject($id, $approval);
                     }
                 }
-                if ($next_approval) {
-                    $users = $this->db->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
-                    ->like('ROLES', $next_approval->id_user_role)
-                    ->where('\''.$next_approval->id_user.'\' LIKE m_user.ID_USER', null, false)
-                    ->get('m_user')
-                    ->result();
-                    $content_template = $email->OPEN_VALUE.$email->CLOSE_VALUE;
-                    foreach ($users as $user) {
-                        $content = str_replace(array('_var1_', '_var2_'), array($user->NAME, $user->DEPARTMENT_DESC), $content_template);
-                        $this->db->insert('i_notification', array(
-                            'recipient' => $user->EMAIL,
-                            'subject' => $email->TITLE,
-                            'content' => $content,
-                            'ismailed' => 0,
-                            'create_date' => date('Y-m-d H:i:s')
-                        ));
-                    }
-                }
+//                if ($next_approval) {
+//                    $users = $this->db->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+//                    ->like('ROLES', $next_approval->id_user_role)
+//                    ->where('\''.$next_approval->id_user.'\' LIKE m_user.ID_USER', null, false)
+//                    ->get('m_user')
+//                    ->result();
+//                    $content_template = $email->OPEN_VALUE.$email->CLOSE_VALUE;
+//                    foreach ($users as $user) {
+//                        $content = str_replace(array('_var1_', '_var2_'), array($user->NAME, $user->DEPARTMENT_DESC), $content_template);
+//                        $this->db->insert('i_notification', array(
+//                            'recipient' => $user->EMAIL,
+//                            'subject' => $email->TITLE,
+//                            'content' => $content,
+//                            'ismailed' => 0,
+//                            'create_date' => date('Y-m-d H:i:s')
+//                        ));
+//                    }
+//                }
             }
             if ($detail) {
                 $record_detail = array();

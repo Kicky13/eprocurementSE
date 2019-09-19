@@ -364,12 +364,8 @@ class Amendment_acceptance extends CI_Controller {
           
                     if (strpos($data_curl, 'HTTP/1.1 200 OK') === false) {
                         echo "<pre>".$data_curl."</pre>";
-                        // echo "Failed Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
                     } else {
-                        $this->db->where('id', $sync->id)
-                        ->update('i_sync', array(
-                            'isclosed' => 1
-                        ));
+                        $this->db->where('id', $sync->id)->update('i_sync', array('isclosed' => 1));
                         echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
                     }
                 }

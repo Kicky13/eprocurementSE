@@ -46,7 +46,7 @@
             <!--Optional:-->
             <purchaseOrderKey>
                <!--Optional:-->
-               <documentCompany><?= $po->id_company ?></documentCompany>
+               <documentCompany>$po->id_company</documentCompany>
                <!--Optional:-->
                <documentNumber><?= substr($po->po_no, 0, 8) ?></documentNumber>
                <!--OP-->

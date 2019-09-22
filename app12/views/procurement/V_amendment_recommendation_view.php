@@ -44,10 +44,9 @@
         $strAmdNoBefore = 'AMD'.$amdNoBefore;
         $docNo = $arf->po_no.'-'.$strAmdNoBefore;
         //$dataBefore = $this->db->where(['doc_no'=>$docNo])->get('t_arf_recommendation_preparation')->row();
-        $performaceBond = $this->db->where(['po_no'=>$arf->po_no, 'doc_no <'=>$arf->doc_no,'extend1'=>1])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
-        $insurance = $this->db->where(['po_no'=>$arf->po_no,'doc_no <'=>$arf->doc_no, 'extend1'=>2])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
-        $latestPerformanceBondDate = isset($performaceBond->new_date_1) ? dateToIndo($performaceBond->new_date_1) : '-';
-        $latestInsuranceDate = isset($insurance->new_date_2) ? dateToIndo($insurance->new_date_2) : '-';
+        @$amdAdditionalDocLatestDate = amdAdditionalDocLatestDate($arf);
+        $latestPerformanceBondDate = @$amdAdditionalDocLatestDate['performance_bond'];
+        $latestInsuranceDate = @$amdAdditionalDocLatestDate['insurance'];
 		/*if($dataBefore)
 		{
 				$new_date_1 = $dataBefore->new_date_1;

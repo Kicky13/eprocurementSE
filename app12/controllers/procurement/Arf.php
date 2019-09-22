@@ -1201,7 +1201,7 @@ class Arf extends CI_Controller
             if ($approved < $approval) {
                 if ($rc->sequence != $rn->sequence) {
                     if ($rn->sequence == 6) {
-                        $query = $this->db->query("SELECT aa.*, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
+                        $query = $this->db->query("SELECT aa.*, a.company_id, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
                         JOIN t_arf a ON aa.id_ref = a.id
                         JOIN m_notic n ON n.ID = aa.email_approve
                         WHERE aa.id_ref = " . $rn->id_ref . " AND aa.sequence = " . $rn->sequence);
@@ -1222,7 +1222,7 @@ class Arf extends CI_Controller
                             );
 
                             foreach ($data_replace as $item) {
-                                $users = $this->db->query("SELECT * FROM m_user WHERE ROLES LIKE '%" . $item->id_user_role . "%'")->result();
+                                $users = $this->db->query("SELECT * FROM m_user WHERE ROLES LIKE '%" . $item->id_user_role . "%' AND COMPANY LIKE '%" . $item->company_id . "%'")->result();
                                 foreach ($users as $user) {
                                     $data['dest'][] = $user->EMAIL;
                                 }
@@ -1262,26 +1262,22 @@ class Arf extends CI_Controller
             JOIN t_arf a ON aa.id_ref = a.id
             JOIN m_user u ON u.ID_USER = a.created_by
             JOIN m_notic n ON n.ID = aa.email_reject
-            WHERE aa.id_ref = "  . $rn->id_ref . "
-            GROUP BY a.doc_no");
+            WHERE aa.id_ref = "  . $rn->id_ref);
 
-            $data_replace = $query->result();
+            $data_replace = $query->row();
 
-            if (count($data_replace) > 0) {
-                $str = $data_replace[0]->open;
-                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+            if (isset($data_replace)) {
+                $str = $data_replace->open;
+                $str = str_replace('no_arf', $data_replace->doc_no, $str);
 
                 $data = array(
                     'img1' => $img1,
                     'img2' => $img2,
-                    'title' => $data_replace[0]->title,
+                    'title' => $data_replace->title,
                     'open' => $str,
-                    'close' => $data_replace[0]->close
+                    'close' => $data_replace->close
                 );
-
-                foreach ($data_replace as $item) {
-                    $data['dest'][] = $item->recipient;
-                }
+                $data['dest'][] = $data_replace->recipient;
             }
         }
 

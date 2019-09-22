@@ -321,8 +321,9 @@ class Amendment_acceptance extends CI_Controller {
             {
               $documentTypeCode = substr($po->po_no, 9, 2);
               $documentNumber = substr($po->po_no, 0, 8);
-              $tQueryJde = "SELECT PDLNID FROM F4311 WHERE PDKCOO = $po->id_company AND PDDCTO = '$documentTypeCode' AND PDDOCO = $documentNumber AND PDNXTR NOT IN (999,980)";
-              $rJde = $this->db->query($q);
+              $tQueryJde = "SELECT PDLNID,PDLITM FROM F4311 WHERE PDKCOO = $po->id_company AND PDDCTO = '$documentTypeCode' AND PDDOCO = $documentNumber AND PDNXTR NOT IN (999,980)";
+              $this->dbo = $this->load->database('oracle', true);
+              $rJde = $this->dbo->query($tQueryJde);
               if($rJde->num_rows() > 0)
               {
                 $results = $rJde->result();

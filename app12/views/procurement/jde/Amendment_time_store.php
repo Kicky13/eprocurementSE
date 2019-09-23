@@ -28,10 +28,18 @@
               <actionType>2</actionType>
               <datesDetail>
                   <datePromisedDelivery><?= substr($date_promised_delivery,0,4).'-'.substr($date_promised_delivery,5,2).'-'.substr($date_promised_delivery,8,2) ?>T00:00:00-06:00</datePromisedDelivery>
-              </datesDetail>    
+              </datesDetail>  
+              <?php if($result->PDLITM)  :?>
+              <product>
+                  <item>
+                      <!--Optional:-->
+                      <itemCatalog><?= $result->PDLITM ?></itemCatalog>
+                  </item>
+              </product>
+              <?php endif;?>
               <purchaseOrderLineKey>
                   <!--Optional:-->
-                  <documentLineNumber><?= $result->PDLNID ?></documentLineNumber><!-- PDLNID -->
+                  <documentLineNumber><?= ($result->PDLNID/1000) ?></documentLineNumber><!-- PDLNID -->
               </purchaseOrderLineKey>
 
             </detail>
@@ -46,7 +54,7 @@
             <!--Optional:-->
             <purchaseOrderKey>
                <!--Optional:-->
-               <documentCompany>$po->id_company</documentCompany>
+               <documentCompany><?=$po->id_company?></documentCompany>
                <!--Optional:-->
                <documentNumber><?= substr($po->po_no, 0, 8) ?></documentNumber>
                <!--OP-->

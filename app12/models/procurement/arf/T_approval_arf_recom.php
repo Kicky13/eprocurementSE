@@ -144,6 +144,8 @@ class T_approval_arf_recom extends CI_Model {
     ->get('t_arf')->row();
 
     $this->db->where('id',$arf->id)->update('t_arf', ['is_issued'=>1]);
+
+    $this->db->where(['arf_response_id'=>$p['arf_response_id']])->update('t_arf_recommendation_preparation', ['amendment_date'=>$p['amendment_date']]);
   }
   public function find($id='')
   {

@@ -282,7 +282,7 @@
         });
 
         $('#add-item-btn-add-item').click(function() {
-            add_arf_item();
+            add_arf_item()
         });
 
         $('#attachment-modal-select_type').change(function() {
@@ -294,6 +294,41 @@
                 $('#attachment-modal-type').val($('#attachment-modal-select_type').val());
             }
         });
+        /*function validationitem() {
+            var id_costcenter = $('#add-item-id_costcenter').val();
+            if (id_costcenter) {
+                var costcenter = $('#add-item-id_costcenter option:selected').text().split(" - ")[1];
+            } else {
+                var costcenter = '';
+            }
+            var account_subsidiary = $('#add-item-id_account_subsidiary').val();
+            var material = $('#add-item-semic_no').val();
+            var uom = $('#add-item-uom').val();
+            var invType = $('#add-item-id_inventory_type').val();
+            var itemType = $('#add-item-id_item_type').val();
+            var datapos = {
+                costcenter: costcenter,
+                account: account_subsidiary,
+                material: material,
+                uomItem: uom,
+                invType: invType,
+                itemType: itemType
+            };
+            $.ajax({
+                method: "POST",
+                url: "<?= base_url().'/validatejde/checkItem' ?>",
+                dataType: "JSON",
+                data: datapos
+            }).done(function (res) {
+                if (res.status = true) {
+                    add_arf_item();
+                } else if(res.status = false) {
+                    swal("Fail", res.msg, "warning");
+                }
+            }).fail(function () {
+                swal("Fail", "Something Went Wrong", "warning");
+            });
+        }*/
     });
 
     function active_amendment(type) {

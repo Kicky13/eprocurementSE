@@ -1244,3 +1244,12 @@ function company_cmms($param=0)
     return $result;
   return $result->num_rows() > 0 ? true : false ;
 }
+function amdAdditionalDocLatestDate($arf, $output_type='')
+{
+  $ci = &get_instance();
+  $performaceBond = $ci->db->where(['po_no'=>$arf->po_no, 'doc_no <'=>$arf->doc_no,'extend1'=>1])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
+  $insurance = $ci->db->where(['po_no'=>$arf->po_no,'doc_no <'=>$arf->doc_no, 'extend2'=>1])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
+  $latestPerformanceBondDate = isset($performaceBond->new_date_1) ? dateToIndo($performaceBond->new_date_1) : '-';
+  $latestInsuranceDate = isset($insurance->new_date_2) ? dateToIndo($insurance->new_date_2) : '-';
+  return ['performance_bond'=>$latestPerformanceBondDate, 'insurance'=>$latestInsuranceDate];
+}

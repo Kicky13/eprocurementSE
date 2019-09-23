@@ -524,24 +524,25 @@ class Ed extends CI_Controller {
             LEFT JOIN t_msr ON t_msr.msr_no = t_approval.data_id
             WHERE data_id = '" . $msr_no . "' AND m_approval.module_kode = 'msr_spa' AND m_approval.urutan = 2");
 
-        $data_replace = $query->result();
+        if ($query->num_rows() > 0) {
+            $data_replace = $query->result();
 
-        $str = $data_replace[0]->open;
-        $str = str_replace('_var1_', $data_replace[0]->msr_title, $str);
-        $str = str_replace('_var4_', $data_replace[0]->data_id, $str);
-        $str = str_replace('_var2_', $data_replace[0]->requestor, $str);
-        $str = str_replace('_var3_', $data_replace[0]->departement, $str);
-        $data = array(
-            'img1' => $img1,
-            'img2' => $img2,
-            'title' => $data_replace[0]->title_email,
-            'open' => $str,
-            'close' => $data_replace[0]->close
-        );
+            $str = $data_replace[0]->open;
+            $str = str_replace('_var1_', $data_replace[0]->msr_title, $str);
+            $str = str_replace('_var4_', $data_replace[0]->data_id, $str);
+            $str = str_replace('_var2_', $data_replace[0]->requestor, $str);
+            $str = str_replace('_var3_', $data_replace[0]->departement, $str);
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title_email,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
 
-        $data['dest'][] = $data_replace[0]->email;
-        $flag = $this->M_sendmail->sendMail($data);
-
+            $data['dest'][] = $data_replace[0]->email;
+            $flag = $this->M_sendmail->sendMail($data);
+        }
 
         if($status === true)
         {
@@ -638,22 +639,25 @@ class Ed extends CI_Controller {
             WHERE bl.msr_no = '" . $data['msr_no'] . "'")->result();
             $img1 = '';
             $img2 = '';
-            $ed = str_replace('R', 'Q', $template[0]->msr_no);
-            $str = $template[0]->OPEN_VALUE;
-            $str = str_replace('_var1_', $template[0]->subject, $str);
-            $str = str_replace('_var2_', $ed, $str);
+            $flag = false;
+            if (count($template) > 0) {
+                $ed = str_replace('R', 'Q', $template[0]->msr_no);
+                $str = $template[0]->OPEN_VALUE;
+                $str = str_replace('_var1_', $template[0]->subject, $str);
+                $str = str_replace('_var2_', $ed, $str);
 
-            $emailData = array(
-                'img1' => $img1,
-                'img2' => $img2,
-                'title' => $template[0]->TITLE,
-                'open' => $str,
-                'close' => $template[0]->CLOSE_VALUE
-            );
-            foreach($template as $key => $value){
-                $emailData['dest'][] = $value->ID_VENDOR;
+                $emailData = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $template[0]->TITLE,
+                    'open' => $str,
+                    'close' => $template[0]->CLOSE_VALUE
+                );
+                foreach($template as $key => $value){
+                    $emailData['dest'][] = $value->ID_VENDOR;
+                }
+                $flag = $this->M_sendmail->sendMail($emailData);
             }
-            $flag = $this->M_sendmail->sendMail($emailData);
             $response = array(
                 'query' => $flag,
                 'success' => true,

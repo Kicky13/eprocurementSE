@@ -205,25 +205,27 @@ class Purchase_order extends CI_Controller
                     JOIN m_notic n ON n.ID = 42
                     WHERE bl.id = " . $bl_detail_id . " AND ap.m_approval_id = 8");
 
-                $data_role = $query->result();
+                if ($query->num_rows() > 0) {
+                    $data_role = $query->result();
 
-                $res = $data_role[0]->open;
-                $res = str_replace('[title]', $this->input->post("title"), $res);
-                $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
+                    $res = $data_role[0]->open;
+                    $res = str_replace('[title]', $this->input->post("title"), $res);
+                    $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
 
-                $data2 = array(
-                    'img1' => $img1,
-                    'img2' => $img2,
-                    'title' => $data_role[0]->title,
-                    'open' => $res,
-                    'close' => $data_role[0]->close
-                );
+                    $data2 = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_role[0]->title,
+                        'open' => $res,
+                        'close' => $data_role[0]->close
+                    );
 
-                foreach ($res as $k => $v) {
-                    $data2['dest'][] = $v->email;
+                    foreach ($res as $k => $v) {
+                        $data2['dest'][] = $v->email;
+                    }
+
+                    $flag = $this->M_sendmail->sendMail($data2);
                 }
-
-                $flag = $this->M_sendmail->sendMail($data2);
                 // End Email
 
                 if ($this->db->trans_status() !== FALSE) {
@@ -591,7 +593,6 @@ class Purchase_order extends CI_Controller
                                     $datax['dest'][] = $v->recipient;
                                 }
                                 $flag = $this->sendMail($datax);
-
                             }
                         }
                     }

@@ -693,6 +693,7 @@ class Arf_notif_preparation extends CI_Controller {
                     $rec = $res[0]['recipients'];
                     $rec_role = $res[0]['rec_role'];
                     $user = $this->manp->get_email_rec($rec, $rec_role);
+                    $email = false;
 //                    if ($user != null) {
                         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
@@ -701,22 +702,24 @@ class Arf_notif_preparation extends CI_Controller {
                         LEFT JOIN t_arf arf ON po.po_no = arf.po_no
                         JOIN m_notic notif ON notif.ID = 90
                         WHERE po.po_no = '" . $po . "'")->result();
-                        $str = $querymail[0]->open;
-                        $str = str_replace('_var1_', $querymail[0]->company, $str);
-                        $str = str_replace('title_agreement', $querymail[0]->po_title, $str);
-                        $str = str_replace('no_arf', $querymail[0]->doc_no, $str);
+                        if (count($querymail) > 0) {
+                            $str = $querymail[0]->open;
+                            $str = str_replace('_var1_', $querymail[0]->company, $str);
+                            $str = str_replace('title_agreement', $querymail[0]->po_title, $str);
+                            $str = str_replace('no_arf', $querymail[0]->doc_no, $str);
 
-                        $dt = array(
-                            'img1' => $img1,
-                            'img2' => $img2,
-                            'title' => $querymail[0]->title,
-                            'open' => $str,
-                            'close' => $querymail[0]->close
-                        );
-                        foreach ($querymail as $val => $k){
-                            $dt['dest'][] = $k->email;
+                            $dt = array(
+                                'img1' => $img1,
+                                'img2' => $img2,
+                                'title' => $querymail[0]->title,
+                                'open' => $str,
+                                'close' => $querymail[0]->close
+                            );
+                            foreach ($querymail as $val => $k){
+                                $dt['dest'][] = $k->email;
+                            }
+                            $email = $this->M_sendmail->sendMail($dt);
                         }
-                        $email = $this->M_sendmail->sendMail($dt);
                         if ($email == false)
                             $response = array("status" => "Failed", "msg" => "Oops, something went wrong 3!");
 //                    }

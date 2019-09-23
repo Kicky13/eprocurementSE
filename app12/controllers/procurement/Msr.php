@@ -471,31 +471,30 @@ class Msr extends CI_Controller {
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
                         where msr_no='".$msr_no."' ");
 
-                      $data_replace = $query->result();
+                      if ($query->num_rows() > 0) {
+                          $data_replace = $query->result();
 
-                      $str = $data_role[0]->open;
-                      $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                      $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_', $msr_no, $str);
+                          $str = $data_role[0]->open;
+                          $str = str_replace('_var1_',$data_replace[0]->title,$str);
+                          $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
+                          $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                          $str = str_replace('_var4_', $msr_no, $str);
 
-                      $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_role[0]->title,
-                        'open' => $str,
-                        'close' => $data_role[0]->close
-                      );
+                          $data = array(
+                              'img1' => $img1,
+                              'img2' => $img2,
+                              'title' => $data_role[0]->title,
+                              'open' => $str,
+                              'close' => $data_role[0]->close
+                          );
 
-                      foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->email;
+                          foreach ($data_role as $k => $v) {
+                              $data['dest'][] = $v->email;
+                          }
+                          $flag = $this->sendMail($data);
                       }
-                      $flag = $this->sendMail($data);
-
                     }
-
                     //End Send Email
-
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit_with_number', array('no' => $input_data['header']['msr_no'])),
                         'type' => 'success'

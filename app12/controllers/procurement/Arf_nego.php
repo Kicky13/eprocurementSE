@@ -85,20 +85,22 @@ class Arf_nego extends CI_Controller {
                 JOIN m_notic notif ON notif.ID = 91
                 WHERE arfr.id = ' . $this->input->post('arf_response_id'));
 
-                $data_replace = $query->result();
+                if ($query->num_rows() > 0) {
+                    $data_replace = $query->result();
 
-                $str = $data_replace[0]->open;
-                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
-                $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
-                $data = array(
-                    'img1' => $img1,
-                    'img2' => $img2,
-                    'title' => $data_replace[0]->title,
-                    'open' => $str,
-                    'close' => $data_replace[0]->close
-                );
-                $data['dest'][] = $data_replace[0]->email;
-                $flag = $this->M_sendmail->sendMail($data);
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                    $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                    $data = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_replace[0]->title,
+                        'open' => $str,
+                        'close' => $data_replace[0]->close
+                    );
+                    $data['dest'][] = $data_replace[0]->email;
+                    $flag = $this->M_sendmail->sendMail($data);
+                }
                 echo json_encode(['status'=>true,'msg'=>'Negotiation Submitted']);
             }
             else

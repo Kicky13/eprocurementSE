@@ -113,24 +113,26 @@ class Award extends CI_Controller {
         JOIN m_notic ON m_notic.ID = 67
         WHERE t_approval.data_id = "' . $this->input->post('msr_no') . '" AND t_approval.m_approval_id = 8');
 
-        $data_replace = $query->result();
+        if ($query->num_rows() > 0) {
+            $data_replace = $query->result();
 
-        $img1 = '';
-        $img2 = '';
+            $img1 = '';
+            $img2 = '';
 
-        $str = $data_replace[0]->open;
-        $str = str_replace('no_msr', $data_replace[0]->data_id, $str);
-        $data = array(
-            'img1' => $img1,
-            'img2' => $img2,
-            'title' => $data_replace[0]->title,
-            'open' => $str,
-            'close' => $data_replace[0]->close
-        );
-        foreach ($data_replace as $val) {
-            $data['dest'][] = $val->email;
+            $str = $data_replace[0]->open;
+            $str = str_replace('no_msr', $data_replace[0]->data_id, $str);
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
+            foreach ($data_replace as $val) {
+                $data['dest'][] = $val->email;
+            }
+            $flag = $this->M_sendmail->sendMail($data);
         }
-        $flag = $this->M_sendmail->sendMail($data);
 
         $this->session->set_flashdata('message', array(
             'message' => __('success_submit'),
@@ -482,7 +484,6 @@ class Award extends CI_Controller {
                         $data['dest'][] = $v->recipient;
                       }
                       $flag = $this->sendMail($data);
-
                     }
 
                     //End Send Email

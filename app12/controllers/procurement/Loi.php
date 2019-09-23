@@ -283,25 +283,27 @@ class Loi extends CI_Controller
                     JOIN m_notic notif ON notif.ID = 84
                     WHERE bl.id = ' . $bl_detail_id);
 
-                    $data_replace = $query->result();
+                    if ($query->num_rows() > 0) {
+                        $data_replace = $query->result();
 
-                    $str = $data_replace[0]->open;
-                    $edno = str_replace('R', 'Q', $data_replace[0]->msr_no);
-                    $str = str_replace('_var1', $data_replace[0]->nama, $str);
-                    $str = str_replace('_var2_', $data_replace[0]->subject, $str);
-                    $str = str_replace('_var3_', $edno, $str);
+                        $str = $data_replace[0]->open;
+                        $edno = str_replace('R', 'Q', $data_replace[0]->msr_no);
+                        $str = str_replace('_var1', $data_replace[0]->nama, $str);
+                        $str = str_replace('_var2_', $data_replace[0]->subject, $str);
+                        $str = str_replace('_var3_', $edno, $str);
 
-                    $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_replace[0]->title,
-                        'open' => $str,
-                        'close' => $data_replace[0]->close
-                    );
-                    foreach ($data_replace as $item) {
-                        $data['dest'][] = $item->email;
+                        $data = array(
+                            'img1' => $img1,
+                            'img2' => $img2,
+                            'title' => $data_replace[0]->title,
+                            'open' => $str,
+                            'close' => $data_replace[0]->close
+                        );
+                        foreach ($data_replace as $item) {
+                            $data['dest'][] = $item->email;
+                        }
+                        $flag = $this->M_sendmail->sendMail($data);
                     }
-                    $flag = $this->M_sendmail->sendMail($data);
 
 	                $this->session->set_flashdata('message', array(
 	                    'message' => __('success_submit_with_no', array('no' => $loi_id)),

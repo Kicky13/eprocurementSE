@@ -701,7 +701,8 @@ class Arf_notif_preparation extends CI_Controller {
                         LEFT JOIN m_vendor vnd ON po.id_vendor = vnd.ID
                         LEFT JOIN t_arf arf ON po.po_no = arf.po_no
                         JOIN m_notic notif ON notif.ID = 90
-                        WHERE po.po_no = '" . $po . "'")->result();
+                        WHERE po.po_no = '" . $po . "'
+                        GROUP BY vnd.NAMA, vnd.ID_VENDOR")->result();
                         if (count($querymail) > 0) {
                             $str = $querymail[0]->open;
                             $str = str_replace('_var1_', $querymail[0]->company, $str);

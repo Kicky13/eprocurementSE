@@ -705,10 +705,33 @@ class M_bl extends CI_Model {
 
   public function getMsrAssignment($id_user='')
   {
-    return $this->db->select('t_msr.*')
-    ->join('t_assignment','t_assignment.msr_no=t_msr.msr_no','left')
-    ->where(['t_assignment.user_id'=>$id_user, 't_msr.status <>'=>2])
-	->where('t_msr.msr_no not in (select msr_no from t_purchase_order where issued = 1)')
-    ->get('t_msr');
+//    return $this->db->select('t_msr.*')
+//    ->join('t_assignment','t_assignment.msr_no=t_msr.msr_no','left')
+//    ->where(['t_assignment.user_id'=>$id_user, 't_msr.status <>'=>2])
+//	->where('t_msr.msr_no not in (select msr_no from t_purchase_order where issued = 1)')
+//    ->get('t_msr');
+      $assignment = $this->db->where('user_id',$id_user)->get('t_assignment');
+      $user = $this->db->where("ID_USER", $id_user)->get('m_user')->row();
+      $dept = $user->ID_DEPARTMENT;
+      $this->db->select('t_msr.*, m_currency.CURRENCY, m_company.ABBREVIATION');
+      $this->db->join('m_currency', 'm_currency.ID = t_msr.id_currency');
+      $this->db->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company', 'left');
+      if($id_user)
+      {
+          $userMsr = [];
+          foreach ($assignment->result() as $r) {
+              $userMsr[] = $r->msr_no;
+          }
+
+          //$this->db->where_in('msr_no', $userMsr);
+          $this->db->where('msr_no in (select msr_no from t_assignment 
+        where user_id = ' . $id_user . ' and t_assignment.msr_no not in (select msr_no from t_purchase_order where issued = 1)) ');
+      }
+      $this->db->order_by('t_msr.msr_no', 'desc');
+      if($dept == '101013800'){
+          return @$this->db->get('t_msr');
+      } else {
+          return @$this->db->get_where('t_msr' ,array('id_department =' => $dept));
+      }
   }
 }

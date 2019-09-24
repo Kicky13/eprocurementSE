@@ -487,7 +487,6 @@ class Msr extends CI_Controller {
                               'open' => $str,
                               'close' => $data_role[0]->close
                           );
-
                           foreach ($data_role as $k => $v) {
                               $data['dest'][] = $v->email;
                           }
@@ -884,7 +883,6 @@ class Msr extends CI_Controller {
                 $msr_status_search[$msr->msr_no] = $msr;
             }
         }
-
         $msr_assignment = $this->msr->getAssignment(array_keys($msr_status_search));
         $msr_assignment_search = [];
         foreach($msr_assignment as $assignment) {
@@ -917,8 +915,6 @@ class Msr extends CI_Controller {
                     break;
             }
         }
-
-
         $this->template->display('procurement/V_msr_inquiry', compact(
             'msrs', 'menu'
         ));

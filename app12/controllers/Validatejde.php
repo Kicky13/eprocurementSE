@@ -13,6 +13,12 @@ class Validatejde extends CI_Controller {
 
     public function checkItem()
     {
+//        $data = array(
+//            "status" => true,
+//            "msg" => "Material and Costcenter is Avaible"
+//        );
+//        echo json_encode($data);
+//        die();
         $postcc = explode(' - ', $this->input->post("costcenter"));
         $postAcc = explode('-', $this->input->post("account"));
         $postUom = explode(' - ', $this->input->post("uomItem"));

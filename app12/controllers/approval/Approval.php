@@ -139,10 +139,8 @@ class Approval extends CI_Controller
 
                     // Send Email ke PS Untuk Verify MSR
                     ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
-
+                    $img1 = "";
+                    $img2 = "";
                     $query = $this->db->query("SELECT us.EMAIL AS recipient, us.NAME, ntf.TITLE, ntf.OPEN_VALUE, ntf.CLOSE_VALUE FROM t_approval ta
                     JOIN m_approval ma ON ma.id = ta.m_approval_id AND ma.urutan = 1
                     JOIN m_user us ON us.ID_USER = ta.created_by
@@ -196,10 +194,8 @@ class Approval extends CI_Controller
 
                     //Send Email
                     ini_set('max_execution_time', 300);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
-
+                    $img1 = "";
+                    $img2 = "";
                     $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
                         join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'
                         join m_user u on u.id_user = t.created_by
@@ -256,8 +252,8 @@ class Approval extends CI_Controller
 
                 //Send Email
                 ini_set('max_execution_time', 300);
-                $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
+                $img1 = '';
+                $img2 = '';
                 if ($approved < $listApproval) {
                     if ($urutannext == 2) {
                         $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
@@ -274,7 +270,7 @@ class Approval extends CI_Controller
                             JOIN m_user u on u.ID_USER = t.created_by
                             JOIN m_notic n on n.ID = 52
                             WHERE t.data_id='" . $data["data_id"] . "' and t.urutan=" . $urutannext);
-                            if ($nextrole->role_id = 27) {
+                            if ($nextrole->role_id == '27') {
                                 $query = $this->db->query("SELECT t_approval.*, t_msr.title as msr_title, (SELECT m_departement.DEPARTMENT_DESC FROM m_user JOIN m_departement ON m_user.ID_DEPARTMENT = m_departement.ID_DEPARTMENT WHERE m_user.ID_USER = t_msr.create_by ) AS departement, (SELECT m_user.NAME FROM m_user WHERE m_user.ID_USER = t_msr.create_by ) AS requestor, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL as recipient, m_notic.TITLE, m_notic.OPEN_VALUE, m_notic.CLOSE_VALUE
                                 FROM t_approval
                                 LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
@@ -817,9 +813,8 @@ class Approval extends CI_Controller
             echo json_encode(['msg' => 'MSR Assigned']);
             //Send Email
             ini_set('max_execution_time', 300);
-            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
+            $img1 = "";
+            $img2 = "";
             /*get MSR*/
             $msr = $this->db->select('title')->where('msr_no', $data['msr_no'])->get('t_msr')->row();
 
@@ -1593,9 +1588,8 @@ class Approval extends CI_Controller
         $this->M_approval->updateBidOpening();
 
         ini_set('max_execution_time', 300);
-        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-        $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
+        $img1 = "";
+        $img2 = "";
         $query = $this->db->query("SELECT u.NAME, c.TITLE, c.OPEN_VALUE, c.CLOSE_VALUE, t.company_desc, q.subject AS titlemsr, t.msr_no, u.email AS email FROM t_eq_data q
             JOIN t_msr t ON t.msr_no=q.msr_no
             JOIN m_user u ON u.ID_USER = t.create_by
@@ -2474,10 +2468,8 @@ class Approval extends CI_Controller
                 'message' => __('success_resubmit'),
                 'type' => 'success'
             ));
-
-            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
+            $img1 = "";
+            $img2 = "";
 
 //                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
 //                        join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'

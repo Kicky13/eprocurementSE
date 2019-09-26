@@ -656,6 +656,10 @@
                     });
                   });
 
+                  $("#openUG").click(function () {
+                      $("#userguideModal").modal();
+                  });
+
                   $("#messages").on('click', function(e) {
                     // e.preventDefault();
                     $.ajax({
@@ -820,6 +824,7 @@
                         <ul class="nav navbar-nav mr-auto float-left">
                             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link nav-menu-main menu-toggle hidden-xs"><i class="fa fa-bars"></i></a></li>
                             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link nav-link-expand"><i class="fa fa-window-maximize"></i></a></li>
+                            <li class="nav-item d-none d-md-block"><a href="#" id="openUG" class="nav-link"><i class="fa fa-info-circle"></i></a></li>
                         </ul>
                         <ul class="nav navbar-nav float-right">
                             <li class="dropdown dropdown-language nav-item">
@@ -880,8 +885,60 @@
 
         <!-- ////////////////////////////////////////////////////////////////////////////-->
 
-
         <!-- main menu-->
+      <div class="modal fade" id="userguideModal" role="dialog" style="width: 100%;">
+          <div class="modal-dialog">
+              <!-- Modal content-->
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">User Guide</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="col-md-4">
+                          <div class="card" style="width: 20rem;">
+                              <img src="./ast11/img/UserManual.jpg" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                  <h5 class="card-title">Procurement : MSR</h5>
+                                  <a href="<?php echo base_url('upload/').'userguide/procurement/msr.pdf' ?>" target="_blank" class="btn btn-primary">Open</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="card" style="width: 20rem;">
+                              <img src="./ast11/img/UserManual.jpg" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                  <h5 class="card-title">Procurement : Evaluation</h5>
+                                  <a href="<?php echo base_url('upload/').'userguide/procurement/evaluation.pdf' ?>" target="_blank" class="btn btn-primary">Open</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="card" style="width: 20rem;">
+                              <img src="./ast11/img/UserManual.jpg" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                  <h5 class="card-title">Procurement : ED</h5>
+                                  <a href="<?php echo base_url('upload/').'userguide/procurement/ed.pdf' ?>" target="_blank" class="btn btn-primary">Open</a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="card" style="width: 20rem;">
+                              <img src="./ast11/img/UserManual.jpg" class="card-img-top" alt="...">
+                              <div class="card-body">
+                                  <h5 class="card-title">Procurement : Agreement</h5>
+                                  <a href="<?php echo base_url('upload/').'userguide/procurement/agreement.pdf' ?>" target="_blank" class="btn btn-primary">Open</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+
+          </div>
+      </div>
         <div data-scroll-to-active="true" class="main-menu menu-fixed menu-light menu-accordion menu-shadow">
             <!-- main menu header-->
             <div class="main-menu-header">

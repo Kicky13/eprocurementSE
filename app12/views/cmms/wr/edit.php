@@ -125,7 +125,7 @@
         <form id="form-attachment-bled" method="post" action="<?=base_url('approval/approval/bledupload')?>" class="form-horizontal" enctype="multipart/form-data">
           <div class="form-group">
             <label>Description</label>
-            <input class="form-control" name="comment_supervisor" id="comment_supervisor" maxlength="30" />
+            <input class="form-control" name="comment_supervisor" id="comment_supervisor" maxlength="150" />
           </div>
           <div class="form-group text-right">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

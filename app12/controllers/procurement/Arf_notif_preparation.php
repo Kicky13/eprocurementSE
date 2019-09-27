@@ -702,8 +702,8 @@ class Arf_notif_preparation extends CI_Controller {
                         LEFT JOIN t_arf arf ON po.po_no = arf.po_no
                         JOIN m_notic notif ON notif.ID = 90
                         WHERE po.po_no = '" . $po . "'")->row();
-                        if (isset($querymail)) {
-                            $str = $querymail[0]->open;
+                        if ($querymail) {
+                            $str = $querymail->open;
                             $str = str_replace('_var1_', $querymail->company, $str);
                             $str = str_replace('title_agreement', $querymail->po_title, $str);
                             $str = str_replace('no_arf', $querymail->doc_no, $str);

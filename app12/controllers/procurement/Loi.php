@@ -277,9 +277,10 @@ class Loi extends CI_Controller
                     $img1 = "";
                     $img2 = "";
                     $edid = $this->input->post('ed_id');
-                    $query = $this->db->query('SELECT ed.subject, bl.msr_no AS msr_no, vendor.ID_VENDOR AS email, vendor.NAMA AS nama, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl_detail bl
+                    $query = $this->db->query('SELECT ed.subject, bl.msr_no AS msr_no, vendor.ID_VENDOR AS email, ms.company_desc AS company, vendor.NAMA AS nama, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_bl_detail bl
                     JOIN m_vendor vendor ON bl.vendor_id = vendor.ID
                     JOIN t_eq_data ed ON ed.msr_no = bl.msr_no
+                    JOIN t_msr ms ON ms.msr_no = bl.msr_no
                     JOIN m_notic notif ON notif.ID = 84
                     WHERE bl.id = ' . $bl_detail_id);
 
@@ -288,7 +289,7 @@ class Loi extends CI_Controller
 
                         $str = $data_replace[0]->open;
                         $edno = str_replace('R', 'Q', $data_replace[0]->msr_no);
-                        $str = str_replace('_var1', $data_replace[0]->nama, $str);
+                        $str = str_replace('_var1_', $data_replace[0]->company, $str);
                         $str = str_replace('_var2_', $data_replace[0]->subject, $str);
                         $str = str_replace('_var3_', $edno, $str);
 

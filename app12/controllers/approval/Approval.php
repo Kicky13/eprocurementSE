@@ -278,7 +278,7 @@ class Approval extends CI_Controller
                                 LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
                                 LEFT JOIN m_notic ON m_notic.ID = 52
                                 LEFT JOIN t_msr ON t_msr.msr_no = t_approval.data_id
-                                WHERE data_id = '" . $data['data_id'] . "' AND m_approval_id in (8,9,10,11,12) AND m_approval.urutan >= 5");
+                                WHERE data_id = '" . $data['data_id'] . "' AND m_approval_id in (8,9,10,11,12) AND m_approval.role_id = 27");
                             }
                         }
                     }

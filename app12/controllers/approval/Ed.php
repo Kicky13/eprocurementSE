@@ -522,7 +522,7 @@ class Ed extends CI_Controller {
             LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
             LEFT JOIN m_notic ON m_notic.ID = 52
             LEFT JOIN t_msr ON t_msr.msr_no = t_approval.data_id
-            WHERE data_id = '" . $msr_no . "' AND m_approval.module_kode = 'msr_spa' AND m_approval.urutan = 2");
+            WHERE data_id = '" . $msr_no . "' AND m_approval.module_kode = 'msr_spa' AND t_approval.status = 2");
 
         if ($query->num_rows() > 0) {
             $data_replace = $query->result();

@@ -42,7 +42,7 @@
 		echo "<th class='text-center'>Qty 2</th>";
 		echo "<th class='text-center'>UoM 2</th>";
 		echo "<th class='text-center'>Currency</th>";
-		echo "<th>Deliery Time</th>";
+		echo "<th>Delivery Time</th>";
 		echo "<th class='text-right'>Unit Price</th>";
 		echo "<th class='text-right'>Total</th>";
 		echo "</tr>";

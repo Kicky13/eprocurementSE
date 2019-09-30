@@ -1710,7 +1710,6 @@ class Approval extends CI_Controller
                 $data['commercialAttachment'] = $this->M_approval->seeAttachment('eva-commercial', $msr_no)->row();
             }
         }
-
         /*print_r($data['ed']);
         exit();*/
         $this->session->set_userdata('referred_from', current_url());

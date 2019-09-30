@@ -201,10 +201,22 @@
             //start($('#icon-tabs'));
           },
           success: function (data) {
+            // alert(data)
+            stop($('#modal-'+frm));
+            if(data == 'Submit')
+            {
+              swal('Done',data,'success')
+              window.open("<?=base_url('home')?>","_self")
+            }
+            else
+            {
+              //swal('Fail',data,'warning')
+              alert(data)
+            }
             /*swal('Done',data,'success')
             stop($('#modal-'+frm));
             $('#modal-'+frm).modal('hide');*/
-            window.open("<?=base_url('home')?>","_self")
+            // window.open("<?=base_url('home')?>","_self")
           },
           error: function (e) {
             swal('<?= __('warning') ?>','Fail, Try Again','warning')

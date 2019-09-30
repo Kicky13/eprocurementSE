@@ -78,11 +78,7 @@ $db['default'] = array(
 	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => '',
-<<<<<<< HEAD
 	'database' => 'supreme2',
-=======
-	'database' => 'supreme_user3',
->>>>>>> 5e2bc79c16da75c6faa0365c682228d94252e07b
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,

@@ -32,6 +32,7 @@ class Home extends CI_Controller {
             ->model('procurement/arf/m_arf_nego')
             ->model('vendor/M_approval_verification')
             ->model('cmms/M_wo_jde','wo')
+            ->model('cmms/M_work_request','wr')
             ->helper(['permission', 'form']);
     }
 
@@ -212,17 +213,7 @@ class Home extends CI_Controller {
         $msrVerify['outstanding_wo_report'] = $this->wo->outstanding_wo_report()->num_rows();
         if(in_array(supervior_cmms, $roles))
         {
-          $cekDoa = "select creator_id from cmms_doa where assign_id = ".$this->session->userdata('ID_USER')." and (now() between start_date and end_date) ";
-          $qdoa = $this->db->query($cekDoa);
-          $qid = $this->session->userdata('ID_USER');
-          if($qdoa->num_rows() > 0)
-          {
-            $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
-          }
-          $q = "select id from t_jabatan where user_id in ($qid)";
-          $q = "select user_id from t_jabatan where parent_id in ($q) ";
-          $sql = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
-          $msrVerify['suprevisor_task'] = $this->db->query($sql)->num_rows();
+          $msrVerify['suprevisor_task'] = $this->wr->suprevisor_task()->num_rows();
         }
         /*cmms tasks end*/
         $menu_task = array();

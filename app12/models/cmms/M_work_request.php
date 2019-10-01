@@ -337,4 +337,19 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
       return false;
     }
   }
+  public function suprevisor_task()
+  {
+    $cekDoa = "select creator_id from cmms_doa where assign_id = ".$this->session->userdata('ID_USER')." and (now() between start_date and end_date) ";
+    $qdoa = $this->db->query($cekDoa);
+    $qid = $this->session->userdata('ID_USER');
+    if($qdoa->num_rows() > 0)
+    {
+      $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+    }
+    $q = "select id from cmms_position where user_id in ($qid)";
+    $q = "select user_id from cmms_position where parent_id in ($q) ";
+    $sql = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
+    $rs = $this->db->query($sql);
+    return $rs;
+  }
 }

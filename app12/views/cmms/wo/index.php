@@ -76,7 +76,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4>WO Detail - CMMS08</h4>
+        <h4><?= $param == 'wr' ? "WR":"WO" ?> Detail - CMMS08</h4>
       </div>
       <div id="result-modal-wo-detail" class="modal-body">
         
@@ -91,7 +91,7 @@
   function openModalWoDetail(wono) {
     $.ajax({
       type:'post',
-      url:"<?= base_url('cmms/equipment/wo_detail') ?>/"+wono,
+      url:"<?= base_url('cmms/equipment/wo_detail') ?>/"+wono+"<?= $param == 'wr' ? '?type=wr' : '' ?>",
       success:function(e){
         $("#result-modal-wo-detail").html(e)
         $("#my-modal-wo-detail").modal('show')

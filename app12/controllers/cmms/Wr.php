@@ -599,7 +599,7 @@ class Wr extends CI_Controller {
         $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE is Failed, you can try in another moment';
         echo json_encode(['status'=>true,'msg'=>$msg]);
       }
-      cmms_log_history('wr',$data['wr_no'],'reject',$msg);
+      // cmms_log_history('wr',$data['wr_no'],'reject',$msg);
     }
     else
     {
@@ -613,6 +613,13 @@ class Wr extends CI_Controller {
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
 
     $data['originator'] = $r->USERNAME;
+    $data['fanumb'] = $wr->fanumb;
+    $data['wr_description'] = $wr->wr_description;
+    $data['failure_desc'] = $wr->failure_desc;
+    $data['req_finish_date'] = $wr->req_finish_date;
+    $data['priority'] = $wr->priority;
+    $data['hazard'] = $wr->hazard;
+    $data['wo_type_id'] = $wr->wo_type_id;
     $xml = $this->load->view('cmms/wr/wsdl-reject', $data, true);
     $headers = array(
       "Content-Type: text/xml",
@@ -622,6 +629,7 @@ class Wr extends CI_Controller {
       "Pragma: no-cache",
       "Content-length: " . strlen($xml),
     );
+    // echo $xml;
     $ch = curl_init('https://10.1.1.94:89/PY910/EquipmentWorkOrderManager?WSDL');
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

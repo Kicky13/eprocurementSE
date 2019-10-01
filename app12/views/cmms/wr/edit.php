@@ -115,6 +115,21 @@
     </div>
   </div>
 </div>
+<!-- <div class="modal fade" id="myModalConfirm" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Are you sure?</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group text-right">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" onclick="doReject()" class="btn btn-danger">Yes</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div> -->
 <div class="modal fade" id="myModalReject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -123,13 +138,14 @@
       </div>
       <div class="modal-body">
         <form id="form-attachment-bled" method="post" action="<?=base_url('approval/approval/bledupload')?>" class="form-horizontal" enctype="multipart/form-data">
-          <div class="form-group">
+          <div class="form-group desc_comment">
             <label>Description</label>
             <input class="form-control" name="comment_supervisor" id="comment_supervisor" maxlength="150" />
           </div>
           <div class="form-group text-right">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" onclick="rejectClick()" class="btn btn-danger">Submit</button>
+            <button type="button" onclick="rejectClick()" class="btn btn-danger submit-btn">Submit</button>
+            <button type="button" onclick="doReject()" class="btn btn-danger do-reject" style="display: none">Yes</button>
           </div>
         </form>
       </div>
@@ -223,10 +239,10 @@
           success: function (e) {
             var r = eval("("+e+")");
             if(r.status){
-              swal('Success',r.msg,'success')
-              setTimeout(function(){ 
+              // swal('Success',r.msg,'success')
+              /*setTimeout(function(){ 
                 window.open("<?=base_url('home')?>","_self")
-              }, 3000);
+              }, 3000);*/
               
             }else{
               swal('<?= __('warning') ?>',r.msg,'warning')
@@ -253,50 +269,51 @@
     }
     else
     {
-      swal({ title: "Warning", text: "Description is Required", type: "warning" }, function(){
-        location = "<?= base_url() ?>";
-      });
+      swal({ title: "Warning", text: "Description is Required", type: "warning" });
       return false;
     }
   }
-  function rejectSubmit() {
-    swalConfirm('Reject', 'Are you sure?', function() {
-      $.ajax({
-        type: "POST",
-        enctype: 'multipart/form-data',
-        url: "<?=base_url('cmms/wr/reject/'.$row->wr_no)?>",
-        data: {comment_supervisor:$("#comment_supervisor")},
-        processData: false,
-        contentType: false,
-        cache: false,
-        timeout: 600000,
-        beforeSend:function(){
-          start($('#icon-tabs'));
-        },
-        success: function (e) {
-          var r = eval("("+e+")");
-          if(r.status){
-            swal({ 
-              title: "Success",
-              text: r.msg,
-              type: "success",
-              },
-              function(){
-                location = "<?= base_url() ?>";
-            });
-          }else{
-            swal('<?= __('warning') ?>',r.msg,'warning')
-          }
-          stop($('#icon-tabs'));
-        },
-        error: function (e) {
-          swal('<?= __('warning') ?>','Something went wrong!','warning')
-          stop($('#icon-tabs'));
+  function doReject() {
+    $.ajax({
+      type: "POST",
+      url: "<?=base_url('cmms/wr/reject/'.$row->wr_no)?>",
+      data: {comment_supervisor:$("#comment_supervisor").val()},
+      beforeSend:function(){
+      $("#myModalReject").modal('hide')
+        // start($('#icon-tabs'));
+      },
+      success: function (e) {
+        var r = eval("("+e+")");
+        if(r.status){
+          swal({ 
+            title: "Success",
+            text: r.msg,
+            type: "success",
+            },
+            function(){
+              location = "<?= base_url() ?>";
+          });
+        }else{
+          swal('<?= __('warning') ?>',r.msg,'warning')
         }
-      });
+        stop($('#icon-tabs'));
+      },
+      error: function (e) {
+        swal('<?= __('warning') ?>','Something went wrong!','warning')
+        stop($('#icon-tabs'));
+      }
     });
   }
+  function rejectSubmit() {
+    // $("#myModalConfirm").modal('show');
+    $(".submit-btn,.desc_comment").hide()
+    $(".do-reject").show()
+    $(".modal-title").html("Are you sure?")
+  }
   function rejectClick() {
+    $(".submit-btn,.desc_comment").show()
+    $(".do-reject").hide()
+    $(".modal-title").html("Reject Work Request")
     if(validationReject())
     {
       rejectSubmit()

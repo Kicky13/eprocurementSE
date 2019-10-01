@@ -40,26 +40,28 @@ class Wo extends CI_Controller {
 
   public function index($param='')
   {
-	if($param == 'outstanding')
-	{
-		$title = 'Outstanding Work Order';
-	}
-	elseif($param == 'wr')
-  { 
-    $title = 'WR List & Tracking - CMMS16';
-  }
-  else
-	{
-		$title = 'Maintenance Task List - CMMSXX';
-	}
-	
     $thead = cmms_settings('woe_list')->get()->result();
     $filter = cmms_settings('woe_list')->where('desc2',1)->get()->result();
+  	if($param == 'outstanding')
+  	{
+  		$title = 'Outstanding Work Order';
+  	}
+  	elseif($param == 'wr')
+    { 
+      $title = 'WR List & Tracking - CMMS16';
+      $thead = cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result();
+      $filter = cmms_settings('wr_list_tracking')->where('desc2',1)->get()->result();
+    }
+    else
+  	{
+  		$title = 'Maintenance Task List - CMMS17';
+  	}
+    
     $data['thead'] = $thead;
     $data['filter'] = $filter;
     $data['menu'] = $this->menu;
-	$data['title'] = $title;
-	$data['param'] = $param;
+  	$data['title'] = $title;
+  	$data['param'] = $param;
     
     $this->template->display($this->view .'/index', $data);
   }
@@ -79,22 +81,25 @@ class Wo extends CI_Controller {
       $eqDesc = $rows->EQDESC;
       $labor = $rows->LABOR;
       $actHour = $rows->ACTHOUR;
-	  $laba = substr($actHour, 0, 2);
-	  $labb = substr($actHour, 2, 2);
-	  $actHour = $laba.'.'.$labb;
+  	  $laba = substr($actHour, 0, 2);
+  	  $labb = substr($actHour, 2, 2);
+  	  $actHour = $laba.'.'.$labb;
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
+      $status = $rows->STATUS;
+      $wo_date = $rows->WO_DATE;
+      $failure_desc = $rows->FAILURE_DESC;
+      $originator = $rows->ORIGINATOR;
       $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
       $row[] = $woDesc;
       $row[] = $eqNo;
       $row[] = $eqDesc;
-      //$row[] = $labor;
-      $row[] = $actHour;
-      $row[] = $actFinishDate;
-      $row[] = $analysisDesc;
-      $row[] = $resDesc;
+      $row[] = $status;
+      $row[] = $wo_date;
+      $row[] = $failure_desc;
+      $row[] = $originator;
       $data[] = $row;
     }
     // print_r($data);

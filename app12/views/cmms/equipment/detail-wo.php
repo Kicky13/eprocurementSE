@@ -9,9 +9,17 @@
 			$wotype = $cmms_wo_type = $this->db->where('id', $txt)->get('cmms_wo_type')->row();
 			@$txt = $wotype->notation;
 		}
+		$identity = 'WO ';
+		if(isset($_GET['type']))
+		{
+			if($_GET['type'] == 'wr')
+			{
+				$identity = 'WR ';
+			}
+		}
 ?>
 		<tr>
-			<td><?= $wod->desc ?></td>
+			<td><?= str_replace('WO ', $identity, $wod->desc) ?></td>
 			<td><input disabled="" class="form-control" value="<?=$txt?>"></td>
 		</tr>
 <?php endforeach;?>

@@ -60,9 +60,9 @@ class M_doa extends CI_Model {
   public function findAssingUsers()
   {
     $query = "select a.user_id, b.NAME user_nama 
-    from t_jabatan a
+    from cmms_position a
     inner join m_user b on a.user_id = b.ID_USER
-    where a.is_cmms = 1 and a.user_role = 1 "; 
+    where a.portal_rule in (1,2) "; 
     return $this->db->query($query);
   }
 }

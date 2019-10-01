@@ -97,8 +97,8 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
           $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
         }
 
-        $q = "select id from t_jabatan where user_id in ($qid) ";
-        $q = "select user_id from t_jabatan where parent_id in ($q) ";
+        $q = "select id from cmms_position where user_id in ($qid) ";
+        $q = "select user_id from cmms_position where parent_id in ($q) ";
         $sql .= " and cmms_wr.created_by in ($q) and cmms_wr.status = '01'";
       }
     }

@@ -201,9 +201,10 @@ class M_equipment extends CI_Model {
   }
   public function labor_list($wo_no='')
   {
-    $sql = "select a.WTDOCO WO_NO, b.ABALPH EMPLOYEE_NAME, trim(c.RADSC2) DEPARTMENT, WTHRW LABOR_HOUR from F31122 a 
-    inner join F0101 b on a.WTAN8 = B.ABAN8
-    inner join F48311 c on c.RARSCN = a.WTAN8 where a.WTDOCO = '$wo_no'";
+    $sql = "select a.WLDOCO WO_NO, b.ABALPH EMPLOYEE_NAME, trim(c.RADSC2) DEPARTMENT, (WLRUNL/100) LABOR_HOUR from F3112  a 
+    inner join F48311 c on c.RADOCO = a.WLDOCO 
+    inner join F0101 b on c.RARSCN = B.ABAN8
+    where a.WLDOCO = '$wo_no'";
     return $this->db->query($sql)->result();
   }
   public function search_for_wr($q='')

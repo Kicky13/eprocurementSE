@@ -7,6 +7,8 @@ class M_wo_jde extends CI_Model {
     $this->db = $this->load->database('oracle', true);
     $this->dbm = $this->load->database('default', true);
     $this->wo_table = 'f4801';
+    /*F48311 as labor list
+    F48310 as labor list old/false*/
   }
   public function _get_datatables_query($value='')
   {

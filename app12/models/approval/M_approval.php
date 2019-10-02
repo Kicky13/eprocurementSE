@@ -1460,7 +1460,7 @@ class M_approval extends CI_Model {
         left join m_approval on m_approval.id = t_approval.m_approval_id
         LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
         LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
-        where t_approval.data_id = '$msr_no' and m_approval.module_kode = 'msr_spa' and t_approval.status = 1";
+        where t_approval.data_id = '$msr_no' and t_approval.m_approval_id in (8,9,10,11,12) and t_approval.status = 1";
         return $this->db->query($sql);
     }
     public function ed_draft($value='')

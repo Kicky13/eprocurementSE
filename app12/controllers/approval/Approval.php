@@ -161,7 +161,7 @@ class Approval extends CI_Controller
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
                         where msr_no='" . $data["data_id"] . "' ");
 
-                        if ($query->num_rows() > 0){
+                        if ($query->num_rows() > 0) {
                             $data_replace = $query->result();
 
                             $str = $data_role[0]->OPEN_VALUE;
@@ -242,13 +242,12 @@ class Approval extends CI_Controller
 
                 }
             } else if ($module_kode == 'msr_spa') {
-
                 $rs = $this->db->where(['t_approval.id' => $data['id']])
                     ->get('t_approval')->row();
                 $urutan = $rs->urutan;
                 $urutannext = $rs->urutan + 1;
-                $listApproval = $this->M_approval->listApprovalED($data["data_id"])->num_rows();
-                $approved = $this->M_approval->listApprovedED($data["data_id"])->num_rows();
+                $listApproval = $this->M_approval->listApprovalEd($data["data_id"])->num_rows();
+                $approved = $this->M_approval->listApprovedEd($data["data_id"])->num_rows();
 
                 //Send Email
                 ini_set('max_execution_time', 300);
@@ -283,7 +282,7 @@ class Approval extends CI_Controller
                         }
                     }
 
-                    if (isset($query)){
+                    if (isset($query)) {
                         if ($query->num_rows() > 0) {
                             $data_role = $query->result();
                             $count = 1;
@@ -324,46 +323,9 @@ class Approval extends CI_Controller
                         }
                     }
                 } else if ($approved = $listApproval) {
-                    //Confirmation For Bidder List Ready for Issuance
-                    $query1 = $this->db->query("SELECT m_user.EMAIL AS recipient, t_eq_data.msr_no, m_notic.TITLE, m_notic.OPEN_VALUE, m_notic.CLOSE_VALUE FROM t_eq_data
-                    JOIN m_user ON m_user.ID_USER = t_eq_data.created_by
-                    LEFT JOIN m_notic ON m_notic.ID = 37
-                    WHERE msr_no = '" . $data['data_id'] . "'");
-
-                    if (isset($query1)) {
-                        $data_role = $query1->result();
-
-                        $data_replace1 = $this->db->query("SELECT distinct e.subject as title,u.NAME,d.DEPARTMENT_DESC from t_msr t
-                        join m_user u on u.id_user=t.create_by
-                        join t_eq_data e on e.msr_no = t.msr_no
-                        join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where t.msr_no='" . $data["data_id"] . "'")->result();
-
-                        if (count($data_replace1) > 0) {
-                            $edno = str_replace('R', 'Q', $data["data_id"]);
-                            $xh = $data_role[0]->OPEN_VALUE;
-                            $xh = str_replace('_var1_', $data_replace1[0]->title, $xh);
-                            $xh = str_replace('_var2_', $data_replace1[0]->NAME, $xh);
-                            $xh = str_replace('_var3_', $data_replace1[0]->DEPARTMENT_DESC, $xh);
-                            $xh = str_replace('_var4_', $edno, $xh);
-
-                            $data1 = array(
-                                'img1' => $img1,
-                                'img2' => $img2,
-                                'title' => $data_role[0]->TITLE,
-                                'open' => $xh,
-                                'close' => $data_role[0]->CLOSE_VALUE
-                            );
-
-                            foreach ($data_role as $k => $v) {
-                                $data1['dest'][] = $v->recipient;
-                            }
-                            $flag1 = $this->sendMail($data1);
-                        }
-                    }
-                } else {
-                    //Notification For Bid Supplier
-                    $query = $this->db->query("SELECT DISTINCT notif.OPEN_VALUE, notif.CLOSE_VALUE, notif.TITLE, msr.company_desc, ed.subject AS titlemsr, ed.msr_no, vnd.ID_VENDOR AS recipient FROM t_bl_detail bl
+                    if (isset($data["issued"]) && $this->input->post('issued') == 1) {
+                        //Notification For Bid Supplier
+                        $query = $this->db->query("SELECT DISTINCT notif.OPEN_VALUE, notif.CLOSE_VALUE, notif.TITLE, msr.company_desc, ed.subject AS titlemsr, ed.msr_no, vnd.ID_VENDOR AS recipient FROM t_bl_detail bl
                     JOIN t_eq_data ed ON bl.msr_no = ed.msr_no
                     JOIN t_msr msr ON msr.msr_no = ed.msr_no
                     JOIN m_user us ON us.ID_USER = ed.created_by
@@ -371,26 +333,65 @@ class Approval extends CI_Controller
                     JOIN m_notic notif ON notif.ID = 38
                     WHERE ed.msr_no = '" . $data["data_id"] . "'");
 
-                    if ($query->num_rows() > 0) {
-                        $data_replace = $query->result();
+                        if ($query->num_rows() > 0) {
+                            $data_replace = $query->result();
 
-                        $str = $data_replace[0]->OPEN_VALUE;
-                        $str = str_replace('_var1_', $data_replace[0]->company_desc, $str);
-                        $str = str_replace('_var2_', $data_replace[0]->titlemsr, $str);
-                        $str = str_replace('_var3_', str_replace('R', 'Q', $data_replace[0]->msr_no), $str);
+                            $str = $data_replace[0]->OPEN_VALUE;
+                            $str = str_replace('_var1_', $data_replace[0]->company_desc, $str);
+                            $str = str_replace('_var2_', $data_replace[0]->titlemsr, $str);
+                            $str = str_replace('_var3_', str_replace('R', 'Q', $data_replace[0]->msr_no), $str);
 
-                        $data = array(
-                            'img1' => $img1,
-                            'img2' => $img2,
-                            'title' => $data_replace[0]->TITLE,
-                            'open' => $str,
-                            'close' => $data_replace[0]->CLOSE_VALUE
-                        );
+                            $data = array(
+                                'img1' => $img1,
+                                'img2' => $img2,
+                                'title' => $data_replace[0]->TITLE,
+                                'open' => $str,
+                                'close' => $data_replace[0]->CLOSE_VALUE
+                            );
 
-                        foreach ($data_replace as $k => $v) {
-                            $data['dest'][] = $v->recipient;
+                            foreach ($data_replace as $k => $v) {
+                                $data['dest'][] = $v->recipient;
+                            }
+                            $flag = $this->sendMail($data);
                         }
-                        $flag = $this->sendMail($data);
+                    } else {
+                        //Confirmation For Bidder List Ready for Issuance
+                        $query1 = $this->db->query("SELECT m_user.EMAIL AS recipient, t_eq_data.msr_no, m_notic.TITLE, m_notic.OPEN_VALUE, m_notic.CLOSE_VALUE FROM t_eq_data
+                    JOIN m_user ON m_user.ID_USER = t_eq_data.created_by
+                    LEFT JOIN m_notic ON m_notic.ID = 37
+                    WHERE msr_no = '" . $data['data_id'] . "'");
+
+                        if ($query1->num_rows() > 0) {
+                            $data_role = $query1->result();
+
+                            $data_replace1 = $this->db->query("SELECT distinct e.subject as title,u.NAME,d.DEPARTMENT_DESC from t_msr t
+                        join m_user u on u.id_user=t.create_by
+                        join t_eq_data e on e.msr_no = t.msr_no
+                        join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
+                        where t.msr_no='" . $data["data_id"] . "'")->result();
+
+                            if (count($data_replace1) > 0) {
+                                $edno = str_replace('R', 'Q', $data["data_id"]);
+                                $xh = $data_role[0]->OPEN_VALUE;
+                                $xh = str_replace('_var1_', $data_replace1[0]->title, $xh);
+                                $xh = str_replace('_var2_', $data_replace1[0]->NAME, $xh);
+                                $xh = str_replace('_var3_', $data_replace1[0]->DEPARTMENT_DESC, $xh);
+                                $xh = str_replace('_var4_', $edno, $xh);
+
+                                $data1 = array(
+                                    'img1' => $img1,
+                                    'img2' => $img2,
+                                    'title' => $data_role[0]->TITLE,
+                                    'open' => $xh,
+                                    'close' => $data_role[0]->CLOSE_VALUE
+                                );
+
+                                foreach ($data_role as $k => $v) {
+                                    $data1['dest'][] = $v->recipient;
+                                }
+                                $flag1 = $this->sendMail($data1);
+                            }
+                        }
                     }
                 }
             } else if ($module_kode == 'award') {
@@ -409,7 +410,7 @@ class Approval extends CI_Controller
                         JOIN m_notic n ON n.ID = 68
                         WHERE ap.data_id = '" . $data['data_id'] . "' AND mp.module_kode = 'award' AND mp.urutan = " . $urutannext);
 
-                        if ($query->num_rows() > 0){
+                        if ($query->num_rows() > 0) {
                             $data_replace = $query->result();
                             $img1 = '';
                             $img2 = '';
@@ -1594,7 +1595,7 @@ class Approval extends CI_Controller
             JOIN t_msr t ON t.msr_no=q.msr_no
             JOIN m_user u ON u.ID_USER = t.create_by
             JOIN m_notic c ON c.ID = 39
-            WHERE q.id = " . $edid ."
+            WHERE q.id = " . $edid . "
             UNION 
             SELECT u.NAME, c.TITLE, c.OPEN_VALUE, c.CLOSE_VALUE, t.company_desc, q.subject AS titlemsr, t.msr_no, u.email AS email FROM t_eq_data q
             JOIN t_msr t ON t.msr_no=q.msr_no
@@ -1618,7 +1619,7 @@ class Approval extends CI_Controller
                 'open' => $str,
                 'close' => $data_replace[0]->CLOSE_VALUE
             );
-            foreach ($data_replace as $v){
+            foreach ($data_replace as $v) {
                 $data['dest'][] = $v->email;
             }
             $flag = $this->sendMail($data);
@@ -1865,7 +1866,7 @@ class Approval extends CI_Controller
             JOIN m_notic notif ON notif.ID = 65
             WHERE tp.m_approval_id = 1 AND ed.id = ' . $this->input->post('ed_id'));;
 
-                if ($query->num_rows() > 0){
+                if ($query->num_rows() > 0) {
                     $data_replace = $query->result();
 
                     $str = $data_replace[0]->open;
@@ -2493,15 +2494,15 @@ class Approval extends CI_Controller
                 $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
                         join m_user u on u.ID_USER=t.create_by
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
-                        where msr_no='".$msr_no."' ");
+                        where msr_no='" . $msr_no . "' ");
 
                 if ($query->num_rows() > 0) {
                     $data_replace = $query->result();
 
                     $str = $data_role[0]->open;
-                    $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                    $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                    $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                    $str = str_replace('_var1_', $data_replace[0]->title, $str);
+                    $str = str_replace('_var2_', $data_replace[0]->NAME, $str);
+                    $str = str_replace('_var3_', $data_replace[0]->DEPARTMENT_DESC, $str);
                     $str = str_replace('_var4_', $msr_no, $str);
 
                     $data = array(

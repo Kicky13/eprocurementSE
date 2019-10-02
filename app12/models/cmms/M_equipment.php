@@ -266,7 +266,7 @@ class M_equipment extends CI_Model {
     select UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(GDTXFT, 8000,1)) testing from f00165 where gdtxky like '%$wo_no%' and GDGTITNM = 'Text1')";
     $rs = $this->db->query($sql);
     if($rs->num_rows() > 0)
-      $rs =  nl2br(str_replace('\par','<br />',substr($rs->row()->AYE, 0,-1)));
+      $rs =  str_replace('\par','<br />',substr($rs->row()->AYE, 0,-1));
     else
       $rs = '';
     return $rs;

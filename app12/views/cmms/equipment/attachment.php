@@ -1,1 +1,3 @@
-<textarea class="form-control" disabled="" rows="5"><?=$attachment?></textarea>
+<div class="form-control" style="background: #eee">
+	<?=$attachment?>
+</div>

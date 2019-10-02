@@ -1,0 +1,1 @@
+<textarea class="form-control" disabled="" rows="5"><?=$attachment?></textarea>

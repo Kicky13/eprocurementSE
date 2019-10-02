@@ -50,7 +50,7 @@ class Wo extends CI_Controller {
     { 
       $title = 'WR List & Tracking - CMMS16';
       $thead = cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result();
-      $filter = cmms_settings('wr_list_tracking')->where('desc2',1)->get()->result();
+      $filter = cmms_settings('wr_list_tracking')->order_by('seq','asc')->where('desc2',1)->get()->result();
     }
     else
   	{
@@ -94,7 +94,7 @@ class Wo extends CI_Controller {
       $originator = $rows->ORIGINATOR;
       $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
-      $row[] = $wotype;
+      $row[] = @wo_type_array($wotype);
       $row[] = $woDesc;
       $row[] = $eqNo;
       $row[] = $eqDesc;

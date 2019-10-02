@@ -260,4 +260,12 @@ class M_equipment extends CI_Model {
 	  $addSql['column_tb'] = "TOTAL";
 	  return $addSql;
   }
+  public function attachment_jde($wo_no='')
+  {
+    $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\x') as aye from (
+    select UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(GDTXFT, 8000,1)) testing from f00165 where gdtxky like '%$wo_no%' and GDGTITNM = 'Text1')";
+    $rs = $this->db->query($sql);
+    $rs =  nl2br(str_replace('\par','<br />',substr($rs->row()->AYE, 0,-1)));
+    return $rs;
+  }
 }

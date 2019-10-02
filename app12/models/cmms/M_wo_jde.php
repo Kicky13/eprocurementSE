@@ -52,6 +52,10 @@ class M_wo_jde extends CI_Model {
     {
       $sql .= " and UPPER(EQDESC) like UPPER('%".$this->input->post('EQDESC')."%')";
     }
+    if($this->input->post('ORIGINATOR'))
+    {
+      $sql .= " and UPPER(ORIGINATOR) like UPPER('%".$this->input->post('ORIGINATOR')."%')";
+    }
     
 	/*
 	$q = "select * from m_user where id_user = ".$this->session->userdata('ID_USER');

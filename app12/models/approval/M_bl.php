@@ -618,7 +618,7 @@ class M_bl extends CI_Model {
               // echo count($getAssignmentAgreement);
               // echo "<br>";
               /*exit();*/
-              if(is_array($getAssignmentAgreement))
+              if(is_array($getAssignmentAgreement) and count($getAssignmentAgreement) > 0)
               {
                   $this->db->where_in('t_msr.msr_no',$getAssignmentAgreement);
               }

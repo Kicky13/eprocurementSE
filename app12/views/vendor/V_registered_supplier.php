@@ -2681,6 +2681,11 @@
                $('#ref').attr('src', data);
                $('#modal2').modal('show');
            }
+           function  review_file(data)
+           {
+                $('#ref').attr('src', data);
+                $('#modal2').modal('show');
+           }
            function slides()
            {
                $('#edit').hide();

@@ -40,8 +40,8 @@ class Wo extends CI_Controller {
 
   public function index($param='')
   {
-    $thead = cmms_settings('woe_list')->get()->result();
-    $filter = cmms_settings('woe_list')->where('desc2',1)->get()->result();
+    $thead = cmms_settings('woe_list')->order_by('seq','asc')->get()->result();
+    $filter = cmms_settings('woe_list')->order_by('seq','asc')->where('desc2',1)->get()->result();
   	if($param == 'outstanding')
   	{
   		$title = 'Outstanding Work Order';
@@ -87,12 +87,14 @@ class Wo extends CI_Controller {
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
+	  $wotype = $rows->WOTYPE;
       $status = $rows->STATUS;
       $wo_date = $rows->WO_DATE;
       $failure_desc = $rows->FAILURE_DESC;
       $originator = $rows->ORIGINATOR;
       $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
+      $row[] = $wotype;
       $row[] = $woDesc;
       $row[] = $eqNo;
       $row[] = $eqDesc;

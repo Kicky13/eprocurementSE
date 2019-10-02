@@ -2697,11 +2697,11 @@
                $('#tabelsertifikasi').DataTable().destroy();
                $('#main').show();
            }
-           function review(data)
-           {
-               $('#ref').attr('src', "<?= base_url() ?>upload/CSMS/" + data);
-               $('#modal2').modal('show');
-           }
+           //function review(data)
+           //{
+           //    $('#ref').attr('src', "<?//= base_url() ?>//upload/CSMS/" + data);
+           //    $('#modal2').modal('show');
+           //}
            function tbl(id)
            {
                var obj = {};

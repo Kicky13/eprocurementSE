@@ -2666,9 +2666,14 @@
            });
        }
 
+           function  review_gambar(data)
+           {
+               $('#ref').attr('src', data);
+               $('#modal2').modal('show');
+           }
            function review(data, pilih)
            {
-               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + pilih + data);
+               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + data + "" + pilih);
                $('#modal2').modal('show');
            }
            function review_akta(data)

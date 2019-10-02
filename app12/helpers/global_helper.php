@@ -1271,3 +1271,13 @@ function wr_priority($value='',$all=false)
       return $list;
     return $list[$value];
 }
+function wo_type_array($value='')
+{
+  $ci = &get_instance();
+  $result = $ci->db->get('cmms_wo_type');
+  $s = [];
+  foreach ($result->result() as $r) {
+    $s[$r->id] = $r->code_alpha;
+  }
+  return @$s[$value];
+}

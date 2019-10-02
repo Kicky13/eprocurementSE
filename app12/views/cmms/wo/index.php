@@ -120,7 +120,7 @@
 		  <?php if($param == 'outstanding'):?>
           data.wasrst = '70';
 		  <?php elseif($param == 'wr'):?>
-		  
+          data.ORIGINATOR = $('#filter_ORIGINATOR').val();
       <?php else:?>
       data.washno = 1;
 		  <?php endif;?>

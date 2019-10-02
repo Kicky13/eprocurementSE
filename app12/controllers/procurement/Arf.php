@@ -90,7 +90,7 @@ class Arf extends CI_Controller
                     } else {
                         if ($model->sequence == 1) {
                             return 'Rejected';
-                        } elseif ($model->sequence == $this->m_arf_approval->last_sequence($model->id)->sequence) {
+                        } elseif (@$model->sequence == @$this->m_arf_approval->last_sequence($model->id)->sequence) {
                             return 'Completed';
                         } else {
                             if ($model->approval_status) {

@@ -346,7 +346,7 @@ class Wr extends CI_Controller {
       2 => 'Immediate',
       3 => 'Within 3 - 7 Days',
       4 => 'Requirment Shutdown Work',
-      5 => 'Preventive Maintenance',
+      /*5 => 'Preventive Maintenance',*/
       6 => 'Outage Work',
     ];
     $s = "<select name='priority' id='priority' class='form-control'>";

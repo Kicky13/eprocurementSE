@@ -2673,7 +2673,7 @@
            }
            function review(data, pilih)
            {
-               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + data + "" + pilih);
+               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + pilih + "" + data);
                $('#modal2').modal('show');
            }
            function review_akta(data)

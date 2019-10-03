@@ -239,9 +239,6 @@ class Wr extends CI_Controller {
     }
     else
     {
-      $data_foto = $this->upload->data();
-      $file_name =  $data_foto['file_name'];
-
       $data = $this->input->post();
       $data['photo'] = $file_name;
       $data['wr_no'] = $this->mod->wr_no_jde();

@@ -241,10 +241,14 @@
           success: function (e) {
             var r = eval("("+e+")");
             if(r.status){
-              // swal('Success',r.msg,'success')
-              /*setTimeout(function(){ 
-                window.open("<?=base_url('home')?>","_self")
-              }, 3000);*/
+              swal({ 
+                title: "Success",
+                text: r.msg,
+                type: "success",
+                },
+                function(){
+                  location = "<?= base_url() ?>";
+              });
               
             }else{
               swal('<?= __('warning') ?>',r.msg,'warning')

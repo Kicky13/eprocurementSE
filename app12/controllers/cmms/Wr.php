@@ -240,7 +240,7 @@ class Wr extends CI_Controller {
     else
     {
       $data = $this->input->post();
-      $data['photo'] = $file_name;
+      // $data['photo'] = $file_name;
       $data['wr_no'] = $this->mod->wr_no_jde();
       $store = $this->wr->store($data);
 

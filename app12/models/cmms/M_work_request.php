@@ -378,7 +378,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     {
       $userName = [];
       foreach ($rsUserNamePortal->result() as $rUserNamePortal) {
-        $userName[] = "'".$rUserNamePortal->ID_USER."'";
+        $userName[] = "'".$rUserNamePortal->USERNAME."'";
       }
       $impl = implode(',', $userName);
       $sqlGetAvaJdeWo = "select WADOCO from f4801 where watyps not in ('M') and WASRST = '01' and WAANO in ($impl)";

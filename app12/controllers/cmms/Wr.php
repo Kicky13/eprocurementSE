@@ -239,7 +239,45 @@ class Wr extends CI_Controller {
     }
     else
     {
-        echo json_encode(['status'=>false,'msg'=>'Image is Required']);
+      $data_foto = $this->upload->data();
+      $file_name =  $data_foto['file_name'];
+
+      $data = $this->input->post();
+      $data['photo'] = $file_name;
+      $data['wr_no'] = $this->mod->wr_no_jde();
+      $store = $this->wr->store($data);
+
+      if($store)
+      {
+        $send_wsdl = $this->send_wsdl($data);
+        $msg = '';
+        if($send_wsdl)
+        {
+          /*insert long desc*/
+          $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
+          if($insert_long_desc_jde)
+          {
+            $msg = 'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success';
+            echo json_encode(['status'=>true,'msg'=>$msg]);
+          }
+          else
+          {
+            $msg = 'WR '.$data['wr_no'].'  Has Been Created & Send to JDE is Success, Long Description Is Failed to JDE';
+            echo json_encode(['status'=>true,'msg'=>$msg, 'sql'=>$this->db->last_query()]);
+          }
+        }
+        else
+        {
+          $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment';
+          echo json_encode(['status'=>true,'msg'=>$msg]);
+        }
+        /*$module_kode, $data_id, $description, $keterangan = ''*/
+        cmms_log_history('wr',$data['wr_no'],'create',$msg);
+      }
+      else
+      {
+        echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+      }
     }
   }
   public function update($value='')
@@ -580,7 +618,69 @@ class Wr extends CI_Controller {
   }
   public function reject($wr_no='')
   {
-    $data['wr_no'] = $wr_no;
+    $data = $this->input->post();
+    if($_FILES['photo']['tmp_name'])
+    {
+      $config['upload_path']  = './upload/wr/';
+      if (!is_dir($config['upload_path'])) {
+          mkdir($config['upload_path'],0755,TRUE);
+      }
+      $config['allowed_types'] = 'jpg|jpeg|png|JPEG|PNG|JPG';
+      $config['encrypt_name']= true;
+      $config['max_size']      = '2000';
+
+      $this->load->library('upload', $config);
+      if ( ! $this->upload->do_upload('photo'))
+      {
+        $msg = $this->upload->display_errors('', '');
+        $status = false;
+        echo json_encode(['status'=>$status, 'msg'=>$msg]);
+        exit;
+      }
+      else
+      {
+        $data_foto = $this->upload->data();
+        $file_name =  $data_foto['file_name'];
+        $data['photo'] = $file_name;
+      }
+    }
+    $data['status'] = '91';
+    if(isset($data['parent_id']))
+    {
+      unset($data['parent_id']);
+    }
+    $update = $this->wr->reject($data);
+    if($update)
+    {
+      $msg = '';
+      $send_wsdl = $this->send_wsdl_reject($data);
+      if($send_wsdl)
+      {
+        /*update long desc*/
+        $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
+        if($update_long_desc_jde)
+        {
+          $msg = 'WR '.$data['wr_no'].'  Has Been Rejected & Send to JDE is Success';
+          echo json_encode(['status'=>true,'msg'=>$msg]);
+        }
+        else
+        {
+          $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE, Long Description Is Failed to JDE';
+          echo json_encode(['status'=>true,'msg'=>$msg, 'sql'=>$this->db->last_query()]);
+        }
+      }
+      else
+      {
+        $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE is Failed, you can try in another moment';
+        echo json_encode(['status'=>true,'msg'=>$msg]);
+      }
+    }
+    else
+    {
+      echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
+    }
+    /*old*/
+    /*$data['wr_no'] = $wr_no;
     $data['comment_supervisor'] = $this->input->post('comment_supervisor');
     $data['status'] = '91'; #reject status
 
@@ -604,7 +704,7 @@ class Wr extends CI_Controller {
     else
     {
       echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
-    }
+    }*/
   }
   public function send_wsdl_reject($data='', $manual= false)
   {

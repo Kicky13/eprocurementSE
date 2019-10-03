@@ -22,7 +22,13 @@ class M_wo_jde extends CI_Model {
     }
     if($this->input->post('wotype'))
     {
-      $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
+      // $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
+      $q = $this->dbm->query("select * from cmms_wo_type where code_alpha = '".$this->input->post('wotype')."'");
+      if($q->num_rows() > 0)
+      {
+        $qr = $q->row();
+        $sql .= " and wotype = ".$qr->id;
+      }
     }
     if($this->input->post('WONO'))
     {

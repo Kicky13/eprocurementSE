@@ -99,7 +99,15 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
 
         $q = "select id from cmms_position where user_id in ($qid) ";
         $q = "select user_id from cmms_position where parent_id in ($q) ";
+        $sqlCheckAdd = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
+
         $sql .= " and cmms_wr.created_by in ($q) and cmms_wr.status = '01'";
+
+        $rsCheckAdd = $this->db->query($sqlCheckAdd);
+        if($rsCheckAdd->num_rows() > 0)
+        {
+          $sql .= $this->addSqlJdeWo($rs);
+        }
       }
     }
     return $sql;
@@ -350,6 +358,45 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     $q = "select user_id from cmms_position where parent_id in ($q) ";
     $sql = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
     $rs = $this->db->query($sql);
+    if($rs->num_rows() > 0)
+    {
+      $sql .= $this->addSqlJdeWo($rs);
+      $rs = $this->db->query($sql);      
+    }
     return $rs;
+  }
+  public function addSqlJdeWo($rs)
+  {
+    $userId = [];
+    foreach ($rs->result() as $r) {
+      $userId[] = $r->created_by;
+    }
+    $impl = implode(',', $userId);
+    $sqlGetUserNamePortal = "select USERNAME from m_user where ID_USER in ($impl)";
+    $rsUserNamePortal = $this->db->query($sqlGetUserNamePortal);
+    if($rsUserNamePortal->num_rows() > 0)
+    {
+      $userName = [];
+      foreach ($rsUserNamePortal->result() as $rUserNamePortal) {
+        $userName[] = "'".$rUserNamePortal->ID_USER."'";
+      }
+      $impl = implode(',', $userName);
+      $sqlGetAvaJdeWo = "select WADOCO from f4801 where watyps not in ('M') and WASRST = '01' and WAANO in ($impl)";
+      $rsAvaJdeWo = $this->dbo->query($sqlGetAvaJdeWo);
+      if($rsAvaJdeWo->num_rows() > 0)
+      {
+        $woNoJde = [];
+        foreach ($rsAvaJdeWo->result() as $rAvaJdeWo) {
+          $woNoJde[] = "'".$rAvaJdeWo->WADOCO."'";
+        }
+        $impl = implode(',', $woNoJde);
+        $sql = " and cmms_wr.wr_no in ($impl) ";
+      }
+      else
+      {
+        $sql = " and cmms_wr.wr_no = 'mrt' ";
+      }
+    }
+    return $sql;
   }
 }

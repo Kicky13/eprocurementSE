@@ -106,7 +106,7 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
         $rsCheckAdd = $this->db->query($sqlCheckAdd);
         if($rsCheckAdd->num_rows() > 0)
         {
-          $sql .= $this->addSqlJdeWo($rs);
+          $sql .= $this->addSqlJdeWo($rsCheckAdd);
         }
       }
     }

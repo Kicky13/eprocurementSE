@@ -285,7 +285,7 @@
     $.ajax({
       type: "POST",
       enctype: 'multipart/form-data',
-      url: "<?=base_url('cmms/wr/reject'.$row->wr_no)?>",
+      url: "<?=base_url('cmms/wr/reject/'.$row->wr_no)?>",
       data: data,
       processData: false,
       contentType: false,

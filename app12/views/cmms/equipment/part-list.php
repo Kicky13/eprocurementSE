@@ -3,15 +3,15 @@
 		<tr>
 			<th>ITEM NUMBER</th>
 			<th>ITEM DESCRIPTION</th>
-			<th>QTY</th>
-			<th>UOM</th>
+			<th>REQUEST</th>
+			<th>ACTUAL</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php 
 			foreach ($part_list as $r)
 			{
-				echo "<tr><td>$r->ITEM_NUMBER</td><td>$r->DESCRIPTION</td><td>$r->QTY</td><td>$r->UOM</td></tr>";
+				echo "<tr><td>$r->ITEM_NUMBER</td><td>$r->DESCRIPTION</td><td>$r->REQUEST</td><td>$r->ACTUAL</td></tr>";
 			}
 		?>
 	</tbody>

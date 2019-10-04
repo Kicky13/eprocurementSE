@@ -5,7 +5,7 @@
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-6 col-12 mb-1">
-        <h3 class="content-header-title"><?= $title ?></h3>
+        <h3 class="content-header-title"><?= $title ?> (<?=$row->wr_no?>)</h3>
       </div>
       <div class="content-header-right breadcrumbs-right breadcrumbs-top col-md-6 col-12">
         <div class="breadcrumb-wrapper col-12">
@@ -23,7 +23,7 @@
               <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
-                    <h6> <?= $title ?></h6>
+                    <h6> <?= $title ?> (<?=$row->wr_no?>)</h6>
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">

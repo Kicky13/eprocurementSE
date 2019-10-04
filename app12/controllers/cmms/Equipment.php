@@ -157,8 +157,8 @@ class Equipment extends CI_Controller {
     print_r($data);
     exit();*/
     $data['task_instruction'] = $this->mod->task_instruction($data['wo_detail']->TASKINSTRUCTION);
-    $data['part_list'] = $this->mod->part_list($wo_no);
-    $data['labor_list'] = $this->mod->labor_list($wo_no);
+    $data['part_list'] = $this->mod->new_part_list($wo_no);
+    $data['labor_list'] = $this->mod->labor_detail($wo_no);
     $data['attachment'] = $this->mod->attachment_jde($wo_no);
     $this->load->view($this->view.'/wo_detail', $data);
   }

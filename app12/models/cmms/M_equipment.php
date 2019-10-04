@@ -271,4 +271,27 @@ class M_equipment extends CI_Model {
       $rs = '';
     return $rs;
   }
+  public function new_part_list($wono='')
+  {
+    $sql = "select WMCPIL ITEM_NUMBER,concat(trim(WMDSC1),concat(' ',trim(WMDSC2))) as DESCRIPTION, WMUORG as request,WMTRQT as actual from f3111 where wmdoco='$wono'";
+    $rs = $this->db->query($sql);
+    return $rs;
+  }
+  public function labor_detail($wono='')
+  {
+    $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
+    $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
+
+    $estimate = $this->db->query($estimate);
+    $actual = $this->db->query($actual);
+    return ['estimate'=>$estimate, 'actual'=>$actual];
+  }
+  public function new_pm($value='')
+  {
+    /*select * from F1308 where F0NUMB = '10000029' car parent pm as F0AAID*/
+    /*select * from f1201 where FANUMB = '10004322' cari disini*/
+    /*select * from f1201 where FANUMB = '10000029'*/
+    /*select * from f4801 where WADOCO = '19000099'*/
+    /*pm status = 01 atau 50 dengan kondisi jika ada service type yang kembar, ambil yang statusnya 01 berapa pun banyaknya data*/
+  }
 }

@@ -119,7 +119,8 @@ class Wr extends CI_Controller {
         }
         if($value->desc1 == 'status')
         {
-          $x = "<a href='#' onclick=\"getCmmsLogHistory('".$rows->wr_no."')\">$x</a>";
+          //$x = "<a href='#' onclick=\"getCmmsLogHistory('".$rows->wr_no."')\">$x</a>";
+          $x = $rows->wr_no;
         }
         $row[] = $x;
       }
@@ -202,13 +203,15 @@ class Wr extends CI_Controller {
         $data = $this->input->post();
         $data['photo'] = $file_name;
 		    $data['wr_no'] = $this->mod->wr_no_jde();
-        $store = $this->wr->store($data);
+        // $store = $this->wr->store($data);
+        $send_wsdl = $this->send_wsdl($data);
 
-        if($store)
+        if($send_wsdl)
         {
-          $send_wsdl = $this->send_wsdl($data);
+          // $send_wsdl = $this->send_wsdl($data);
+        	$store = $this->wr->store($data);
           $msg = '';
-          if($send_wsdl)
+          if($store)
           {
             /*insert long desc*/
             $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
@@ -225,15 +228,15 @@ class Wr extends CI_Controller {
           }
           else
           {
-            $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment';
+            $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Success, but PORTAL is down';
             echo json_encode(['status'=>true,'msg'=>$msg]);
           }
           /*$module_kode, $data_id, $description, $keterangan = ''*/
-          cmms_log_history('wr',$data['wr_no'],'create',$msg);
+          // cmms_log_history('wr',$data['wr_no'],'create',$msg);
         }
         else
         {
-          echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+          echo json_encode(['status'=>fail,'msg'=>'JDE Failed']);
         }
       }
     }
@@ -242,13 +245,15 @@ class Wr extends CI_Controller {
       $data = $this->input->post();
       // $data['photo'] = $file_name;
       $data['wr_no'] = $this->mod->wr_no_jde();
-      $store = $this->wr->store($data);
-
-      if($store)
-      {
+      // $store = $this->wr->store($data);
         $send_wsdl = $this->send_wsdl($data);
+
+      if($send_wsdl)
+      {
+        // $send_wsdl = $this->send_wsdl($data);
+      	$store = $this->wr->store($data);
         $msg = '';
-        if($send_wsdl)
+        if($store)
         {
           /*insert long desc*/
           $insert_long_desc_jde = $this->wr->insert_long_desc_jde($data);
@@ -265,15 +270,15 @@ class Wr extends CI_Controller {
         }
         else
         {
-          $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Failed, you can try in another moment';
+          $msg = 'WR '.$data['wr_no'].' Has Been Created & Send JDE is Success, but PORTAL is down';
           echo json_encode(['status'=>true,'msg'=>$msg]);
         }
         /*$module_kode, $data_id, $description, $keterangan = ''*/
-        cmms_log_history('wr',$data['wr_no'],'create',$msg);
+        // cmms_log_history('wr',$data['wr_no'],'create',$msg);
       }
       else
       {
-        echo json_encode(['status'=>fail,'msg'=>'Fail, Please Tyr Again']);
+        echo json_encode(['status'=>fail,'msg'=>'JDE Failed']);
       }
     }
   }
@@ -313,12 +318,14 @@ class Wr extends CI_Controller {
     {
       unset($data['parent_id']);
     }
-    $update = $this->wr->update_and_approve($data);
-    if($update)
+    // $update = $this->wr->update_and_approve($data);
+    $send_wsdl = $this->send_wsdl_update($data);
+    if($send_wsdl)
     {
       $msg = '';
-      $send_wsdl = $this->send_wsdl_update($data);
-      if($send_wsdl)
+    	$update = $this->wr->update_and_approve($data);
+      // $send_wsdl = $this->send_wsdl_update($data);
+      if($update)
       {
         /*update long desc*/
         $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
@@ -335,14 +342,14 @@ class Wr extends CI_Controller {
       }
       else
       {
-        $msg = 'WR '.$data['wr_no'].' Has Been Update & Send JDE is Failed, you can try in another moment';
+        $msg = 'WR '.$data['wr_no'].' Has Been Update & Send JDE is Success, but PORTAL is down';
         echo json_encode(['status'=>true,'msg'=>$msg]);
       }
-      cmms_log_history('wr',$data['wr_no'],'update-approve',$msg);
+      // cmms_log_history('wr',$data['wr_no'],'update-approve',$msg);
     }
     else
     {
-      echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
+      echo json_encode(['status'=>false,'msg'=>'JDE Failed']);
     }
   }
   public function optWoType($wo_type_selected = '', $name='wo_type_id', $search=false)
@@ -646,12 +653,14 @@ class Wr extends CI_Controller {
     {
       unset($data['parent_id']);
     }
-    $update = $this->wr->reject($data);
-    if($update)
+    // $update = $this->wr->reject($data);
+    $send_wsdl = $this->send_wsdl_reject($data);
+    if($send_wsdl)
     {
       $msg = '';
-      $send_wsdl = $this->send_wsdl_reject($data);
-      if($send_wsdl)
+      // $send_wsdl = $this->send_wsdl_reject($data);
+    	$update = $this->wr->reject($data);
+      if($update)
       {
         /*update long desc*/
         $update_long_desc_jde = $this->wr->update_long_desc_jde($data);
@@ -668,13 +677,13 @@ class Wr extends CI_Controller {
       }
       else
       {
-        $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE is Failed, you can try in another moment';
+        $msg = 'WR '.$data['wr_no'].' Has Been Rejected & Send JDE is Success, but PORTAL is down';
         echo json_encode(['status'=>true,'msg'=>$msg]);
       }
     }
     else
     {
-      echo json_encode(['status'=>false,'msg'=>'Fail, Please Tyr Again']);
+      echo json_encode(['status'=>false,'msg'=>'JDE Failed']);
     }
     /*old*/
     /*$data['wr_no'] = $wr_no;

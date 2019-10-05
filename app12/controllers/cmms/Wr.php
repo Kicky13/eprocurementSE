@@ -438,9 +438,9 @@ class Wr extends CI_Controller {
       foreach ($this->settings('detail') as $key => $value) {
         $tampung .= " $key = '".trim($rows->$key)."'";
       }
-      $btnAdd = "<a href='#' $tampung class='btn btn-sm btn-primary' id='$rows->FANUMB' onclick=\"getSelectedData($rows->FANUMB)\">$rows->FANUMB</a>";
+      $btnAdd = "<a href='#' $tampung class='btn btn-sm btn-primary' id='$rows->FANUMB' onclick=\"getSelectedData($rows->FANUMB)\">$rows->FAASID</a>";
       foreach ($this->settings('thead') as $key => $value) {
-      	if($key == 'FANUMB')
+      	if($key == 'FAASID')
       	{
       		$row[] = $btnAdd;
       	}

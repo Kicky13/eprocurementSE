@@ -283,7 +283,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
   }
   public function findSupervisor()
   {
-    $q = "SELECT EMAIL from m_user where m_user.ID_USER = (select user_id from t_jabatan where id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER')."))";
+    $q = "SELECT EMAIL from m_user where m_user.ID_USER = (select user_id from cmms_position where id = (select parent_id from cmms_position where user_id = ".$this->session->userdata('ID_USER')."))";
     return $this->db->query($q)->row();
   }
   public function sendEmail($email='',$data='')

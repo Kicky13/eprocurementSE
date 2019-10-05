@@ -438,11 +438,18 @@ class Wr extends CI_Controller {
       foreach ($this->settings('detail') as $key => $value) {
         $tampung .= " $key = '".trim($rows->$key)."'";
       }
-      $btnAdd = "<button type='button' href='#' $tampung class='btn btn-sm btn-primary' id='$rows->FANUMB' onclick=\"getSelectedData($rows->FANUMB)\">Select</button>";
+      $btnAdd = "<a href='#' $tampung class='btn btn-sm btn-primary' id='$rows->FANUMB' onclick=\"getSelectedData($rows->FANUMB)\">$rows->FANUMB</a>";
       foreach ($this->settings('thead') as $key => $value) {
-        $row[] = trim($rows->$key);
+      	if($key == 'FANUMB')
+      	{
+      		$row[] = $btnAdd;
+      	}
+      	else
+      	{
+	        $row[] = trim($rows->$key);
+      	}
       }
-      $row[] = "$btnAdd";
+      // $row[] = "$btnAdd";
       $data[] = $row;
     }
  

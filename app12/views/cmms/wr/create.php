@@ -139,7 +139,7 @@
                     <th>Equipment Description</th>
                     <th>Equipment Class</th>
                     <th>Equipment Type</th>
-                    <th>Select</th>
+                    <!-- <th>Select</th> -->
                   </tr>
                 </thead>
                 <tbody id="tbody-equipment-search">

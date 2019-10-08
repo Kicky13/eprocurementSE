@@ -160,6 +160,7 @@ class Equipment extends CI_Controller {
     $data['part_list'] = $this->mod->new_part_list($wo_no);
     $data['labor_list'] = $this->mod->labor_detail($wo_no);
     $data['attachment'] = $this->mod->attachment_jde($wo_no);
+    $data['attachment_other'] = $this->mod->attachment_jde_other($wo_no);
     $this->load->view($this->view.'/wo_detail', $data);
   }
   public function get_task_instruction_from_pm($value='')

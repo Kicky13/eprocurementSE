@@ -235,7 +235,7 @@ class M_equipment extends CI_Model {
   function wo_search()
   {
 	  $query = $this->input->get('search');
-	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '60' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 5 ROWS ONLY ";
+	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 9 ROWS ONLY ";
 	  $r =  $this->db->query($sql)->result();
 	  
 	  $d = [];

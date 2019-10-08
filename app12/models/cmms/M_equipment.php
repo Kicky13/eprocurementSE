@@ -271,6 +271,12 @@ class M_equipment extends CI_Model {
       $rs = '';
     return $rs;
   }
+  public function attachment_jde_other($wo_no='')
+  {
+    $sql = "select GDGTITNM,GDGTFILENM from f00165 where gdtxky like '%$wo_no%' and GDGTITNM != 'Text1'";
+    $rs = $this->db->query($sql);
+    return $rs;
+  }
   public function new_part_list($wono='')
   {
     $sql = "select WMCPIL ITEM_NUMBER,concat(trim(WMDSC1),concat(' ',trim(WMDSC2))) as DESCRIPTION, WMUORG as request,WMTRQT as actual from f3111 where wmdoco='$wono'";

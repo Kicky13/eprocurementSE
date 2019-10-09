@@ -835,6 +835,8 @@ class Purchase_order extends CI_Controller
         $menu = get_main_menu();
 
         $pos = $this->M_purchase_order->inquiry($params);
+        $queryPO = $this->db->last_query();
+        echo $queryPO;
         $pos_status_stmt = $this->M_purchase_order->approvalStatuses(null, ['resource' => true]);
 
         $pos_status = [];
@@ -877,6 +879,9 @@ class Purchase_order extends CI_Controller
             $po->action_to_role_description = @$po_status->action_to_role_description ?: '';
         });
         $arf_issued = $this->M_arf->arf_issued()->result();
+        $arfQuery = $this->db->last_query();
+        echo $arfQuery;
+        die();
         $po_issued = [];
         $arf_list = [];
         foreach ($arf_issued as $key => $value) {

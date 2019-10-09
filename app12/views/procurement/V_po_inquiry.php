@@ -40,6 +40,7 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="table-responsive">
+                          <h3><?php echo json_encode($pos); ?></h3>
                         <table id="po_inquiry" class="table table-striped table-bordered table-fixed-column order-column dataex-lr-fixedcolumns table-hover table-no-wrap display" width="100%">
                           <thead>
                             <tr>
@@ -84,7 +85,6 @@
                                   <a href="<?= base_url('procurement/purchase_order/show/'.$po->id) ?>" class="btn btn-sm btn-info">
                                     View
                                   </a>
-                                  
                                   <?php 
                                     foreach ($po_issued as $arf) {
                                       if($arf->po_no == $po->po_no)
@@ -117,6 +117,7 @@
                             </tr>
                           </tfoot>
                         </table>
+                          <h3><?php echo json_encode($po_issued); ?></h3>
                       </div>
                     </div>
                   </div>

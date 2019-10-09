@@ -1264,7 +1264,7 @@ function wr_priority($value='',$all=false)
       2 => 'Immediate',
       3 => 'Within 3 - 7 Days',
       4 => 'Requirment Shutdown Work',
-      /*5 => 'Preventive Maintenance',*/
+      5 => 'Preventive Maintenance',
       6 => 'Outage Work',
     ];
     if($all)

@@ -62,7 +62,26 @@ class M_wo_jde extends CI_Model {
     {
       $sql .= " and UPPER(ORIGINATOR) like UPPER('%".$this->input->post('ORIGINATOR')."%')";
     }
-    
+
+    if(isset($_POST['order']) and $this->input->post('param') == 'wr')
+    {
+      $columns = [];
+      //var $column_order = array('id','bantuan_id','nama_alat','jumlah','terpasang','terpakai','kondisi','dimanfaatkan','foto_alat','titik_pemasangan','created_by','updated_by');
+
+      foreach (cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result() as $wr_list_tracking) {
+        $columns[] = $wr_list_tracking->desc;
+      }
+      // $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+      $sql .= " order by ".$columns[$_POST['order']['0']['column']]." ".$_POST['order']['0']['dir'];
+
+    } 
+    else if(isset($this->order))
+    {
+      /*$order = $this->order;
+      $this->db->order_by(key($order), $order[key($order)]);*/
+      $sql .= " order by wadoco asc";
+
+    }
 	/*
 	$q = "select * from m_user where id_user = ".$this->session->userdata('ID_USER');
 	$u = $this->dbm->query($q)->row();
@@ -100,7 +119,7 @@ class M_wo_jde extends CI_Model {
   {
     $sql = $this->_get_datatables_query();
     
-    $sql .= " order by wadoco asc";
+    // $sql .= " order by wadoco asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";

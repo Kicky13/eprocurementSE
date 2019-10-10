@@ -304,11 +304,14 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
         $userCreated = user()->NAME;
         $createdAt = dateToIndo($data['created_at'], false, true);
         $wr_priority = wr_priority($data['priority']);
+        $wrtype = $this->db->where('id',$data['wo_type_id'])->get('cmms_wo_type')->row();
         $open = $wr->OPEN_VALUE;
         $close = $wr->CLOSE_VALUE;
         $title = $wr->TITLE;
         $open = str_replace('__wrno__', $data['wr_no'], $open);
         $open = str_replace('__wrdesc__', $data['wr_description'], $open);
+        $open = str_replace('__wrtype__', $wrtype->notation, $open);
+        $open = str_replace('__requestfinishdate__', dateToIndo($data['req_finish_date']), $open);
         $open = str_replace('__createdby__', $userCreated, $open);
         $open = str_replace('__createdat__', $createdAt, $open);
         $open = str_replace('__wrpriority__', $wr_priority, $open);

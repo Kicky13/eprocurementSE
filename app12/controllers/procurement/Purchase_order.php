@@ -879,6 +879,9 @@ class Purchase_order extends CI_Controller
             $po->action_to_role_description = @$po_status->action_to_role_description ?: '';
         });
         $arf_issued = $this->M_arf->arf_issued()->result();
+//        $arfQuery = $this->db->last_query();
+//        echo $arfQuery;
+//        die();
         $po_issued = [];
         $arf_list = [];
         foreach ($arf_issued as $key => $value) {

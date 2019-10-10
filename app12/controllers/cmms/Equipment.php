@@ -220,12 +220,12 @@ class Equipment extends CI_Controller {
   {
 	  $file = $this->input->get('xlink');
 	  $file = str_replace('/','\\',$file);
-	  $file = '//jktds01/E910/mediaobj/htmlupload/FILE-10-1-1-57-9189934920311359-1570436079629.pdf';
+	  $file = '\\\jktds01\E910\mediaobj\htmlupload\FILE-10-1-1-57-9189934920311359-1570436079629.pdf';
 	  echo $file;
 	  // exit();
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
-    header('Content-Disposition: attachment; filename="'.basename().'"');
+    header('Content-Disposition: attachment; filename="'.basename($file).'"');
     header('Expires: 0');
     header('Cache-Control: must-revalidate');
     header('Pragma: public');

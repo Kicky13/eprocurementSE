@@ -32,8 +32,7 @@ class M_arf_notif_preparation extends CI_Model {
                         ->where(array('an.id' => null, 'as.user_id' => $this->session->ID_USER))
                         ->order_by('doc_date', 'DESC')
                         ->get();
-//        return $res->result_array();
-        return $this->db->last_query();
+        return $res->result_array();
     }
 
     public function get_list_progress() {

@@ -40,7 +40,6 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="table-responsive">
-                          <h3><?php echo json_encode($pos); ?></h3>
                         <table id="po_inquiry" class="table table-striped table-bordered table-fixed-column order-column dataex-lr-fixedcolumns table-hover table-no-wrap display" width="100%">
                           <thead>
                             <tr>
@@ -117,7 +116,6 @@
                             </tr>
                           </tfoot>
                         </table>
-                          <h3><?php echo json_encode($po_issued); ?></h3>
                       </div>
                     </div>
                   </div>

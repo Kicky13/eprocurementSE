@@ -99,6 +99,7 @@
     <div class="form-group row amendment_recommendation_tab">
         <label class="col-md-3">Latest Agreement Value</label>
         <div class="col-md-3">
+            <input type="hidden" id="latest-agreement-value2" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
             <input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
         </div>
         <label class="col-md-3">New Agreement Value</label>
@@ -532,10 +533,17 @@
       return n;
     }
     <?php if(isset($issued)): ?>
-      var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").attr('data')
-      var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
-      $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
-      $("#new-agreement-value").val(new_agreement)
+      var checkelement = document.getElementById("all-amd-<?= $arf->doc_no ?>");
+      console.log(checkelement);
+      if (checkelement) {
+          var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").attr('data');
+          var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+      } else {
+          var new_agreement = $("#latest-agreement-value2").val();
+          var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+      }
+      $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
+      $("#new-agreement-value").val(new_agreement);
     <?php endif;?>
   })
 </script>

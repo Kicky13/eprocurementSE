@@ -154,6 +154,7 @@ class Equipment extends CI_Controller {
   {
     $data['wo_detail'] = $this->mod->wo_detail($wo_no);
     $data['parent_wo'] = $this->mod->get_parent_wo($wo_no);
+    $data['po_no'] = $this->mod->get_po_no($wo_no);
     /*echo "<pre>";
     print_r($data);
     exit();*/

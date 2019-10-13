@@ -26,6 +26,10 @@
 		{
 			$txt = $parent_wo;
 		}
+		if($wod->desc2 == 'PO_NO')
+		{
+			$txt = $po_no;
+		}
 ?>
 		<tr>
 			<td><?= str_replace('WO ', $identity, $wod->desc) ?></td>

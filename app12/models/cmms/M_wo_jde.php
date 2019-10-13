@@ -30,21 +30,21 @@ class M_wo_jde extends CI_Model {
         $sql .= " and wotype = ".$qr->id;
       }
     }
-    if($this->input->post('WONO'))
+    if($this->input->post('WADOCO'))
     {
-      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('WONO')."%')";
+      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('WADOCO')."%')";
     }
-    if($this->input->post('WODESC'))
+    if($this->input->post('WADL01'))
     {
-      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('WODESC')."%')";
+      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('WADL01')."%')";
     }
-    if($this->input->post('wasrst'))
+    if($this->input->post('WASRST'))
     {
-      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('wasrst')."%')";
+      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRSTWANUMB')."%')";
     }
-    if($this->input->post('wanumb'))
+    if($this->input->post('WANUMB'))
     {
-      $sql .= " and UPPER(wanumb) like UPPER('%".$this->input->post('wanumb')."%')";
+      $sql .= " and UPPER(wanumb) like UPPER('%".$this->input->post('WANUMB')."%')";
     }
     if($this->input->post('failure_desc'))
     {
@@ -67,15 +67,16 @@ class M_wo_jde extends CI_Model {
     {
       $columns = [];
       //var $column_order = array('id','bantuan_id','nama_alat','jumlah','terpasang','terpakai','kondisi','dimanfaatkan','foto_alat','titik_pemasangan','created_by','updated_by');
-
+$i=1;
       foreach (cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result() as $wr_list_tracking) {
-        $columns[] = $wr_list_tracking->desc;
+        $columns[$i] = $wr_list_tracking->desc1;
+		$i++;
       }
       // $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
       $sql .= " order by ".$columns[$_POST['order']['0']['column']]." ".$_POST['order']['0']['dir'];
 
     } 
-    else if(isset($this->order))
+    else
     {
       /*$order = $this->order;
       $this->db->order_by(key($order), $order[key($order)]);*/

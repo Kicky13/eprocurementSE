@@ -300,4 +300,10 @@ class M_equipment extends CI_Model {
     /*select * from f4801 where WADOCO = '19000099'*/
     /*pm status = 01 atau 50 dengan kondisi jika ada service type yang kembar, ambil yang statusnya 01 berapa pun banyaknya data*/
   }
+  public function get_parent_wo($wo_no='')
+  {
+    $sql = "select WAPARS from f4801 where  wadoco='$wo_no'";
+    $r = $this->db->query($sql);
+    return $r->WAPARS;
+  }
 }

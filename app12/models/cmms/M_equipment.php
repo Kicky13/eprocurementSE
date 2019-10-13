@@ -5,6 +5,7 @@ class M_equipment extends CI_Model {
   public function __construct() {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
+    $this->dbm = $this->load->database('default', true);
   }
   public function _get_datatables_query($value='')
   {
@@ -309,7 +310,7 @@ class M_equipment extends CI_Model {
   public function get_po_no($wo_no='')
   {
     $sql = "SELECT b.po_no FROM `t_msr` a join t_purchase_order b on a.msr_no = b.msr_no WHERE wo_no = '$wo_no'";
-    $r = $this->db->query($sql)->row();
+    $r = $this->dbm->query($sql)->row();
     return @$r->po_no;
   }
 }

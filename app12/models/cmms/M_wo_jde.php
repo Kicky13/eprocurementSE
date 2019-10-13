@@ -40,7 +40,7 @@ class M_wo_jde extends CI_Model {
     }
     if($this->input->post('WASRST'))
     {
-      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRST')."%')";
+      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRSTWANUMB')."%')";
     }
     if($this->input->post('WANUMB'))
     {
@@ -67,15 +67,16 @@ class M_wo_jde extends CI_Model {
     {
       $columns = [];
       //var $column_order = array('id','bantuan_id','nama_alat','jumlah','terpasang','terpakai','kondisi','dimanfaatkan','foto_alat','titik_pemasangan','created_by','updated_by');
-
+$i=1;
       foreach (cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result() as $wr_list_tracking) {
-        $columns[] = $wr_list_tracking->desc;
+        $columns[$i] = $wr_list_tracking->desc1;
+		$i++;
       }
       // $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
       $sql .= " order by ".$columns[$_POST['order']['0']['column']]." ".$_POST['order']['0']['dir'];
 
     } 
-    else if(isset($this->order))
+    else
     {
       /*$order = $this->order;
       $this->db->order_by(key($order), $order[key($order)]);*/

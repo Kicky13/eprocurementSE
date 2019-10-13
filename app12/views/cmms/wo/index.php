@@ -106,8 +106,8 @@
       'processing': true, //Feature control the processing indicator.
       'serverSide': true, //Feature control DataTables' server-side processing mode.
       'order': [], //Initial no order.
-	  <?php elseif($param == 'wr'):?>
-	  <?php else;?>
+	  <?php if($param == 'wr'):?>
+	  <?php else:?>
 	  'bSort':false,
 	  <?php endif;?>
       'bFilter':false,
@@ -124,6 +124,7 @@
           data.wasrst = '70';
 		  <?php elseif($param == 'wr'):?>
           data.ORIGINATOR = $('#filter_ORIGINATOR').val();
+		 data.param = 'wr';
       <?php else:?>
       data.washno = 1;
 		  <?php endif;?>
@@ -136,7 +137,7 @@
         'defaultContent': '-',
         'targets': '_all',
       },
-	  <?php elseif($param == 'wr'):?>
+	  <?php if($param == 'wr'):?>
 	  { "orderable": false, "targets": 0 }
 	  <?php endif;?>
       ],

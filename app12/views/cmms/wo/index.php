@@ -116,8 +116,8 @@
         'url': '<?php echo base_url('cmms/wo/ajax_list')?>',
         'type': 'POST',
         'data': function ( data ) {
-          data.WONO = $('#filter_WONO').val();
-          data.WODESC = $('#filter_WODESC').val();
+          data.WADL01 = $('#filter_WADL01').val();
+          data.WADL01 = $('#filter_WADL01').val();
           data.EQNO = $('#filter_EQNO').val();
           data.EQDESC = $('#filter_EQDESC').val();
 		  <?php if($param == 'outstanding'):?>

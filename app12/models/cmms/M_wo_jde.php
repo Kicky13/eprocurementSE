@@ -40,7 +40,7 @@ class M_wo_jde extends CI_Model {
     }
     if($this->input->post('WASRST'))
     {
-      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRSTWANUMB')."%')";
+      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRST')."%')";
     }
     if($this->input->post('WANUMB'))
     {

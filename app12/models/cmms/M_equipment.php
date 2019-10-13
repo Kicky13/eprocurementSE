@@ -303,7 +303,7 @@ class M_equipment extends CI_Model {
   public function get_parent_wo($wo_no='')
   {
     $sql = "select WAPARS from f4801 where  wadoco='$wo_no'";
-    $r = $this->db->query($sql);
+    $r = $this->db->query($sql)->row();
     return $r->WAPARS;
   }
 }

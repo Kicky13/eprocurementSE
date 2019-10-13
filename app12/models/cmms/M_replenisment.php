@@ -53,7 +53,7 @@ class M_replenisment extends CI_Model {
       $sql .= " and UPPER(RPTDAY) like UPPER('%".$this->input->post('RPTDAY')."%')";
     }
 
-    $sql .= $addParents;
+    // $sql .= $addParents;
     return $sql;
 
   }

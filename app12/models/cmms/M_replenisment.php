@@ -72,7 +72,7 @@ class M_replenisment extends CI_Model {
   public function sql($value='')
   {
 	  
-    $sql = "select * from (select RPMCU, RPLITM, RPUORG,RPDOCO,RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1) x";
+    $sql = "select * from (select RPMCU, RPLITM, RPUORG, RPDOCO, RPEV01, RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1) x";
     return $sql;  
   }
   public function dt_count_all()

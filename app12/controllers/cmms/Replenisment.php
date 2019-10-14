@@ -28,6 +28,11 @@ class Replenisment extends CI_Controller {
     $head = [
       'RPLITM' => 'Item Number',
       'RPMCU' =>    'Ware House',
+      'RPUORG' => 'Recommended Order Qty',
+      'RPDOCO' => 'WO Number',
+      'RPTRQT' => 'WO Reservation Qty',
+      'RPDPL' => 'Plan Finish Date',
+      'RPDRQJ' => 'Request Finish Date',
       'RPEV01' => 'Status',
     ];
     $data['thead'] = $head;

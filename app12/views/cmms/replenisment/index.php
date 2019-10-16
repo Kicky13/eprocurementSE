@@ -23,11 +23,16 @@
                 <div class="card-body card-dashboard">
                   <div class="row">
                     <div class="col-md-12">
+                      <center>                        
+                      <a href="<?= base_url('procurement/msr/create') ?>" class="btn btn-primary btn-to-msr" style="display: none" onclick="check_cart()">MSR Preparation</a>
+                      </center>
+                    </div>
+                    <div class="col-md-12">
                       <div class="table-responsive">
                         <table id="tbl" class="table table-striped table-bordered table-fixed-column order-column dataex-lr-fixedcolumns table-hover table-no-wrap">
                           <thead>
                             <tr>
-                              <th width="25">No</th>
+                              <th width="25">#</th>
                               <?php 
                                 foreach ($thead as $key => $value) {
                                   echo "<th>$value</th>";
@@ -52,6 +57,33 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="my-modal-wo-detail" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Detail</h4>
+      </div>
+      <div id="result-modal-wo-detail" class="modal-body row">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function detailReplenisment(no) {
+    $.ajax({
+      type:'post',
+      url:"<?= base_url('cmms/replenisment/show') ?>/"+no,
+      success:function(e){
+        $("#result-modal-wo-detail").html(e)
+        $("#my-modal-wo-detail").modal('show')
+      }
+    })
+  }
+</script>
 <SCRIPT LANGUAGE='JavaScript'>
   var table
   $(document).ready(function() {
@@ -59,7 +91,7 @@
       'processing': true, //Feature control the processing indicator.
       'serverSide': true, //Feature control DataTables' server-side processing mode.
       'order': [], //Initial no order.  
-  	  'bSort':false,
+      'bSort':false,
       'bFilter':false,
       // Load data for the table's content from an Ajax source
       'ajax': {
@@ -76,7 +108,7 @@
         'defaultContent': '-',
         'targets': '_all',
       },
-	  
+    
       ],
    
     });
@@ -89,4 +121,63 @@
       table.ajax.reload();  //just reload table
     });
   });
+  // var dt = [];
+  function addItemNumber(a,b) {
+    // alert($("#tag"+b).text());
+    attr = $("#tag"+b).text()
+    if(attr == 'Add')
+    {
+      addToCart(a,b)
+      // $("#tag"+b).text('Remove')
+    }
+    else
+    {
+      removeToCart(a,b)
+      // $("#tag"+b).text('Add')
+    }
+  }
+  function addToCart(a,b) {
+    $.ajax({
+      type:'POST',
+      data:{item_number:a},
+      url:"<?= base_url('cmms/replenisment/add_to_cart') ?>",
+      success:function(e){
+        if(e == '1')
+        {
+          $(".btn-to-msr").show()
+        }
+        else
+        {
+          $(".btn-to-msr").hide()
+        }
+        $("#tag"+b).text('Remove')
+      }
+    })
+  }
+  function removeToCart(a,b) {
+   $.ajax({
+      type:'POST',
+      data:{item_number:a},
+      url:"<?= base_url('cmms/replenisment/remove_to_cart') ?>",
+      success:function(e){
+        if(e == '1')
+        {
+          $(".btn-to-msr").show()
+        }
+        else
+        {
+          $(".btn-to-msr").hide()
+        }
+        $("#tag"+b).text('Add')
+      }
+    })
+  }
+  function check_cart() {
+    /*$.ajax({
+      url:"<?= base_url('cmms/replenisment/check_cart') ?>",
+      success:function(e){
+        console.log(e)
+      }
+    })*/
+  }
   </script>

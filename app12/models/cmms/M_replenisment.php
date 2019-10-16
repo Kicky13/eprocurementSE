@@ -89,10 +89,10 @@ class M_replenisment extends CI_Model {
     $sql = $this->_get_datatables_query();
     return $this->db->query($sql)->num_rows();
   }
-  public function find($fanumb='')
+  public function find($item_number='')
   {
     $sql = $this->sql();
-    $sql .= " where fanumb = $fanumb";
+    $sql .= " where RPLITM = '$item_number'";
     $rs = $this->db->query($sql)->row();
     return $rs;
   }

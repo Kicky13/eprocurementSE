@@ -28,10 +28,11 @@ class Replenisment extends CI_Controller {
     $head = [
       'RPLITM' => 'Item Number',
       'RPMCU' =>    'Ware House',
+      'RPUNCS' =>    'Unit Cost',
       'RPUORG' => 'Recommended Order Qty',
       'RPDOCO' => 'WO Number',
       'RPTRQT' => 'WO Reservation Qty',
-      'RPDPL' => 'Plan Finish Date',
+      'RPDPL' => 'Plan Start Date',
       'RPDRQJ' => 'Request Finish Date',
       'RPEV01' => 'Status',
     ];
@@ -222,11 +223,13 @@ class Replenisment extends CI_Controller {
   public function add_to_cart()
   {
     $item_number = $this->input->post('item_number');
+    $find = $this->mod->find($item_number);
+
     $this->load->library('cart');
     $data = array(
       'id'      => uniqid(),
-      'qty'     => 1,
-      'price'   => 1,
+      'qty'     => $find->RPUORG,
+      'price'   => $find->RPUNCS,
       'name'    => str_replace('.', '-', $item_number),
     );
     $this->cart->insert($data);   
@@ -267,5 +270,64 @@ class Replenisment extends CI_Controller {
   {
     $this->load->library('cart');
     print_r($this->cart->contents());
+  }
+  public function save_draft_msr()
+  {
+    $this->load->library('cart');
+    $this->load->model('material/M_group', 'material_group');
+
+    $user = user();
+    $department = $this->db->where('ID_DEPARTMENT',$user->ID_DEPARTMENT)->get('m_department')->row();
+    $t_msr_draft['id_currency_base'] = 3;
+    $t_msr_draft['create_by'] = $this->session->userdata('ID_USER');
+    $t_msr_draft['create_on'] = date("Y-m-d H:i:s");
+    $t_msr_draft['id_department'] = $user->ID_DEPARTMENT;
+    $t_msr_draft['department_desc'] = $department->DEPARTMENT_DESC;
+    
+    $this->db->insert('t_msr_draft', $t_msr_draft);
+    $insert_id = $this->db->insert_id();
+
+    $contents = $this->cart->contents();
+    foreach ($contents as $r) {
+        $amount = $r['price'] * $r['qty'];
+        $material = $this->db->where('MATERIAL_CODE', $r['name'])->get('m_material')->row();
+        $uom = $material->UOM;
+        $uom_id = @$this->db->where('MATERIAL_UOM',$uom)->get('m_material_uom')->row()->ID;
+        $t_msr_item_draft['t_msr_draft_id'] = $insert_id;
+        $t_msr_item_draft['id_itemtype'] = 'GOODS';
+        $t_msr_item_draft['id_itemtype_category'] = 'SEMIC';
+        $t_msr_item_draft['material_id'] = $material['MATERIAL'];
+        $t_msr_item_draft['semic_no'] = $r['name'];
+        $t_msr_item_draft['description'] = $material['MATERIAL_NAME'];
+        /*procurement/msr/findItemAttributes?material_id=10000002&type=GOODS&itemtype_category=SEMIC*/
+        /*{"type":"GOODS","group_name":"DRILLING AND PRODUCTION (KLASIFKASI)","group_code":"A","subgroup_name":"CASING, TUBING AND ACCESSORIES","subgroup_code":"4","uom_description":"Meters","uom_name":"MT","uom_id":"85","qty_onhand":"","qty_ordered":""}*/
+        $material_id = $material['MATERIAL'];
+        $type = 'GOODS';
+        if ($material_id && $type) {
+            if ($result = $this->material_group->findByMaterialAndType($material_id, $type)) {
+                $result = $result[0];
+                $t_msr_item_draft['groupcat'] = $result['group_code'];
+                $t_msr_item_draft['groupcat_desc'] = $result['group_name'];
+                $t_msr_item_draft['sub_groupcat'] = $result['subgroup_code'];
+                $t_msr_item_draft['sub_groupcat_desc'] = $result['subgroup_name'];
+            }
+        }
+        $t_msr_item_draft['qty'] = $r['qty'];
+        $t_msr_item_draft['uom_id'] = $uom_id;
+        $t_msr_item_draft['uom'] = $uom;
+        $t_msr_item_draft['priceunit'] = $r['price'];
+        $t_msr_item_draft['priceunit_base'] = $r['price'];
+        $t_msr_item_draft['id_importation'] = 'L';
+        $t_msr_item_draft['importation_desc'] = 'Local';
+        $t_msr_item_draft['id_dpoint'] = '10101';
+        $t_msr_item_draft['dpoint_desc'] = 'Muara Laboh';
+        $t_msr_item_draft['id_bplant'] = '10101';
+        $t_msr_item_draft['id_costcenter'] = '101032210';
+        $t_msr_item_draft['costcenter_desc'] = 'Maintenance';
+        $t_msr_item_draft['amount'] = $amount;
+        $t_msr_item_draft['amount_base'] = $amount;
+        $t_msr_item_draft['inv_type'] = 1;
+        $this->db->insert('t_msr_item_draft', $t_msr_item_draft);
+    }
   }
 }

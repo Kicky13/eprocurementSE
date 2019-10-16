@@ -82,6 +82,10 @@ class Replenisment extends CI_Controller {
           $link = "<a href='#' onclick=\"detailReplenisment('$rows->RPLITM')\">$rows->RPLITM</a>";
           $row[] = $link;
         }
+        elseif($key == 'RPUNCS')
+        {
+          $row[] = "<span style='float:right'>".numIndo($rows->$key)."</span>";
+        }
         else
         {
           $row[] = $rows->$key;

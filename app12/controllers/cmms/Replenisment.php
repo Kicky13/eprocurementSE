@@ -71,10 +71,20 @@ class Replenisment extends CI_Controller {
     foreach ($list as $rows) {
       $no++;
       $row = array();
-      $row[] = $no;
+      $itemNumber = trim($rows->RPLITM);
+      $itemClear = str_replace('.', '', trim($rows->RPLITM));
+      $row[] = "<a href='#' onclick=\"addItemNumber('$rows->RPLITM','$itemClear')\" id='tag$itemClear' class='btn btn-sm btn-primary'>Add</a>";
       
       foreach ($this->settings('thead') as $key => $value) {
-        $row[] = $rows->$key;
+        if($key == 'RPLITM')
+        {
+          $link = "<a href='#' onclick=\"detailReplenisment('$rows->RPLITM')\">$rows->RPLITM</a>";
+          $row[] = $link;
+        }
+        else
+        {
+          $row[] = $rows->$key;
+        }
       }
       $row[] = $rows->RPEV01 == 1 ? 'New Request' : '';
       $data[] = $row;
@@ -134,20 +144,10 @@ class Replenisment extends CI_Controller {
       $no++;
     }
   }
-  public function wo_detail($wo_no='')
+  public function show($no='')
   {
-    $data['wo_detail'] = $this->mod->wo_detail($wo_no);
-    $data['parent_wo'] = $this->mod->get_parent_wo($wo_no);
-    $data['po_no'] = $this->mod->get_po_no($wo_no);
-    /*echo "<pre>";
-    print_r($data);
-    exit();*/
-    $data['task_instruction'] = $this->mod->task_instruction($data['wo_detail']->TASKINSTRUCTION);
-    $data['part_list'] = $this->mod->new_part_list($wo_no);
-    $data['labor_list'] = $this->mod->labor_detail($wo_no);
-    $data['attachment'] = $this->mod->attachment_jde($wo_no);
-    $data['attachment_other'] = $this->mod->attachment_jde_other($wo_no);
-    $this->load->view($this->view.'/wo_detail', $data);
+    $data = ['data'=>$this->mod->detail($no)];
+    $this->load->view($this->view.'/detail', $data);
   }
   public function get_task_instruction_from_pm($value='')
   {
@@ -218,5 +218,54 @@ class Replenisment extends CI_Controller {
     header('Content-Length: ' . filesize($file));
     readfile($file);
     exit;
+  }
+  public function add_to_cart()
+  {
+    $item_number = $this->input->post('item_number');
+    $this->load->library('cart');
+    $data = array(
+      'id'      => uniqid(),
+      'qty'     => 1,
+      'price'   => 1,
+      'name'    => str_replace('.', '-', $item_number),
+    );
+    $this->cart->insert($data);   
+    if($this->cart->total() > 0) 
+    {
+      echo 1;
+    }
+    else
+    {
+      echo 0;
+    }
+  }
+  public function remove_to_cart()
+  {
+    $item_number = $this->input->post('item_number');
+    $this->load->library('cart');
+    foreach ($this->cart->contents() as $items) {
+      $rowid = $items['rowid'];
+      if($items['name'] == str_replace('.', '-', $item_number))
+      {
+        $data = array(
+          'rowid' => $rowid,
+          'qty'   => 0
+        );
+        $this->cart->update($data);
+      }
+    }
+    if($this->cart->total() > 0) 
+    {
+      echo 1;
+    }
+    else
+    {
+      echo 0;
+    }
+  }
+  public function check_cart()
+  {
+    $this->load->library('cart');
+    print_r($this->cart->contents());
   }
 }

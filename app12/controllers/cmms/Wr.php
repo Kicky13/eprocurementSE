@@ -354,7 +354,7 @@ class Wr extends CI_Controller {
   }
   public function optWoType($wo_type_selected = '', $name='wo_type_id', $search=false)
   {
-    $wotype = $this->wo_type->all();
+    $wotype = $this->db->where('status',1)->get('cmms_wo_type')->result();
     $s = "<select name='$name' id='$name' class='form-control'>";
     if($search)
       $s .= "<option value=''>--All--</option>";

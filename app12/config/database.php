@@ -77,8 +77,8 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => 'root',
-	'password' => '',
-	'database' => 'supreme_user3',
+	'password' => 'rootpwd',
+	'database' => 'supreme_dev',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -161,7 +161,6 @@ $db['oracle'] = array(
 	'save_queries' => TRUE
 );
 
-<<<<<<< HEAD
 $db['dev_user'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
@@ -183,7 +182,6 @@ $db['dev_user'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-=======
 $dbstr ="(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.1.65)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=jdese)))";
 $db['oracledev'] = array(
     'dsn'	=> '',
@@ -206,4 +204,3 @@ $db['oracledev'] = array(
     'failover' => array(),
     'save_queries' => TRUE
 );
->>>>>>> de107282db4d5a200bb4ff7a4144b0054f1c0290

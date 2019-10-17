@@ -24,7 +24,7 @@
                   <div class="row">
                     <div class="col-md-12">
                       <center>                        
-                      <a href="<?= base_url('procurement/msr/create') ?>" class="btn btn-primary btn-to-msr" style="display: none" onclick="check_cart()">MSR Preparation</a>
+                      <a href="#" class="btn btn-primary btn-to-msr" style="display: none" onclick="check_cart()">Draft to MSR Preparation</a>
                       </center>
                     </div>
                     <div class="col-md-12">
@@ -173,11 +173,11 @@
     })
   }
   function check_cart() {
-    /*$.ajax({
-      url:"<?= base_url('cmms/replenisment/check_cart') ?>",
+    $.ajax({
+      url:"<?= base_url('cmms/replenisment/save_draft_msr') ?>",
       success:function(e){
-        console.log(e)
+        window.open("<?=base_url('procurement/msr/createFromDraft')?>/"+e,"_self");
       }
-    })*/
+    })
   }
   </script>

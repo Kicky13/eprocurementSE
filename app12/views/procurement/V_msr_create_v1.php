@@ -897,6 +897,12 @@ margin-top: 5px;
         ?>
         </div>
         </div>
+        <div class="form-group row">
+        <label class="col-form-label col-sm-4">WO Number:</label>
+        <div class="col-sm-8">
+        <input name="wo_no" id="wo_no" class="form-control">
+        </div>
+        </div>
       </div>
       </form>
     </div>
@@ -2685,6 +2691,8 @@ $('#item-add12').click(function () {
             material.description = $('#item-semic_no_name').val()
         }
 
+        var wo_no = $('#wo_no').val()
+
         $.ajax({
             method: "POST",
             url: "<?= base_url().'/Validatejde/checkItem' ?>",
@@ -2700,7 +2708,8 @@ $('#item-add12').click(function () {
                         + hidden_input(item_namespace + '[item_type_value]', item_type_value)
                         + hidden_input(item_namespace + '[item_type_name]', item_type_name)
                         + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
-                        + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
+                        + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name)
+                        + hidden_input(item_namespace + '[wo_no]', wo_no),
 
                     "itemtype_category": itemtype_category_name
                         + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)

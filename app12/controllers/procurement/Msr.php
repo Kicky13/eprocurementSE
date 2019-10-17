@@ -1359,7 +1359,8 @@ class Msr extends CI_Controller {
 	public function saveDraftV1(){
         $post = $this->input->post();
         $draft_id = trim($post['draft_id']);
-		
+        print_r($post);
+		exit();
         $msr_no = @$post['msr_no'] ?: NULL;
 		
         $input_data['header'] = $this->makeHeaderFromPost($msr_no);
@@ -2003,6 +2004,7 @@ class Msr extends CI_Controller {
             'item_modification' => @$item['item_modification_value'] ?: 0,
             'priceunit_base' => @$priceunit_base ?: 0,
             'amount_base' => @$amount_base ?: 0,
+            'wo_no' => @$item['wo_no'],
         );
     }
 

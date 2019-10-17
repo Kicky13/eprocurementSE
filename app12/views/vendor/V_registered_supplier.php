@@ -2666,15 +2666,25 @@
            });
        }
 
+           function  review_gambar(data)
+           {
+               $('#ref').attr('src', data);
+               $('#modal2').modal('show');
+           }
            function review(data, pilih)
            {
-               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + pilih + data);
+               $('#ref').attr('src', "<?php echo base_url() ?>upload/LEGAL_DATA/" + pilih + "" + data);
                $('#modal2').modal('show');
            }
            function review_akta(data)
            {
                $('#ref').attr('src', data);
                $('#modal2').modal('show');
+           }
+           function  review_file(data)
+           {
+                $('#ref').attr('src', data);
+                $('#modal2').modal('show');
            }
            function slides()
            {
@@ -2692,11 +2702,11 @@
                $('#tabelsertifikasi').DataTable().destroy();
                $('#main').show();
            }
-           function review(data)
-           {
-               $('#ref').attr('src', "<?= base_url() ?>upload/CSMS/" + data);
-               $('#modal2').modal('show');
-           }
+           //function review(data)
+           //{
+           //    $('#ref').attr('src', "<?//= base_url() ?>//upload/CSMS/" + data);
+           //    $('#modal2').modal('show');
+           //}
            function tbl(id)
            {
                var obj = {};

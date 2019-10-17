@@ -194,44 +194,20 @@ class Purchase_order extends CI_Controller
                 }
 
                 $this->db->trans_complete();
+                // Send Email Notification for Head of Proc
+                $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+                $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-
-
-                if ($this->db->trans_status() !== FALSE) {
-                    // generate approval flow!!!
-                    try {
-                        $this->M_approval->generateDocumentFlow($this->M_purchase_order::module_kode, $po_id);
-                        log_message('info', 'Document approval #'.$po_no.' flow has already generated');
-                    } catch (RuntimeException $e) {
-                       log_message('error', $e->getMessage());
-                    }
-
-                    log_history($this->M_purchase_order::module_kode, $po_no, 'Created');
-                    $this->session->set_flashdata('message', array(
-                        'message' => __('success_submit_with_number', array('no' => $po_no)),
-                        'type' => 'success'
-                    ));
-
-                    // Send Email Notification for lose supplier
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
-//                    $query = $this->db->query("SELECT t.title as TITLEMSR,b.msr_no,u.EMAIL as EMAIL,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE from t_purchase_order b
-//                        join t_approval a on a.data_id=b.id and a.urutan=1
-//                        join m_approval m on m.id=a.m_approval_id
-//                        join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
-//                        join m_notic n on n.id=42
-//                        join t_msr t on t.msr_no=b.msr_no
-//                        where b.id=".$po_id);
-                    $query = $this->db->query("SELECT ed.msr_no, us.EMAIL as email, us.NAME AS user, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, ed.subject AS subject FROM t_bl_detail bl
+                $query = $this->db->query("SELECT ed.msr_no, us.EMAIL as email, us.NAME AS user, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, ed.subject AS subject FROM t_bl_detail bl
                     JOIN t_approval ap ON ap.data_id = bl.msr_no
                     JOIN t_eq_data ed ON bl.msr_no = ed.msr_no
                     JOIN m_user us ON us.ID_USER = ap.created_by
                     JOIN m_notic n ON n.ID = 42
                     WHERE bl.id = " . $bl_detail_id . " AND ap.m_approval_id = 8");
 
+                if ($query->num_rows() > 0) {
                     $data_role = $query->result();
-					
+
                     $res = $data_role[0]->open;
                     $res = str_replace('[title]', $this->input->post("title"), $res);
                     $res = str_replace('[no]', str_replace('R', 'S', $data_role[0]->msr_no), $res);
@@ -249,7 +225,23 @@ class Purchase_order extends CI_Controller
                     }
 
                     $flag = $this->M_sendmail->sendMail($data2);
-                    // End Email
+                }
+                // End Email
+
+                if ($this->db->trans_status() !== FALSE) {
+                    // generate approval flow!!!
+                    try {
+                        $this->M_approval->generateDocumentFlow($this->M_purchase_order::module_kode, $po_id);
+                        log_message('info', 'Document approval #'.$po_no.' flow has already generated');
+                    } catch (RuntimeException $e) {
+                       log_message('error', $e->getMessage());
+                    }
+
+                    log_history($this->M_purchase_order::module_kode, $po_no, 'Created');
+                    $this->session->set_flashdata('message', array(
+                        'message' => __('success_submit_with_number', array('no' => $po_no)),
+                        'type' => 'success'
+                    ));
 
 					//var_dump($po_id);exit;
 					//delete po reject
@@ -544,9 +536,6 @@ class Purchase_order extends CI_Controller
         }
 
         if ($hit_db) {
-            /* $data = $this->makePOUpdateFromPostBy(); */
-            /* $this->M_purchase_order->update($po->id, $data); */
-
             if ($action == 1) {
                 if ($this->M_purchase_order->approve($post['id'], $post['data_id'], $post['deskripsi'])) {
                     $type = 'success';
@@ -558,122 +547,59 @@ class Purchase_order extends CI_Controller
                     @$module_kode = $rs->module_kode;
                     @$urutan1 = $rs->urutan;
 
-                    $q = "select max(urutan) urutan from t_approval WHERE data_id = '".$post['data_id']."'";
-                    $rs = $this->db->query($q)->row();
-                    $urutan2 = $rs->urutan;
+                    $n = $this->db->where('id', $post['id'])->get('t_approval')->row();
+                    $urutan = $n->urutan;
+                    $urutannext = $urutan + 1;
 
+                    $roleApprover = $this->M_approval->roleApprover($urutan, $this->input->post('data_id'));
+                    $roleNextApprover = $this->M_approval->roleApprover($urutannext, $this->input->post('data_id'));
+                    $listApproval = $this->M_approval->listApprovalPO($this->input->post('data_id'));
+                    $listApproved = $this->M_approval->listApprovedPO($this->input->post('data_id'));
 
-                    if($urutan1 == $urutan2)
-                        {
-
-
-                            // Send Email ke PS Untuk Verify MSR
+                    if ($listApproved < $listApproval) {
+                        if ($roleApprover != $roleNextApprover) {
                             ini_set('max_execution_time', 500);
                             $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
                             $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-
-                            $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
-                                join m_approval m on m.id=t.m_approval_id and m.module_kode='po' and m.urutan=1
-                                join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
-                                join m_notic n on n.ID=42
-                                where t.data_id='".$post["data_id"]."'");
+                            $query = $this->db->query("SELECT po.po_no, po.title as title_doc, mp.module_kode, mp.role_id, mp.deskripsi, us.NAME, us.EMAIL AS recipient, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval ap
+                            JOIN m_approval mp ON ap.m_approval_id = mp.id
+                            JOIN t_purchase_order po ON po.id = ap.data_id
+                            JOIN m_user us ON us.ID_USER = ap.created_by
+                            JOIN m_notic n ON n.ID = 42
+                            WHERE ap.data_id = " . $this->input->post('data_id') . " AND mp.module_kode = 'po' AND ap.urutan = " . $urutannext);
                             if ($query->num_rows() > 0) {
-                              $data_role = $query->result();
-                              $count = 1;
+                                $data_replace = $query->result();
+                                $count = 1;
                             } else {
-                              $count = 0;
+                                $count = 0;
                             }
 
                             if ($count === 1) {
 
-                              $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
-                                join t_purchase_order o on o.id='".$post['data_id']."' and o.msr_no=t.msr_no
-                                join m_user u on u.ID_USER=t.create_by
-                                join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT");
+                                $str = $data_replace[0]->open;
+                                $str = str_replace('[title]', $data_replace[0]->title_doc, $str);
+                                $str = str_replace('[no]', $data_replace[0]->po_no, $str);
 
-                              $data_replace = $query->result();
+                                $datax = array(
+                                    'img1' => $img1,
+                                    'img2' => $img2,
+                                    'title' => $data_replace[0]->title,
+                                    'open' => $str,
+                                    'close' => $data_replace[0]->close
+                                );
 
-                              $res = $data_role;
-                              $str = $data_role[0]->OPEN_VALUE;
-                              $str = str_replace('_var1_',$data_replace[0]->title,$str);
-
-                              $data = array(
-                                'img1' => $img1,
-                                'img2' => $img2,
-                                'title' => $data_role[0]->TITLE,
-                                'open' => $str,
-                                'close' => $data_role[0]->CLOSE_VALUE
-                              );
-
-                              foreach ($data_role as $k => $v) {
-                                $data['dest'][] = $v->recipient;
-                              }
-                              //$flag = $this->sendMail($data);
-
+                                foreach ($data_replace as $v) {
+                                    $datax['dest'][] = $v->recipient;
+                                }
+                                $flag = $this->sendMail($datax);
                             }
-
-                            //End Send Email
-
-                        }else{
-                            $rs = $this->db->where(['t_approval.id'=>$post['id']])
-                            ->get('t_approval')->row();
-                            $urutannext = $rs->urutan+1;
-
-                            //Send Email
-                            ini_set('max_execution_time', 500);
-                            $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                            $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
-
-                            $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
-                                join m_approval m on m.id=t.m_approval_id and m.module_kode='po'
-                                join m_user u on u.roles like CONCAT('%', m.role_id ,'%')
-                                join m_notic n on n.ID=42
-                                where t.data_id='".$post["data_id"]."' and t.urutan=".$urutannext);
-                            if ($query->num_rows() > 0) {
-                              $data_role = $query->result();
-                              $count = 1;
-                            } else {
-                              $count = 0;
-                            }
-
-                            if ($count === 1) {
-
-                             $query = $this->db->query("SELECT distinct t.title,u.NAME,d.DEPARTMENT_DESC from t_msr t
-                                join t_purchase_order o on o.id='".$post['data_id']."' and o.msr_no=t.msr_no
-                                join m_user u on u.ID_USER=t.create_by
-                                join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT");
-
-
-                              $data_replace = $query->result();
-
-                              $res = $data_role;
-                              $str = $data_role[0]->OPEN_VALUE;
-                              $str = str_replace('_var1_',$data_replace[0]->title,$str);
-
-                              $data = array(
-                                'img1' => $img1,
-                                'img2' => $img2,
-                                'title' => $data_role[0]->TITLE,
-                                'open' => $str,
-                                'close' => $data_role[0]->CLOSE_VALUE
-                              );
-
-                              foreach ($data_role as $k => $v) {
-                                $data['dest'][] = $v->recipient;
-                              }
-                              $flag = $this->sendMail($data);
-
-                            }
-
-                            //End Send Email
-
                         }
-                        $this->session->set_flashdata('message', array(
-                            'message' => __('success_approve'),
-                            'type' => 'success'
-                        ));
+                    }
+                    $this->session->set_flashdata('message', array(
+                        'message' => __('success_approve'),
+                        'type' => 'success'
+                    ));
 
                 } else {
                     $type = 'error';
@@ -794,7 +720,7 @@ class Purchase_order extends CI_Controller
 
                     $img1 = "";
                     $img2 = "";
-                    $query = $this->db->query('SELECT po.po_no AS po, po.msr_no AS msr_no, po.company_desc AS company, po.po_date AS po_date, po.delivery_date AS delivery_date, vend.ID_VENDOR AS email, vend.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
+                    $query = $this->db->query('SELECT po.po_no AS po, po.title AS po_title, po.msr_no AS msr_no, po.company_desc AS company, po.po_date AS po_date, po.delivery_date AS delivery_date, vend.ID_VENDOR AS email, vend.NAMA AS vendor, notif.TITLE AS title, notif.OPEN_VALUE AS open, notif.CLOSE_VALUE AS close FROM t_purchase_order po
                     JOIN t_bl_detail bl ON po.bl_detail_id = bl.id
                     JOIN m_vendor vend ON bl.vendor_id = vend.ID
                     JOIN m_notic notif ON notif.ID = 85
@@ -812,6 +738,9 @@ class Purchase_order extends CI_Controller
                     $data_unsuccess = $query2->result();
 
                     $str = $data_succes[0]->open;
+                    $str = str_replace('_var1_', $data_succes[0]->company, $str);
+                    $str = str_replace('_var2_', $data_succes[0]->po_title, $str);
+                    $str = str_replace('_var3_', $data_succes[0]->po, $str);
 
                     $success = array(
                         'img1' => $img1,
@@ -825,7 +754,7 @@ class Purchase_order extends CI_Controller
                         $success['dest'][] = $value->email;
                     }
 
-                    if (count($data_unsuccess) > 0) {
+                    if ($query2->num_rows() > 0) {
                         $rep = $data_unsuccess[0]->open;
                         $rep = str_replace('[ed_no]', str_replace('R', 'Q', $data_unsuccess[0]->msr_no), $rep);
                         $rep = str_replace('[ed_title]', $data_unsuccess[0]->subject, $rep);
@@ -845,7 +774,7 @@ class Purchase_order extends CI_Controller
                         $unsuccessmail = $this->M_sendmail->sendMail($unsuccess);
                     }
 
-//                    $successmail = $this->M_sendmail->sendMail($success);
+                    $successmail = $this->M_sendmail->sendMail($success);
 
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit'),
@@ -906,6 +835,8 @@ class Purchase_order extends CI_Controller
         $menu = get_main_menu();
 
         $pos = $this->M_purchase_order->inquiry($params);
+//        $queryPO = $this->db->last_query();
+//        echo $queryPO;
         $pos_status_stmt = $this->M_purchase_order->approvalStatuses(null, ['resource' => true]);
 
         $pos_status = [];
@@ -948,6 +879,9 @@ class Purchase_order extends CI_Controller
             $po->action_to_role_description = @$po_status->action_to_role_description ?: '';
         });
         $arf_issued = $this->M_arf->arf_issued()->result();
+//        $arfQuery = $this->db->last_query();
+//        echo $arfQuery;
+//        die();
         $po_issued = [];
         $arf_list = [];
         foreach ($arf_issued as $key => $value) {
@@ -2504,8 +2438,8 @@ class Purchase_order extends CI_Controller
               echo "Execution Berhasil - insert PO ".$req_no." at ".date("Y-m-d H:i:s");
               $query_update = $this->db->query("update i_sync set isclosed=1,updatedate=now() where doc_type='po' and doc_no='".$req_no."' and isclosed=0");
             }else{
-                echo $xml_post_string;
-              echo "Execution Gagal - insert PO at ".date("Y-m-d H:i:s").'-'.$error_msg.'-'.$curl_errno.'-'.$http_status;
+                echo "<pre>".$data_curl."</pre>";
+              // echo "Execution Gagal - insert PO at ".date("Y-m-d H:i:s").'-'.$error_msg.'-'.$curl_errno.'-'.$http_status;
             }
     }
         $data_log['script_type'] = 'po';

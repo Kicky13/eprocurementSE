@@ -24,9 +24,9 @@ class M_arf extends M_base {
                 else approval_arf.description
                 end) 
              as approval_status")
-        ->join('t_purchase_order', 't_purchase_order.po_no = t_arf.po_no')
-        ->join('t_msr', 't_msr.msr_no = t_purchase_order.msr_no')
-        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+        ->join('t_purchase_order', 't_purchase_order.po_no = t_arf.po_no','left')
+        ->join('t_msr', 't_msr.msr_no = t_purchase_order.msr_no','left')
+        ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company','left')
         ->join('m_user', 'm_user.ID_USER = t_arf.created_by')
         ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
         ->join('m_vendor', 'm_vendor.ID = t_purchase_order.id_vendor')

@@ -32,6 +32,8 @@
         $dataBefore = false;
         $new_date_1 = '-';
         $new_date_2 = '-';
+        $latestPerformanceBondDate = '-';
+        $latestInsuranceDate = '-';
     }
     else
     {
@@ -41,8 +43,11 @@
         $amdNoBefore = $toInt > 10 ? $toInt : '0'.$toInt;
         $strAmdNoBefore = 'AMD'.$amdNoBefore;
         $docNo = $arf->po_no.'-'.$strAmdNoBefore;
-        $dataBefore = $this->db->where(['doc_no'=>$docNo])->get('t_arf_recommendation_preparation')->row();
-		if($dataBefore)
+        //$dataBefore = $this->db->where(['doc_no'=>$docNo])->get('t_arf_recommendation_preparation')->row();
+        @$amdAdditionalDocLatestDate = amdAdditionalDocLatestDate($arf);
+        $latestPerformanceBondDate = @$amdAdditionalDocLatestDate['performance_bond'];
+        $latestInsuranceDate = @$amdAdditionalDocLatestDate['insurance'];
+		/*if($dataBefore)
 		{
 				$new_date_1 = $dataBefore->new_date_1;
         $new_date_2 = $dataBefore->new_date_2;
@@ -50,7 +55,7 @@
 		else{
 			$new_date_1 = '-';
         $new_date_2 ='-';
-		}
+		}*/
         
 		
 		
@@ -311,6 +316,8 @@
                                         'insuranceOriginalValue' => $insuranceOriginalValue,
                                         'newDate1Now' => $newDate1Now,
                                         'newDate2Now' => $newDate2Now,
+                                        'latestPerformanceBondDate' => $latestPerformanceBondDate,
+                                        'latestInsuranceDate' => $latestInsuranceDate
                                     ]);
                                 }
                                 else
@@ -321,6 +328,8 @@
                                         'insuranceOriginalValue' => $insuranceOriginalValue,
                                         'newDate1Now' => $newDate1Now,
                                         'newDate2Now' => $newDate2Now,
+                                        'latestPerformanceBondDate' => $latestPerformanceBondDate,
+                                        'latestInsuranceDate' => $latestInsuranceDate
                                     ]);
                                 }
 
@@ -654,7 +663,7 @@
         // alert('Latest Agreement Value '+latest_agreement_value)
         // $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
 
-        $('#new_date_1,#new_date_2').datepicker({
+        $('#new_date_1,#new_date_2,#amendment_date').datepicker({
             dateFormat : 'yy-mm-dd'
         });
         $("#extend1").on('click',function(){

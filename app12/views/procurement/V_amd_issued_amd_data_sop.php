@@ -48,6 +48,36 @@
         </div>
     </div>
     <?php endif;?>
+    <?php if(isset($issued)): ?>
+    <div class="form-group row">
+        <label class="col-md-3">Amendment Date</label>
+        <div class="col-md-3">
+            <?php 
+                if($recom->amendment_date)
+                {
+                    $amendment_date = dateToIndo($recom->amendment_date);
+                    $amendment_date_disabled = "disabled=''";
+                }
+                else
+                {
+                    $amendment_date = '';
+                    $amendment_date_disabled = "";
+                }
+            ?>
+            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" required="" value="<?= @$amendment_date ?>">
+        </div>
+    </div>
+    <?php else:?>
+        <?php if($recom->amendment_date): ?>
+            <label class="col-md-3">Amendment Date</label>
+            <div class="col-md-3">
+                <?php                    
+                    $amendment_date = dateToIndo($recom->amendment_date);
+                ?>
+                <input disabled="" class="form-control" required="" value="<?= @$amendment_date ?>">
+            </div>
+        <?php endif;?>
+    <?php endif;?>
     <div class="row amendment_recommendation_tab">
         <div class="col-md-12" style="font-weight: bold;margin-bottom: 10px;font-size: 17px">
             Agreement Data including this Amendment
@@ -69,6 +99,7 @@
     <div class="form-group row amendment_recommendation_tab">
         <label class="col-md-3">Latest Agreement Value</label>
         <div class="col-md-3">
+            <input type="hidden" id="latest-agreement-value2" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
             <input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
         </div>
         <label class="col-md-3">New Agreement Value</label>
@@ -241,14 +272,14 @@
                 <div class="col-md-4">
                     <input class="form-control" disabled value="<?= $performanceBondOriginalValue ?>">
                 </div>
-                <div class="col-md-4"><input class="form-control" disabled value="<?=$new_date_1?>" ></div>
+                <div class="col-md-4"><input class="form-control" disabled value="<?=$latestPerformanceBondDate?>" ></div>
             </div>
             <div class="row">
                 <div class="col-md-4">Insurance</div>
                 <div class="col-md-4">
                     <input class="form-control" disabled value="<?= $insuranceOriginalValue ?>">
                 </div>
-                <div class="col-md-4"><input class="form-control" disabled value="<?=$new_date_2?>"></div>
+                <div class="col-md-4"><input class="form-control" disabled value="<?=$latestInsuranceDate?>"></div>
             </div>
         </div>
         <div class="col-md-6">
@@ -502,10 +533,17 @@
       return n;
     }
     <?php if(isset($issued)): ?>
-      var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").attr('data')
-      var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
-      $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
-      $("#new-agreement-value").val(new_agreement)
+      var checkelement = document.getElementById("all-amd-<?= $arf->doc_no ?>");
+      console.log(checkelement);
+      if (checkelement) {
+          var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").attr('data');
+          var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+      } else {
+          var new_agreement = $("#latest-agreement-value2").val();
+          var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
+      }
+      $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
+      $("#new-agreement-value").val(new_agreement);
     <?php endif;?>
   })
 </script>

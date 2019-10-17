@@ -84,7 +84,6 @@
                                   <a href="<?= base_url('procurement/purchase_order/show/'.$po->id) ?>" class="btn btn-sm btn-info">
                                     View
                                   </a>
-                                  
                                   <?php 
                                     foreach ($po_issued as $arf) {
                                       if($arf->po_no == $po->po_no)

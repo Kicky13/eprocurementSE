@@ -1244,6 +1244,7 @@ function company_cmms($param=0)
     return $result;
   return $result->num_rows() > 0 ? true : false ;
 }
+
 if (!function_exists('cmms_log_history'))
 {
     function cmms_log_history($module_kode, $data_id, $description1, $description2 = '') {
@@ -1280,4 +1281,13 @@ function wo_type_array($value='')
     $s[$r->id] = $r->code_alpha;
   }
   return @$s[$value];
+}
+function amdAdditionalDocLatestDate($arf, $output_type='')
+{
+  $ci = &get_instance();
+  $performaceBond = $ci->db->where(['po_no'=>$arf->po_no, 'doc_no <'=>$arf->doc_no,'extend1'=>1])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
+  $insurance = $ci->db->where(['po_no'=>$arf->po_no,'doc_no <'=>$arf->doc_no, 'extend2'=>1])->order_by('id','desc')->get('t_arf_recommendation_preparation')->row();
+  $latestPerformanceBondDate = isset($performaceBond->new_date_1) ? dateToIndo($performaceBond->new_date_1) : '-';
+  $latestInsuranceDate = isset($insurance->new_date_2) ? dateToIndo($insurance->new_date_2) : '-';
+  return ['performance_bond'=>$latestPerformanceBondDate, 'insurance'=>$latestInsuranceDate];
 }

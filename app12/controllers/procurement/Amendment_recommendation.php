@@ -263,21 +263,23 @@ class Amendment_recommendation extends CI_Controller {
             JOIN m_user usr ON usr.ID_USER = rec.id_user
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence = 2 AND rec.id_ref = " . $data['arf_response_id']);
-            $data_replace = $query->result();
-            $str = $data_replace[0]->open;
+            if ($query->num_rows() > 0) {
+                $data_replace = $query->result();
+                $str = $data_replace[0]->open;
 
-            $data = array(
-                'img1' => $img1,
-                'img2' => $img2,
-                'title' => $data_replace[0]->title,
-                'open' => $str,
-                'close' => $data_replace[0]->close
-            );
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
 
-            foreach ($data_replace as $item) {
-                $data['dest'][] = $item->email;
+                foreach ($data_replace as $item) {
+                    $data['dest'][] = $item->email;
+                }
+                $flag = $this->M_sendmail->sendMail($data);
             }
-            $flag = $this->M_sendmail->sendMail($data);
             echo json_encode(['status'=>true,'msg'=>'Amendment Submitted']);
         }
         else
@@ -497,23 +499,26 @@ class Amendment_recommendation extends CI_Controller {
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence = " . $seq . " AND rec.id_ref = " . $recom->id_ref);
             }
-            $data_replace = $query->result();
-            $str = $data_replace[0]->open;
-            $img1 = '';
-            $img2 = '';
 
-            $data = array(
-                'img1' => $img1,
-                'img2' => $img2,
-                'title' => $data_replace[0]->title,
-                'open' => $str,
-                'close' => $data_replace[0]->close
-            );
+            if ($query->num_rows() > 0) {
+                $data_replace = $query->result();
+                $str = $data_replace[0]->open;
+                $img1 = '';
+                $img2 = '';
 
-            foreach ($data_replace as $item) {
-                $data['dest'][] = $item->email;
+                $data = array(
+                    'img1' => $img1,
+                    'img2' => $img2,
+                    'title' => $data_replace[0]->title,
+                    'open' => $str,
+                    'close' => $data_replace[0]->close
+                );
+
+                foreach ($data_replace as $item) {
+                    $data['dest'][] = $item->email;
+                }
+                $flag = $this->M_sendmail->sendMail($data);
             }
-            $flag = $this->M_sendmail->sendMail($data);
         }
         $this->T_approval_arf_recom->approve();
     }
@@ -529,25 +534,27 @@ class Amendment_recommendation extends CI_Controller {
         LEFT JOIN m_notic n ON n.ID = 92
         WHERE po.po_no = "' . $this->input->post('po_no') . '"');
 
-        $data_replace = $query->result();
+        if ($query->num_rows() > 0) {
+            $data_replace = $query->result();
 
-        $str = $data_replace[0]->open;
-        $str = str_replace('_var1_', $data_replace[0]->company, $str);
-        $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
-        $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+            $str = $data_replace[0]->open;
+            $str = str_replace('_var1_', $data_replace[0]->company, $str);
+            $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+            $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
 
-        $data = array(
-            'img1' => $img1,
-            'img2' => $img2,
-            'title' => $data_replace[0]->title,
-            'open' => $str,
-            'close' => $data_replace[0]->close
-        );
+            $data = array(
+                'img1' => $img1,
+                'img2' => $img2,
+                'title' => $data_replace[0]->title,
+                'open' => $str,
+                'close' => $data_replace[0]->close
+            );
 
-        foreach ($data_replace as $item) {
-            $data['dest'][] = $item->email;
+            foreach ($data_replace as $item) {
+                $data['dest'][] = $item->email;
+            }
+            $flag = $this->M_sendmail->sendMail($data);
         }
-        $flag = $this->M_sendmail->sendMail($data);
         echo json_encode(['status'=>true, 'msg'=>"Issued"]);
     }
     public function newAgreementPeriodTo($arf='')

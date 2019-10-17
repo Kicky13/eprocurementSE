@@ -107,7 +107,7 @@
 									if(isset($nego))
 									{
 										if ($nego) {
-											$deli_time = $this->db->where(['msr_no'=>$ed->msr_no,'vendor_id'=>$row->vendor_id])->get('t_nego');
+											$deli_time = $this->db->where(['msr_no'=>$ed->msr_no,'vendor_id'=>$row->vendor_id])->order_by('id', 'desc')->get('t_nego');
 		                                    if($deli_time->num_rows() > 0){
 		                                    	$dt = $deli_time->row();
 		                                    	$nego_detail = $this->db->where(['msr_no'=>$ed->msr_no,'nego_id'=>$dt->id,'sop_id'=>$r->id])->get('t_nego_detail');

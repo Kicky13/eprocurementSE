@@ -17,7 +17,8 @@ class M_arf_po extends M_base {
         ->join('m_currency currency', 'currency.ID = t_purchase_order.id_currency')
         ->join('m_currency currency_base', 'currency_base.ID = t_purchase_order.id_currency_base')
         ->join('(
-            SELECT t_arf.po_no, SUM(estimated_value) as prev_value, MAX((SELECT value FROM t_arf_detail_revision WHERE type=\'time\' AND doc_id = t_arf.id)) as prev_date FROM t_arf
+            SELECT t_arf.po_no, SUM(estimated_value) as prev_value, MAX(t_arf_detail_revision.value) as prev_date FROM t_arf
+            JOIN t_arf_detail_revision ON t_arf_detail_revision.doc_id = t_arf.id AND t_arf_detail_revision.type = \'time\'
             WHERE t_arf.status = \'submitted\'
             GROUP BY t_arf.po_no
         ) prev_arf', 'prev_arf.po_no = t_purchase_order.po_no', 'left')

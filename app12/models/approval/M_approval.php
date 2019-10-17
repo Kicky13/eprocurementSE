@@ -1222,12 +1222,29 @@ class M_approval extends CI_Model {
         $sqlId = "select * from t_jabatan where user_id = $created_by";
         $n = $this->db->query($sqlId)->row();
         $id = @$n->id;
-        if($nominal > 5000000)
+        // echo $id;
+        if($nominal > 1000000)
         {
-            $sql = "SELECT * FROM t_jabatan WHERE id = 1";
+            /*$sql = "SELECT * FROM t_jabatan WHERE nominal = 1000000 and operand = '>'";
             $result = $this->db->query($sql);
             $row = $result->row();
-            $rs = $row;
+            $rs = $row;*/
+            for ($i=0; $i <9; $i++) {
+                $sql = "SELECT * FROM t_jabatan WHERE id = (SELECT parent_id FROM t_jabatan WHERE id = '$id')";
+                $result = $this->db->query($sql);
+                $row = $result->row();
+                if(@$row->nominal == 1000000 and @$row->operand == '>')
+                {
+                    $rs = $row;
+                    break;
+                }
+                else
+                {
+                    $id = @$row->id;
+                }
+            }
+            // echo $this->db->last_query();
+            // exit();
         }
         else
         {
@@ -1434,6 +1451,16 @@ class M_approval extends CI_Model {
         LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
         LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
         where data_id = '$msr_no' and m_approval_id in (8,9,10,11,12)";
+        return $this->db->query($sql);
+    }
+    public function listApprovedEd($msr_no='')
+    {
+        $sql = "select t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama
+        from t_approval
+        left join m_approval on m_approval.id = t_approval.m_approval_id
+        LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+        LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+        where t_approval.data_id = '$msr_no' and t_approval.m_approval_id in (8,9,10,11,12) and t_approval.status = 1";
         return $this->db->query($sql);
     }
     public function ed_draft($value='')
@@ -1699,7 +1726,7 @@ class M_approval extends CI_Model {
         }
         return $total;
     }
-    public function listApprovalAward($msr_no='')
+    public function listApprovalAward($msr_no = '')
     {
         $sql = "select t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama
         from t_approval
@@ -1707,6 +1734,16 @@ class M_approval extends CI_Model {
         LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
         LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
         where data_id = '$msr_no' and m_approval.module_kode = 'award'";
+        return $this->db->query($sql);
+    }
+    public function listApprovedAward($msr_no = '')
+    {
+        $sql = "select t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama
+        from t_approval
+        left join m_approval on m_approval.id = t_approval.m_approval_id
+        LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
+        LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
+        where data_id = '$msr_no' and m_approval.module_kode = 'award' AND t_approval.status = 1";
         return $this->db->query($sql);
     }
     public function greeting_award_approval()
@@ -2138,5 +2175,27 @@ class M_approval extends CI_Model {
             $result = $newEd_1;
         }
         return $result;
+    }
+    public function listApprovalPO($dataid)
+    {
+        $sql = "SELECT * FROM t_approval tp
+        JOIN m_approval mp ON tp.m_approval_id = mp.id
+        WHERE mp.module_kode = 'po' AND tp.data_id = " . $dataid;
+        return $this->db->query($sql);
+    }
+    public function listApprovedPO($dataid)
+    {
+        $sql = "SELECT * FROM t_approval tp
+        JOIN m_approval mp ON tp.m_approval_id = mp.id
+        WHERE mp.module_kode = 'po' AND tp.data_id = " . $dataid . " AND tp.status = 1";
+        return $this->db->query($sql);
+    }
+
+    public function roleApprover($urutan, $dataid)
+    {
+        $query = $this->db->query("SELECT * FROM t_approval tp
+        JOIN m_approval mp ON tp.m_approval_id = mp.id
+        WHERE tp.urutan = " .$urutan . " AND tp.data_id = '" . $dataid . "' AND mp.module_kode = 'po'");
+        return $query;
     }
 }

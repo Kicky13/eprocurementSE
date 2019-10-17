@@ -47,10 +47,9 @@ class M_Msr extends CI_Model {
     $this->db->order_by('t_msr.msr_no', 'desc');
     if($dept == '101013800'){
       return @$this->db->get($this->table)->result();
-    }else{
+    } else {
       return @$this->db->get_where($this->table,array('id_department =' => $dept))->result();
     }
-
   }
 
   // do we need $company?

@@ -198,6 +198,34 @@ class Msr extends CI_Controller {
         echo '[{"id":1,"text":"Asia","population":null,"flagUrl":null,"checked":true,"hasChildren":false,"children":[{"id":2,"text":"China","population":1373541278,"flagUrl":"http://code.gijgo.com/flags/24/China.png","checked":false,"hasChildren":false,"children":[]},{"id":3,"text":"Japan","population":126730000,"flagUrl":"http://code.gijgo.com/flags/24/Japan.png","checked":false,"hasChildren":false,"children":[]},{"id":4,"text":"Mongolia","population":3081677,"flagUrl":"http://code.gijgo.com/flags/24/Mongolia.png","checked":false,"hasChildren":false,"children":[]}]},{"id":5,"text":"North America","population":null,"flagUrl":null,"checked":false,"hasChildren":false,"children":[{"id":6,"text":"USA","population":325145963,"flagUrl":"http://code.gijgo.com/flags/24/United%20States%20of%20America(USA).png","checked":false,"hasChildren":false,"children":[{"id":7,"text":"California","population":39144818,"flagUrl":null,"checked":false,"hasChildren":false,"children":[]},{"id":8,"text":"Florida","population":20271272,"flagUrl":null,"checked":false,"hasChildren":false,"children":[]}]},{"id":9,"text":"Canada","population":35151728,"flagUrl":"http://code.gijgo.com/flags/24/canada.png","checked":false,"hasChildren":false,"children":[]},{"id":10,"text":"Mexico","population":119530753,"flagUrl":"http://code.gijgo.com/flags/24/mexico.png","checked":false,"hasChildren":false,"children":[]}]},{"id":11,"text":"South America","population":null,"flagUrl":null,"checked":false,"hasChildren":false,"children":[{"id":12,"text":"Brazil","population":207350000,"flagUrl":"http://code.gijgo.com/flags/24/brazil.png","checked":false,"hasChildren":false,"children":[]},{"id":13,"text":"Argentina","population":43417000,"flagUrl":"http://code.gijgo.com/flags/24/argentina.png","checked":false,"hasChildren":false,"children":[]},{"id":14,"text":"Colombia","population":49819638,"flagUrl":"http://code.gijgo.com/flags/24/colombia.png","checked":false,"hasChildren":false,"children":[]}]},{"id":15,"text":"Europe","population":null,"flagUrl":null,"checked":false,"hasChildren":false,"children":[{"id":16,"text":"England","population":54786300,"flagUrl":"http://code.gijgo.com/flags/24/england.png","checked":false,"hasChildren":false,"children":[]},{"id":17,"text":"Germany","population":82175700,"flagUrl":"http://code.gijgo.com/flags/24/germany.png","checked":false,"hasChildren":false,"children":[]},{"id":18,"text":"Bulgaria","population":7101859,"flagUrl":"http://code.gijgo.com/flags/24/bulgaria.png","checked":false,"hasChildren":false,"children":[]},{"id":19,"text":"Poland","population":38454576,"flagUrl":"http://code.gijgo.com/flags/24/poland.png","checked":false,"hasChildren":false,"children":[]}]}]';
     }
 
+    public function createTest($doctype = "MSR", $company = '10103')
+    {
+        $this->load->model('setting/M_master_company', 'company')
+            ->model('setting/M_msrtype', 'msrtype')
+            ->model('other_master/M_currency', 'currency')
+            ->model('setting/M_pmethod', 'pmethod')
+            ->model('setting/M_pgroup', 'plocation')
+            ->model('setting/M_master_costcenter', 'cost_center')
+            ->model('setting/M_location', 'location')
+            ->model('setting/M_delivery_point', 'delivery_point')
+            ->model('setting/M_delivery_term', 'delivery_term')
+            ->model('setting/M_importation', 'importation')
+            ->model('setting/M_requestfor', 'requestfor')
+            ->model('setting/M_master_inspection', 'inspection')
+            ->model('setting/M_freight', 'freight')
+            ->model('setting/M_itemtype', 'itemtype')
+            ->model('setting/M_master_acc_sub', 'accsub')
+            ->model('procurement/M_msr', 'msr')
+            ->model('procurement/M_msr_item', 'msr_item')
+            ->model('procurement/M_msr_attachment', 'msr_attachment')
+            ->model('setting/M_itemtype_category')
+            ->model('material/M_uom')
+            ->helper(array('form', 'array', 'url', 'exchange_rate'))
+            ->library(['form_validation', 'DocNumber', 'upload']);
+        $msr_no = DocNumber::generate($doctype, $company);
+        echo $msr_no;
+    }
+
     public function create()
     {
         $this->load->model('setting/M_master_company', 'company')
@@ -233,6 +261,7 @@ class Msr extends CI_Controller {
         exit();*/
 
         if ($post && $this->validateCreate($post)) {
+
             // translate for second AAS approval
             $post['user_id'] = $_GET['user_id'] = $_POST['user_id'] = $_POST['submit-second-aas-approver-id'];
 
@@ -441,9 +470,8 @@ class Msr extends CI_Controller {
 
                     //Send Email
                     ini_set('max_execution_time', 500);
-                    $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
-                    $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
-
+                    $img1 = "";
+                    $img2 = "";
 
 //                    $query = $this->db->query("SELECT distinct u.email as recipient,n.TITLE,n.OPEN_VALUE,n.CLOSE_VALUE FROM t_approval t
 //                        join m_approval m on m.id=t.m_approval_id and m.module_kode='msr'
@@ -470,31 +498,29 @@ class Msr extends CI_Controller {
                         join m_departement d on d.ID_DEPARTMENT=u.ID_DEPARTMENT
                         where msr_no='".$msr_no."' ");
 
-                      $data_replace = $query->result();
+                      if ($query->num_rows() > 0) {
+                          $data_replace = $query->result();
 
-                      $str = $data_role[0]->open;
-                      $str = str_replace('_var1_',$data_replace[0]->title,$str);
-                      $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
-                      $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
-                      $str = str_replace('_var4_', $msr_no, $str);
+                          $str = $data_role[0]->open;
+                          $str = str_replace('_var1_',$data_replace[0]->title,$str);
+                          $str = str_replace('_var2_',$data_replace[0]->NAME,$str);
+                          $str = str_replace('_var3_',$data_replace[0]->DEPARTMENT_DESC,$str);
+                          $str = str_replace('_var4_', $msr_no, $str);
 
-                      $data = array(
-                        'img1' => $img1,
-                        'img2' => $img2,
-                        'title' => $data_role[0]->title,
-                        'open' => $str,
-                        'close' => $data_role[0]->close
-                      );
-
-                      foreach ($data_role as $k => $v) {
-                        $data['dest'][] = $v->email;
+                          $data = array(
+                              'img1' => $img1,
+                              'img2' => $img2,
+                              'title' => $data_role[0]->title,
+                              'open' => $str,
+                              'close' => $data_role[0]->close
+                          );
+                          foreach ($data_role as $k => $v) {
+                              $data['dest'][] = $v->email;
+                          }
+                          $flag = $this->sendMail($data);
                       }
-                      $flag = $this->sendMail($data);
-
                     }
-
                     //End Send Email
-
                     $this->session->set_flashdata('message', array(
                         'message' => __('success_submit_with_number', array('no' => $input_data['header']['msr_no'])),
                         'type' => 'success'
@@ -884,7 +910,6 @@ class Msr extends CI_Controller {
                 $msr_status_search[$msr->msr_no] = $msr;
             }
         }
-
         $msr_assignment = $this->msr->getAssignment(array_keys($msr_status_search));
         $msr_assignment_search = [];
         foreach($msr_assignment as $assignment) {
@@ -917,8 +942,6 @@ class Msr extends CI_Controller {
                     break;
             }
         }
-
-
         $this->template->display('procurement/V_msr_inquiry', compact(
             'msrs', 'menu'
         ));
@@ -1353,8 +1376,8 @@ class Msr extends CI_Controller {
         if ($draft) {
             $this->M_msr_draft->update($draft_id, $input_data['header']);
         } else {
-			$this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
-			$this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
+			// $this->M_msr_draft->deletedraf($input_data['header']['msr_no']);		
+			// $this->M_msr_draft->delAppr($input_data['header']['msr_no']);			
 		
 			$this->M_msr_draft->add($input_data['header']);
 			$draft_id = $input_data['header']['id'] = $this->db->insert_id();

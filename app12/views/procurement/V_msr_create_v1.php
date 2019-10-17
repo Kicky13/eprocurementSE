@@ -1301,10 +1301,8 @@ function validate_msr_item(form) {
       error.insertBefore($(element).parents('.form-group'));
     },
   });
-
-
   // validated!!
-  return form.valid();
+  return form.valid()
 }
 
 <?php
@@ -2531,200 +2529,261 @@ function uom_name_parse(text)
   }
 }
 
+$('#item-add12').click(function () {
+    var costcenter = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
+    var itemType = $('#item-item_type').val();
+    var uom = $('#item-uom_name').val();
+    var invType = $('#item-inv_type').val();
+    var material = $('#item-material_id').val();
+    var account_subsidiary = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
+    var datapos = {
+        costcenter: costcenter,
+        account: account_subsidiary,
+        material: material,
+        uomItem: uom,
+        invType: invType,
+        itemType: itemType
+    };
+    $.ajax({
+        method: "POST",
+        url: "<?= base_url().'/Validatejde/checkItem' ?>",
+        dataType: "JSON",
+        data: datapos
+    }).done(function (res) {
+        console.log(res);
+        if (res.status = true) {
+            return true;
+        } else if(res.status = false) {
+            swal("FAILED", res.msg, "warning");
+            return false;
+        }
+    }).fail(function () {
+        swal("FAILED", "Something Went Wrong", "warning")
+        return false;
+    });
+});
 
-$('#item-add').click(function() {
-	console.log('item-add');
-  var modal = $('#msr-development-item-modal')
+    $('#item-add').click(function() {
+        console.log('item-add');
+        var modal = $('#msr-development-item-modal')
 
-  if (!validate_msr_item(modal.find('form')[0])) {
-    return false;
-  }
+        if (!validate_msr_item(modal.find('form')[0])) {
+            return false;
+        }
 
-  var total_amount = 0
-  var total_tax = 0
-  var total_amount_with_tax = 0
+        var ccc = document.getElementById("select2-item-cost_center_slc2-container").getAttribute("title");
+        var itp = $('#item-item_type').val();
+        var uomxy = $('#item-uom_name').val();
+        var invt = $('#item-inv_type').val();
+        var mtrlnew = $('#item-material_id').val();
+        var acc_sub = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : '';
+        var datapos = {
+            costcenter: ccc,
+            account: acc_sub,
+            material: mtrlnew,
+            uomItem: uomxy,
+            invType: invt,
+            itemType: itp
+        };
 
-  var selected_material = $('#item-material_id').select2('data')[0]
-  var material = {
-    semic_no: selected_material.semic_no,
-    description: selected_material.name
-  }
+        var total_amount = 0
+        var total_tax = 0
+        var total_amount_with_tax = 0
 
-  var index = Math.floor(Math.random() * 10) + Date.now();
-  var item_namespace = 'items['+index+']'
+        var selected_material = $('#item-material_id').select2('data')[0]
+        var material = {
+            semic_no: selected_material.semic_no,
+            description: selected_material.name
+        }
 
-  var item_type_value = $('#item-item_type').val()
-  var item_type_name = $('#item-item_type option:selected').text()
-  var itemtype_category_value = $('#item-itemtype_category').val()
-  var itemtype_category_name = $('#item-itemtype_category option:selected').text()
-  var material_id = $('#item-material_id').val()
-  // var material = split_semic($('#item-material_id option:selected').text())
-  var group_value = $('#item-group_value').val()
-  var group_name = $('#item-group_name').val()
-  var subgroup_value = $('#item-subgroup_value').val()
-  var subgroup_name = $('#item-subgroup_name').val()
-  var qty_ordered_value = accounting.parse($('#item-qty_ordered').val())
-  var qty_onhand_value = accounting.parse($('#item-qty_onhand').val())
-  var qty_required_value = accounting.parse($('#item-qty_required').val())
-  var _uom, uom_name = '', uom_id = '', uom_description = ''
-  if (itemtype_category_value == 'SEMIC') {
-    uom_value = $('#item-uom_value').val()
-    if (uom_value) {
-      _uom = uom_name_parse($('#item-uom_name').val())
-      uom_name = _uom.name
-      uom_description = _uom.description
-    }
-  } else {
-    uom_value = $('#item-uom_name_service').val()
-    if (uom_value) {
-      _uom = uom_name_parse($('#item-uom_name_service option:selected').text())
-      uom_name = _uom.name
-      uom_description = _uom.description
-    }
-  }
+        var index = Math.floor(Math.random() * 10) + Date.now();
+        var item_namespace = 'items['+index+']'
 
-  var unit_price_value = accounting.parse($('#item-unit_price').val());
-  var total_value_value = accounting.parse($('#item-total_value').val());
+        var item_type_value = $('#item-item_type').val()
+        var item_type_name = $('#item-item_type option:selected').text()
+        var itemtype_category_value = $('#item-itemtype_category').val()
+        var itemtype_category_name = $('#item-itemtype_category option:selected').text()
+        var material_id = $('#item-material_id').val()
+        // var material = split_semic($('#item-material_id option:selected').text())
+        var group_value = $('#item-group_value').val()
+        var group_name = $('#item-group_name').val()
+        var subgroup_value = $('#item-subgroup_value').val()
+        var subgroup_name = $('#item-subgroup_name').val()
+        var qty_ordered_value = accounting.parse($('#item-qty_ordered').val())
+        var qty_onhand_value = accounting.parse($('#item-qty_onhand').val())
+        var qty_required_value = accounting.parse($('#item-qty_required').val())
+        var _uom, uom_name = '', uom_id = '', uom_description = ''
+        if (itemtype_category_value == 'SEMIC') {
+            uom_value = $('#item-uom_value').val()
+            if (uom_value) {
+                _uom = uom_name_parse($('#item-uom_name').val())
+                uom_name = _uom.name
+                uom_description = _uom.description
+            }
+        } else {
+            uom_value = $('#item-uom_name_service').val()
+            if (uom_value) {
+                _uom = uom_name_parse($('#item-uom_name_service option:selected').text())
+                uom_name = _uom.name
+                uom_description = _uom.description
+            }
+        }
 
-  var currency_value = $('#item-currency_value').val();
-  var currency_name = $('#item-currency_name').val();
+        var unit_price_value = accounting.parse($('#item-unit_price').val());
+        var total_value_value = accounting.parse($('#item-total_value').val());
 
-  var importation_value = $('#item-importation').val() ? $('#item-importation').val() : ''
-  var importation_name = importation_value ? $('#item-importation option:selected').text() : '';
+        var currency_value = $('#item-currency_value').val();
+        var currency_name = $('#item-currency_name').val();
 
-  var delivery_point_value = $('#item-delivery_point').val() ? $('#item-delivery_point').val() : ''
-  var delivery_point_name = delivery_point_value ? $('#item-delivery_point option:selected').text() : '';
+        var importation_value = $('#item-importation').val() ? $('#item-importation').val() : ''
+        var importation_name = importation_value ? $('#item-importation option:selected').text() : '';
 
-  var cost_center_value = $('#item-cost_center').val() ? $('#item-cost_center').val() : ''
-  var cost_center_name = ''
-  if (cost_center_value) {
-    cost_center_name = $('#item-cost_center option:selected').text()
-    cost_center_name = cost_center_name.split(' - ')
-    cost_center_name.shift()
-    cost_center_name = cost_center_name.join(' - ')
-  }
-  
-  //replace costcenter
-  var cost_center_value = $('#item-cost_center_slc2').val() ? $('#item-cost_center_slc2').val() : ''
-  var cost_center_name = ''
-  if (cost_center_value) {
-    cost_center_name = $('#item-cost_center_slc2 option:selected').text()
-    cost_center_name = cost_center_name.split(' - ')
-    cost_center_name.shift()
-    cost_center_name = cost_center_name.join(' - ')
-  }
+        var delivery_point_value = $('#item-delivery_point').val() ? $('#item-delivery_point').val() : ''
+        var delivery_point_name = delivery_point_value ? $('#item-delivery_point option:selected').text() : '';
 
-  var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : ''
-  var account_subsidiary_name = ''
-  if (account_subsidiary_value) {
-    account_subsidiary_name = $('#item-account_subsidiary option:selected').text()
-    account_subsidiary_name = account_subsidiary_name.split(' - ')
-    account_subsidiary_name.shift()
-    account_subsidiary_name = account_subsidiary_name.join(' - ')
-  }
+        var cost_center_value = $('#item-cost_center').val() ? $('#item-cost_center').val() : ''
+        var cost_center_name = ''
+        if (cost_center_value) {
+            cost_center_name = $('#item-cost_center option:selected').text()
+            cost_center_name = cost_center_name.split(' - ')
+            cost_center_name.shift()
+            cost_center_name = cost_center_name.join(' - ')
+        }
 
-  var is_asset_value = $('#item-is_asset').is(':checked') ? 1 : 0;
-  var is_asset_name = is_asset_value == 1 ? 'Yes': 'No';
+        //replace costcenter
+        var cost_center_value = $('#item-cost_center_slc2').val() ? $('#item-cost_center_slc2').val() : ''
+        var cost_center_name = ''
+        if (cost_center_value) {
+            cost_center_name = $('#item-cost_center_slc2 option:selected').text()
+            cost_center_name = cost_center_name.split(' - ')
+            cost_center_name.shift()
+            cost_center_name = cost_center_name.join(' - ')
+        }
 
-  var item_modification_value = $('#item-item_modification').is(':checked') ? 1 : 0;
-  var item_modification_name = item_modification_value == 1 ? 'Yes': 'No';
+        var account_subsidiary_value = $('#item-account_subsidiary').val() ? $('#item-account_subsidiary').val() : ''
+        var account_subsidiary_name = ''
+        if (account_subsidiary_value) {
+            account_subsidiary_name = $('#item-account_subsidiary option:selected').text()
+            account_subsidiary_name = account_subsidiary_name.split(' - ')
+            account_subsidiary_name.shift()
+            account_subsidiary_name = account_subsidiary_name.join(' - ')
+        }
 
-  var inv_type_value = $('#item-inv_type').val() ? $('#item-inv_type').val() : ''
-  var inv_type_name = ''
-  if (inv_type_value) {
-    inv_type_name = $('#item-inv_type option:selected').text()
-  }
+        var is_asset_value = $('#item-is_asset').is(':checked') ? 1 : 0;
+        var is_asset_name = is_asset_value == 1 ? 'Yes': 'No';
 
-  if (['WORKS', 'CONSULTATION', 'MATGROUP'].indexOf(itemtype_category_value) != -1) {
-    material.description = $('#item-semic_no_name').val()
-  }
+        var item_modification_value = $('#item-item_modification').is(':checked') ? 1 : 0;
+        var item_modification_name = item_modification_value == 1 ? 'Yes': 'No';
 
+        var inv_type_value = $('#item-inv_type').val() ? $('#item-inv_type').val() : ''
+        var inv_type_name = ''
+        if (inv_type_value) {
+            inv_type_name = $('#item-inv_type option:selected').text()
+        }
 
-  msr_development_detail_list.row.add({
-    "id": index,
+        if (['WORKS', 'CONSULTATION', 'MATGROUP'].indexOf(itemtype_category_value) != -1) {
+            material.description = $('#item-semic_no_name').val()
+        }
 
-    "item_type": modal.find('#item-item_type option:selected').text()
-      + hidden_input(item_namespace + '[item_type_value]', item_type_value)
-      + hidden_input(item_namespace + '[item_type_name]', item_type_name)
-      + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
-      + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
+        $.ajax({
+            method: "POST",
+            url: "<?= base_url().'/Validatejde/checkItem' ?>",
+            dataType: "JSON",
+            data: datapos
+        }).done(function (res) {
+            console.log(res);
+            if (res.status === true) {
+                msr_development_detail_list.row.add({
+                    "id": index,
 
-    "itemtype_category": itemtype_category_name
-      + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
-      + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
+                    "item_type": modal.find('#item-item_type option:selected').text()
+                        + hidden_input(item_namespace + '[item_type_value]', item_type_value)
+                        + hidden_input(item_namespace + '[item_type_name]', item_type_name)
+                        + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
+                        + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
 
-    "semic_no": material.semic_no
-      + hidden_input(item_namespace + '[material_id]', material_id)
-      + hidden_input(item_namespace + '[semic_no_value]', material.semic_no),
+                    "itemtype_category": itemtype_category_name
+                        + hidden_input(item_namespace + '[itemtype_category_value]', itemtype_category_value)
+                        + hidden_input(item_namespace + '[itemtype_category_name]', itemtype_category_name),
 
-    "description_of_unit": material.description
-      + hidden_input(item_namespace + '[semic_no_name]', material.description),
+                    "semic_no": material.semic_no
+                        + hidden_input(item_namespace + '[material_id]', material_id)
+                        + hidden_input(item_namespace + '[semic_no_value]', material.semic_no),
 
-    "group": modal.find('#item-group').val()
-      + hidden_input(item_namespace + '[group_value]', group_value)
-      + hidden_input(item_namespace + '[group_name]', group_name),
+                    "description_of_unit": material.description
+                        + hidden_input(item_namespace + '[semic_no_name]', material.description),
 
-    "subgroup": modal.find('#item-subgroup').val()
-      + hidden_input(item_namespace + '[subgroup_value]', subgroup_value)
-      + hidden_input(item_namespace + '[subgroup_name]', subgroup_name),
+                    "group": modal.find('#item-group').val()
+                        + hidden_input(item_namespace + '[group_value]', group_value)
+                        + hidden_input(item_namespace + '[group_name]', group_name),
 
-    "qty_required": modal.find('#item-qty_required').val()
-      + hidden_input(item_namespace + '[qty_required_value]', qty_required_value),
+                    "subgroup": modal.find('#item-subgroup').val()
+                        + hidden_input(item_namespace + '[subgroup_value]', subgroup_value)
+                        + hidden_input(item_namespace + '[subgroup_name]', subgroup_name),
 
-    "qty_onhand": accounting.format(qty_onhand_value)
-      + hidden_input(item_namespace + '[qty_onhand_value]', qty_onhand_value),
+                    "qty_required": modal.find('#item-qty_required').val()
+                        + hidden_input(item_namespace + '[qty_required_value]', qty_required_value),
 
-    "qty_ordered": accounting.format(qty_ordered_value)
-      + hidden_input(item_namespace + '[qty_ordered_value]', qty_ordered_value),
+                    "qty_onhand": accounting.format(qty_onhand_value)
+                        + hidden_input(item_namespace + '[qty_onhand_value]', qty_onhand_value),
 
-    "uom": uom_name_format(uom_name, uom_description)
-      + hidden_input(item_namespace + '[uom_name]', uom_name)
-      + hidden_input(item_namespace + '[uom_value]', uom_value)
-      + hidden_input(item_namespace + '[uom_description]', uom_description),
+                    "qty_ordered": accounting.format(qty_ordered_value)
+                        + hidden_input(item_namespace + '[qty_ordered_value]', qty_ordered_value),
 
-    "unit_price": accounting.format(unit_price_value)
-      + hidden_input(item_namespace + '[unit_price_value]', unit_price_value),
+                    "uom": uom_name_format(uom_name, uom_description)
+                        + hidden_input(item_namespace + '[uom_name]', uom_name)
+                        + hidden_input(item_namespace + '[uom_value]', uom_value)
+                        + hidden_input(item_namespace + '[uom_description]', uom_description),
 
-    "total_value": accounting.format(total_value_value)
-      + hidden_input(item_namespace + '[total_value]', total_value_value),
+                    "unit_price": accounting.format(unit_price_value)
+                        + hidden_input(item_namespace + '[unit_price_value]', unit_price_value),
 
-    "currency": currency_name
-      + hidden_input(item_namespace + '[currency_value]', currency_value)
-      + hidden_input(item_namespace + '[currency_name]', currency_name),
+                    "total_value": accounting.format(total_value_value)
+                        + hidden_input(item_namespace + '[total_value]', total_value_value),
 
-    "importation": importation_name
-      + hidden_input(item_namespace + '[importation_value]', importation_value)
-      + hidden_input(item_namespace + '[importation_name]', importation_name),
+                    "currency": currency_name
+                        + hidden_input(item_namespace + '[currency_value]', currency_value)
+                        + hidden_input(item_namespace + '[currency_name]', currency_name),
 
-    "delivery_point": delivery_point_name
-      + hidden_input(item_namespace + '[delivery_point_value]', delivery_point_value)
-      + hidden_input(item_namespace + '[delivery_point_name]', delivery_point_name),
+                    "importation": importation_name
+                        + hidden_input(item_namespace + '[importation_value]', importation_value)
+                        + hidden_input(item_namespace + '[importation_name]', importation_name),
 
-    "cost_center": cost_center_name
-      + hidden_input(item_namespace + '[cost_center_value]', cost_center_value)
-      + hidden_input(item_namespace + '[cost_center_name]', cost_center_name),
+                    "delivery_point": delivery_point_name
+                        + hidden_input(item_namespace + '[delivery_point_value]', delivery_point_value)
+                        + hidden_input(item_namespace + '[delivery_point_name]', delivery_point_name),
 
-    "account_subsidiary": account_subsidiary_value+" - "+account_subsidiary_name
-      + hidden_input(item_namespace + '[account_subsidiary_value]', account_subsidiary_value)
-      + hidden_input(item_namespace + '[account_subsidiary_name]', account_subsidiary_name),
+                    "cost_center": cost_center_name
+                        + hidden_input(item_namespace + '[cost_center_value]', cost_center_value)
+                        + hidden_input(item_namespace + '[cost_center_name]', cost_center_name),
 
-    /*"is_asset": is_asset_name
-      + hidden_input(item_namespace + '[is_asset]', is_asset_value),*/
+                    "account_subsidiary": account_subsidiary_value+" - "+account_subsidiary_name
+                        + hidden_input(item_namespace + '[account_subsidiary_value]', account_subsidiary_value)
+                        + hidden_input(item_namespace + '[account_subsidiary_name]', account_subsidiary_name),
 
-    "inv_type": inv_type_name
-      + hidden_input(item_namespace + '[inv_type_value]', inv_type_value)
-      + hidden_input(item_namespace + '[inv_type_name]', inv_type_name),
+                    /*"is_asset": is_asset_name
+                      + hidden_input(item_namespace + '[is_asset]', is_asset_value),*/
 
-    "item_modification": item_modification_name
-      + hidden_input(item_namespace + '[item_modification_value]', item_modification_value),
+                    "inv_type": inv_type_name
+                        + hidden_input(item_namespace + '[inv_type_value]', inv_type_value)
+                        + hidden_input(item_namespace + '[inv_type_name]', inv_type_name),
 
-    "action": ""
-  }).draw()
+                    "item_modification": item_modification_name
+                        + hidden_input(item_namespace + '[item_modification_value]', item_modification_value),
 
-  display_total_value_header_section()
+                    "action": ""
+                }).draw()
 
-  modal.modal('hide')
-})
+                display_total_value_header_section()
+
+                modal.modal('hide')
+            } else if(res.status === false) {
+                swal("FAILED", res.msg, "warning");
+            }
+        }).fail(function () {
+            swal("FAILED", "Something Went Wrong", "warning");
+        });
+    })
 
 $('#item-qty_required').change(function(e) {
   var qty_required = $(this).val()

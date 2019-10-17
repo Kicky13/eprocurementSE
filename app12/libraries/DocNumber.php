@@ -102,10 +102,15 @@ class DocNumber {
         } else {
             $year = date('Y');
         }
-
         $sequence = substr($year_seq, 2, strlen($year_seq));
-        if (!$sequence)
+        if (!$sequence) {
             $sequence = 0;
+        }
+        if ($year == '2019') {
+            if (intval($sequence) < 499) {
+                $sequence = 499;
+            }
+        }
 
         return compact('year', 'sequence', 'doctype', 'company');
     }

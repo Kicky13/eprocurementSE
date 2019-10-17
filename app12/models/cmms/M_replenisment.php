@@ -268,4 +268,8 @@ class M_replenisment extends CI_Model {
     $r = $this->db->query($sql)->row();
     return @$r->po_no;
   }
+  public function update($value='')
+  {
+    $this->db->query("update F5743702 set RPEV01 = 2 where RPEV01 = 1 and RPUORG > 0 and RPLITM = '$value'");
+  }
 }

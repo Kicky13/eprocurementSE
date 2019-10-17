@@ -344,6 +344,7 @@ class Replenisment extends CI_Controller {
       $t_msr_item_draft['amount_base'] = $amount;
       $t_msr_item_draft['inv_type'] = 1;
       $this->db->insert('t_msr_item_draft', $t_msr_item_draft);
+      $this->mod->update($semic_no);
     }
     echo $insert_id;
   }

@@ -1359,8 +1359,8 @@ class Msr extends CI_Controller {
 	public function saveDraftV1(){
         $post = $this->input->post();
         $draft_id = trim($post['draft_id']);
-        print_r($post);
-		exit();
+        /*print_r($post);
+		exit();*/
         $msr_no = @$post['msr_no'] ?: NULL;
 		
         $input_data['header'] = $this->makeHeaderFromPost($msr_no);

@@ -301,7 +301,8 @@ class Replenisment extends CI_Controller {
 
     $contents = $this->cart->contents();
     foreach ($contents as $r) {
-      $amount = $r['price'] * $r['qty'];
+      $price = ($r['price']/10000);
+      $amount = $price * $r['qty'];
       $semic_no = str_replace('-', '.', $r['name']);
       $sql = "select * from m_material where trim(MATERIAL_CODE) = '".trim($semic_no)."'";
       $material = $this->db->query($sql)->row();
@@ -331,8 +332,8 @@ class Replenisment extends CI_Controller {
       $t_msr_item_draft['qty'] = $r['qty'];
       $t_msr_item_draft['uom_id'] = $uom_id;
       $t_msr_item_draft['uom'] = $uom;
-      $t_msr_item_draft['priceunit'] = $r['price'];
-      $t_msr_item_draft['priceunit_base'] = $r['price'];
+      $t_msr_item_draft['priceunit'] = $price;
+      $t_msr_item_draft['priceunit_base'] = $price;
       $t_msr_item_draft['id_importation'] = 'L';
       $t_msr_item_draft['importation_desc'] = 'Local';
       $t_msr_item_draft['id_dpoint'] = '10101';

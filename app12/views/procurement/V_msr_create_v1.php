@@ -900,7 +900,7 @@ margin-top: 5px;
         <div class="form-group row">
         <label class="col-form-label col-sm-4">WO Number:</label>
         <div class="col-sm-8">
-        <input name="wo_no" id="wo_no" class="form-control">
+        <input name="wo_no" id="wo_no" class="form-control js-data-example-ajax">
         </div>
         </div>
       </div>
@@ -1629,6 +1629,31 @@ function display_alert_validate_attachment(text, elm_class = 'danger')
 var default_item_value = new DefaultItemValue();
 
 $(document).ready(function() {
+  $('.js-data-example-ajax').select2({
+    ajax: {
+    delay:250,
+    url: "<?= base_url('cmms/wr/wo_search') ?>",
+    dataType: 'json',
+    data: function (params) {
+      var query = {
+      search: params.term,
+      //type: 'public'
+      }
+
+      // Query parameters will be ?search=[term]&type=public
+      return query;
+    },
+    processResults: function (data) {
+      // Transforms the top-level key of the response object from 'items' to 'results'
+      return {
+      results: data
+      };
+    }
+    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+    },
+    placeholder: 'Search ',
+    minimumInputLength: 3,
+  });
   if (!($('.modal.in').length)) {
     $('.modal-dialog').css({
       top: 0,

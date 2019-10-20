@@ -77,7 +77,7 @@ class M_replenisment extends CI_Model {
   }
   public function detail($id)
   {
-    $sql = "select RPMCU, RPLITM, RPUNCS, RPUORG, RPDOCO, RPEV01, RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1 and RPUORG = 0 and RPLITM = '$id'";
+    $sql = "select RPMCU, RPLITM, RPUNCS, RPUORG, RPDOCO, RPEV01, RPPQOH, RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1 and RPUORG = 0 and RPLITM = '$id'";
     return $this->db->query($sql);
   }
   public function dt_count_all()
@@ -187,19 +187,6 @@ class M_replenisment extends CI_Model {
   {
 	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";
 	  return $this->db->query($sql)->result();
-  }
-  function wo_search()
-  {
-	  $query = $this->input->get('search');
-	  $sql = "select WADOCO, WADL01 from f4801 where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 9 ROWS ONLY ";
-	  $r =  $this->db->query($sql)->result();
-	  
-	  $d = [];
-	  foreach($r as $v)
-	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO.' - '.$v->WADL01];
-	  }
-	  return $d;
   }
   public function wr_no_jde($value='')
   {

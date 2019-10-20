@@ -242,13 +242,13 @@ class M_equipment extends CI_Model {
   function wo_search()
   {
 	  $query = $this->input->get('search');
-	  $sql = "select WADOCO, WADL01, WAVR01 from f4801 where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 9 ROWS ONLY ";
+	  $sql = "select WADOCO, WADL01, FAASID from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 9 ROWS ONLY ";
 	  $r =  $this->db->query($sql)->result();
 	  
 	  $d = [];
 	  foreach($r as $v)
 	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO.' - '.$v->WADL01, 'equipment'=>$v->WAVR01];
+		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO.' - '.$v->WADL01, 'equipment'=>$v->FAASID];
 	  }
 	  return $d;
   }
@@ -318,5 +318,11 @@ class M_equipment extends CI_Model {
     $sql = "SELECT b.po_no FROM `t_msr` a join t_purchase_order b on a.msr_no = b.msr_no WHERE wo_no = '$wo_no'";
     $r = $this->dbm->query($sql)->row();
     return @$r->po_no;
+  }
+  public function find_wo_bssv($wo_no='')
+  {
+    $sql = "select WADOCO, WADL01, FAASID,FANUMB from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO) = UPPER('$query')";
+    $result = $this->db->query($sql)->row();
+    return $result;   
   }
 }

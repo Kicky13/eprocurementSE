@@ -2061,6 +2061,7 @@ class Purchase_order extends CI_Controller
         $req_no = "";
         $result = true;
         $query_check_out = $this->db->query("select doc_no from i_sync where doc_type='po' and isclosed=0 limit 1");
+        $this->load->model('cmms/M_equipment');
         if($query_check_out->num_rows()>0){
             $result_check = $query_check_out->result();
             $req_no = $result_check[0]->doc_no;
@@ -2101,7 +2102,8 @@ class Purchase_order extends CI_Controller
                 , o.master_list
                 , b.vat
                 , d.line_no
-				, u_msr.username as orderedBy
+                , u_msr.username as orderedBy,
+				, i.wo_no as wo_no
                 from t_purchase_order o
                 join t_purchase_order_detail d on d.po_id=o.id
                 join t_msr m on m.msr_no=o.msr_no
@@ -2128,11 +2130,16 @@ class Purchase_order extends CI_Controller
             $detailxml = "";
 
             for ($i=0; $i < $query_select_mat->num_rows(); $i++) {
-                // $semic_noo = "";
-                // $glacc = "";
-                // if (strlen($res[$i]->semic_no)>6) {
-                //     $semic_noo = $res[$i]->semic_no;
-                // }
+                $assetId = "";
+                $subWo = "";
+                $subWoType = "";
+                if($res[$i]->wo_no)
+                {
+                    $find_wo_bssv = $this->M_equipment->find_wo_bssv($res[$i]->wo_no);
+                    $assetId = "<assetId>".$find_wo_bssv->FANUMB."</assetId>";
+                    $subWo = "<subledger>".$find_wo_bssv->WADOCO."</subledger>";
+                    $subWoType = "<subledgerTypeCode>W</subledgerTypeCode>";
+                }
 
                 $id_costcenter = $objectAccount = $subsidiary = $glClassCode = '';
                 $material_desc = $semic_no = $line_type_code = $subledger = $subledgerTypeCode = '';
@@ -2220,6 +2227,7 @@ class Purchase_order extends CI_Controller
                 }
 
                 $glacc = '<glAccount>
+                '.$assetId.'
             <businessUnit>'.$id_costcenter.'</businessUnit>
             <objectAccount>'.$objectAccount.'</objectAccount>
             <subsidiary>'.$subsidiary.'</subsidiary>
@@ -2233,7 +2241,8 @@ class Purchase_order extends CI_Controller
                     <subledger>' . $subledger . '</subledger>
                     <subledgerTypeCode>'. $subledgerTypeCode .'</subledgerTypeCode>';
                 }
-
+                $glacc .= $subWo;
+                $glacc .= $subWoType;
                 if(strlen($material_desc) > 30){
                     $material_desc = substr($material_desc, 0, 29);
                 }

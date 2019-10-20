@@ -238,6 +238,7 @@ class Replenisment extends CI_Controller {
       'qty'     => $find->RPUORG,
       'price'   => $find->RPUNCS,
       'name'    => str_replace('.', '-', $item_number),
+      'options' => array('qty_onhand_value' => $find->RPPQOH)
     );
     $this->cart->insert($data);   
     if($this->cart->total() > 0) 
@@ -301,6 +302,7 @@ class Replenisment extends CI_Controller {
 
     $contents = $this->cart->contents();
     foreach ($contents as $r) {
+      $options = $r['options'];
       $price = ($r['price']/10000);
       $amount = $price * $r['qty'];
       $semic_no = str_replace('-', '.', $r['name']);
@@ -330,6 +332,7 @@ class Replenisment extends CI_Controller {
           }
       }
       $t_msr_item_draft['qty'] = $r['qty'];
+      $t_msr_item_draft['qty_onhand_value'] = $options['qty_onhand_value'];
       $t_msr_item_draft['uom_id'] = $uom_id;
       $t_msr_item_draft['uom'] = $uom;
       $t_msr_item_draft['priceunit'] = $price;

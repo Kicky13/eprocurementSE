@@ -44,6 +44,7 @@ $can_create_msr = can_create_msr();
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/app-assets/vendors/css/pickers/pickadate/pickadate.css">
 <!--<link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/app-assets/vendors/css/tables/datatable/jquery.dataTables.min.css">-->
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
 <style>
 .msr-development-detail-list-table, .msr-development-budget-table {
 margin-bottom: 20px;
@@ -897,13 +898,16 @@ margin-top: 5px;
         ?>
         </div>
         </div>
-        <div class="form-group row">
+       
+      </div>
+	  <div class="col-sm-12">
+	    <div class="form-group row">
         <label class="col-form-label col-sm-4">WO Number:</label>
         <div class="col-sm-8">
-        <input name="wo_no" id="wo_no" class="form-control wo_no_select2">
+		<select style="width:100%" class="form-control wo_no_select2" value="" id="wo_no" name="wo_no"></select>
         </div>
         </div>
-      </div>
+	  </div>
       </form>
     </div>
     <div class="modal-footer">
@@ -2397,6 +2401,7 @@ $('#item-itemtype_category').change(function(e) {
 
 })
 $('.wo_no_select2').select2({
+  dropdownParent: $("#msr-development-item-modal"),
   ajax: {
     delay:250,
     url: "<?= base_url('cmms/wr/wo_search') ?>",
@@ -2415,6 +2420,12 @@ $('.wo_no_select2').select2({
   },
   placeholder: 'Search ',
   minimumInputLength: 3,
+  templateResult: function(e) {
+	return e.text+' ('+e.equipment+')';
+  },
+  templateSelection: function(e){
+	  return e.text+' ('+e.equipment+')';
+  }
 });
 $('#item-material_id').select2({
   // since select2 version 4, dropdownParent property must be defined to show up at modal

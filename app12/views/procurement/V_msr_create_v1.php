@@ -900,7 +900,7 @@ margin-top: 5px;
         <div class="form-group row">
         <label class="col-form-label col-sm-4">WO Number:</label>
         <div class="col-sm-8">
-        <input name="wo_no" id="wo_no" class="form-control">
+        <input name="wo_no" id="wo_no" class="form-control wo_no_select2">
         </div>
         </div>
       </div>
@@ -2396,7 +2396,26 @@ $('#item-itemtype_category').change(function(e) {
   // MSR - Tambah Inputan inventory type
 
 })
-
+$('.wo_no_select2').select2({
+  ajax: {
+    delay:250,
+    url: "<?= base_url('cmms/wr/wo_search') ?>",
+    dataType: 'json',
+    data: function (params) {
+      var query = {
+        search: params.term,
+      }
+      return query;
+    },
+    processResults: function (data) {
+      return {
+      results: data
+      };
+    }
+  },
+  placeholder: 'Search ',
+  minimumInputLength: 3,
+});
 $('#item-material_id').select2({
   // since select2 version 4, dropdownParent property must be defined to show up at modal
   // @see https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/33884094#33884094

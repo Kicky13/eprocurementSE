@@ -18,6 +18,7 @@ class Wo extends CI_Controller {
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
     $this->load->model('cmms/M_wo_jde', 'wo');
+    $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -62,6 +63,7 @@ class Wo extends CI_Controller {
     $data['menu'] = $this->menu;
   	$data['title'] = $title;
   	$data['param'] = $param;
+    $data['wotype'] = $this->optWoTypeSearch('', 'filter_wotype', true);
     $data['status'] = $this->optWoStatus('', 'filter_STATUS', true);
     
     $this->template->display($this->view .'/index', $data);
@@ -124,6 +126,20 @@ class Wo extends CI_Controller {
     foreach ($wotype as $r) {
       $selected = $wo_type_selected == $r->id ? "selected=''":"";
       $s .= "<option $selected value='$r->id'>$r->code_alpha - $r->notation</option>";
+    }
+    $s .= "</select>";
+    return $s;
+  }
+  public function optWoTypeSearch($wo_type_selected = '', $name='wo_type_id', $search=false)
+  {
+    $wotype = $this->wo_type->all();
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
+    foreach ($wotype as $r) {
+      $selected = $wo_type_selected == $r->id ? "selected=''":"";
+      $s .= "<option $selected value='$r->code_alpha'>$r->code_alpha - $r->notation</option>";
     }
     $s .= "</select>";
     return $s;

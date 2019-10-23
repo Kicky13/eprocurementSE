@@ -32,6 +32,8 @@
                             <div class="col-md-6">
                               <?php if($value->desc1 == 'STATUS'): ?>
                               <?=$status?>
+                              <?php elseif($value->desc1 == 'wotype'):?>
+                              <?=$wotype?>
                               <?php else:?>
                               <input class="form-control" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
                               <?php endif;?>
@@ -132,6 +134,8 @@
 		 data.param = 'wr';
       <?php else:?>
       data.washno = 1;
+      data.STATUS = $('#filter_STATUS').val();
+      data.wotype = $('#filter_wotype').val();
 		  <?php endif;?>
         }
       },

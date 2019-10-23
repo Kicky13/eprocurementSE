@@ -145,7 +145,7 @@ class M_equipment extends CI_Model {
   {
     /*$sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) next_due_date from f1207 a inner join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts = '01' where fwnumb = $id";
     return $this->db->query($sql)->result();*/
-    $sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) next_due_date from f1207 a left join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts in ('01','50') where fwnumb = $id order by a.fwmsts desc";
+    $sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (case when fwtdt > 0 then (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) else null end) next_due_date from f1207 a left join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts in ('01','50') where fwnumb = $id order by a.fwmsts desc";
     $rs = [];
     foreach ($this->db->query($sql)->result() as $r) {
       $rs[@$r->WO_NUMBER] = $r;
@@ -187,10 +187,14 @@ class M_equipment extends CI_Model {
     (case when WADRQJ > 0 then (to_date(concat(to_char(to_number(substr(WADRQJ,1,3)+1900)),substr(WADRQJ,4,3)),'YYYYDDD')) else null end) PLANNED_FINISH_DATE,
     (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) ACTUAL_FINISH_DATE";
 
-    $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,
+    $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,FAASID as EQ_NO, concat(FADL01,FADL02) eq_desc,
+    (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(equipment.faacl6) ) as loct,
     concat(trim(drky),concat(' - ',drdl01)) as status
-    from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
+    from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a 
+    left outer join f4801t b on a.wadoco=b.wadoco 
+    inner join f40039 c on a.wadcto = c.dtdct 
     inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
+    LEFT JOIN f1201 equipment on equipment.FANUMB = a.WANUMB
 	left join f0101 on f0101.ABAN8 = a.WAANO
 	";
     return $this->db->query($sql)->row();
@@ -269,7 +273,7 @@ class M_equipment extends CI_Model {
   }
   public function attachment_jde($wo_no='')
   {
-    $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\x') as aye from (
+    $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\par') as aye from (
     select UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(GDTXFT, 8000,1)) testing from f00165 where gdtxky like '%$wo_no%' and GDGTITNM = 'Text1')";
     $rs = $this->db->query($sql);
     if($rs->num_rows() > 0)
@@ -294,10 +298,16 @@ class M_equipment extends CI_Model {
   {
     $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
     $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
+    $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,c.WLDSC1
+    from F48311 a 
+    left join F0101 b on a.RARSCN = b.ABAN8 
+    left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
+    where a.RADOCO = '$wono'";
 
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);
-    return ['estimate'=>$estimate, 'actual'=>$actual];
+    $assignment = $this->db->query($assignment);
+    return ['estimate'=>$estimate, 'actual'=>$actual, 'assignment'=>$assignment];
   }
   public function new_pm($value='')
   {

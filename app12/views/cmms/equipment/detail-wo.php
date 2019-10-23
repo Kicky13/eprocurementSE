@@ -32,8 +32,8 @@
 		}
 ?>
 		<tr>
-			<td><?= str_replace('WO ', $identity, $wod->desc) ?></td>
-			<td><input disabled="" class="form-control" value="<?=$txt?>"></td>
+			<td style="padding: 0px"><?= str_replace('WO ', $identity, $wod->desc) ?></td>
+			<td style="padding: 0px"><input disabled="" class="form-control" value="<?=$txt?>"></td>
 		</tr>
 <?php endforeach;?>
 	</tbody>

@@ -106,11 +106,12 @@ class Award extends CI_Controller {
     public function recomendation()
     {
         $this->M_approval->approvalEdEvaluation();
-        $query = $this->db->query('SELECT t_approval.*,m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL email, m_notic.TITLE title, m_notic.OPEN_VALUE open, m_notic.CLOSE_VALUE close FROM t_approval
+        $query = $this->db->query('SELECT t_approval.*, t_eq_data.subject, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL email, m_notic.TITLE title, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close FROM t_approval
+        JOIN t_eq_data ON t_eq_data.msr_no = t_approval.data_id
         LEFT JOIN m_approval on m_approval.id = t_approval.m_approval_id
         LEFT JOIN m_user_roles on m_approval.role_id = m_user_roles.ID_USER_ROLES
         LEFT JOIN m_user on m_user.ID_USER = t_approval.created_by
-        JOIN m_notic ON m_notic.ID = 67
+        JOIN m_notic ON m_notic.ID = 68
         WHERE t_approval.data_id = "' . $this->input->post('msr_no') . '" AND t_approval.m_approval_id = 8');
 
         if ($query->num_rows() > 0) {
@@ -120,7 +121,9 @@ class Award extends CI_Controller {
             $img2 = '';
 
             $str = $data_replace[0]->open;
-            $str = str_replace('no_msr', $data_replace[0]->data_id, $str);
+            $str = str_replace('_var1_', $data_replace[0]->subject, $str);
+            $str = str_replace('_var2_', $data_replace[0]->data_id, $str);
+
             $data = array(
                 'img1' => $img1,
                 'img2' => $img2,

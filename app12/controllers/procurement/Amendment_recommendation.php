@@ -259,13 +259,17 @@ class Amendment_recommendation extends CI_Controller {
             $img1 = '';
             $img2 = '';
 
-            $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            $query = $this->db->query("SELECT rec.description, arf.po_title, arf.doc_no, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+            JOIN t_arf_response resp ON rec.id_ref = resp.id
+            JOIN t_arf arf ON resp.doc_no = arf.doc_no
             JOIN m_user usr ON usr.ID_USER = rec.id_user
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence = 2 AND rec.id_ref = " . $data['arf_response_id']);
             if ($query->num_rows() > 0) {
                 $data_replace = $query->result();
                 $str = $data_replace[0]->open;
+                $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+                $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
 
                 $data = array(
                     'img1' => $img1,
@@ -485,7 +489,48 @@ class Amendment_recommendation extends CI_Controller {
     public function approve($value='')
     {
         $app_id = $this->input->post('approval_id');
+        $app_next = $app_id + 1;
         $recom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_id)->row();
+        $total_approver = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id_ref = ' . $recom->id_ref)->num_rows();
+        $approved = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_id . ' AND status = 1')->num_rows();
+        $nextrecom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_next)->row();
+        if ($approved < ($total_approver - 1)) {
+            if ($recom->id_user_role != 27) {
+              $query = $this->db->query("SELECT rec.description, arf.doc_no, arf.po_title usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+              JOIN t_arf_response resp ON rec.id_ref = resp.id
+              JOIN t_arf arf ON resp.doc_no = arf.doc_no
+              JOIN m_user usr ON usr.ID_USER = rec.id_user
+              JOIN m_notic n ON n.ID = 93
+              WHERE rec.id_ref = " . $recom->id_ref . " AND rec.id_user_role = " . $nextrecom->id_user_role);
+
+                if ($query->num_rows() > 0) {
+                    $data_replace = $query->result();
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('title_agreement', $data_replace[0]->doc_no, $str);
+                    $str = str_replace('no_arf', $data_replace[0]->po_title, $str);
+                    $img1 = '';
+                    $img2 = '';
+
+                    $data = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_replace[0]->title,
+                        'open' => $str,
+                        'close' => $data_replace[0]->close
+                    );
+
+                    foreach ($data_replace as $item) {
+                        $data['dest'][] = $item->email;
+                    }
+                    $flag = $this->M_sendmail->sendMail($data);
+                }
+            }
+        }
+        if (isset($nextrecom->id_user_role)) {
+            if ($recom->id_user_role != 5){
+
+            }
+        }
         if ($recom->sequence <= 4) {
             if ($recom->sequence == 4) {
                 $query = $this->db->query("SELECT rec.description, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
@@ -498,26 +543,6 @@ class Amendment_recommendation extends CI_Controller {
             JOIN m_user usr ON usr.ID_USER = rec.id_user
             JOIN m_notic n ON n.ID = 93
             WHERE rec.sequence = " . $seq . " AND rec.id_ref = " . $recom->id_ref);
-            }
-
-            if ($query->num_rows() > 0) {
-                $data_replace = $query->result();
-                $str = $data_replace[0]->open;
-                $img1 = '';
-                $img2 = '';
-
-                $data = array(
-                    'img1' => $img1,
-                    'img2' => $img2,
-                    'title' => $data_replace[0]->title,
-                    'open' => $str,
-                    'close' => $data_replace[0]->close
-                );
-
-                foreach ($data_replace as $item) {
-                    $data['dest'][] = $item->email;
-                }
-                $flag = $this->M_sendmail->sendMail($data);
             }
         }
         $this->T_approval_arf_recom->approve();

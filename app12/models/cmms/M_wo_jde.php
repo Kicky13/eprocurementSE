@@ -16,9 +16,9 @@ class M_wo_jde extends CI_Model {
     $sql = $this->sql();
     $sql .= " where 1=1  ";
     
-    if($this->input->post('status'))
+    if($this->input->post('STATUS'))
     {
-      $sql .= " and UPPER(status) = UPPER('".$this->input->post('status')."')";
+      $sql .= " and UPPER(substr(status,1,2)) = UPPER('".$this->input->post('STATUS')."')";
     }
     if($this->input->post('wotype'))
     {

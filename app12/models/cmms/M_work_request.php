@@ -204,6 +204,15 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
   {
     $this->db->trans_begin();
     //unset($data['status'],$data['id'],$data['description']);
+    if($data['parent_id_old'])
+    {
+      $data['parent_id'] = null;
+    }
+    if($data['photo_old'])
+    {
+      $data['photo'] = null;
+    }
+    unset($data['parent_id_old'],$data['photo']);
     $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
     //$this->approve($this->input->post());
     if($this->db->trans_status() === true)

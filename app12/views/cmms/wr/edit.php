@@ -73,7 +73,9 @@
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
                             <?php if($row->photo): ?>
-                            <a class="btn btn-info btn-sm" target="_blank" href="<?= base_url('upload/wr/'.$row->photo) ?>">View Photo</a>
+                            <a class="btn btn-info btn-sm btn-view-photo" target="_blank" href="<?= base_url('upload/wr/'.$row->photo) ?>">View Photo</a>
+                            <a class="btn btn-info btn-sm" href="#" onclick="clearPhoto()">Delete Photo</a>
+                            <input type="hidden" name="photo_old" id="photo_old" value="<?=$row->photo?>">
                             <?php endif;?>
 							<span id="photo_preview"></span>
                           </div>
@@ -84,7 +86,12 @@
                           <div class="form-group">
                             <label>Parent WO</label>
                             <select class="form-control js-data-example-ajax" id="parent_id" name="parent_id"></select>
-                            <span class="btn-info">WO Parent : <?= $row->parent_id ?></span>
+                            <input type="hidden" name="parent_id_old" id="parent_id_old" value="<?=$row->parent_id?>">
+                            <small><a href="#" onclick="clearParentWo()">Clear Parent Wo</a></small>
+                            &nbsp;&nbsp;&nbsp;
+                            <?php if($row->parent_id): ?>
+                            <span class="btn-info parent-wo-str">WO Parent : <?= $row->parent_id ?></span>
+                            <?php endif;?>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -100,8 +107,8 @@
                           </div>
                         </div>
                         <div class="col-md-12">
-                          <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Kembali</a>
-                          <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Update & Approve</button>
+                          <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Back</a>
+                          <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Approve</button>
                           <!-- <button id="btn-reject" class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button> -->
                           <a id="btn-reject" href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModalReject">Reject</a>
                         </div>
@@ -373,4 +380,13 @@
         this.value = this.value.toUpperCase();
     });
 	});
+  function clearParentWo() {
+    $("#parent_id_old").val('');
+    $(".parent-wo-str").text('');
+    $('.js-data-example-ajax').val(null).trigger('change');
+  }
+  function clearPhoto() {
+    $(".btn-view-photo").hide();
+    $("#photo_old").val('');
+  }
 </script>

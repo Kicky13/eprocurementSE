@@ -62,6 +62,7 @@ class Wo extends CI_Controller {
     $data['menu'] = $this->menu;
   	$data['title'] = $title;
   	$data['param'] = $param;
+    $data['status'] = $this->optWoStatus('', 'filter_STATUS', true);
     
     $this->template->display($this->view .'/index', $data);
   }

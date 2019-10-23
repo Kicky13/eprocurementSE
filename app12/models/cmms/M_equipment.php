@@ -321,7 +321,7 @@ class M_equipment extends CI_Model {
   }
   public function find_wo_bssv($wo_no='')
   {
-    $sql = "select WADOCO, WADL01, FAASID,FANUMB from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO) = UPPER('$query')";
+    $sql = "select WADOCO, WADL01, FAASID,FANUMB from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO) = UPPER('$wo_no')";
     $result = $this->db->query($sql)->row();
     return $result;   
   }

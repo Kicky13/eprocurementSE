@@ -87,7 +87,8 @@ class Replenisment extends CI_Controller {
         }
         elseif($key == 'RPUNCS')
         {
-          $row[] = "<span style='float:right'>".numIndo($rows->$key)."</span>";
+			$nilai = ($rows->$key/10000);
+          $row[] = "<span style='float:right'>".numIndo($nilai)."</span>";
         }
         else
         {

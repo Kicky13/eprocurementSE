@@ -58,7 +58,7 @@
                           </div>
                           <?php } ?>
           						  <div class="form-group row">
-          							<button type='button' id='btn-filter' class='btn btn-primary'>Filter</button>
+          							<button type='button' id='btn-filter' class='btn btn-primary'>Search</button>
           						  </div>
                         </div>
                       </div>

@@ -81,6 +81,7 @@
                           <div class="form-group">
                             <label>Parent WO</label>
                             <select class="form-control js-data-example-ajax" value="" id="parent_id" name="parent_id"></select>
+                            <small><a href="#" onclick="clearParentId()">Click Here to Clear</a></small>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -126,7 +127,7 @@
             <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
             <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
-            <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Filter</a>
+            <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Search</a>
           </div>
         </div>
         <div class="row">
@@ -351,8 +352,11 @@
     function previewFile(param, tmppath) {
         $("#"+param+"_preview").html("<a href='"+tmppath+"' target='_blank'>Preview Here</a>");
     }
-    $('.toupper').keyup(function(){
+    $('.toupper').change(function(){
         this.value = this.value.toUpperCase();
     });
 	});
+  function clearParentId() {
+      $('.js-data-example-ajax').val(null).trigger('change');
+    }
 </script>

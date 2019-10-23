@@ -30,13 +30,17 @@
                           <div class="form-group row">
                             <label class="col-md-3"><?=$value->desc?></label>
                             <div class="col-md-6">
+                              <?php if($value->desc1 == 'STATUS'): ?>
+                              <?=$status?>
+                              <?php else:?>
                               <input class="form-control" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
+                              <?php endif;?>
                             </div>
                           </div>
                           <?php endforeach;?>
                           <div class="form-group row">
                             <div class="col-md-6">
-                            <button type='button' id='btn-filter' class='btn btn-primary'>Filter</button>
+                            <button type='button' id='btn-filter' class='btn btn-primary'>Search</button>
                             </div>
                             </div>
                         </div>
@@ -124,6 +128,7 @@
           data.wasrst = '70';
 		  <?php elseif($param == 'wr'):?>
           data.ORIGINATOR = $('#filter_ORIGINATOR').val();
+          data.STATUS = $('#filter_STATUS').val();
 		 data.param = 'wr';
       <?php else:?>
       data.washno = 1;

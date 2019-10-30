@@ -28,7 +28,7 @@
 		}
 		if($wod->desc2 == 'PO_NO')
 		{
-			$txt = $po_no;
+			$txt = @$po_no->po_no." (".@$po_no->vendor_name.")";
 		}
 ?>
 		<tr>

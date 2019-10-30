@@ -65,6 +65,7 @@ class Wo extends CI_Controller {
   	$data['param'] = $param;
     $data['wotype'] = $this->optWoTypeSearch('', 'filter_wotype', true);
     $data['status'] = $this->optWoStatus('', 'filter_STATUS', true);
+    $data['priority'] = optPriority('filter_WAPRTS','',true);
     
     $this->template->display($this->view .'/index', $data);
   }
@@ -90,19 +91,22 @@ class Wo extends CI_Controller {
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
-	  $wotype = $rows->WOTYPE;
+    $wotype = $rows->WOTYPE;
+	  $priority = $rows->WAPRTS;
       $status = $rows->STATUS;
       $wo_date = $rows->WO_DATE;
+      $plannedStartDate = $rows->PLANNED_START_DATE;
       $failure_desc = $rows->FAILURE_DESC;
       $originator = $rows->ORIGINATOR;
       $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
       $row[] = @wo_type_array($wotype);
       $row[] = $woDesc;
+      $row[] = @wr_priority($priority);
       $row[] = $eqNo;
       $row[] = $eqDesc;
       $row[] = $status;
-      $row[] = $wo_date;
+      $row[] = $plannedStartDate;
       $row[] = $failure_desc;
       $row[] = $originator;
       $data[] = $row;

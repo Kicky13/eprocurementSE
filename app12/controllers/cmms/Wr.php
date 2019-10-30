@@ -236,7 +236,7 @@ class Wr extends CI_Controller {
         }
         else
         {
-          echo json_encode(['status'=>fail,'msg'=>'JDE Failed']);
+          echo json_encode(['status'=>'fail','msg'=>'JDE Failed']);
         }
       }
     }
@@ -278,7 +278,7 @@ class Wr extends CI_Controller {
       }
       else
       {
-        echo json_encode(['status'=>fail,'msg'=>'JDE Failed']);
+        echo json_encode(['status'=>'fail','msg'=>'JDE Failed']);
       }
     }
   }

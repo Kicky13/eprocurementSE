@@ -1303,3 +1303,24 @@ function amdAdditionalDocLatestDate($arf, $output_type='')
   $latestInsuranceDate = isset($insurance->new_date_2) ? dateToIndo($insurance->new_date_2) : '-';
   return ['performance_bond'=>$latestPerformanceBondDate, 'insurance'=>$latestInsuranceDate];
 }
+function optPriority($name='priority', $row=0, $search=false)
+{
+  $list = 
+  [
+    1 => 'Urgent',
+    2 => 'Immediate',
+    3 => 'Within 3 - 7 Days',
+    4 => 'Requirment Shutdown Work',
+    /*5 => 'Preventive Maintenance',*/
+    6 => 'Outage Work',
+  ];
+  $s = "<select name='$name' id='$name' class='form-control'>";
+  if($search)
+      $s .= "<option value=''>--All--</option>";
+  foreach ($list as $key => $value) {
+    $selected = $row == $key ? "selected=''":"";
+    $s .= "<option $selected value='$key'>$value</option>";
+  }
+  $s .= "</select>";
+  return $s;
+}

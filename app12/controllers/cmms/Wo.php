@@ -18,6 +18,7 @@ class Wo extends CI_Controller {
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
     $this->load->model('cmms/M_wo_jde', 'wo');
+    $this->load->model('cmms/M_wo_type', 'wo_type');
     $this->load->helper(array('permission'));
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -62,7 +63,9 @@ class Wo extends CI_Controller {
     $data['menu'] = $this->menu;
   	$data['title'] = $title;
   	$data['param'] = $param;
+    $data['wotype'] = $this->optWoTypeSearch('', 'filter_wotype', true);
     $data['status'] = $this->optWoStatus('', 'filter_STATUS', true);
+    $data['priority'] = optPriority('filter_WAPRTS','',true);
     
     $this->template->display($this->view .'/index', $data);
   }
@@ -88,19 +91,22 @@ class Wo extends CI_Controller {
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
       $resDesc = $rows->RESDESC;
-	  $wotype = $rows->WOTYPE;
+    $wotype = $rows->WOTYPE;
+	  $priority = $rows->WAPRTS;
       $status = $rows->STATUS;
       $wo_date = $rows->WO_DATE;
+      $plannedStartDate = $rows->PLANNED_START_DATE;
       $failure_desc = $rows->FAILURE_DESC;
       $originator = $rows->ORIGINATOR;
       $link = "<a href='#' onclick=\"openModalWoDetail('$woNo')\">$woNo</a>";
       $row[] = $link;
       $row[] = @wo_type_array($wotype);
       $row[] = $woDesc;
+      $row[] = @wr_priority($priority);
       $row[] = $eqNo;
       $row[] = $eqDesc;
       $row[] = $status;
-      $row[] = $wo_date;
+      $row[] = $plannedStartDate;
       $row[] = $failure_desc;
       $row[] = $originator;
       $data[] = $row;
@@ -124,6 +130,20 @@ class Wo extends CI_Controller {
     foreach ($wotype as $r) {
       $selected = $wo_type_selected == $r->id ? "selected=''":"";
       $s .= "<option $selected value='$r->id'>$r->code_alpha - $r->notation</option>";
+    }
+    $s .= "</select>";
+    return $s;
+  }
+  public function optWoTypeSearch($wo_type_selected = '', $name='wo_type_id', $search=false)
+  {
+    $wotype = $this->wo_type->all();
+    $s = "<select name='$name' id='$name' class='form-control'>";
+    if($search)
+      $s .= "<option value=''>--All--</option>";
+
+    foreach ($wotype as $r) {
+      $selected = $wo_type_selected == $r->id ? "selected=''":"";
+      $s .= "<option $selected value='$r->code_alpha'>$r->code_alpha - $r->notation</option>";
     }
     $s .= "</select>";
     return $s;

@@ -32,6 +32,10 @@
                             <div class="col-md-6">
                               <?php if($value->desc1 == 'STATUS'): ?>
                               <?=$status?>
+                              <?php elseif($value->desc1 == 'wotype'):?>
+                              <?=$wotype?>
+                              <?php elseif($value->desc1 == 'WAPRTS'):?>
+                              <?=$priority?>
                               <?php else:?>
                               <input class="form-control" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
                               <?php endif;?>
@@ -129,9 +133,13 @@
 		  <?php elseif($param == 'wr'):?>
           data.ORIGINATOR = $('#filter_ORIGINATOR').val();
           data.STATUS = $('#filter_STATUS').val();
+      data.wotype = $('#filter_wotype').val();
+      data.WAPRTS = $('#filter_WAPRTS').val();
 		 data.param = 'wr';
       <?php else:?>
       data.washno = 1;
+      data.STATUS = $('#filter_STATUS').val();
+      data.wotype = $('#filter_wotype').val();
 		  <?php endif;?>
         }
       },

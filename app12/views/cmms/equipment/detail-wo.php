@@ -28,12 +28,12 @@
 		}
 		if($wod->desc2 == 'PO_NO')
 		{
-			$txt = $po_no;
+			$txt = @$po_no->po_no." (".@$po_no->vendor_name.")";
 		}
 ?>
 		<tr>
-			<td><?= str_replace('WO ', $identity, $wod->desc) ?></td>
-			<td><input disabled="" class="form-control" value="<?=$txt?>"></td>
+			<td style="padding: 0px"><?= str_replace('WO ', $identity, $wod->desc) ?></td>
+			<td style="padding: 0px"><input disabled="" class="form-control" value="<?=$txt?>"></td>
 		</tr>
 <?php endforeach;?>
 	</tbody>

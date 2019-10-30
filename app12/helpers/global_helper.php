@@ -1272,6 +1272,18 @@ function wr_priority($value='',$all=false)
       return $list;
     return $list[$value];
 }
+function portal_rule($value='',$all=false)
+{
+  $list = 
+    [
+      1 => 'Maintenance Planner ',
+      2 => 'Supervisor',
+      3 => 'Creator (Include Technician/Department)',
+    ];
+    if($all)
+      return $list;
+    return $list[$value];
+}
 function wo_type_array($value='')
 {
   $ci = &get_instance();

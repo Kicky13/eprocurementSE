@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('Anda tidak masuk dengan benar');
 
-class M_doa extends CI_Model {
+class M_position extends CI_Model {
 
   public function __construct() {
     parent::__construct();    
@@ -26,10 +26,10 @@ class M_doa extends CI_Model {
   }
   public function form_row($id='')
   {
-  	return $this->db->where('id',$id)->get('cmms_position')->row()
+  	return $this->db->where('id',$id)->get('cmms_position')->row();
   }
   public function form_parent()
   {
-  	return $this->db->query("select cmms_position.id, m_user.NAME  from m_user LEFT JOIN cmms_position on m_user.ID_USER = cmms_position.user_id where id_user in (select user_id from cmms_position where portal_rule in (1,2))")
+  	return $this->db->query("select cmms_position.id, m_user.NAME  from m_user LEFT JOIN cmms_position on m_user.ID_USER = cmms_position.user_id where id_user in (select user_id from cmms_position where portal_rule in (1,2))");
   }
 }

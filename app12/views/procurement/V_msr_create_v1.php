@@ -1702,11 +1702,11 @@ var msr_development_steps = $("#msr-development-form").steps({
     {
       // Block MSR creation for procurement location other than 'PG01' (Head Office Procurement)
       var plocation = $('#plocation').val()
-      if (plocation != '' && plocation != 'PG01') {
-        // alert('Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed")
-        swal('<?= __('warning') ?>','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
-        return false
-      }
+      //if (plocation != '') {
+      //  // alert('Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed")
+      //  swal('<?//= __('warning') ?>//','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
+      //  return false
+      //}
 
       // Check exchange rate
       var currency_id = $('#currency').val();
@@ -3235,10 +3235,10 @@ function submit_msr() {
 
     // Block MSR creation for procurement location other than 'PG01' (Head Office Procurement)
     var plocation = $('#plocation').val()
-    if (plocation != '' && plocation != 'PG01') {
-      swal('<?= __('warning') ?>','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
-      return false
-    }
+    //if (plocation != '') {
+    //  swal('<?//= __('warning') ?>//','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
+    //  return false
+    //}
 
 
     $('#item-table-alert').hide()

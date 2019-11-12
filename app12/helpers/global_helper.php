@@ -1244,6 +1244,56 @@ function company_cmms($param=0)
     return $result;
   return $result->num_rows() > 0 ? true : false ;
 }
+
+if (!function_exists('cmms_log_history'))
+{
+    function cmms_log_history($module_kode, $data_id, $description1, $description2 = '') {
+        $ci =& get_instance();
+        $ci->load->model('cmms/M_log');
+        $created_at = today_sql();
+        $created_by = $ci->session->userdata('ID_USER') ?: $ci->session->userdata('ID');
+
+        $ci->M_log->store(compact('module_kode', 'data_id', 'description1', 'description2',
+            'created_at', 'created_by'));
+    }
+}
+function wr_priority($value='',$all=false)
+{
+  $list = 
+    [
+      1 => 'Urgent ',
+      2 => 'Immediate',
+      3 => 'Within 3 - 7 Days',
+      4 => 'Requirment Shutdown Work',
+      5 => 'Preventive Maintenance',
+      6 => 'Outage Work',
+    ];
+    if($all)
+      return $list;
+    return $list[$value];
+}
+function portal_rule($value='',$all=false)
+{
+  $list = 
+    [
+      1 => 'Maintenance Planner ',
+      2 => 'Supervisor',
+      3 => 'Creator (Include Technician/Department)',
+    ];
+    if($all)
+      return $list;
+    return $list[$value];
+}
+function wo_type_array($value='')
+{
+  $ci = &get_instance();
+  $result = $ci->db->get('cmms_wo_type');
+  $s = [];
+  foreach ($result->result() as $r) {
+    $s[$r->id] = $r->code_alpha;
+  }
+  return @$s[$value];
+}
 function amdAdditionalDocLatestDate($arf, $output_type='')
 {
   $ci = &get_instance();
@@ -1252,4 +1302,25 @@ function amdAdditionalDocLatestDate($arf, $output_type='')
   $latestPerformanceBondDate = isset($performaceBond->new_date_1) ? dateToIndo($performaceBond->new_date_1) : '-';
   $latestInsuranceDate = isset($insurance->new_date_2) ? dateToIndo($insurance->new_date_2) : '-';
   return ['performance_bond'=>$latestPerformanceBondDate, 'insurance'=>$latestInsuranceDate];
+}
+function optPriority($name='priority', $row=0, $search=false)
+{
+  $list = 
+  [
+    1 => 'Urgent',
+    2 => 'Immediate',
+    3 => 'Within 3 - 7 Days',
+    4 => 'Requirment Shutdown Work',
+    /*5 => 'Preventive Maintenance',*/
+    6 => 'Outage Work',
+  ];
+  $s = "<select name='$name' id='$name' class='form-control'>";
+  if($search)
+      $s .= "<option value=''>--All--</option>";
+  foreach ($list as $key => $value) {
+    $selected = $row == $key ? "selected=''":"";
+    $s .= "<option $selected value='$key'>$value</option>";
+  }
+  $s .= "</select>";
+  return $s;
 }

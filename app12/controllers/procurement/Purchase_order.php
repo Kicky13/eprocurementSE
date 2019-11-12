@@ -2061,6 +2061,7 @@ class Purchase_order extends CI_Controller
         $req_no = "";
         $result = true;
         $query_check_out = $this->db->query("select doc_no from i_sync where doc_type='po' and isclosed=0 limit 1");
+        $this->load->model('cmms/M_equipment');
         if($query_check_out->num_rows()>0){
             $result_check = $query_check_out->result();
             $req_no = $result_check[0]->doc_no;
@@ -2101,11 +2102,12 @@ class Purchase_order extends CI_Controller
                 , o.master_list
                 , b.vat
                 , d.line_no
-				, u_msr.username as orderedBy
+                , u_msr.username as orderedBy
+				, i.wo_no as wo_no
                 from t_purchase_order o
                 join t_purchase_order_detail d on d.po_id=o.id
                 join t_msr m on m.msr_no=o.msr_no
-                join m_warehouse w on w.id_company=m.id_company
+                join m_warehouse w on w.id_company=m.id_company and w.is_cmms = 0
                 join m_user u on u.ID_USER=o.create_by
                 join m_user u_msr on u_msr.ID_USER=m.create_by
                 join m_currency cfrom on cfrom.ID=o.id_currency
@@ -2118,21 +2120,20 @@ class Purchase_order extends CI_Controller
                 left join m_msr_inventory_type mit on mit.id = d.id_msr_inv_type
                 where o.id='".$req_no."' ");
             $res = $query_select_mat->result();
-
+			
             if ($query_select_mat->num_rows() == 0) {
                 echo "Error. No data found . May be due to incomplete data. Please recheck your data".PHP_EOL;
                 return false;
             }
-
+			
             $ch = curl_init('https://10.1.1.94:89/PY910/ProcurementManager?WSDL');
             $detailxml = "";
 
             for ($i=0; $i < $query_select_mat->num_rows(); $i++) {
-                // $semic_noo = "";
-                // $glacc = "";
-                // if (strlen($res[$i]->semic_no)>6) {
-                //     $semic_noo = $res[$i]->semic_no;
-                // }
+                $assetId = "";
+                $subWo = "";
+                $subWoType = "";
+                
 
                 $id_costcenter = $objectAccount = $subsidiary = $glClassCode = '';
                 $material_desc = $semic_no = $line_type_code = $subledger = $subledgerTypeCode = '';
@@ -2218,14 +2219,22 @@ class Purchase_order extends CI_Controller
                         '' :
                         $landedCostRuleCode = $res[$i]->vat;
                 }
-
-                $glacc = '<glAccount>
+				
+				if($res[$i]->wo_no)
+                {
+                    $find_wo_bssv = $this->M_equipment->find_wo_bssv($res[$i]->wo_no);
+                    $assetId = "<assetId>*".$find_wo_bssv->FANUMB."</assetId>";
+                    $subledger = $find_wo_bssv->WADOCO;
+                    $subledgerTypeCode = "W";
+                }
+                $glacc = $assetId.'<glAccount>
             <businessUnit>'.$id_costcenter.'</businessUnit>
             <objectAccount>'.$objectAccount.'</objectAccount>
             <subsidiary>'.$subsidiary.'</subsidiary>
         </glAccount>
         <glClassCode>'. $glClassCode .'</glClassCode>';
-
+				
+				
                 if ($res[$i]->id_itemtype == 'SERVICE' || (
                 $res[$i]->id_itemtype == 'GOODS' && in_array($res[$i]->msr_inv_type_code, ['AST', 'CON'])
                 )) {
@@ -2233,7 +2242,8 @@ class Purchase_order extends CI_Controller
                     <subledger>' . $subledger . '</subledger>
                     <subledgerTypeCode>'. $subledgerTypeCode .'</subledgerTypeCode>';
                 }
-
+                $glacc .= $subWo;
+                $glacc .= $subWoType;
                 if(strlen($material_desc) > 30){
                     $material_desc = substr($material_desc, 0, 29);
                 }
@@ -2404,7 +2414,8 @@ class Purchase_order extends CI_Controller
       </orac:processPurchaseOrderV2>
    </soapenv:Body>
 </soapenv:Envelope>';
-
+//echo $xml_post_string;
+//exit();
             $headers = array(
                 #"Content-type: application/soap+xml;charset=\"utf-8\"",
                 "Content-Type: text/xml",
@@ -2438,7 +2449,7 @@ class Purchase_order extends CI_Controller
               echo "Execution Berhasil - insert PO ".$req_no." at ".date("Y-m-d H:i:s");
               $query_update = $this->db->query("update i_sync set isclosed=1,updatedate=now() where doc_type='po' and doc_no='".$req_no."' and isclosed=0");
             }else{
-                echo "<pre>".$data_curl."</pre>";
+                echo "<pre>".$xml_post_string."</pre>";
               // echo "Execution Gagal - insert PO at ".date("Y-m-d H:i:s").'-'.$error_msg.'-'.$curl_errno.'-'.$http_status;
             }
     }

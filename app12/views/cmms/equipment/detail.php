@@ -37,7 +37,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row hidden">
           <div class="col-md-12">
             <?php if(@$basic_info_form->FAWOYN == 1):?>
             <a href="<?= base_url('cmms/wr/create/'.$basic_info_form->FAAAID) ?>" target="_blank" class="btn btn-primary">CREATE WR</a>

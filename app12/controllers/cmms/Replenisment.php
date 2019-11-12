@@ -1,18 +1,16 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Equipment extends CI_Controller {
+class Replenisment extends CI_Controller {
 
-  protected $view = 'cmms/equipment';
+  protected $view = 'cmms/replenisment';
   protected $menu;
 
   public function __construct() {
     parent::__construct();
     $this->load->model('vendor/M_vendor');
     $this->load->model('vendor/M_all_intern', 'mai');
-    $this->load->model('cmms/M_equipment','mod');
-    $this->load->model('cmms/M_equipment_picture','picture');
-    $this->load->model('cmms/M_work_request','wr');
+    $this->load->model('cmms/M_replenisment','mod');
 
     $this->mai->cek_session();
     $get_menu = $this->M_vendor->menu();
@@ -28,33 +26,31 @@ class Equipment extends CI_Controller {
   public function settings($value='')
   {
     $head = [
-      'FAASID' => 'Equipment Number',
-      'FADL01' => 'Equipment Description',
-      'LOCT' => 'Location',
-      'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
-      'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',
+      'RPLITM' => 'Item Number',
+      'RPMCU' =>    'Ware House',
+      'RPUNCS' =>    'Unit Cost',
+      'RPUORG' => 'Recommended Order Qty',
+      'RPDOCO' => 'WO Number',
+      'RPTRQT' => 'WO Reservation Qty',
+      'RPDPL' => 'Plan Start Date',
+      'RPDRQJ' => 'Request Finish Date',
+      'RPEV01' => 'Status',
     ];
     $data['thead'] = $head;
     return $data[$value];
   }
   public function index($param='') {
+    $this->load->library('cart');
+    $this->cart->destroy();
+
     $data['menu'] = $this->menu;
 	$data['thead'] = $this->settings('thead');
 	
-	$title = 'Equipment List - CMMS01';
-	if($param=='repretitive')
-	{
-		$title = 'Equipment Repretitive Failure';
-		$data['thead']['JML'] = 'Total';
-	}
+	$title = 'Replenisment';
 	
     $data['param'] = $param;
 	$data['title'] = $title;
-    $data['optCriticality'] = $this->optCriticality('filter_CIT');
-    $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    
     $this->template->display($this->view .'/index', $data);
   }
   public function detail($id='')
@@ -79,21 +75,27 @@ class Equipment extends CI_Controller {
     foreach ($list as $rows) {
       $no++;
       $row = array();
-      $row[] = $no;
-      $detailLink = "<a href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
-      $wrLink = $rows->FAWOYN == 1 ? "<a href='".base_url('cmms/wr/create/'.$rows->FANUMB)."' target='_blank' class='btn btn-primary btn-sm hidden'>Create WR</a>" : "";
-	  if($this->input->post('reprentitive'))
-	  {
-		  $wrLink = '';
-	  }
-      $row[] = "$detailLink $wrLink";
+      $itemNumber = trim($rows->RPLITM);
+      $itemClear = str_replace('.', '', trim($rows->RPLITM));
+      $row[] = "<a href='#' onclick=\"addItemNumber('$rows->RPLITM','$itemClear')\" id='tag$itemClear' class='btn btn-sm btn-primary'>Add</a>";
+      
       foreach ($this->settings('thead') as $key => $value) {
-        $row[] = $rows->$key;
+        if($key == 'RPLITM')
+        {
+          $link = "<a href='#' onclick=\"detailReplenisment('$rows->RPLITM')\">$rows->RPLITM</a>";
+          $row[] = $link;
+        }
+        elseif($key == 'RPUNCS')
+        {
+			$nilai = ($rows->$key/10000);
+          $row[] = "<span style='float:right'>".numIndo($nilai)."</span>";
+        }
+        else
+        {
+          $row[] = $rows->$key;
+        }
       }
-      if($this->input->post('reprentitive'))
-	  {
-		  $row[] = "<span style='float:right'>".$rows->JML."</span>";
-	  }
+      $row[] = $rows->RPEV01 == 1 ? 'New Request' : '';
       $data[] = $row;
     }
  
@@ -151,22 +153,10 @@ class Equipment extends CI_Controller {
       $no++;
     }
   }
-  public function wo_detail($wo_no='')
+  public function show($no='')
   {
-    $data['wo_detail'] = $this->mod->wo_detail($wo_no);
-    $data['parent_wo'] = $this->mod->get_parent_wo($wo_no);
-    $data['po_no'] = $this->mod->get_po_no($wo_no);
-    /*echo "<pre>";
-    print_r($data);
-    exit();*/
-    $data['task_instruction'] = $this->mod->task_instruction($data['wo_detail']->TASKINSTRUCTION);
-    $data['part_list'] = $this->mod->new_part_list($wo_no);
-    $data['labor_list'] = $this->mod->labor_detail($wo_no);
-    $data['attachment'] = $this->mod->attachment_jde($wo_no);
-    $data['attachment_other'] = $this->mod->attachment_jde_other($wo_no);
-    $data['wr'] = $this->wr->findByWrNo($wo_no);
-    $data['wo_no']=$wo_no;
-    $this->load->view($this->view.'/wo_detail', $data);
+    $data = ['data'=>$this->mod->detail($no)];
+    $this->load->view($this->view.'/detail', $data);
   }
   public function get_task_instruction_from_pm($value='')
   {
@@ -237,5 +227,130 @@ class Equipment extends CI_Controller {
     header('Content-Length: ' . filesize($file));
     readfile($file);
     exit;
+  }
+  public function add_to_cart()
+  {
+    $item_number = $this->input->post('item_number');
+    $find = $this->mod->find($item_number);
+
+    $this->load->library('cart');
+    $data = array(
+      'id'      => uniqid(),
+      'qty'     => $find->RPUORG,
+      'price'   => $find->RPUNCS,
+      'name'    => str_replace('.', '-', $item_number),
+      'options' => array('qty_onhand_value' => $find->RPPQOH)
+    );
+    $this->cart->insert($data);   
+    if($this->cart->total() > 0) 
+    {
+      echo 1;
+    }
+    else
+    {
+      echo 0;
+    }
+  }
+  public function remove_to_cart()
+  {
+    $item_number = $this->input->post('item_number');
+    $this->load->library('cart');
+    foreach ($this->cart->contents() as $items) {
+      $rowid = $items['rowid'];
+      if($items['name'] == str_replace('.', '-', $item_number))
+      {
+        $data = array(
+          'rowid' => $rowid,
+          'qty'   => 0
+        );
+        $this->cart->update($data);
+      }
+    }
+    if($this->cart->total() > 0) 
+    {
+      echo 1;
+    }
+    else
+    {
+      echo 0;
+    }
+  }
+  public function check_cart()
+  {
+    $this->load->library('cart');
+    print_r($this->cart->contents());
+  }
+  public function save_draft_msr()
+  {
+    $this->load->library('cart');
+    $this->load->model('material/M_group', 'material_group');
+
+    $user = user();
+    $department = $this->db->where('ID_DEPARTMENT',$user->ID_DEPARTMENT)->get('m_departement')->row();
+    $t_msr_draft['id_currency'] = 3;
+    $t_msr_draft['id_currency_base'] = 3;
+    $t_msr_draft['id_costcenter'] = '101032210';
+    $t_msr_draft['costcenter_desc'] = 'Maintenance';
+    $t_msr_draft['id_msr_type'] = 'MSR01';
+    $t_msr_draft['msr_type_desc'] = 'Goods';
+    $t_msr_draft['create_by'] = $this->session->userdata('ID_USER');
+    $t_msr_draft['create_on'] = date("Y-m-d H:i:s");
+    $t_msr_draft['id_department'] = $user->ID_DEPARTMENT;
+    $t_msr_draft['department_desc'] = $department->DEPARTMENT_DESC;
+    
+    $this->db->insert('t_msr_draft', $t_msr_draft);
+    $insert_id = $this->db->insert_id();
+
+    $contents = $this->cart->contents();
+    foreach ($contents as $r) {
+      $options = $r['options'];
+      $price = ($r['price']/10000);
+      $amount = $price * $r['qty'];
+      $semic_no = str_replace('-', '.', $r['name']);
+      $sql = "select * from m_material where trim(MATERIAL_CODE) = '".trim($semic_no)."'";
+      $material = $this->db->query($sql)->row();
+      // echo $this->db->last_query();
+      // exit();
+      $uom = $material->UOM;
+      $uom_id = @$this->db->where('MATERIAL_UOM',$uom)->get('m_material_uom')->row()->ID;
+      $t_msr_item_draft['t_msr_draft_id'] = $insert_id;
+      $t_msr_item_draft['id_itemtype'] = 'GOODS';
+      $t_msr_item_draft['id_itemtype_category'] = 'SEMIC';
+      $t_msr_item_draft['material_id'] = $material->MATERIAL;
+      $t_msr_item_draft['semic_no'] = $semic_no;
+      $t_msr_item_draft['description'] = $material->MATERIAL_NAME;
+      /*procurement/msr/findItemAttributes?material_id=10000002&type=GOODS&itemtype_category=SEMIC*/
+      /*{"type":"GOODS","group_name":"DRILLING AND PRODUCTION (KLASIFKASI)","group_code":"A","subgroup_name":"CASING, TUBING AND ACCESSORIES","subgroup_code":"4","uom_description":"Meters","uom_name":"MT","uom_id":"85","qty_onhand":"","qty_ordered":""}*/
+      $material_id = $material->MATERIAL;
+      $type = 'GOODS';
+      if ($material_id && $type) {
+          if ($result = $this->material_group->findByMaterialAndType($material_id, $type)) {
+              $result = $result[0];
+              $t_msr_item_draft['groupcat'] = $result->group_code;
+              $t_msr_item_draft['groupcat_desc'] = $result->group_name;
+              $t_msr_item_draft['sub_groupcat'] = $result->subgroup_code;
+              $t_msr_item_draft['sub_groupcat_desc'] = $result->subgroup_name;
+          }
+      }
+      $t_msr_item_draft['qty'] = $r['qty'];
+      $t_msr_item_draft['qty_onhand_value'] = $options['qty_onhand_value'];
+      $t_msr_item_draft['uom_id'] = $uom_id;
+      $t_msr_item_draft['uom'] = $uom;
+      $t_msr_item_draft['priceunit'] = $price;
+      $t_msr_item_draft['priceunit_base'] = $price;
+      $t_msr_item_draft['id_importation'] = 'L';
+      $t_msr_item_draft['importation_desc'] = 'Local';
+      $t_msr_item_draft['id_dpoint'] = '10101';
+      $t_msr_item_draft['dpoint_desc'] = 'Muara Laboh';
+      $t_msr_item_draft['id_bplant'] = '10101';
+      $t_msr_item_draft['id_costcenter'] = '101032210';
+      $t_msr_item_draft['costcenter_desc'] = 'Maintenance';
+      $t_msr_item_draft['amount'] = $amount;
+      $t_msr_item_draft['amount_base'] = $amount;
+      $t_msr_item_draft['inv_type'] = 1;
+      $this->db->insert('t_msr_item_draft', $t_msr_item_draft);
+      $this->mod->update($semic_no);
+    }
+    echo $insert_id;
   }
 }

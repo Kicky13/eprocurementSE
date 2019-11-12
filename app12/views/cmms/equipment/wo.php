@@ -48,7 +48,10 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+    	</div>
     </div>
+  </div>
+</div>
 <script type="text/javascript">
 	function openModalWoDetail(wono) {
 		$.ajax({

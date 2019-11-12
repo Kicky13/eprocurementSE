@@ -6,41 +6,88 @@ class M_wo_jde extends CI_Model {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
     $this->dbm = $this->load->database('default', true);
+    $this->wo_table = 'f4801';
+    /*F3112
+    F48311 as labor list
+    F48310 as labor list old/false*/
   }
   public function _get_datatables_query($value='')
   {
     $sql = $this->sql();
     $sql .= " where 1=1  ";
     
-    if($this->input->post('status'))
+    if($this->input->post('STATUS'))
     {
-      $sql .= " and UPPER(status) = UPPER('".$this->input->post('status')."')";
+      $sql .= " and UPPER(substr(status,1,2)) = UPPER('".$this->input->post('STATUS')."')";
     }
     if($this->input->post('wotype'))
     {
-      $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
+      // $sql .= " and UPPER(wotype) like UPPER('%".$this->input->post('wotype')."%')";
+      $q = $this->dbm->query("select * from cmms_wo_type where code_alpha = '".$this->input->post('wotype')."'");
+      if($q->num_rows() > 0)
+      {
+        $qr = $q->row();
+        $sql .= " and wotype = '".$qr->id."'";
+      }
     }
-    if($this->input->post('wadoco'))
+    if($this->input->post('WADOCO'))
     {
-      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('wadoco')."%')";
+      $sql .= " and UPPER(wadoco) like UPPER('%".$this->input->post('WADOCO')."%')";
     }
-    if($this->input->post('wadl01'))
+    if($this->input->post('WADL01'))
     {
-      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('wadl01')."%')";
+      $sql .= " and UPPER(wadl01) like UPPER('%".$this->input->post('WADL01')."%')";
     }
-    if($this->input->post('wasrst'))
+    if($this->input->post('WASRST'))
     {
-      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('wasrst')."%')";
+      $sql .= " and UPPER(wasrst) like UPPER('%".$this->input->post('WASRST')."%')";
     }
-    if($this->input->post('wanumb'))
+    if($this->input->post('WAPRTS'))
     {
-      $sql .= " and UPPER(wanumb) like UPPER('%".$this->input->post('wanumb')."%')";
+      $sql .= " and UPPER(WAPRTS) = UPPER(".$this->input->post('WAPRTS').")";
+    }
+    if($this->input->post('WANUMB'))
+    {
+      $sql .= " and UPPER(wanumb) like UPPER('%".$this->input->post('WANUMB')."%')";
     }
     if($this->input->post('failure_desc'))
     {
       $sql .= " and UPPER(failure_desc) like UPPER('%".$this->input->post('failure_desc')."%')";
     }
-	
+    if($this->input->post('EQNO'))
+    {
+      $sql .= " and UPPER(EQNO) like UPPER('%".$this->input->post('EQNO')."%')";
+    }
+    if($this->input->post('EQDESC'))
+    {
+      $sql .= " and UPPER(EQDESC) like UPPER('%".$this->input->post('EQDESC')."%')";
+    }
+    if($this->input->post('ORIGINATOR'))
+    {
+      $sql .= " and UPPER(ORIGINATOR) like UPPER('%".$this->input->post('ORIGINATOR')."%')";
+    }
+
+    if(isset($_POST['order']) and $this->input->post('param') == 'wr')
+    {
+      $columns = [];
+      //var $column_order = array('id','bantuan_id','nama_alat','jumlah','terpasang','terpakai','kondisi','dimanfaatkan','foto_alat','titik_pemasangan','created_by','updated_by');
+$i=1;
+      foreach (cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result() as $wr_list_tracking) {
+        $columns[$i] = $wr_list_tracking->desc1;
+		$i++;
+      }
+      // $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+      $sql .= " order by ".$columns[$_POST['order']['0']['column']]." ".$_POST['order']['0']['dir'];
+
+    } 
+    else
+    {
+      /*$order = $this->order;
+      $this->db->order_by(key($order), $order[key($order)]);*/
+      $sql .= " order by wadoco asc";
+
+    }
+	/*
 	$q = "select * from m_user where id_user = ".$this->session->userdata('ID_USER');
 	$u = $this->dbm->query($q)->row();
 	if (isset($u->ROLES)) {
@@ -69,7 +116,7 @@ class M_wo_jde extends CI_Model {
 			$implode = implode(',',$users_id);
 			$sql .= " and ABAN8 in ($implode)";
 		}
-	}
+	}*/
     return $sql;
 
   }
@@ -77,7 +124,7 @@ class M_wo_jde extends CI_Model {
   {
     $sql = $this->_get_datatables_query();
     
-    $sql .= " order by wadoco asc";
+    // $sql .= " order by wadoco asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
@@ -88,12 +135,25 @@ class M_wo_jde extends CI_Model {
   }
   public function sql($value='')
   {
-	  $sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8
+	  $where = ' where 1=1 ';
+	  if($this->input->post('washno'))
+    {
+      // $where .= " and a.WASHNO is not null";
+      $where .= " and a.wadoco in (".$this->maintenance_task_list().")";
+    }
+	if($this->input->post('wasrst'))
+    {
+      $where .= " and a.wasrst = '".$this->input->post('wasrst')."'";
+    }
+	  $sql="select a.watyps as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC, f0101.ABALPH ORIGINATOR, ABAN8, f1201.FAASID as EQNO, f1201.FADL01 as EQDESC,'Under Consturction' as LABOR, a.WAHRSA as ACTHOUR,a.WAPRTS,(case when a.WASTRT > 0 then (to_date(concat(to_char(to_number(substr(a.WASTRT,1,3)+1900)),substr(a.WASTRT,4,3)),'YYYYDDD')) else null end) PLANNED_START_DATE,
+	  (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) as ACTFINISHDATE, 
+	  a.KBDS01 as ANALYSISDESC,'Under Consturction' as RESDESC, a.WAANSA as CREWID
 	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M')) a 
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
 	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
-	left join f0101 on f0101.ABAN8 = a.WAANO";
-    $sql = "select * from ($sql) x";
+  left join f0101 on f0101.ABAN8 = a.WAANO
+  left join f1201 on f1201.fanumb = a.WANUMB $where";
+    $sql = "select x.*,crew.ABALPH as CREWNAME from ($sql) x left join f0101 crew  on crew.ABAN8 = x.CREWID ";
     return $sql;  
   }
   public function dt_count_all()
@@ -198,18 +258,6 @@ class M_wo_jde extends CI_Model {
 	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";
 	  return $this->db->query($sql)->result();
   }
-  function wo_search()
-  {
-	  $query = $this->input->get('query');
-	  $sql = "select WADOCO, WADL01 from f4801 where UPPER(WADOCO)like UPPER('%$query%') fetch first 5 ROWS ONLY ";
-	  $r =  $this->db->query($sql)->result();
-	  $d = [];
-	  foreach($r as $v)
-	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADL01];
-	  }
-	  return $d;
-  }
   public function wr_no_jde($value='')
   {
     $sql = "select NNN001 from crpctl.F0002 where nnsy='48'";
@@ -217,5 +265,24 @@ class M_wo_jde extends CI_Model {
 	$q = "update crpctl.f0002 set nnn001=nnn001+1 where nnsy='48'";
 	$this->db->query($q);
     return $r->NNN001;
+  }
+  public function outstanding_wo_report()
+  {
+    $sql = $this->db->query("select * from {$this->wo_table} where WASRST = ?", ['70']);
+    return $sql;
+  }
+  public function maintenance_task_list($id_user='')
+  {
+    $user = user()->USERNAME;
+    
+    if($id_user)
+      $user = user($id_user)->USERNAME;
+
+    $columnDefault = "a.RATSKID, a.RADOCO, a.RADSC1, a.RADSC2, b.ABAN8, b.ABAN81, b.ABALPH";
+    $sql = "select a.RADOCO
+    from F48311 a 
+    left join F0101 b on a.RARSCN = b.ABAN81 
+    where b.ABAN8 = $user";
+    return $sql;
   }
 }

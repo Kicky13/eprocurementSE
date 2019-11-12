@@ -37,7 +37,12 @@
                             </div>
                           </div>
                           <?php 
-                            foreach ($thead as $key => $value) {
+							$thead2 = $thead;
+							if($param == 'repretitive')
+							{
+								unset($thead2['JML'],$thead2['LOCT'],$thead2['CIT'],$thead2['PARENTS'],$thead2['DSPARENTS'],$thead2['EQCLAS']);
+							}
+                            foreach ($thead2 as $key => $value) {
                           ?>
                           <div class="form-group row">
                             <label class="col-md-3"><?=$value?></label>
@@ -53,7 +58,7 @@
                           </div>
                           <?php } ?>
           						  <div class="form-group row">
-          							<button type='button' id='btn-filter' class='btn btn-primary'>Filter</button>
+          							<button type='button' id='btn-filter' class='btn btn-primary'>Search</button>
           						  </div>
                         </div>
                       </div>
@@ -112,11 +117,16 @@
 				'data': function ( data ) {
           data.FAASID = $('#filter_FAASID').val();
           data.FADL01 = $('#filter_FADL01').val();
-          data.LOCT = $('#filter_LOCT').val();
+          data.EQTYPE = $('#filter_EQTYPE').val();
+		  <?php if($param == 'repretitive'): ?>
+		  data.reprentitive = 1;
+		  <?php else:?>
+		  data.LOCT = $('#filter_LOCT').val();
           data.CIT = $('#filter_CIT').val();
           data.PARENTS = $('#filter_PARENTS').val();
           data.EQCLAS = $('#filter_EQCLAS').val();
-          data.EQTYPE = $('#filter_EQTYPE').val();
+		  <?php endif;?>
+		  //unset($thead2['JML'],$thead2['LOCT'],$thead2['CIT'],$thead2['CIT'],$thead2['PARENTS'],$thead2['DSPARENTS'],$thead2['EQCLAS']);
 		  var filterallowance = 0;
 		  if ($('#filter_ALLOWANCE').is(":checked"))
 			{

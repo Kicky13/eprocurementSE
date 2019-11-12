@@ -120,7 +120,7 @@ class Wr extends CI_Controller {
         if($value->desc1 == 'status')
         {
           //$x = "<a href='#' onclick=\"getCmmsLogHistory('".$rows->wr_no."')\">$x</a>";
-          $x = $rows->wr_no;
+          $x = @$rows->status;
         }
         $row[] = $x;
       }
@@ -203,6 +203,7 @@ class Wr extends CI_Controller {
         $data = $this->input->post();
         $data['photo'] = $file_name;
 		    $data['wr_no'] = $this->mod->wr_no_jde();
+        $data['parent_id'] = isset($data['parent_id']) ? 0 : $data['parent_id'];
         // $store = $this->wr->store($data);
         $send_wsdl = $this->send_wsdl($data);
 
@@ -666,6 +667,7 @@ class Wr extends CI_Controller {
     {
       $msg = '';
       // $send_wsdl = $this->send_wsdl_reject($data);
+      unset($data['parent_id_old']);
     	$update = $this->wr->reject($data);
       if($update)
       {

@@ -47,7 +47,7 @@ class Equipment extends CI_Controller {
 	$title = 'Equipment List - CMMS01';
 	if($param=='repretitive')
 	{
-		$title = 'Equipment Repretitive Failure';
+		$title = 'Equipment Repetitive Failure';
 		$data['thead']['JML'] = 'Total';
 	}
 	

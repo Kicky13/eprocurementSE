@@ -46,7 +46,7 @@ class Replenisment extends CI_Controller {
     $data['menu'] = $this->menu;
 	$data['thead'] = $this->settings('thead');
 	
-	$title = 'Replenisment';
+	$title = 'Recommended Purchase List';
 	
     $data['param'] = $param;
 	$data['title'] = $title;

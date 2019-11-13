@@ -203,9 +203,9 @@ class Wr extends CI_Controller {
         $data = $this->input->post();
         $data['photo'] = $file_name;
 		    $data['wr_no'] = $this->mod->wr_no_jde();
-        $data['parent_id'] = isset($data['parent_id']) ? 0 : $data['parent_id'];
+        //$data['parent_id'] = isset($data['parent_id']) ? 0 : $data['parent_id'];
         // $store = $this->wr->store($data);
-        $send_wsdl = $this->send_wsdl($data);
+        $send_wsdl = $this->send_wsdl($data, true);
 
         if($send_wsdl)
         {
@@ -661,6 +661,7 @@ class Wr extends CI_Controller {
     {
       unset($data['parent_id']);
     }
+    unset($data['photo_old']);
     // $update = $this->wr->reject($data);
     $send_wsdl = $this->send_wsdl_reject($data);
     if($send_wsdl)

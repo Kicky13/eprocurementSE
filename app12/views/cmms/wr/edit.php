@@ -230,7 +230,7 @@
         swal('Info','Requested Finish Date is Required','warning')
         return false
       }
-      swalConfirm('Approval & Update', 'Are you sure?', function() {
+      swalConfirm('Approval', 'Are you sure?', function() {
         var form = $("#frm-bled")[0];
         var data = new FormData(form);
         $.ajax({

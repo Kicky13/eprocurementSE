@@ -436,7 +436,7 @@ margin-top: 5px;
                               Please add at least an item
                             </div>-->
                             <div class="btn-group pull-right">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#msr-development-item-modal">Add New Item</button>
+                              <button onclick="clearWONumber()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#msr-development-item-modal">Add New Item</button>
                               <!--
                               <button type="button" class="btn btn-sm btn-secondary">Upload</button>
                               <button type="button" class="btn btn-sm btn-info">Download</button>
@@ -3306,6 +3306,10 @@ function submit_msr() {
 
 
 set_value('cost_center')
+
+function clearWONumber(){
+  $('.wo_no_select2').val(null).trigger('change');
+}
 </script>
 
 <?php /* vim: set fen foldmethod=indent ts=2 sw=2 tw=0 et autoindent :*/ ?>

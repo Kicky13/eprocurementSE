@@ -123,7 +123,7 @@
             <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
-            <input class="form-control" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
             <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
             <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
@@ -242,6 +242,9 @@
 	  placeholder: 'Search ',
 		minimumInputLength: 3,
 	});
+  <?php if($filter_FAASID): ?>
+  $("#myModal").modal('show')
+  <?php endif;?>
   });
   function getSelectedData(id)
   {

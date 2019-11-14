@@ -136,7 +136,7 @@ class Wr extends CI_Controller {
     echo json_encode($output);
   }
 
-  public function create($FAAAID='')
+  public function create($FAASID='')
   {
     if(!company_cmms())
     {
@@ -152,6 +152,7 @@ class Wr extends CI_Controller {
     $data['optWoType'] = $this->optWoType();
     $data['optPriority'] = $this->optPriority();
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    $data['filter_FAASID'] = $FAASID;
     $this->template->display($this->view .'/create', $data);
   }
   public function show($wr_no='')

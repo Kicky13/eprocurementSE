@@ -33,7 +33,7 @@
                <!--Optional:-->
             </originator>
             <!--Optional:-->
-            <?php if($parent_id): ?>
+            <?php if(isset($parent_id)): ?>
             <parentOrderNumber><?=$parent_id?></parentOrderNumber>
             <?php endif?>
             <!--Optional:-->

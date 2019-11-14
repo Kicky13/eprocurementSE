@@ -78,6 +78,7 @@
     </div>
   </div>
 </div>
+<?php $this->load->view('cmms/log_history_modal',['modal'=>true]);?>
 	<SCRIPT LANGUAGE='JavaScript'>
 	var table
 	$(document).ready(function() {

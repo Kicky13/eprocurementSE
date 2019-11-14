@@ -198,5 +198,27 @@ class Welcome extends CI_Controller {
         $return = $this->db->query($q)->row();
         print_r($return);
     }
+    public function testing_send_email_cmms($wr_no='19000048')
+    {
+        $this->load->model('cmms/M_work_request', 'mwr');
+        $email = $this->mwr->findSupervisor()->EMAIL;
+        if($this->mwr->sendEmail($email,$wr_no))
+        {
+            echo "Store";
+        }
+        else
+        {
+            echo "Fail";
+        }
+    }
+    public function test_attachment($value='')
+    {
+        $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\par') as aye from (
+        select UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(GDTXFT, 8000,1)) testing from f00165 where gdtxky like '%19000199%' and GDGTITNM = 'Text1')";
+        $this->db = $this->load->database('oracle', true);
+        $rs = $this->db->query($sql)->row();
+        $data['attachment'] = $rs->AYE;
+        $this->load->view('coba/V_attachment_jde',$data);
+    }
 }
 

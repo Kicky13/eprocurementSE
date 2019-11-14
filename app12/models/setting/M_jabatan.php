@@ -21,16 +21,16 @@ class M_jabatan extends MY_Model
         $user = $this->findByUser($user_id);
 
         // only works for user primary & secondary
-        if (!in_array($user->user_role, [2,3])) {
+        if (!in_array(@$user->user_role, [2,3])) {
             return [];
         }
-		if($user->user_role == t_jabatan_user_secondary)
+		if(@$user->user_role == t_jabatan_user_secondary)
         {
 			return $this->db->where('parent_id', $user->parent_id)->or_where('user_id', $user->parent_id)->get($this->table)->result();
         }
-        if($user->user_role == t_jabatan_user_primary)
+        if(@$user->user_role == t_jabatan_user_primary)
         {
-			return $this->db->where('user_id', $user_id)->or_where('parent_id', $user->id)->get($this->table)->result();
+			return $this->db->where('user_id', $user_id)->or_where('parent_id', @$user->id)->get($this->table)->result();
         }
         return [];
 

@@ -34,6 +34,7 @@ class Validatejde extends CI_Controller {
             $checkCC = $this->checkCostcenter($costcenter, $gmobj, $gmsub);
         }
 
+        $checkCC = $this->checkCostcenter($costcenter, @$gmobj, @$gmsub);
         $checkMaterial = $this->checkMaterial($material, $uom);
         $matchCheck = false;
 

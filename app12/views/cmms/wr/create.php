@@ -62,16 +62,17 @@
                           </div>
                           <div class="form-group">
                             <label>WR Description</label>
-                            <input class="form-control" id="wr_description" name="wr_description" maxlength="30">
+                            <input class="form-control toupper" id="wr_description" name="wr_description" maxlength="30">
                             <small>&nbsp;</small>
                           </div>
                           <div class="form-group">
                             <label>Failure Description</label>
-                            <input class="form-control" name="failure_desc" name="failure_desc" maxlength="80">
+                            <input class="form-control toupper" name="failure_desc" name="failure_desc" maxlength="80">
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
+							<span id="photo_preview"></span>
                           </div>
                           <div class="form-group">
                             <label>Requested Finish Date</label>
@@ -80,18 +81,19 @@
                           <div class="form-group">
                             <label>Parent WO</label>
                             <select class="form-control js-data-example-ajax" value="" id="parent_id" name="parent_id"></select>
+                            <small><a href="#" onclick="clearParentId()">Click Here to Clear</a></small>
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Hazard Identification & Risk Assesment</label>
-                            <input class="form-control" name="hazard" id="hazard" maxlength="100">
+                            <input class="form-control toupper" name="hazard" id="hazard" maxlength="100">
                           </div>
                         </div>
                         <div class="col-md-12">
                           <div class="form-group">
                             <label>Long Description</label>
-                            <textarea class="form-control" name="long_description" id="long_description" rows="3"></textarea>
+                            <textarea class="form-control toupper" name="long_description" id="long_description" rows="3"></textarea>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -110,7 +112,7 @@
   </div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-lg" role="document" style="max-width: 1024px">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="myModalLabel">Search Equipment - CMMS09</h4>
@@ -121,11 +123,11 @@
             <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
-            <input class="form-control" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
             <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
             <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
-            <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Filter</a>
+            <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Search</a>
           </div>
         </div>
         <div class="row">
@@ -138,7 +140,7 @@
                     <th>Equipment Description</th>
                     <th>Equipment Class</th>
                     <th>Equipment Type</th>
-                    <th>Select</th>
+                    <!-- <th>Select</th> -->
                   </tr>
                 </thead>
                 <tbody id="tbody-equipment-search">
@@ -240,6 +242,9 @@
 	  placeholder: 'Search ',
 		minimumInputLength: 3,
 	});
+  <?php if($filter_FAASID): ?>
+  $("#myModal").modal('show')
+  <?php endif;?>
   });
   function getSelectedData(id)
   {
@@ -342,4 +347,19 @@
       swal('Info','Please Select Equipment First','warning')
     }
   }
+  $(function() {
+	$("#photo").change(function(event){
+        var tmppath = URL.createObjectURL(event.target.files[0]);
+        previewFile('photo', tmppath);
+    })
+    function previewFile(param, tmppath) {
+        $("#"+param+"_preview").html("<a href='"+tmppath+"' target='_blank'>Preview Here</a>");
+    }
+    $('.toupper').change(function(){
+        this.value = this.value.toUpperCase();
+    });
+	});
+  function clearParentId() {
+      $('.js-data-example-ajax').val(null).trigger('change');
+    }
 </script>

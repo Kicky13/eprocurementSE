@@ -130,6 +130,7 @@
           data.EQDESC = $('#filter_EQDESC').val();
 		  <?php if($param == 'outstanding'):?>
           data.wasrst = '70';
+          data.wotype = $('#filter_wotype').val();
 		  <?php elseif($param == 'wr'):?>
           data.ORIGINATOR = $('#filter_ORIGINATOR').val();
           data.STATUS = $('#filter_STATUS').val();

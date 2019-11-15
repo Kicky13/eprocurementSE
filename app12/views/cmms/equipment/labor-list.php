@@ -1,20 +1,68 @@
+<?php if($labor_list['estimate']->num_rows() > 0): ?>
 <table class="table">
 	<thead>
+		<tr bgcolor="#ccceee">
+			<th colspan="3">ESTIMATE</th>
+		</tr>
 		<tr>
-			<th>NAME</th>
 			<th>DEPARTMENT</th>
-			<th>ACTUAL LABOR HOUR</th>
+			<th>MANHOUR</th>
+			<th>MAN POWER</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php
-			foreach ($labor_list as $r) {
-				$LABOR_HOUR = $r->LABOR_HOUR;
-				$laba = substr($LABOR_HOUR, 0, 2);
-				$labb = substr($LABOR_HOUR, 2, 2);
-				$labor = $laba.'.'.$labb;
-				echo "<tr><td>$r->EMPLOYEE_NAME</td><td>$r->DEPARTMENT</td><td>$labor</td></tr>";
+			foreach ($labor_list['estimate']->result() as $r) {
+				$department = $r->DEPARTMENT;
+				$manhour = $r->MANHOUR;
+				$manpower = $r->MANPOWER;
+				echo "<tr><td>$department</td><td>$manhour</td><td>$manpower</td></tr>";
 			}
 		?>
 	</tbody>
 </table>
+<?php endif;?>
+<?php if($labor_list['assignment']->num_rows() > 0): ?>
+<table class="table">
+	<thead>
+		<tr bgcolor="#ccceee">
+			<th colspan="3">ASSIGNMENT</th>
+		</tr>
+		<tr>
+			<th>DEPARTMENT</th>
+			<th>RESOURCE</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php
+			foreach ($labor_list['assignment']->result() as $r) {
+				$department = $r->WLDSC1;
+				$resource = $r->ABALPH;
+				echo "<tr><td>$department</td><td>$resource</td></tr>";
+			}
+		?>
+	</tbody>
+</table>
+<?php endif;?>
+<?php if($labor_list['actual']->num_rows() > 0): ?>
+<table class="table">
+	<thead>
+		<tr bgcolor="#ccceee">
+			<th colspan="2">ACTUAL</th>
+		</tr>
+		<tr>
+			<th>NAME</th>
+			<th>ACT HOUR</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php
+			foreach ($labor_list['actual']->result() as $r) {
+				$name = $r->NAME;
+				$acthour = $r->ACTHOURS;
+				echo "<tr><td>$name</td><td>$acthour</td></tr>";
+			}
+		?>
+	</tbody>
+</table>
+<?php endif;?>

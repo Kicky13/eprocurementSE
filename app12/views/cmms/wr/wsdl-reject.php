@@ -13,10 +13,10 @@
          <assetNumber>*<?= $fanumb ?></assetNumber>
          <!--Optional:-->
          <classification>
-            <!--Optional:-->
             <categoryCodes>
-               <!--Optional:-->
-               <categoryCode003>RPR</categoryCode003>
+               <categoryCode002>.</categoryCode002>             
+               <categoryCode003>.</categoryCode003>
+               <phase>.</phase>
             </categoryCodes>
          </classification>
          <description><?= trim($wr_description) ?></description>
@@ -33,7 +33,9 @@
                <!--Optional:-->
             </originator>
             <!--Optional:-->
-          <!--  <parentOrderNumber>?</parentOrderNumber> -->
+            <?php if($parent_id): ?>
+            <parentOrderNumber><?=$parent_id?></parentOrderNumber>
+            <?php endif?>
             <!--Optional:-->
             <plannedFinishDate></plannedFinishDate>            
             <!--Optional:-->
@@ -42,7 +44,7 @@
             <priority><?= $priority ?></priority>
             <!--Optional:-->
            <status>91</status>
-            <statusComment><?= $hazard ?></statusComment>
+            <statusComment></statusComment>
          </planning>        
          <processing>
             <!--Optional:-->

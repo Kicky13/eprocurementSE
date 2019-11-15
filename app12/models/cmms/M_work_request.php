@@ -11,6 +11,7 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
   public function __construct() {
     parent::__construct();
     $this->dbo = $this->load->database('oracle', true);
+    $this->db_dev_user = $this->load->database('dev_user', true);
     $user = user();
     $this->user = $user;
     if (isset($user->ROLES)) {
@@ -88,9 +89,25 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
       }
       if(in_array(supervior_cmms, $this->roles))
       {
-        $q = "select id from t_jabatan where user_id = ".$this->session->userdata('ID_USER');
-        $q = "select user_id from t_jabatan where parent_id = ($q) ";
+        $cekDoa = "select creator_id from cmms_doa where assign_id = ".$this->session->userdata('ID_USER')." and (now() between start_date and end_date) ";
+        $qdoa = $this->db->query($cekDoa);
+        $qid = $this->session->userdata('ID_USER');
+        if($qdoa->num_rows() > 0)
+        {
+          $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+        }
+
+        $q = "select id from cmms_position where user_id in ($qid) ";
+        $q = "select user_id from cmms_position where parent_id in ($q) ";
+        $sqlCheckAdd = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
+
         $sql .= " and cmms_wr.created_by in ($q) and cmms_wr.status = '01'";
+
+        $rsCheckAdd = $this->db->query($sqlCheckAdd);
+        if($rsCheckAdd->num_rows() > 0)
+        {
+          $sql .= $this->addSqlJdeWo($rsCheckAdd);
+        }
       }
     }
     return $sql;
@@ -138,6 +155,11 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
 
     $wr_no = $this->find($this->db->insert_id())->wr_no;
     // $this->generate_approval($wr_no);
+    $findSupervisor = $this->findSupervisor();
+    if($findSupervisor)
+    {
+      $this->sendEmail($findSupervisor->EMAIL, $data);
+    }
 
     if($this->db->trans_status() === true)
     {
@@ -182,6 +204,15 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
   {
     $this->db->trans_begin();
     //unset($data['status'],$data['id'],$data['description']);
+    if(@$data['parent_id_old'])
+    {
+      @$data['parent_id'] = null;
+    }
+    if(@$data['photo_old'])
+    {
+      @$data['photo'] = null;
+    }
+    unset($data['parent_id_old'],$data['photo_old']);
     $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
     //$this->approve($this->input->post());
     if($this->db->trans_status() === true)
@@ -241,12 +272,12 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
   public function update_long_desc_jde($data='')
   {
     $this->dbo->trans_begin();
-    $sets = "gdtxft = utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl deskripsi_line}'";
+    $sets = "gdtxft = utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_line}')";
     $long_description = cmms_long_desc_extract($data['long_description']);
     $hazard = " HAZARD:".$data['hazard']."\par";
-    $long_desc_values .= $hazard;
+    $long_description .= $hazard;
     $sets = str_replace('deskripsi_line', $long_description, $sets);
-    $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' ";
+    $query = "update {$this->long_desc_table} set $sets where gdtxky = '".$data['wr_no']."' and gdobnm = 'GT4801A' and gdgtitnm = 'Text1' ";
     $this->dbo->query($query);
     if($this->dbo->trans_status() === true)
     {
@@ -258,5 +289,126 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
       $this->dbo->trans_rollback();
       return false;
     }
+  }
+  public function findSupervisor()
+  {
+    $q = "SELECT EMAIL from m_user where m_user.ID_USER = (select user_id from cmms_position where id = (select parent_id from cmms_position where user_id = ".$this->session->userdata('ID_USER')."))";
+    return $this->db->query($q)->row();
+  }
+  public function sendEmail($email='',$data='')
+  {
+    $wr = $this->db->where('CATEGORY','wr_supervisor_approval')->get('cmms_email_notification_setting')->row();
+    if($wr)
+    {
+      if(is_array($data))
+      {
+
+      }
+      else
+      {
+        $data = $this->db->where('wr_no',$data)->get('cmms_wr')->row_array();
+      }
+      if($data)
+      {
+        $userCreated = user()->NAME;
+        $createdAt = dateToIndo($data['created_at'], false, true);
+        $wr_priority = wr_priority($data['priority']);
+        $wrtype = $this->db->where('id',$data['wo_type_id'])->get('cmms_wo_type')->row();
+        $open = $wr->OPEN_VALUE;
+        $close = $wr->CLOSE_VALUE;
+        $title = $wr->TITLE;
+        $open = str_replace('__wrno__', $data['wr_no'], $open);
+        $open = str_replace('__wrdesc__', $data['wr_description'], $open);
+        $open = str_replace('__wrtype__', $wrtype->notation, $open);
+        $open = str_replace('__requestfinishdate__', dateToIndo($data['req_finish_date']), $open);
+        $open = str_replace('__createdby__', $userCreated, $open);
+        $open = str_replace('__createdat__', $createdAt, $open);
+        $open = str_replace('__wrpriority__', $wr_priority, $open);
+        $content['open'] = $open;
+        $content['close'] = $close;
+        $content['title'] = $title;
+        $ctn = '<br>' . $content['open'] . '
+                <br>
+                ' . $content['close'] . '
+                <br>';
+        $data_email['recipient'] = $email;
+        $data_email['subject'] = $content['title'];
+        $data_email['content'] = $ctn;
+        $data_email['ismailed'] = 0;
+        $this->db_dev_user->trans_begin();
+        $this->db_dev_user->insert('i_notification', $data_email);
+        if ($this->db_dev_user->trans_status() === true) {
+          $this->db_dev_user->trans_commit();
+          return true;
+        } else {
+          $this->db_dev_user->trans_rollback();
+          return false;
+        }
+      }
+      else
+      {
+        echo "<pre>";
+        echo $this->db_dev_user->last_query();
+        print_r($data);
+      }
+    }
+    else
+    {
+      return false;
+    }
+  }
+  public function suprevisor_task()
+  {
+    $cekDoa = "select creator_id from cmms_doa where assign_id = ".$this->session->userdata('ID_USER')." and (now() between start_date and end_date) ";
+    $qdoa = $this->db->query($cekDoa);
+    $qid = $this->session->userdata('ID_USER');
+    if($qdoa->num_rows() > 0)
+    {
+      $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+    }
+    $q = "select id from cmms_position where user_id in ($qid)";
+    $q = "select user_id from cmms_position where parent_id in ($q) ";
+    $sql = "select * from cmms_wr where status = '01' and cmms_wr.created_by in ($q)";
+    $rs = $this->db->query($sql);
+    if($rs->num_rows() > 0)
+    {
+      $sql .= $this->addSqlJdeWo($rs);
+      $rs = $this->db->query($sql);      
+    }
+    return $rs;
+  }
+  public function addSqlJdeWo($rs)
+  {
+    $userId = [];
+    foreach ($rs->result() as $r) {
+      $userId[] = $r->created_by;
+    }
+    $impl = implode(',', $userId);
+    $sqlGetUserNamePortal = "select USERNAME from m_user where ID_USER in ($impl)";
+    $rsUserNamePortal = $this->db->query($sqlGetUserNamePortal);
+    if($rsUserNamePortal->num_rows() > 0)
+    {
+      $userName = [];
+      foreach ($rsUserNamePortal->result() as $rUserNamePortal) {
+        $userName[] = "'".$rUserNamePortal->USERNAME."'";
+      }
+      $impl = implode(',', $userName);
+      $sqlGetAvaJdeWo = "select WADOCO from f4801 where watyps not in ('M') and WASRST = '01' and WAANO in ($impl)";
+      $rsAvaJdeWo = $this->dbo->query($sqlGetAvaJdeWo);
+      if($rsAvaJdeWo->num_rows() > 0)
+      {
+        $woNoJde = [];
+        foreach ($rsAvaJdeWo->result() as $rAvaJdeWo) {
+          $woNoJde[] = "'".$rAvaJdeWo->WADOCO."'";
+        }
+        $impl = implode(',', $woNoJde);
+        $sql = " and cmms_wr.wr_no in ($impl) ";
+      }
+      else
+      {
+        $sql = " and cmms_wr.wr_no = 'mrt' ";
+      }
+    }
+    return $sql;
   }
 }

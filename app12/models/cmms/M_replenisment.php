@@ -1,129 +1,84 @@
 <?php if (!defined('BASEPATH')) exit('Anda tidak masuk dengan benar');
 
-class M_equipment extends CI_Model {
+class M_replenisment extends CI_Model {
 
   public function __construct() {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
-    $this->dbm = $this->load->database('default', true);
+    /* [RPLITM] => 14.10.005.002.1          
+      [RPMCU] =>    10101WH02
+      [RPUORG] => 30
+      [RPEV01] => 1
+      [RPEV02] => 1
+      [RPTRDJ] => 119283
+      [RPTDAY] => 93938
+      [RPUSER] => SCM       
+      [RPUSER] => PC
+      [RPDOCO] => 0
+      [RPTRQT] => 0
+      [RPDRQJ] => 0
+      [RPDPL] => 0*/
   }
   public function _get_datatables_query($value='')
   {
     $sql = $this->sql();
     $sql .= " where 1=1  ";
-    if($this->input->post('ALLOWANCE') == 2)
+    
+    if($this->input->post('RPLITM') == 1)
     {
-      $sql .= " and FAWOYN =  '0'";
+      $sql .= " and RPLITM =  '".$this->input->post('RPLITM')."'";
     }
-    if($this->input->post('ALLOWANCE') == 1)
+    if($this->input->post('RPMCU'))
     {
-      $sql .= " and FAWOYN =  '".$this->input->post('ALLOWANCE')."'";
+      $sql .= " and UPPER(TRIM(RPMCU)) = UPPER('".$this->input->post('RPMCU')."')";
     }
-    if($this->input->post('FAASID'))
+    if($this->input->post('RPUORG'))
     {
-      $sql .= " and UPPER(FAASID) = UPPER('".$this->input->post('FAASID')."')";
+      $sql .= " and UPPER(RPUORG) like UPPER('%".$this->input->post('RPUORG')."%')";
     }
-    if($this->input->post('FADL01'))
+    if($this->input->post('RPEV01'))
     {
-      $sql .= " and UPPER(FADL01) like UPPER('%".$this->input->post('FADL01')."%')";
+      $sql .= " and UPPER(RPEV01) like UPPER('%".$this->input->post('RPEV01')."%')";
     }
-    if($this->input->post('LOCT'))
+    if($this->input->post('RPEV02'))
     {
-      $sql .= " and UPPER(LOCT) like UPPER('%".$this->input->post('LOCT')."%')";
+      $sql .= " and UPPER(RPEV02) like UPPER('%".$this->input->post('RPEV02')."%')";
     }
-    if($this->input->post('CIT'))
+    if($this->input->post('RPTRDJ'))
     {
-      $sql .= " and UPPER(CIT) like UPPER('%".$this->input->post('CIT')."%')";
+      $sql .= " and UPPER(RPTRDJ) like UPPER('%".$this->input->post('RPTRDJ')."%')";
     }
-    $addParents = '';
-    if($this->input->post('PARENTS'))
+    if($this->input->post('RPTDAY'))
     {
-      // $sql .= " and PARENTS like '%".$this->input->post('PARENTS')."%'";
-    	$findFANUMB = $this->db->query("select FAAAID,FANUMB from F1201 where TRIM(UPPER(FAASID)) = UPPER('".$this->input->post('PARENTS')."')")->row();
-    	if($findFANUMB)
-    	{
-			if($findFANUMB->FAAAID == $findFANUMB->FANUMB)
-			{
-				
-			}
-			else
-			{
-				$fanumb = $findFANUMB->FANUMB;
-				/*SELECT ID,EMPLOYEE_NAME,MANAGER_ID FROM "EMPLOYEE_TEST" START WITH ID = 101 CONNECT BY PRIOR ID = MANAGER_ID */
-				$addParents = " START WITH FANUMB = $fanumb CONNECT BY PRIOR FANUMB = FAAAID ";
-			}
-    	}
-      else
-      {
-        $addParents = " START WITH FANUMB = 123 CONNECT BY PRIOR FANUMB = FAAAID ";
-      }
-    	/*get FANUMB*/
+      $sql .= " and UPPER(RPTDAY) like UPPER('%".$this->input->post('RPTDAY')."%')";
     }
-    if($this->input->post('DSPARENTS'))
-    {
-      $sql .= " and UPPER(DSPARENTS) like UPPER('%".$this->input->post('DSPARENTS')."%')";
-    }
-    if($this->input->post('EQCLAS'))
-    {
-      $sql .= " and UPPER(EQCLAS) like UPPER('%".$this->input->post('EQCLAS')."%')";
-    }
-    if($this->input->post('EQTYPE'))
-    {
-      $sql .= " and UPPER(EQTYPE) like UPPER('%".$this->input->post('EQTYPE')."%')";
-    }
-    $sql .= $addParents;
+
+    // $sql .= $addParents;
     return $sql;
 
   }
   public function dt_get_datatables()
   {
     $sql = $this->_get_datatables_query();
-    /*'FAASID' => 'Equipment Number',
-      'FADL01' => 'Equipment Description',
-      'LOCT' => 'Location',
-      'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
-      'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',*/
     
-    
-    $sql .= " order by faaaid asc";
+    $sql .= " order by RPLITM asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
     }
-	//echo $sql;
     $query = $this->db->query($sql);
     return $query->result();
   }
   public function sql($value='')
   {
-	  $addSql='';
-	  $addColumn='';
 	  
-	if($this->input->post('reprentitive'))
-	{
-		$reprentitive = $this->reprentitive();
-		$addSql = $reprentitive['join'];
-		$addColumn = ", ".$reprentitive['column_db'];
-	}
-    $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb, concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01, faasid, (select faasid from f1201 where fanumb=a.faaaid ) parents, 
-        (select concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01 from f1201 where fanumb=a.faaaid ) dsparents, 
-        nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PA' and trim(drky)=trim(b.wrprodf) ),' ') as eqtype,
-        nvl((select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='17' and drrt='PM' and trim(drky)=trim(b.wrPRODM) ),' ') as eqclas,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C3' and trim(drky)=trim(a.faacl3) ) as manuf,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C4' and trim(drky)=trim(a.faacl4) ) as years,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C1' and trim(drky)=trim(a.faacl1) ) as mjacclass,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C2' and trim(drky)=trim(a.faacl2) ) as majorequiclass,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(a.faacl6) ) as loct,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C7' and trim(drky)=trim(a.faacl7) ) as cit,
-        (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages $addColumn
-        from f1201 a 
-		inner join f1217 b on a.fanumb=b.wrnumb 
-		$addSql
-		) x";
+    $sql = "select * from (select RPMCU, RPUNCS, RPLITM, RPPQOH, RPUORG, RPDOCO, RPEV01, RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1 and RPUORG > 0) x";
     return $sql;  
+  }
+  public function detail($id)
+  {
+    $sql = "select RPMCU, RPLITM, RPUNCS, RPUORG, RPDOCO, RPEV01, RPPQOH, RPTRQT, (case when RPDRQJ > 0 then (to_date(concat(to_char(to_number(substr(RPDRQJ,1,3)+1900)),substr(RPDRQJ,4,3)),'YYYYDDD')) else null end) RPDRQJ, (case when RPDPL > 0 then (to_date(concat(to_char(to_number(substr(RPDPL,1,3)+1900)),substr(RPDPL,4,3)),'YYYYDDD')) else null end) RPDPL from F5743702 where RPEV01 = 1 and RPUORG = 0 and RPLITM = '$id'";
+    return $this->db->query($sql);
   }
   public function dt_count_all()
   {
@@ -134,23 +89,17 @@ class M_equipment extends CI_Model {
     $sql = $this->_get_datatables_query();
     return $this->db->query($sql)->num_rows();
   }
-  public function find($fanumb='')
+  public function find($item_number='')
   {
     $sql = $this->sql();
-    $sql .= " where fanumb = $fanumb";
+    $sql .= " where RPLITM = '$item_number'";
     $rs = $this->db->query($sql)->row();
     return $rs;
   }
   public function pm1($id='')
   {
-    /*$sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) next_due_date from f1207 a inner join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts = '01' where fwnumb = $id";
-    return $this->db->query($sql)->result();*/
-    $sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (case when fwtdt > 0 then (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) else null end) next_due_date from f1207 a left join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts in ('01','50') where fwnumb = $id order by a.fwmsts desc";
-    $rs = [];
-    foreach ($this->db->query($sql)->result() as $r) {
-      $rs[@$r->WO_NUMBER] = $r;
-    }
-    return $rs;
+    $sql = "select fwdoco wo_number, wadl01 wo_desc,fwtdt, b.washno as taskinstruction, (to_date(concat(to_char(to_number(substr(fwtdt,1,3)+1900)),substr(fwtdt,4,3)),'YYYYDDD')) next_due_date from f1207 a inner join f4801 b on a.fwdoco = b.wadoco and b.watyps = 'M' and a.fwmsts = '01' where fwnumb = $id";
+    return $this->db->query($sql)->result();
   }
   public function pm2($id='')
   {
@@ -187,14 +136,10 @@ class M_equipment extends CI_Model {
     (case when WADRQJ > 0 then (to_date(concat(to_char(to_number(substr(WADRQJ,1,3)+1900)),substr(WADRQJ,4,3)),'YYYYDDD')) else null end) PLANNED_FINISH_DATE,
     (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) ACTUAL_FINISH_DATE";
 
-    $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,FAASID as EQ_NO, concat(FADL01,FADL02) eq_desc,
-    (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(equipment.faacl6) ) as loct,
+    $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,
     concat(trim(drky),concat(' - ',drdl01)) as status
-    from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a 
-    left outer join f4801t b on a.wadoco=b.wadoco 
-    inner join f40039 c on a.wadcto = c.dtdct 
+    from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
     inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'
-    LEFT JOIN f1201 equipment on equipment.FANUMB = a.WANUMB
 	left join f0101 on f0101.ABAN8 = a.WAANO
 	";
     return $this->db->query($sql)->row();
@@ -243,19 +188,6 @@ class M_equipment extends CI_Model {
 	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";
 	  return $this->db->query($sql)->result();
   }
-  function wo_search()
-  {
-	  $query = $this->input->get('search');
-	  $sql = "select WADOCO, WADL01, FAASID from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO)like UPPER('%$query%') fetch first 9 ROWS ONLY ";
-	  $r =  $this->db->query($sql)->result();
-	  
-	  $d = [];
-	  foreach($r as $v)
-	  {
-		 $d[] = ['id'=>$v->WADOCO, 'text'=>$v->WADOCO.' - '.$v->WADL01, 'equipment'=>$v->FAASID];
-	  }
-	  return $d;
-  }
   public function wr_no_jde($value='')
   {
     $sql = "select NNN001 from crpctl.F0002 where nnsy='48'";
@@ -273,7 +205,7 @@ class M_equipment extends CI_Model {
   }
   public function attachment_jde($wo_no='')
   {
-    $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\par') as aye from (
+    $sql = "select replace(replace(testing,'{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057'),'\x') as aye from (
     select UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(GDTXFT, 8000,1)) testing from f00165 where gdtxky like '%$wo_no%' and GDGTITNM = 'Text1')";
     $rs = $this->db->query($sql);
     if($rs->num_rows() > 0)
@@ -298,16 +230,10 @@ class M_equipment extends CI_Model {
   {
     $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
     $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
-    $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,c.WLDSC1
-    from F48311 a 
-    left join F0101 b on a.RARSCN = b.ABAN8 
-    left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
-    where a.RADOCO = '$wono'";
 
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);
-    $assignment = $this->db->query($assignment);
-    return ['estimate'=>$estimate, 'actual'=>$actual, 'assignment'=>$assignment];
+    return ['estimate'=>$estimate, 'actual'=>$actual];
   }
   public function new_pm($value='')
   {
@@ -325,17 +251,12 @@ class M_equipment extends CI_Model {
   }
   public function get_po_no($wo_no='')
   {
-    $sql = "SELECT b.po_no, v.NAMA vendor_name FROM `t_msr_item` a 
-    join t_purchase_order b on a.msr_no = b.msr_no 
-    join m_vendor v on b.id_vendor = v.ID
-    WHERE wo_no = '$wo_no'";
-    $r = $this->dbm->query($sql)->row();
-    return @$r;
+    $sql = "SELECT b.po_no FROM `t_msr` a join t_purchase_order b on a.msr_no = b.msr_no WHERE wo_no = '$wo_no'";
+    $r = $this->db->query($sql)->row();
+    return @$r->po_no;
   }
-  public function find_wo_bssv($wo_no='')
+  public function update($value='')
   {
-    $sql = "select WADOCO, WADL01, FAASID,FANUMB from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO) = UPPER('$wo_no')";
-    $result = $this->db->query($sql)->row();
-    return $result;   
+    $this->db->query("update F5743702 set RPEV01 = 2 where RPEV01 = 1 and RPUORG > 0 and RPLITM = '$value'");
   }
 }

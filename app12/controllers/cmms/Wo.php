@@ -105,7 +105,7 @@ class Wo extends CI_Controller {
       $row[] = @wr_priority($priority);
       $row[] = $eqNo;
       $row[] = $eqDesc;
-      $row[] = $status;
+      $row[] = strtoupper($status);
       $row[] = $plannedStartDate;
       $row[] = $failure_desc;
       $row[] = $originator;

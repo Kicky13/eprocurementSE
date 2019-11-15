@@ -122,6 +122,7 @@
                                             <label class="col-md-5">Latest Value<br><small class="text-primary">(Original value plus previous amendment)</small></label>
                                             <div class="col-md-7">
                                                 <?= $po->currency ?> <span id="header-latest-value"><?= numIndo($arf->amount_po) ?></span>
+                                                <input type="hidden" id="header-latest-value-origin" value="<?= $arf->amount_po_arf ?>">
                                                 <!-- <?= $po->currency ?> <?= ($arf->status == 'submitted') ? numIndo($arf->amount_po_arf) : numIndo($po->latest_value) ?> -->
                                                 <input type="hidden" id="po_latest_value" value="<?= ($arf->status == 'submitted') ? $arf->amount_po : $arf->amount_po ?>">
                                             </div>
@@ -598,21 +599,24 @@
               var r = eval("("+e+")");
               if(r.status)
               {
-                var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
+                // var n = toFloat($("#po_latest_value").val()) - toFloat(r.spending_value);
+                  var n = toFloat($("#header-latest-value-origin").val()) - toFloat(r.spending_value);
                 $('#po_spending_value').html(Localization.number(r.spending_value));
                 $('#po_remaining_value').html(Localization.number(n));
               }
               else
               {
                 $('#po_spending_value').html(Localization.number(0));
-                var n = toFloat($("#po_latest_value").val());
+                // var n = toFloat($("#po_latest_value").val());
+                var n = toFloat($("#header-latest-value-origin").val());
                 $("#po_remaining_value").html(Localization.number(n));
                 swal('Fail','Cant Get Spending Value','warning')
               }
             },
             error:function(){
               $('#po_spending_value').html(Localization.number(0));
-              var n = toFloat($("#po_latest_value").val());
+              // var n = toFloat($("#po_latest_value").val());
+              var n = toFloat($("#header-latest-value-origin").val());
               $("#po_remaining_value").html(Localization.number(n));
               swal('Fail','Cant Get Spending Value','warning')
             }
@@ -646,8 +650,13 @@
                 }
                 var estimated_val = '<?= $arf->estimated_value ?>';
                 var total_summary = toFloat(estimated_val) + finalTotal;
-                $("#total-summary").text(Localization.number(total_summary))
-                $("#header-latest-value").text(Localization.number(finalTotal));
+                $("#total-summary").text(Localization.number(total_summary));
+                if (toFloat($('#header-latest-value-origin').val()) !== 0) {
+                    $('#header-latest-value').text('<?= numIndo($arf->amount_po_arf) ?>');
+                } else {
+                    $("#header-latest-value").text(Localization.number(finalTotal));
+                }
+                // $("#header-latest-value").text(Localization.number(finalTotal));
                 $("#po_latest_value").val(finalTotal);
                 get_spending_value("<?= $arf->po_no ?>");
               }

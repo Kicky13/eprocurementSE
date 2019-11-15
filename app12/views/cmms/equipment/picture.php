@@ -1,5 +1,5 @@
 <div class="col-md-12">
-<div class="form-group row">
+<div class="form-group row hidden">
 	<label class="col-md-2">Picture</label>
 	<div class="col-md-3">
 		

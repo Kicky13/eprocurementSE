@@ -384,21 +384,7 @@ class Wr extends CI_Controller {
   }
   public function optPriority($row=0)
   {
-    $list = 
-    [
-      1 => 'Urgent',
-      2 => 'Immediate',
-      3 => 'Within 3 - 7 Days',
-      4 => 'Requirment Shutdown Work',
-      /*5 => 'Preventive Maintenance',*/
-      6 => 'Outage Work',
-    ];
-    $s = "<select name='priority' id='priority' class='form-control'>";
-    foreach ($list as $key => $value) {
-      $selected = $row == $key ? "selected=''":"";
-      $s .= "<option $selected value='$key'>$value</option>";
-    }
-    $s .= "</select>";
+    $s = optPriority('priority', $row);
     return $s;
   }
   public function settings($value='')

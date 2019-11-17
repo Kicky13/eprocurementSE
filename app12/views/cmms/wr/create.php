@@ -123,9 +123,9 @@
             <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
-            <input class="form-control" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
-            <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
-            <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
+            <input class="form-control toupper" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control toupper" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
+            <input class="form-control toupper" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
             <?= $optEqType ?>
             <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Search</a>
           </div>
@@ -303,6 +303,12 @@
       if(!req_finish_date)
       {
         swal('Info','Requested Finish Date is Required','warning')
+        return false
+      }
+      var wr_description = $("#wr_description").val()
+      if(!wr_description)
+      {
+        swal('Info','WR Description is Required','warning')
         return false
       }
 

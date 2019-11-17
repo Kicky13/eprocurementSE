@@ -36,6 +36,9 @@
               </div>
             </div>
           </div>
+          <div class="col-12">
+            <a href="<?= base_url('cmms/equipment') ?>" class="btn btn-info">Back</a>
+          </div>
         </div>
         <div class="row hidden">
           <div class="col-md-12">

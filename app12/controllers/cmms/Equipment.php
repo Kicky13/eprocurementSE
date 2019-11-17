@@ -32,10 +32,11 @@ class Equipment extends CI_Controller {
       'FADL01' => 'Equipment Description',
       'LOCT' => 'Location',
       'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
+      'PARENTS' => 'Parent Equipment Number',
       'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',
+      'EQTYPE' => 'Equipment Class',
+      'EQCLAS' => 'Equipment Type',
+      
     ];
     $data['thead'] = $head;
     return $data[$value];
@@ -211,7 +212,7 @@ class Equipment extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>ALL TYPE</option>";
+        $opt .= "<option value=''>ALL</option>";
       }
       else
       {

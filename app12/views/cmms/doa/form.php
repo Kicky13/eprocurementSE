@@ -172,7 +172,7 @@
   function resetClick() {
     if(confirm('Are you sure?'))
     {
-      var id = <?= @$row->id ?>;
+      var id = '<?= @$row->id ?>';
       var url = "<?=base_url('cmms/doa/delete');?>/"+id;
       $.ajax({
         url:url,

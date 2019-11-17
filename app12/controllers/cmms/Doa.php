@@ -83,7 +83,7 @@ class Doa extends CI_Controller {
     if($delete)
     {
 
-      echo json_encode(['status'=>true, 'msg'=>'Updated']);
+      echo json_encode(['status'=>true, 'msg'=>'Reset']);
     }
     else
     {

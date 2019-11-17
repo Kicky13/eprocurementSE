@@ -67,6 +67,11 @@
                         </div>
                         <div class="col-md-12">
                           <button class="btn btn-primary" type="button" onclick="submitClick()">Submit</button>
+                          <?php if($row): ?>
+                              <?php if(strtotime(date("Y-m-d")) < strtotime($row->end_date)): ?>
+                                <a href="#" class="btn btn-danger" oncancel="resetClick()">Reset</a>
+                              <?php endif;?>
+                          <?php endif;?>
                         </div>
                       </div>
                     </fieldset>
@@ -162,6 +167,40 @@
     else
     {
       return false;
+    }
+  }
+  function resetClick() {
+    if(confirm('Are you sure?'))
+    {
+      var id = <?= @$row->id ?>;
+      var url = "<?=base_url('cmms/doa/delete');?>/"+id;
+      $.ajax({
+        url:url,
+        type:'post',
+        beforeSend:function(){
+          start($('#icon-tabs'));
+        },
+        success: function (e) {
+          var r = eval("("+e+")");
+          if(r.status){
+            swal({ 
+              title: "Success",
+              text: r.msg,
+              type: "success",
+              },
+              function(){
+                location = "<?= base_url('cmms/doa') ?>";
+            });
+          }else{
+            swal('<?= __('warning') ?>',r.msg,'warning')
+          }
+          stop($('#icon-tabs'));
+        },
+        error: function (e) {
+          swal('<?= __('warning') ?>','Something went wrong!','warning')
+          stop($('#icon-tabs'));
+        }
+      })
     }
   }
 </script>

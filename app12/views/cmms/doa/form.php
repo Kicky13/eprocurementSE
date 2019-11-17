@@ -69,7 +69,7 @@
                           <button class="btn btn-primary" type="button" onclick="submitClick()">Submit</button>
                           <?php if($row): ?>
                               <?php if(strtotime(date("Y-m-d")) < strtotime($row->end_date)): ?>
-                                <a href="#" class="btn btn-danger" oncancel="resetClick()">Reset</a>
+                                <a href="#" class="btn btn-danger" onclick="resetClick()">Reset</a>
                               <?php endif;?>
                           <?php endif;?>
                         </div>

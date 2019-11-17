@@ -194,7 +194,7 @@ class Equipment extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->CRITICALLY == ' - .')
       {
-        $opt .= "<option value=''>ALL</option>";
+        $opt .= "<option value=''>--All--</option>";
       }
       else
       {
@@ -212,7 +212,7 @@ class Equipment extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>ALL</option>";
+        $opt .= "<option value=''>--All--</option>";
       }
       else
       {

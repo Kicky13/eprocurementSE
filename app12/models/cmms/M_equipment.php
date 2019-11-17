@@ -173,7 +173,7 @@ class M_equipment extends CI_Model {
     /*$sql = "select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status
     from (select * from f4801 where  watyps not in ('M')  and wanumb='$id' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
     inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";*/
-	$sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC
+	$sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,upper(concat(trim(drky),concat(' - ',drdl01))) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC
 	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M') and f4801.wanumb='$id') a 
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
 	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
@@ -189,7 +189,7 @@ class M_equipment extends CI_Model {
 
     $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,FAASID as EQ_NO, concat(FADL01,FADL02) eq_desc,
     (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(equipment.faacl6) ) as loct,
-    concat(trim(drky),concat(' - ',drdl01)) as status
+    upper(concat(trim(drky),concat(' - ',drdl01))) as status
     from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a 
     left outer join f4801t b on a.wadoco=b.wadoco 
     inner join f40039 c on a.wadcto = c.dtdct 

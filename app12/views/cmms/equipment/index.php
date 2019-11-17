@@ -52,7 +52,7 @@
                               <?php elseif($key == 'EQTYPE'):?>
                                 <?= $optEqType ?>
                               <?php else:?>
-                              <input class="form-control" name="<?= $key ?>" id="filter_<?= $key ?>">
+                              <input class="form-control toupper" name="<?= $key ?>" id="filter_<?= $key ?>">
                               <?php endif;?>
                             </div>
                           </div>
@@ -153,5 +153,8 @@
 			$('#form-filter')[0].reset();
 			table.ajax.reload();  //just reload table
 		});
+    $('.toupper').change(function(){
+        this.value = this.value.toUpperCase();
+    });
 	});
 	</script>

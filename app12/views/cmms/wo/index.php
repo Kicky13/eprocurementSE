@@ -27,17 +27,19 @@
                       <div class="panel panel-default collapse" id="filter-view" style="margin-top: 10px">
                         <div class="panel-body">
                           <?php foreach ($filter as $key => $value) : ?>
+                            <?php if($param == 'outstanding' and $value->desc1 == 'STATUS') continue;?>
                           <div class="form-group row">
                             <label class="col-md-3"><?=$value->desc?></label>
                             <div class="col-md-6">
-                              <?php if($value->desc1 == 'STATUS'): ?>
+                              <?php if($value->desc1 == 'STATUS' and $param != 'outstanding'): ?>
                               <?=$status?>
                               <?php elseif($value->desc1 == 'wotype'):?>
                               <?=$wotype?>
                               <?php elseif($value->desc1 == 'WAPRTS'):?>
                               <?=$priority?>
                               <?php else:?>
-                              <input class="form-control" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
+
+                              <input class="form-control toupper" name="<?= $value->desc1 ?>" id="filter_<?= $value->desc1 ?>">
                               <?php endif;?>
                             </div>
                           </div>
@@ -84,7 +86,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4><?= $param == 'wr' ? "WR":"WO" ?> Detail - CMMS08</h4>
+        <h4>WR/WO Detail - CMMS08</h4>
       </div>
       <div id="result-modal-wo-detail" class="modal-body">
         
@@ -130,6 +132,7 @@
           data.EQDESC = $('#filter_EQDESC').val();
 		  <?php if($param == 'outstanding'):?>
           data.wasrst = '70';
+          data.wotype = $('#filter_wotype').val();
 		  <?php elseif($param == 'wr'):?>
           data.ORIGINATOR = $('#filter_ORIGINATOR').val();
           data.STATUS = $('#filter_STATUS').val();
@@ -163,6 +166,9 @@
     $('#btn-reset').click(function(){ //button reset event click
       $('#form-filter')[0].reset();
       table.ajax.reload();  //just reload table
+    });
+    $('.toupper').change(function(){
+        this.value = this.value.toUpperCase();
     });
   });
   </script>

@@ -49,7 +49,7 @@ class Wo extends CI_Controller {
   	}
   	elseif($param == 'wr')
     { 
-      $title = 'WR List & Tracking - CMMS16';
+      $title = 'WR/WO List & Tracking - CMMS16';
       $thead = cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result();
       $filter = cmms_settings('wr_list_tracking')->order_by('seq','asc')->where('desc2',1)->get()->result();
     }
@@ -105,7 +105,7 @@ class Wo extends CI_Controller {
       $row[] = @wr_priority($priority);
       $row[] = $eqNo;
       $row[] = $eqDesc;
-      $row[] = $status;
+      $row[] = strtoupper($status);
       $row[] = $plannedStartDate;
       $row[] = $failure_desc;
       $row[] = $originator;

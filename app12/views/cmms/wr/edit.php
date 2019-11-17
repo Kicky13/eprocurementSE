@@ -230,6 +230,12 @@
         swal('Info','Requested Finish Date is Required','warning')
         return false
       }
+      var wr_description = $("#wr_description").val()
+      if(!wr_description)
+      {
+        swal('Info','WR Description is Required','warning')
+        return false
+      }
       swalConfirm('Approval', 'Are you sure?', function() {
         var form = $("#frm-bled")[0];
         var data = new FormData(form);

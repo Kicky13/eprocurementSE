@@ -36,6 +36,9 @@
               </div>
             </div>
           </div>
+          <div class="col-12">
+            <a href="#" onclick="goBack()" class="btn btn-info">Back</a>
+          </div>
         </div>
         <div class="row hidden">
           <div class="col-md-12">
@@ -134,5 +137,8 @@
         }
       })
     }
+  }
+  function goBack(argument) {
+      window.history.back()
   }
 </script>

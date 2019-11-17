@@ -1,6 +1,6 @@
 <div class="col-md-12">
-<div class="form-group row">
-	<label class="col-md-2">Picture</label>
+<div class="form-group row hidden">
+	<label class="col-md-2">Attachment</label>
 	<div class="col-md-3">
 		
 	<input type="file" name="image" id="image_picture" class="form-control" style="height:35px !important;padding:6px">

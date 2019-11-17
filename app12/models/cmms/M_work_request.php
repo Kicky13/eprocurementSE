@@ -370,7 +370,7 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
       foreach ($qdoa->result() as $r) {
         $arrd[] = $r->creator_id;
       }
-      $impl = implode('m', $arrd);
+      $impl = implode(',', $arrd);
       $qid = $impl.','.$this->session->userdata('ID_USER');
     }
     $q = "select id from cmms_position where user_id in ($qid)";

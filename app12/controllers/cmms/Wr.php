@@ -504,7 +504,7 @@ class Wr extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>ALL TYPE</option>";
+        $opt .= "<option value=''>TYPE</option>";
       }
       else
       {

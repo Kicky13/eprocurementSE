@@ -37,7 +37,7 @@
             </div>
           </div>
           <div class="col-12">
-            <a href="<?= base_url('cmms/equipment') ?>" class="btn btn-info">Back</a>
+            <a href="#" onclick="goBack()" class="btn btn-info">Back</a>
           </div>
         </div>
         <div class="row hidden">
@@ -137,5 +137,8 @@
         }
       })
     }
+  }
+  function goBack(argument) {
+      window.history.back()
   }
 </script>

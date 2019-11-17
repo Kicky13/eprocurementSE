@@ -179,6 +179,7 @@
     });
     $('#req_finish_date').datepicker({
       dateFormat:'yy-mm-dd',
+      minDate:new Date()
     });
     //hide next and previous button
     $('a[href="#next"]').hide();

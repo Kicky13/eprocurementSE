@@ -28,13 +28,13 @@
                       <div class="row">
                         <div class="col-md-6">
 						              <div class="form-group">
-                            <label>Creator</label>
+                            <label>Delegating Official</label>
                             <input class="form-control" disabled="" value="<?= $this->session->userdata('NAME') ?>">
                             <input type="hidden" name="creator_id" readonly="" value="<?= $this->session->userdata('ID_USER') ?>">
                             <input type="hidden" name="id" readonly="" value="<?= @$row->id ?>">
                           </div>
                           <div class="form-group">
-                            <label>Assign to</label>
+                            <label>Delegate to</label>
                             <select class="form-control" name="assign_id">
                               <?php foreach ($assign_to as $assign) {
                                 $selected = '';
@@ -48,11 +48,21 @@
                           </div>
                           <div class="form-group">
                             <label>Start Date</label>
-                            <input class="form-control" required="" id="start_date" name="start_date" value="<?= @$row->start_date ?>">
+                            <input class="form-control" required="" id="start_date" name="start_date" value="<?= date('Y-m-d') ?>">
                           </div>
                           <div class="form-group">
                             <label>End Date</label>
                             <input class="form-control" required="" id="end_date" name="end_date" value="<?= @$row->end_date ?>">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <?php if($row): ?>
+                              <?php if(strtotime(date("Y-m-d")) < strtotime($row->end_date)): ?>
+                              <label>Note : </label>
+                              <input class="form-control" disabled="" value="Delegate to <?= user($row->assign_id)->NAME ?>  from <?= dateToIndo($row->start_date) ?> to <?= dateToIndo($row->end_date) ?>">
+                              <?php endif;?>
+                            <?php endif;?>
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -97,8 +107,12 @@
     //hide next and previous button
     $('a[href="#next"]').hide();
     $('a[href="#previous"]').hide();
-    $('#start_date,#end_date').datepicker({
+    $('#end_date').datepicker({
       dateFormat:'yy-mm-dd',
+    });
+    $('#start_date').datepicker({
+      dateFormat:'yy-mm-dd',
+      minDate:new Date()
     });
 	});
   function submitClick(argument) {

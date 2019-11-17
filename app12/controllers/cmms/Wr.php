@@ -560,6 +560,7 @@ class Wr extends CI_Controller {
         echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
         echo $xml;
       }
+    //echo $data_curl;
       return false;
     } else {
         // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");

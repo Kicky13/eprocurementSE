@@ -133,7 +133,7 @@ class M_equipment extends CI_Model {
         from f1201 a 
 		inner join f1217 b on a.fanumb=b.wrnumb 
 		$addSql 
-		) x $addWhere";
+		) x";
     return $sql;  
   }
   public function dt_count_all()
@@ -280,7 +280,7 @@ class M_equipment extends CI_Model {
   }
   public function reprentitive()
   {
-	  $addSql['join'] = "inner join (select WANUMB, count(*) jml from f4801 group by wanumb) c on a.FANUMB = c.WANUMB";
+	  $addSql['join'] = "inner join (select WANUMB, count(*) jml from f4801 group by wanumb) c on a.FANUMB = c.WANUMB and c.jml > 1  ";
 	  $addSql['column_db'] = "JML";
 	  $addSql['column_tb'] = "TOTAL";
 	  return $addSql;

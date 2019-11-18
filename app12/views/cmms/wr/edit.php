@@ -107,7 +107,7 @@
                           </div>
                         </div>
                         <div class="col-md-12">
-                          <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Back</a>
+                          <!-- <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Back</a> -->
                           <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Approve</button>
                           <!-- <button id="btn-reject" class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button> -->
                           <a id="btn-reject" href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModalReject">Reject</a>

@@ -94,7 +94,13 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
         $qid = $this->session->userdata('ID_USER');
         if($qdoa->num_rows() > 0)
         {
-          $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+          $arrd = [];
+          foreach ($qdoa->result() as $r) {
+            $arrd[] = $r->creator_id;
+          }
+          $impl = implode(',', $arrd);
+          $qid = $impl.','.$this->session->userdata('ID_USER');
+          // $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
         }
 
         $q = "select id from cmms_position where user_id in ($qid) ";

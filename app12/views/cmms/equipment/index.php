@@ -108,7 +108,10 @@
 			'processing': true, //Feature control the processing indicator.
 			'serverSide': true, //Feature control DataTables' server-side processing mode.
 			'order': [], //Initial no order.
-			'bSort':false,
+      <?php if($param == 'repretitive'):?>
+      <?php else:?>
+      'bSort':false,
+      <?php endif;?>
       'bFilter':false,
 			// Load data for the table's content from an Ajax source
 			'ajax': {
@@ -142,6 +145,9 @@
 				'defaultContent': '-',
 				'targets': '_all',
 			},
+      <?php if($param == 'repretitive'):?>
+      { "orderable": false, "targets": [0,1,2,3,4,5,6,7,8,9] }
+      <?php endif;?>
 			],
 	 
 		});

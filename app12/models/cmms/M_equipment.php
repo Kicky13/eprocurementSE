@@ -87,8 +87,17 @@ class M_equipment extends CI_Model {
       'EQCLAS' => 'Equipment Class',
       'EQTYPE' => 'Equipment Type',*/
     
+    if(isset($_POST['order']) and $this->input->post('param') == 'reprentitive')
+    {
+      $columns = [];
+      $sql .= " order by JML ".$_POST['order']['0']['dir'];
+
+    } 
+    else
+    {
+      $sql .= " order by faaaid asc";
+    }
     
-    $sql .= " order by faaaid asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
@@ -100,13 +109,15 @@ class M_equipment extends CI_Model {
   public function sql($value='')
   {
 	  $addSql='';
-	  $addColumn='';
+    $addColumn='';
+	  $addWhere='';
 	  
 	if($this->input->post('reprentitive'))
 	{
 		$reprentitive = $this->reprentitive();
 		$addSql = $reprentitive['join'];
 		$addColumn = ", ".$reprentitive['column_db'];
+    $addWhere = " where JML > 1";
 	}
     $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb, concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01, faasid, (select faasid from f1201 where fanumb=a.faaaid ) parents, 
         (select concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01 from f1201 where fanumb=a.faaaid ) dsparents, 
@@ -121,8 +132,8 @@ class M_equipment extends CI_Model {
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages $addColumn
         from f1201 a 
 		inner join f1217 b on a.fanumb=b.wrnumb 
-		$addSql
-		) x";
+		$addSql 
+		) x $addWhere";
     return $sql;  
   }
   public function dt_count_all()

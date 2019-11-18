@@ -81,7 +81,7 @@ class Equipment extends CI_Controller {
       $no++;
       $row = array();
       $row[] = $no;
-      $detailLink = "<a href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
+      $detailLink = "<a target='_blank' href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
       $wrLink = $rows->FAWOYN == 1 ? "<a href='".base_url('cmms/wr/create/'.$rows->FANUMB)."' target='_blank' class='btn btn-primary btn-sm hidden'>Create WR</a>" : "";
 	  if($this->input->post('reprentitive'))
 	  {

@@ -115,7 +115,7 @@ class Wr extends CI_Controller {
         }
         if($value->desc1 == 'wr_no')
         {
-          $x = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
+          $x = "<a target='_blank' href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
         }
         if($value->desc1 == 'status')
         {

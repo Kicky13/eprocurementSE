@@ -45,7 +45,7 @@ class Doa extends CI_Controller {
       $store = $this->mod->store($data);
       if($store)
       {
-        echo json_encode(['status'=>true, 'msg'=>'Stored']);
+        echo json_encode(['status'=>true, 'msg'=>'Delegated']);
       }
       else
       {
@@ -68,7 +68,7 @@ class Doa extends CI_Controller {
       $update = $this->mod->update($data);
       if($update)
       {
-        echo json_encode(['status'=>true, 'msg'=>'Updated']);
+        echo json_encode(['status'=>true, 'msg'=>'Delegated']);
       }
       else
       {

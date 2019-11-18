@@ -75,7 +75,6 @@ class Equipment extends CI_Controller {
   public function ajax_list()
   {
     $list = $this->mod->dt_get_datatables();
-    $q = $this->db->last_query();
     $data = array();
     $no = $_POST['start'];
     foreach ($list as $rows) {
@@ -104,7 +103,6 @@ class Equipment extends CI_Controller {
             'recordsTotal' => $this->mod->dt_count_all(),
             'recordsFiltered' => $this->mod->dt_count_filtered(),
             'data' => $data,
-            'sql' => $q,
         );
     echo json_encode($output);
   }

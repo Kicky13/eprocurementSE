@@ -72,6 +72,21 @@ class M_equipment extends CI_Model {
       $sql .= " and UPPER(EQTYPE) like UPPER('%".$this->input->post('EQTYPE')."%')";
     }
     $sql .= $addParents;
+    if(isset($_POST['order']) and $this->input->post('reprentitive') == 1)
+    {
+      $columns = [];
+      $sql .= " order by JML ".$_POST['order']['0']['dir'];
+
+    } 
+    else
+    {
+      $sql .= " order by faaaid asc";
+    }
+    
+    if($_POST['length'] != -1)
+    {
+      $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
+    }
     return $sql;
 
   }
@@ -87,22 +102,8 @@ class M_equipment extends CI_Model {
       'EQCLAS' => 'Equipment Class',
       'EQTYPE' => 'Equipment Type',*/
     
-    if(isset($_POST['order']) and $this->input->post('param') == 'reprentitive')
-    {
-      $columns = [];
-      $sql .= " order by JML ".$_POST['order']['0']['dir'];
-
-    } 
-    else
-    {
-      $sql .= " order by faaaid asc";
-    }
     
-    if($_POST['length'] != -1)
-    {
-      $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
-    }
-	//echo $sql;
+	// echo $sql;
     $query = $this->db->query($sql);
     return $query->result();
   }

@@ -109,7 +109,7 @@ class Wr extends CI_Controller {
       foreach ($this->db->where('module','wr_list')->get('cmms_settings')->result() as $key => $value) {
         $v = $value->desc1;
         $x = $rows->$v;
-        if($value->desc1 == 'req_finish_date')
+        if($value->desc1 == 'req_finish_date' or $value->desc1 == 'created_at')
         {
           $x = dateToIndo($x);
         }

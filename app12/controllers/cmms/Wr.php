@@ -46,7 +46,7 @@ class Wr extends CI_Controller {
 
   public function index()
   {
-    $thead = cmms_settings('wr_list')->get()->result();
+    $thead = cmms_settings('wr_list')->order_by('seq','asc')->get()->result();
     $filter = cmms_settings('wr_list')->where('desc2',1)->get()->result();
     $data['menu'] = $this->menu;
     $data['thead'] = $thead;

@@ -152,6 +152,7 @@ class Wr extends CI_Controller {
     $data['optWoType'] = $this->optWoType();
     $data['optPriority'] = $this->optPriority();
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    $data['optEqClass'] = $this->optEqClass('eq_class', 'filter_EQCLAS');
     $data['filter_FAASID'] = $FAASID;
     $this->template->display($this->view .'/create', $data);
   }
@@ -499,7 +500,7 @@ class Wr extends CI_Controller {
   public function optEqType($name_id='')
   {
     $crt = $this->mod->eq_type();
-    $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
     // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
@@ -509,6 +510,24 @@ class Wr extends CI_Controller {
       else
       {
         $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optEqClass($name='', $idtag = '')
+  {
+    $crt = $this->mod->eq_class();
+    $opt = "<select name='$name' class='form-control select2' id='$idtag' style='width:100%'>";
+    // $opt .= "<option value=''>--ALL TYPE--</option>";
+    foreach ($crt as $key => $value) {
+      if($value->EQ_CLASS == ' - .')
+      {
+        $opt .= "<option value=''>--All--</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_CLASS'>$value->EQ_CLASS</option>";
       }
     }
     $opt .= "</select>";

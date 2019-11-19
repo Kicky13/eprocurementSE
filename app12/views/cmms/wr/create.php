@@ -125,7 +125,8 @@
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
             <input class="form-control toupper" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
             <input class="form-control toupper" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
-            <input class="form-control toupper" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
+            <!-- <input class="form-control toupper" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px"> -->
+            <?= $optEqClass ?>
             <?= $optEqType ?>
             <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Search</a>
           </div>
@@ -159,6 +160,7 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function(){
+    $('.select2').select2();
     $("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",

@@ -90,6 +90,7 @@ class Wo extends CI_Controller {
   	  $actHour = $laba.'.'.$labb;
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
+      $requestFinishDate = $rows->REQUESTED_FINISH_DATE;
       $resDesc = $rows->RESDESC;
     $wotype = $rows->WOTYPE;
 	  $priority = $rows->WAPRTS;
@@ -107,6 +108,8 @@ class Wo extends CI_Controller {
       $row[] = $eqDesc;
       $row[] = strtoupper($status);
       $row[] = $plannedStartDate;
+      $row[] = $requestFinishDate;
+      $row[] = $wo_date;
       $row[] = $failure_desc;
       $row[] = $originator;
       $data[] = $row;

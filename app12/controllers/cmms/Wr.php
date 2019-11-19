@@ -505,7 +505,7 @@ class Wr extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>TYPE</option>";
+        $opt .= "<option value=''>--All--</option>";
       }
       else
       {
@@ -519,7 +519,6 @@ class Wr extends CI_Controller {
   {
     $crt = $this->mod->eq_class();
     $opt = "<select name='$name' class='form-control select2' id='$idtag' style='width:100%'>";
-    // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
       if($value->EQ_CLASS == ' - .')
       {

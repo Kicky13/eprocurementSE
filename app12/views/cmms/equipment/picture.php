@@ -21,7 +21,7 @@
 	</thead>
 	<tbody id="dt-picture">
 		<?php $no=1; foreach ($eq_picture->result() as $key => $value) {
-			$link = $r->GDGTFILENM;
+			$link = $value->GDGTFILENM;
 			$view = "<a href='".$link."' target='_blank' class='btn btn-sm btn-info'>View</a>";
 		      echo "<tr><td>$no</td><td>$value->GDGTITNM</td><td>$view</td><tr>";
 		      $no++;

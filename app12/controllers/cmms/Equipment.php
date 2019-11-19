@@ -66,7 +66,7 @@ class Equipment extends CI_Controller {
     $data['basic_info_form'] = $this->mod->find($id);
     $data['pm1'] = $this->mod->pm1($id);
     $data['pm2'] = $this->mod->pm1($id);
-    $data['eq_picture'] = $this->picture->findByEquipment($id);
+    $data['eq_picture'] = $this->mod->picture_equipment($id);
     $data['spec'] = $this->mod->spec($id);
     $data['wo'] = $this->mod->wo($id);
     $data['equipment_id'] = $id;

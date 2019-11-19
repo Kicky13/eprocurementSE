@@ -352,4 +352,10 @@ class M_equipment extends CI_Model {
     $result = $this->db->query($sql)->row();
     return $result;   
   }
+  public function picture_equipment($eq_no='')
+  {
+    $sql = "select * from crpdta.f00165 where gdtxky='$eq_no' and GDOBNM='GT1701'";
+    $result = $this->db->query($sql);
+    return $result;
+  }
 }

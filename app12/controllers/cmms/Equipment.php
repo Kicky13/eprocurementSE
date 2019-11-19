@@ -57,7 +57,7 @@ class Equipment extends CI_Controller {
     $data['optCriticality'] = $this->optCriticality('filter_CIT');
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
     $data['optEqClass'] = $this->optEqClass('filter_EQCLAS');
-    $data['optLoct'] = $this->optEqClass('filter_LOCT');
+    $data['optLoct'] = $this->optLoct('filter_LOCT');
     $this->template->display($this->view .'/index', $data);
   }
   public function detail($id='')

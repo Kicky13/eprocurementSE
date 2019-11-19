@@ -1,7 +1,4 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
-
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">

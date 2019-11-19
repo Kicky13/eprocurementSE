@@ -227,7 +227,7 @@ class Equipment extends CI_Controller {
   public function optEqClass($name_id='')
   {
     $crt = $this->mod->eq_class();
-    $opt = "<select name='$name_id' class='form-control select2' id='$name_id'>";
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
     // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
       if($value->EQ_CLASS == ' - .')
@@ -245,7 +245,7 @@ class Equipment extends CI_Controller {
   public function optLoct($name_id='')
   {
     $crt = $this->mod->eq_loct();
-    $opt = "<select name='$name_id' class='form-control select2' id='$name_id'>";
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
     // SA1 - ADMIN COMPLEX 1
     foreach ($crt as $key => $value) {
       if(empty(trim($value->DRKY)))

@@ -230,7 +230,7 @@ class Equipment extends CI_Controller {
     $opt = "<select name='$name_id' class='form-control select2' id='$name_id'>";
     // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
-      if($value->EQ_TYPE == ' - .')
+      if($value->EQ_CLASS == ' - .')
       {
         $opt .= "<option value=''>--All--</option>";
       }

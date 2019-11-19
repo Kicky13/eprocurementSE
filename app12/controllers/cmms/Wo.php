@@ -108,8 +108,11 @@ class Wo extends CI_Controller {
       $row[] = $eqDesc;
       $row[] = strtoupper($status);
       $row[] = $plannedStartDate;
-      $row[] = $requestFinishDate;
-      $row[] = $wo_date;
+      if($this->input->post('param') == 'wr')
+      {
+        $row[] = $requestFinishDate;
+        $row[] = $wo_date;
+      }
       $row[] = $failure_desc;
       $row[] = $originator;
       $data[] = $row;

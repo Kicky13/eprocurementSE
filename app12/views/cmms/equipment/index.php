@@ -51,6 +51,10 @@
                                 <?= $optCriticality ?>
                               <?php elseif($key == 'EQTYPE'):?>
                                 <?= $optEqType ?>
+                              <?php elseif($key == 'EQCLAS'):?>
+                                <?= $optEqClass ?>
+                              <?php elseif($key == 'LOCT'):?>
+                                <?= $optLoct ?>
                               <?php else:?>
                               <input class="form-control toupper" name="<?= $key ?>" id="filter_<?= $key ?>">
                               <?php endif;?>
@@ -162,5 +166,6 @@
     $('.toupper').change(function(){
         this.value = this.value.toUpperCase();
     });
+    $('.select2').select2();
 	});
 	</script>

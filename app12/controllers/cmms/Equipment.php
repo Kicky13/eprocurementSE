@@ -53,9 +53,11 @@ class Equipment extends CI_Controller {
 	}
 	
     $data['param'] = $param;
-	$data['title'] = $title;
+    $data['title'] = $title;
     $data['optCriticality'] = $this->optCriticality('filter_CIT');
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    $data['optEqClass'] = $this->optEqClass('filter_EQCLASS');
+    $data['optLoct'] = $this->optEqClass('filter_LOCT');
     $this->template->display($this->view .'/index', $data);
   }
   public function detail($id='')
@@ -217,6 +219,43 @@ class Equipment extends CI_Controller {
       else
       {
         $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optEqClass($name_id='')
+  {
+    $crt = $this->mod->eq_class();
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id'>";
+    // $opt .= "<option value=''>--ALL TYPE--</option>";
+    foreach ($crt as $key => $value) {
+      if($value->EQ_TYPE == ' - .')
+      {
+        $opt .= "<option value=''>--All--</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_CLASS'>$value->EQ_CLASS</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optLoct($name_id='')
+  {
+    $crt = $this->mod->eq_loct();
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id'>";
+    // SA1 - ADMIN COMPLEX 1
+    foreach ($crt as $key => $value) {
+      if(empty(trim($value->DRKY)))
+      {
+        $opt .= "<option value=''>--All--</option>";
+      }
+      else
+      {
+        $trimdata = trim($value->DRKY).' - '.trim($value->DRDL01);
+        $opt .= "<option value='$trimdata'>$trimdata</option>";
       }
     }
     $opt .= "</select>";

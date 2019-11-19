@@ -252,6 +252,18 @@ class M_equipment extends CI_Model {
     $s = $this->db->query($q);
     return $s->result();
   }
+  public function eq_class()
+  {
+    $q = "select concat(trim(drky),concat(' - ',trim(drdl01))) EQ_CLASS  from CRPCTL.f0005 where drsy='17' and drrt='PM'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
+  public function eq_loct()
+  {
+    $q = "SELECT * FROM crpctl.F0005 WHERE DRSY='12' AND DRRT='C6'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
   function failure_wr($eq_class)
   {
 	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";

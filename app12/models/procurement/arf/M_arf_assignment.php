@@ -15,5 +15,6 @@ class M_arf_assignment extends M_base {
         ->like('m_user.ROLES',','.$this->procurement_specialist_id.',')
         ->get('m_user')
         ->result();
+        
     }
 }

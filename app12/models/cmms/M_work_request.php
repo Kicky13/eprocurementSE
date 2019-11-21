@@ -317,6 +317,8 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
         $open = $wr->OPEN_VALUE;
         $close = $wr->CLOSE_VALUE;
         $title = $wr->TITLE;
+        $open = str_replace('__eqno__', $data['eq_number'], $open);
+        $open = str_replace('__eqdesc__', $data['eq_desc'], $open);
         $open = str_replace('__wrno__', $data['wr_no'], $open);
         $open = str_replace('__wrdesc__', $data['wr_description'], $open);
         $open = str_replace('__wrtype__', $wrtype->notation, $open);

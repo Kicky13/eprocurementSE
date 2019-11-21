@@ -79,6 +79,7 @@ class Arf extends CI_Controller
                     }
                     if ($user_id = $this->input->get('user_id')) {
                         $model->where("t_arf.id in (select doc_id from t_arf_assignment where user_id = '$user_id')");
+                        $model->where("t_arf.is_issued = 0");
                     }
                 })
                 ->edit_column('doc_no', function ($model) {

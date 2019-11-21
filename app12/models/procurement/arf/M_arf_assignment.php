@@ -11,7 +11,7 @@ class M_arf_assignment extends M_base {
 
     public function get_user_assigned() {
         return $this->db->select('m_user.ID_USER as user_id, m_user.USERNAME as username, m_user.NAME as name, COALESCE(assigned.num_of_assigned, 0) as num_of_assigned')
-        ->join('(SELECT user_id, COUNT(1) as num_of_assigned FROM t_arf_assignment GROUP BY user_id) assigned', 'assigned.user_id = m_user.ID_USER', 'left')
+        ->join('(SELECT user_id, COUNT(1) as num_of_assigned FROM t_arf_assignment JOIN t_arf ON t_arf.id = t_arf_assignment.doc_id AND t_arf.is_issued = 0 GROUP BY user_id) assigned', 'assigned.user_id = m_user.ID_USER', 'left')
         ->like('m_user.ROLES',','.$this->procurement_specialist_id.',')
         ->get('m_user')
         ->result();

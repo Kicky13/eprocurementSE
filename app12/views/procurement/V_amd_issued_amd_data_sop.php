@@ -64,7 +64,7 @@
                     $amendment_date_disabled = "";
                 }
             ?>
-            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" required="" value="<?= @$amendment_date ?>">
+            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" disabled required="" value="<?= @$amendment_date ?>">
         </div>
     </div>
     <?php else:?>

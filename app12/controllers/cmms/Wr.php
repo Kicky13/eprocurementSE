@@ -622,6 +622,8 @@ class Wr extends CI_Controller {
 	
     $data['originator'] = $r->USERNAME;
     $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+      echo $xml;
+    exit();
     $headers = array(
       "Content-Type: text/xml",
       "charset:utf-8",

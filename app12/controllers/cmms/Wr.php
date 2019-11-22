@@ -539,7 +539,7 @@ class Wr extends CI_Controller {
     $name='maintenance_activity_type';
     $crt = $this->wr->maintenance_activity_type();
     $opt = "<select name='$name' class='form-control' id='$name' style='width:100%'>";
-    foreach ($crt as $key => $value) {
+    foreach ($crt->result() as $key => $value) {
       if(empty(trim($value->DRKY)))
       {
         //$opt .= "<option value=''>----</option>";

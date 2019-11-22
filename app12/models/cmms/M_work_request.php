@@ -429,6 +429,6 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     /*Maintenance Activity Type*/
     $q = "SELECT * FROM crpctl.F0005 WHERE DRSY='00' AND DRRT='W3'";
     $return = $this->dbo->query($q);
-    return $q;
+    return $return;;
   }
 }

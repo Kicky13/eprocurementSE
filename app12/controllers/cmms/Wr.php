@@ -546,7 +546,7 @@ class Wr extends CI_Controller {
       }
       else
       {
-        $v= trim($value->DRKY);
+        $v= $value->DRKY;
         $t= trim($value->DRDL01);
         $s = $selected == $v ? "selected=''":'';
         $opt .= "<option value='$v' $s>$t</option>";

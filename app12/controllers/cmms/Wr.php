@@ -621,10 +621,10 @@ class Wr extends CI_Controller {
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
 	
     $data['originator'] = $r->USERNAME;
-    print_r($data);
-    // $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
-      echo $xml;
-    exit();
+    // print_r($data);
+    $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+      // echo $xml;
+    // exit();
     $headers = array(
       "Content-Type: text/xml",
       "charset:utf-8",
@@ -654,7 +654,7 @@ class Wr extends CI_Controller {
         echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
         echo $xml;
       }
-      echo $xml;
+      // echo $xml;
       return false;
     } else {
         // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");

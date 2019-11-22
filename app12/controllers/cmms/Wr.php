@@ -621,7 +621,8 @@ class Wr extends CI_Controller {
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
 	
     $data['originator'] = $r->USERNAME;
-    $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+    print_r($data);
+    // $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
       echo $xml;
     exit();
     $headers = array(

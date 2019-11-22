@@ -318,16 +318,16 @@ class Wr extends CI_Controller {
         $data['photo'] = $file_name;
       }
     }
-    $data['status'] = '05';
     if(isset($data['parent_id']))
     {
       unset($data['parent_id']);
     }
-    // $update = $this->wr->update_and_approve($data);
+    $update = $this->wr->update_and_approve_no_status($data);
     $send_wsdl = $this->send_wsdl_update($data);
     if($send_wsdl)
     {
       $msg = '';
+      $data['status'] = '05';
     	$update = $this->wr->update_and_approve($data);
       // $send_wsdl = $this->send_wsdl_update($data);
       if($update)

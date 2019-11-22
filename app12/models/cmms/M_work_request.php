@@ -232,6 +232,32 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
       return false;
     }
   }
+  public function update_and_approve_no_status($data='')
+  {
+    $this->db->trans_begin();
+    //unset($data['status'],$data['id'],$data['description']);
+    if(@$data['parent_id_old'])
+    {
+      @$data['parent_id'] = null;
+    }
+    if(@$data['photo_old'])
+    {
+      @$data['photo'] = null;
+    }
+    unset($data['parent_id_old'],$data['photo_old']);
+    $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
+    //$this->approve($this->input->post());
+    if($this->db->trans_status() === true)
+    {
+      $this->db->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->db->trans_rollback();
+      return false;
+    }
+  }
   public function reject($data='')
   {
     $this->db->trans_begin();

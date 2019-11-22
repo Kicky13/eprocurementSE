@@ -203,6 +203,7 @@ class M_equipment extends CI_Model {
 
     $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,FAASID as EQ_NO, concat(FADL01,FADL02) eq_desc,
     (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(equipment.faacl6) ) as loct,
+    (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='00' and drrt='W3' and trim(drky)=trim(WAWR03) ) as main_act_type,
     upper(concat(trim(drky),concat(' - ',drdl01))) as status
     from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a 
     left outer join f4801t b on a.wadoco=b.wadoco 

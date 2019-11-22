@@ -23,7 +23,6 @@
               <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
-                    <h6> <?= $title ?> (<?=$row->wr_no?>)</h6>
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">
@@ -168,7 +167,7 @@
       $("#btn-approve,#btn-reject").hide()
       $("#hazard,#priority,#wr_description,#photo,#req_finish_date,#parent_id,#long_description").attr("disabled","")
     <?php endif;?>
-    $("#frm-bled").steps({
+    /*$("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -185,13 +184,13 @@
       onStepChanged: function (event, currentIndex, priorIndex) {
 
       }
-    });
+    });*/
     $('#req_finish_date').datepicker({
       dateFormat:'yy-mm-dd',
     });
     //hide next and previous button
-    $('a[href="#next"]').hide();
-    $('a[href="#previous"]').hide();
+    /*$('a[href="#next"]').hide();
+    $('a[href="#previous"]').hide();*/
 
   $('.js-data-example-ajax').select2({
     ajax: {

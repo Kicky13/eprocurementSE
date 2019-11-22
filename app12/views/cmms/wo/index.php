@@ -86,7 +86,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4>WR/WO Detail - CMMS08</h4>
+        <h4>WO Detail - CMMS08</h4>
       </div>
       <div id="result-modal-wo-detail" class="modal-body">
         

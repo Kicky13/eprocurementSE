@@ -23,7 +23,7 @@
               <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
-                    <h6> <?= $title ?></h6>
+                    
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">
@@ -163,7 +163,7 @@
     $('.select2').select2({
       dropdownParent: $("#myModal"),
     });
-    $("#frm-bled").steps({
+    /*$("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -180,14 +180,14 @@
       onStepChanged: function (event, currentIndex, priorIndex) {
 
       }
-    });
+    });*/
     $('#req_finish_date').datepicker({
       dateFormat:'yy-mm-dd',
       minDate:new Date()
     });
     //hide next and previous button
-    $('a[href="#next"]').hide();
-    $('a[href="#previous"]').hide();
+    /*$('a[href="#next"]').hide();
+    $('a[href="#previous"]').hide();*/
 
     table = $('#dt-equipment').DataTable({ 
       'processing': true, //Feature control the processing indicator.

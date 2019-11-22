@@ -1,6 +1,14 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
+<style type="text/css">
+  .select2-selection--single{
+    padding-left: 0.75rem !important
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow{
+    right: 0px !important
+  }
+</style>
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">
@@ -63,7 +71,7 @@
                             </div>
                           </div>
                           <?php } ?>
-          						  <div class="form-group row">
+          						  <div class="form-group">
           							<button type='button' id='btn-filter' class='btn btn-primary'>Search</button>
           						  </div>
                         </div>

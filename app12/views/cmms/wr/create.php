@@ -70,6 +70,10 @@
                             <input class="form-control toupper" name="failure_desc" name="failure_desc" maxlength="80">
                           </div>
                           <div class="form-group">
+                            <label>Maintenance Activity Type</label>
+                            <?= $optMaintenanceActivityType ?>
+                          </div>
+                          <div class="form-group">
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
 							<span id="photo_preview"></span>

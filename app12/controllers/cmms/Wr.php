@@ -153,6 +153,7 @@ class Wr extends CI_Controller {
     $data['optPriority'] = $this->optPriority();
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
     $data['optEqClass'] = $this->optEqClass('eq_class', 'filter_EQCLAS');
+    $data['optMaintenanceActivityType'] = $this->optMaintenanceActivityType();
     $data['filter_FAASID'] = $FAASID;
     $this->template->display($this->view .'/create', $data);
   }
@@ -170,6 +171,7 @@ class Wr extends CI_Controller {
     $data['row'] = $wr;
     $data['optWoType'] = $this->optWoType($wr->wo_type_id);
     $data['optPriority'] = $this->optPriority($wr->priority);
+    $data['optMaintenanceActivityType'] = $this->optMaintenanceActivityType($wr->maintenance_activity_type);
     if(in_array(operator_cmms, $this->roles) or in_array(department_cmms, $this->roles))
     {
       $data['user_creator'] = true;
@@ -527,6 +529,27 @@ class Wr extends CI_Controller {
       else
       {
         $opt .= "<option value='$value->EQ_CLASS'>$value->EQ_CLASS</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optMaintenanceActivityType($selected=1)
+  {
+    $name='maintenance_activity_type';
+    $crt = $this->wr->maintenance_activity_type();
+    $opt = "<select name='$name' class='form-control' id='$name' style='width:100%'>";
+    foreach ($crt as $key => $value) {
+      if(empty(trim($value->DRKY)))
+      {
+        //$opt .= "<option value=''>----</option>";
+      }
+      else
+      {
+        $v= trim($value->DRKY);
+        $t= trim($value->DRDL01);
+        $s = $selected == $v ? "selected=''":'';
+        $opt .= "<option value='$v' $s>$t</option>";
       }
     }
     $opt .= "</select>";

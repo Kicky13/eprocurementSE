@@ -23,7 +23,7 @@
               <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
-                    <h6> <?= $title ?></h6>
+                    
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">
@@ -68,6 +68,10 @@
                           <div class="form-group">
                             <label>Failure Description</label>
                             <input class="form-control toupper" name="failure_desc" name="failure_desc" maxlength="80">
+                          </div>
+                          <div class="form-group">
+                            <label>Maintenance Activity Type</label>
+                            <?= $optMaintenanceActivityType ?>
                           </div>
                           <div class="form-group">
                             <label>Photo</label>
@@ -123,9 +127,10 @@
             <a href="#filter-view" class="btn btn-info btn-sm" data-toggle="collapse" style="border-radius: 5px 5px 0px 0px;padding: 10px;">Filter View</a>
           </div>
           <div class="col-md-12 collapse" id="filter-view" style="margin-bottom: 10px">
-            <input class="form-control" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
-            <input class="form-control" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
-            <input class="form-control" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px">
+            <input class="form-control toupper" value="<?= $filter_FAASID ?>" name="eq_number" id="filter_FAASID" placeholder="Equipment Number" style="margin-bottom: 5px">
+            <input class="form-control toupper" name="eq_desc" id="filter_FADL01" placeholder="Equipment Description" style="margin-bottom: 5px">
+            <!-- <input class="form-control toupper" name="eq_class" id="filter_EQCLAS" placeholder="Equipment Class" style="margin-bottom: 5px"> -->
+            <?= $optEqClass ?>
             <?= $optEqType ?>
             <a href="#" class="btn btn-sm btn-primary btn-filter" style="margin-top: 5px">Search</a>
           </div>
@@ -159,7 +164,10 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function(){
-    $("#frm-bled").steps({
+    $('.select2').select2({
+      dropdownParent: $("#myModal"),
+    });
+    /*$("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -176,13 +184,14 @@
       onStepChanged: function (event, currentIndex, priorIndex) {
 
       }
-    });
+    });*/
     $('#req_finish_date').datepicker({
       dateFormat:'yy-mm-dd',
+      minDate:new Date()
     });
     //hide next and previous button
-    $('a[href="#next"]').hide();
-    $('a[href="#previous"]').hide();
+    /*$('a[href="#next"]').hide();
+    $('a[href="#previous"]').hide();*/
 
     table = $('#dt-equipment').DataTable({ 
       'processing': true, //Feature control the processing indicator.
@@ -303,6 +312,12 @@
       if(!req_finish_date)
       {
         swal('Info','Requested Finish Date is Required','warning')
+        return false
+      }
+      var wr_description = $("#wr_description").val()
+      if(!wr_description)
+      {
+        swal('Info','WR Description is Required','warning')
         return false
       }
 

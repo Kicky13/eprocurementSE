@@ -1,16 +1,16 @@
 <?php 
-	$identity = 'WO';
+	/*$identity = 'WO';
 	if(isset($_GET['type']))
 	{
 		if($_GET['type'] == 'wr')
 		{
 			$identity = 'WR';
 		}
-	}
+	}*/
 ?>
 <div class="row">
 	<div class="col-md-12">
-		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('detail-wo')"><?=$identity?> Detail</a>
+		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('detail-wo')">WO Detail</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('task-instruction')">Task Instruction</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('labor-list')">Labor List</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('part-list')">Part List</a>

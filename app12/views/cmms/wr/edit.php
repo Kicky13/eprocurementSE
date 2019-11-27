@@ -23,7 +23,6 @@
               <div class="card-content collapse show">
                 <div class="card-body card-scroll">
                   <form action="#" class="wizard-circle frm-bled" id="frm-bled" enctype="multipart/form-data">
-                    <h6> <?= $title ?> (<?=$row->wr_no?>)</h6>
                     <fieldset>
                       <div class="row">
                         <div class="col-md-6">
@@ -70,6 +69,10 @@
                             <input class="form-control toupper" name="failure_desc" name="failure_desc" maxlength="80" value="<?=$row->failure_desc?>">
                           </div>
                           <div class="form-group">
+                            <label>Maintenance Activity Type</label>
+                            <?= $optMaintenanceActivityType ?>
+                          </div>
+                          <div class="form-group">
                             <label>Photo</label>
                             <input class="form-control" type="file" id="photo" name="photo" style="height:35px !important;padding:6px">
                             <?php if($row->photo): ?>
@@ -107,7 +110,7 @@
                           </div>
                         </div>
                         <div class="col-md-12">
-                          <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Back</a>
+                          <!-- <a href="<?= base_url('cmms/wr') ?>" class="btn btn-info">Back</a> -->
                           <button id="btn-approve" class="btn btn-primary" type="button" onclick="updateWrClick()">Approve</button>
                           <!-- <button id="btn-reject" class="btn btn-danger" type="button" onclick="rejectClick()">Reject</button> -->
                           <a id="btn-reject" href="#" class="btn btn-danger" data-toggle="modal" data-target="#myModalReject">Reject</a>
@@ -168,7 +171,7 @@
       $("#btn-approve,#btn-reject").hide()
       $("#hazard,#priority,#wr_description,#photo,#req_finish_date,#parent_id,#long_description").attr("disabled","")
     <?php endif;?>
-    $("#frm-bled").steps({
+    /*$("#frm-bled").steps({
       headerTag: "h6",
       bodyTag: "fieldset",
       transitionEffect: "fade",
@@ -185,13 +188,13 @@
       onStepChanged: function (event, currentIndex, priorIndex) {
 
       }
-    });
+    });*/
     $('#req_finish_date').datepicker({
       dateFormat:'yy-mm-dd',
     });
     //hide next and previous button
-    $('a[href="#next"]').hide();
-    $('a[href="#previous"]').hide();
+    /*$('a[href="#next"]').hide();
+    $('a[href="#previous"]').hide();*/
 
   $('.js-data-example-ajax').select2({
     ajax: {
@@ -228,6 +231,12 @@
       if(!req_finish_date)
       {
         swal('Info','Requested Finish Date is Required','warning')
+        return false
+      }
+      var wr_description = $("#wr_description").val()
+      if(!wr_description)
+      {
+        swal('Info','WR Description is Required','warning')
         return false
       }
       swalConfirm('Approval', 'Are you sure?', function() {

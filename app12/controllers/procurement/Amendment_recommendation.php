@@ -496,7 +496,7 @@ class Amendment_recommendation extends CI_Controller {
         $nextrecom = $this->db->query('SELECT * FROM t_approval_arf_recom WHERE id = ' . $app_next)->row();
         if ($approved < ($total_approver - 1)) {
             if ($recom->id_user_role != 27) {
-              $query = $this->db->query("SELECT rec.description, arf.doc_no, arf.po_title usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
+              $query = $this->db->query("SELECT rec.description, arf.doc_no, arf.po_title, usr.NAME AS name, usr.EMAIL AS email, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close FROM t_approval_arf_recom rec
               JOIN t_arf_response resp ON rec.id_ref = resp.id
               JOIN t_arf arf ON resp.doc_no = arf.doc_no
               JOIN m_user usr ON usr.ID_USER = rec.id_user

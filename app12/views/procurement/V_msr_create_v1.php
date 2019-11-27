@@ -436,7 +436,7 @@ margin-top: 5px;
                               Please add at least an item
                             </div>-->
                             <div class="btn-group pull-right">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#msr-development-item-modal">Add New Item</button>
+                              <button onclick="clearWONumber()" type="button" class="btn btn-primary" data-toggle="modal" data-target="#msr-development-item-modal">Add New Item</button>
                               <!--
                               <button type="button" class="btn btn-sm btn-secondary">Upload</button>
                               <button type="button" class="btn btn-sm btn-info">Download</button>
@@ -1712,11 +1712,11 @@ var msr_development_steps = $("#msr-development-form").steps({
     {
       // Block MSR creation for procurement location other than 'PG01' (Head Office Procurement)
       var plocation = $('#plocation').val()
-      if (plocation != '' && plocation != 'PG01') {
-        // alert('Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed")
-        swal('<?= __('warning') ?>','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
-        return false
-      }
+      //if (plocation != '') {
+      //  // alert('Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed")
+      //  swal('<?//= __('warning') ?>//','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
+      //  return false
+      //}
 
       // Check exchange rate
       var currency_id = $('#currency').val();
@@ -3274,10 +3274,10 @@ function submit_msr() {
 
     // Block MSR creation for procurement location other than 'PG01' (Head Office Procurement)
     var plocation = $('#plocation').val()
-    if (plocation != '' && plocation != 'PG01') {
-      swal('<?= __('warning') ?>','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
-      return false
-    }
+    //if (plocation != '') {
+    //  swal('<?//= __('warning') ?>//','Creation MSR with Procurement Location ' + $('#plocation option:selected').text() + " is disallowed",'warning')
+    //  return false
+    //}
 
 
     $('#item-table-alert').hide()
@@ -3306,6 +3306,10 @@ function submit_msr() {
 
 
 set_value('cost_center')
+
+function clearWONumber(){
+  $('.wo_no_select2').val(null).trigger('change');
+}
 </script>
 
 <?php /* vim: set fen foldmethod=indent ts=2 sw=2 tw=0 et autoindent :*/ ?>

@@ -49,7 +49,7 @@ class Wo extends CI_Controller {
   	}
   	elseif($param == 'wr')
     { 
-      $title = 'WR List & Tracking - CMMS16';
+      $title = 'WO List & Tracking - CMMS16';
       $thead = cmms_settings('wr_list_tracking')->order_by('seq','asc')->get()->result();
       $filter = cmms_settings('wr_list_tracking')->order_by('seq','asc')->where('desc2',1)->get()->result();
     }
@@ -90,6 +90,7 @@ class Wo extends CI_Controller {
   	  $actHour = $laba.'.'.$labb;
       $actFinishDate = $rows->ACTFINISHDATE;
       $analysisDesc = $rows->ANALYSISDESC;
+      $requestFinishDate = $rows->REQUESTED_FINISH_DATE;
       $resDesc = $rows->RESDESC;
     $wotype = $rows->WOTYPE;
 	  $priority = $rows->WAPRTS;
@@ -105,8 +106,13 @@ class Wo extends CI_Controller {
       $row[] = @wr_priority($priority);
       $row[] = $eqNo;
       $row[] = $eqDesc;
-      $row[] = $status;
+      $row[] = strtoupper($status);
       $row[] = $plannedStartDate;
+      if($this->input->post('param') == 'wr')
+      {
+        $row[] = $requestFinishDate;
+        $row[] = $wo_date;
+      }
       $row[] = $failure_desc;
       $row[] = $originator;
       $data[] = $row;

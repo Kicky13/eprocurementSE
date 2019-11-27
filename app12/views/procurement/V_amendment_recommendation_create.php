@@ -107,6 +107,7 @@
                                 <td>Amendment Value</td>
                                 <td>:</td>
                                 <td><?= $arf->currency?> <span id="amd-value-header"><?= numIndo($arf->estimated_value) ?></span></td>
+                                <input type="hidden" id="amd-value-header-origin" value="<?=$arf->estimated_value ?>">
                             </tr>
                         </tbody>
                     </table>
@@ -676,7 +677,8 @@
         }
         var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
-        $("#latest-agreement-value").val(Localization.number(latest_agreement_value))
+        console.log(new_agreement);
+        $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
         $("#new-agreement-value").val(new_agreement)
         $('#new_date_1,#new_date_2').datepicker({
             dateFormat : 'yy-mm-dd'
@@ -917,7 +919,12 @@
     <?php if(isset($issued)):?>
         $(".btn-upload, .btn-hapus-file").show()
     <?php endif;?>
-    $("#arf_request_value,#amd-value-header,#amd-value").text('<?= numIndo($total) ?>');
+    if (toFloat($("#amd-value-header-origin").val()) !== 0) {
+        $("#amd-value-header").text('<?= numIndo($arf->estimated_value) ?>');
+    } else {
+        $("#amd-value-header").text('<?= numIndo($total) ?>');
+    }
+    $("#arf_request_value,#amd-value").text('<?= numIndo($total) ?>');
     $("#arf-value").text($(".arf-<?=$arf->doc_no?>").text())
     arfvalue = $(".arf-<?=$arf->doc_no?>").attr('data-total');
     amdvalue = "<?=$total?>";

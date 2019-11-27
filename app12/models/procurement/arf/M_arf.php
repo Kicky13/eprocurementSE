@@ -30,7 +30,7 @@ class M_arf extends M_base {
         ->join('m_user', 'm_user.ID_USER = t_arf.created_by')
         ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
         ->join('m_vendor', 'm_vendor.ID = t_purchase_order.id_vendor')
-        ->join('m_warehouse', 'm_warehouse.id_company = m_company.id_company')
+        ->join('(select * from m_warehouse where is_cmms = 0) m_warehouse', 'm_warehouse.id_company = m_company.id_company')
         ->join('t_arf_assignment', 't_arf_assignment.doc_id = t_arf.id', 'left')
         ->join('m_user user_assignment', 'user_assignment.ID_USER = t_arf_assignment.user_id', 'left')
         ->join('t_arf_notification', 't_arf_notification.doc_no = t_arf.doc_no', 'left')

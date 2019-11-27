@@ -32,10 +32,11 @@ class Equipment extends CI_Controller {
       'FADL01' => 'Equipment Description',
       'LOCT' => 'Location',
       'CIT' => 'Criticality',
-      'PARENTS' => 'Parent EQ Number',
+      'PARENTS' => 'Parent Equipment Number',
       'DSPARENTS' => 'Parent Description',
-      'EQCLAS' => 'Equipment Class',
-      'EQTYPE' => 'Equipment Type',
+      'EQTYPE' => 'Equipment Class',
+      'EQCLAS' => 'Equipment Type',
+      
     ];
     $data['thead'] = $head;
     return $data[$value];
@@ -52,9 +53,11 @@ class Equipment extends CI_Controller {
 	}
 	
     $data['param'] = $param;
-	$data['title'] = $title;
+    $data['title'] = $title;
     $data['optCriticality'] = $this->optCriticality('filter_CIT');
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    $data['optEqClass'] = $this->optEqClass('filter_EQCLAS');
+    $data['optLoct'] = $this->optLoct('filter_LOCT');
     $this->template->display($this->view .'/index', $data);
   }
   public function detail($id='')
@@ -65,7 +68,7 @@ class Equipment extends CI_Controller {
     $data['basic_info_form'] = $this->mod->find($id);
     $data['pm1'] = $this->mod->pm1($id);
     $data['pm2'] = $this->mod->pm1($id);
-    $data['eq_picture'] = $this->picture->findByEquipment($id);
+    $data['eq_picture'] = $this->mod->picture_equipment($id);
     $data['spec'] = $this->mod->spec($id);
     $data['wo'] = $this->mod->wo($id);
     $data['equipment_id'] = $id;
@@ -80,7 +83,7 @@ class Equipment extends CI_Controller {
       $no++;
       $row = array();
       $row[] = $no;
-      $detailLink = "<a href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
+      $detailLink = "<a target='_blank' href='".base_url('cmms/equipment/detail/'.$rows->FANUMB)."' class='btn btn-info btn-sm'>Detail</a>";
       $wrLink = $rows->FAWOYN == 1 ? "<a href='".base_url('cmms/wr/create/'.$rows->FANUMB)."' target='_blank' class='btn btn-primary btn-sm hidden'>Create WR</a>" : "";
 	  if($this->input->post('reprentitive'))
 	  {
@@ -193,7 +196,7 @@ class Equipment extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->CRITICALLY == ' - .')
       {
-        $opt .= "<option value=''>ALL CRITICALLY</option>";
+        $opt .= "<option value=''>--All--</option>";
       }
       else
       {
@@ -211,11 +214,48 @@ class Equipment extends CI_Controller {
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>ALL TYPE</option>";
+        $opt .= "<option value=''>--All--</option>";
       }
       else
       {
         $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optEqClass($name_id='')
+  {
+    $crt = $this->mod->eq_class();
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
+    // $opt .= "<option value=''>--ALL TYPE--</option>";
+    foreach ($crt as $key => $value) {
+      if($value->EQ_CLASS == ' - .')
+      {
+        $opt .= "<option value=''>--All--</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_CLASS'>$value->EQ_CLASS</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optLoct($name_id='')
+  {
+    $crt = $this->mod->eq_loct();
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
+    // SA1 - ADMIN COMPLEX 1
+    foreach ($crt as $key => $value) {
+      if(empty(trim($value->DRKY)))
+      {
+        $opt .= "<option value=''>--All--</option>";
+      }
+      else
+      {
+        $trimdata = trim($value->DRKY).' - '.trim($value->DRDL01);
+        $opt .= "<option value='$trimdata'>$trimdata</option>";
       }
     }
     $opt .= "</select>";

@@ -1261,12 +1261,12 @@ function wr_priority($value='',$all=false)
 {
   $list = 
     [
-      1 => 'Urgent ',
-      2 => 'Immediate',
-      3 => 'Within 3 - 7 Days',
-      4 => 'Requirment Shutdown Work',
-      5 => 'Preventive Maintenance',
-      6 => 'Outage Work',
+      1 => 'URGENT',
+      2 => 'WITHIN 24 HOURS',
+      3 => 'WITHIN 3 - 7 DAYS',
+      4 => 'REQUIRED SHUTDOWN WORK',
+      5 => 'PREVENTIVE MAINTENANCE',
+      6 => 'OUTAGE WORK',
     ];
     if($all)
       return $list;
@@ -1307,12 +1307,12 @@ function optPriority($name='priority', $row=0, $search=false)
 {
   $list = 
   [
-    1 => 'Urgent',
-    2 => 'Immediate',
-    3 => 'Within 3 - 7 Days',
-    4 => 'Requirment Shutdown Work',
+    1 => 'URGENT',
+    2 => 'WITHIN 24 HOURS',
+    3 => 'WITHIN 3 - 7 DAYS',
+    4 => 'REQUIRED SHUTDOWN WORK',
     /*5 => 'Preventive Maintenance',*/
-    6 => 'Outage Work',
+    6 => 'OUTAGE WORK',
   ];
   $s = "<select name='$name' id='$name' class='form-control'>";
   if($search)

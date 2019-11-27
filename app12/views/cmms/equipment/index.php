@@ -1,4 +1,14 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<?= base_url() ?>ast11/css/custom/custom.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.full.js"></script>
+<style type="text/css">
+  .select2-selection--single{
+    padding-left: 0.75rem !important
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow{
+    right: 0px !important
+  }
+</style>
 <div class="app-content content">
   <div class="content-wrapper">
     <div class="content-header row">
@@ -51,13 +61,17 @@
                                 <?= $optCriticality ?>
                               <?php elseif($key == 'EQTYPE'):?>
                                 <?= $optEqType ?>
+                              <?php elseif($key == 'EQCLAS'):?>
+                                <?= $optEqClass ?>
+                              <?php elseif($key == 'LOCT'):?>
+                                <?= $optLoct ?>
                               <?php else:?>
-                              <input class="form-control" name="<?= $key ?>" id="filter_<?= $key ?>">
+                              <input class="form-control toupper" name="<?= $key ?>" id="filter_<?= $key ?>">
                               <?php endif;?>
                             </div>
                           </div>
                           <?php } ?>
-          						  <div class="form-group row">
+          						  <div class="form-group">
           							<button type='button' id='btn-filter' class='btn btn-primary'>Search</button>
           						  </div>
                         </div>
@@ -108,7 +122,10 @@
 			'processing': true, //Feature control the processing indicator.
 			'serverSide': true, //Feature control DataTables' server-side processing mode.
 			'order': [], //Initial no order.
-			'bSort':false,
+      <?php if($param == 'repretitive'):?>
+      <?php else:?>
+      'bSort':false,
+      <?php endif;?>
       'bFilter':false,
 			// Load data for the table's content from an Ajax source
 			'ajax': {
@@ -142,6 +159,9 @@
 				'defaultContent': '-',
 				'targets': '_all',
 			},
+      <?php if($param == 'repretitive'):?>
+      { "orderable": false, "targets": [0,1,2,3,4,5,6,7,8,9] }
+      <?php endif;?>
 			],
 	 
 		});
@@ -153,5 +173,9 @@
 			$('#form-filter')[0].reset();
 			table.ajax.reload();  //just reload table
 		});
+    $('.toupper').change(function(){
+        this.value = this.value.toUpperCase();
+    });
+    $('.select2').select2();
 	});
 	</script>

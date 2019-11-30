@@ -227,7 +227,7 @@ class M_equipment extends CI_Model {
   }
   public function labor_list($wo_no='')
   {
-    $sql = "select a.WLDOCO WO_NO, b.ABALPH EMPLOYEE_NAME, trim(c.RADSC2) DEPARTMENT, (case when TRIM(WLDSC1) = 'SPECIALIST CONTRACTOR' THEN (WLMOVD/100) ELSE (WLRUNL/100) end) LABOR_HOUR from F3112  a 
+    $sql = "select a.WLDOCO WO_NO, b.ABALPH EMPLOYEE_NAME, trim(c.RADSC2) DEPARTMENT, (WLRUNL/100) LABOR_HOUR from F3112  a 
     inner join F48311 c on c.RADOCO = a.WLDOCO and c.RAOPSQ = a.WLOPSQ
     inner join F0101 b on c.RARSCN = B.ABAN8
     where a.WLDOCO = '$wo_no'";
@@ -323,7 +323,8 @@ class M_equipment extends CI_Model {
   }
   public function labor_detail($wono='')
   {
-    $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
+    $newCase = "(case when TRIM(WLDSC1) = 'SPECIALIST CONTRACTOR' THEN (WLMOVD/100) ELSE (WLRUNL/100) end) MANHOUR";
+    $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ, $newCase ,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
     $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
     $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,c.WLDSC1
     from F48311 a 

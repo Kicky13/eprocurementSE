@@ -325,11 +325,11 @@ class M_equipment extends CI_Model {
   {
     $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
     $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
-    $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,c.WLDSC1
+    $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,trim(c.WLDSC1)
     from F48311 a 
     left join F0101 b on a.RARSCN = b.ABAN8 
     left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
-    where a.RADOCO = '$wono' and trim(WLDSC1) !='SPECIALIST CONTRACTOR'";
+    where a.RADOCO = '$wono'";
 
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);

@@ -329,7 +329,7 @@ class M_equipment extends CI_Model {
     from F48311 a 
     left join F0101 b on a.RARSCN = b.ABAN8 
     left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
-    where a.RADOCO = '$wono'";
+    where a.RADOCO = '$wono' and trim(WLDSC1) !='SPECIALIST CONTRACTOR'";
 
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);

@@ -56,3 +56,25 @@
 	</tbody>
 </table>
 <?php endif;?>
+<?php if($labor_list['actual_3rd']->num_rows() > 0): ?>
+<table class="table">
+	<thead>
+		<tr bgcolor="#ccceee">
+			<th colspan="2">ACTUAL</th>
+		</tr>
+		<tr>
+			<th>NAME</th>
+			<th>ACT HOUR</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php
+			foreach ($labor_list['actual']->result() as $r) {
+				$name = $r->NAME;
+				$acthour = $r->ACTHOURS;
+				echo "<tr><td>$name</td><td>$acthour</td></tr>";
+			}
+		?>
+	</tbody>
+</table>
+<?php endif;?>

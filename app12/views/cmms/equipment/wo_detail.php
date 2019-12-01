@@ -13,7 +13,7 @@
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('detail-wo')">WO Detail</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('task-instruction')">Task Instruction</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('labor-list')">Labor List</a>
-		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('3rd-party-resources')">3RD Party Resources</a>
+		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('3rd-party-resources')">3RD Party</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('part-list')">Part List</a>
 		<a href="#" class="btn btn-info btn-sm" onclick="togglThisWODetail('attachment')">Attachment</a>
 	</div>

@@ -35,21 +35,24 @@
 	</thead>
 	<tbody>
 		<?php
-		$spec = false;
 			foreach ($labor_list['assignment']->result() as $r) {
-				if($r->WLDSC1 == 'SPECIALIST CONTRACTOR')
+				$department = $r->WLDSC1;
+				$resource = $r->ABALPH;
+				
+				$substr = substr($department, 0, 3);
+
+				if($substr == '3RD')
 				{
-					$spec = true;
+
 				}
 				else
 				{
-					$department = $r->WLDSC1;
-					$resource = $r->ABALPH;
+					
 					echo "<tr><td>$department</td><td>$resource</td></tr>";
 				}
 			}
-			if($spec)
-				echo "<tr><td>SPECIALIST CONTRACTOR</td><td></td></tr>";
+			/*if($spec)
+				echo "<tr><td>SPECIALIST CONTRACTOR</td><td></td></tr>";*/
 
 		?>
 	</tbody>

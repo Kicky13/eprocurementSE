@@ -16,7 +16,16 @@
 				$department = $r->DEPARTMENT;
 				$manhour = $r->MANHOUR;
 				$manpower = $r->MANPOWER;
-				echo "<tr><td>$department</td><td>$manhour</td><td>$manpower</td></tr>";
+				$substr = substr($department, 0, 3);
+				
+				if($substr == '3RD')
+				{
+
+				}
+				else
+				{				
+					echo "<tr><td>$department</td><td>$manhour</td><td>$manpower</td></tr>";
+				}
 			}
 		?>
 	</tbody>

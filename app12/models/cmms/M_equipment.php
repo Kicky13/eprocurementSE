@@ -325,7 +325,7 @@ class M_equipment extends CI_Model {
   {
     $estimate =  "select trim(WLMCU),WLDSC1 DEPARTMENT,WLOPSQ,WLRUNL/100 as MANHOUR,WLSETL/100 MANPOWER from f3112 where wldoco='$wono'";
     $actual = "select YTPALF as NAME,sum(YTPHRW)/100 ACTHOURS from f06116 where ytsbl='$wono' group by YTPALF";
-    $assignment = "select a.RADOCO,a.RARSCN,b.abalph,a.RAOPSQ,trim(c.WLDSC1) WLDSC1
+    $assignment = "select a.RADOCO,a.RARSCN,a.RAOPSQ,trim(c.WLDSC1) WLDSC1, TRIM(WLMCU) WLMCU, TRIM(RAMCU)  RAMCU, (CASE WHEN TRIM(WLMCU) <> TRIM(RAMCU) THEN '-' ELSE to_char(abalph) END) abalph
     from F48311 a 
     left join F0101 b on a.RARSCN = b.ABAN8 
     left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ

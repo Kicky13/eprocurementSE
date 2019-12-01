@@ -69,7 +69,7 @@
 	</thead>
 	<tbody>
 		<?php
-			foreach ($labor_list['actual']->result() as $r) {
+			foreach ($labor_list['actual_3rd']->result() as $r) {
 				$name = $r->NAME;
 				$acthour = $r->ACTHOURS;
 				echo "<tr><td>$name</td><td>$acthour</td></tr>";

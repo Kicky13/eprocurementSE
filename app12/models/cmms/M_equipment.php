@@ -331,7 +331,7 @@ class M_equipment extends CI_Model {
     left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
     where a.RADOCO = '$wono'";
 
-    $actual_3rd = "select to_char('SPECIALIST CONTRACTOR') as name,sum(WLMOVD/100) ACTHOURS from f3112 where wldoco= '$wono' and trim(WLDSC1) like '3RD%'";
+    $actual_3rd = "select trim(WLDSC1) as name,(WLMOVD/100) ACTHOURS from f3112 where wldoco= '$wono' and trim(WLDSC1) like '3RD%'";
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);
     $actual_3rd = $this->db->query($actual_3rd);

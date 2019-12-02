@@ -331,11 +331,18 @@ class M_equipment extends CI_Model {
     left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
     where a.RADOCO = '$wono'";
 
+    $assignment_3rd = "select a.RADOCO,trim(c.WLDSC1) WLDSC1, (CASE WHEN TRIM(WLMCU) <> TRIM(RAMCU) THEN '-' ELSE to_char(abalph) END) abalph
+    from F48311 a 
+    left join F0101 b on a.RARSCN = b.ABAN8 
+    left join f3112 c on c.wldoco = a.RADOCO and a.RAOPSQ = c.WLOPSQ
+    where a.RADOCO = '$wono' and WLDSC1 LIKE '3RD%' group by RADOCO, WLDSC1,WLMCU, (CASE WHEN TRIM(WLMCU) <> TRIM(RAMCU) THEN '-' ELSE to_char(abalph) END)";
+
     $actual_3rd = "select trim(WLDSC1) as name,(WLMOVD/100) ACTHOURS from f3112 where wldoco= '$wono' and trim(WLDSC1) like '3RD%'";
     $estimate = $this->db->query($estimate);
     $actual = $this->db->query($actual);
     $actual_3rd = $this->db->query($actual_3rd);
     $assignment = $this->db->query($assignment);
+    $assignment_3rd = $this->db->query($assignment_3rd);
     return ['estimate'=>$estimate, 'actual'=>$actual, 'assignment'=>$assignment,'actual_3rd'=>$actual_3rd];
   }
   public function new_pm($value='')

@@ -28,7 +28,7 @@
 	</tbody>
 </table>
 <?php endif;?>
-<?php if($labor_list['assignment']->num_rows() > 0): ?>
+<?php if($labor_list['assignment_3rd']->num_rows() > 0): ?>
 <table class="table">
 	<thead>
 		<tr bgcolor="#ccceee">
@@ -41,16 +41,11 @@
 	</thead>
 	<tbody>
 		<?php
-			foreach ($labor_list['assignment']->result() as $r) {
+			foreach ($labor_list['assignment_3rd']->result() as $r) {
 				$department = $r->WLDSC1;
 				$resource = $r->ABALPH;
 				
-				$substr = substr($department, 0, 3);
-
-				if($substr == '3RD')
-				{
-					echo "<tr><td>$department</td><td>$resource</td></tr>";
-				}
+				echo "<tr><td>$department</td><td>$resource</td></tr>";
 			}
 		?>
 	</tbody>

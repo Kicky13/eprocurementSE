@@ -343,7 +343,7 @@ class M_equipment extends CI_Model {
     $actual_3rd = $this->db->query($actual_3rd);
     $assignment = $this->db->query($assignment);
     $assignment_3rd = $this->db->query($assignment_3rd);
-    return ['estimate'=>$estimate, 'actual'=>$actual, 'assignment'=>$assignment,'actual_3rd'=>$actual_3rd];
+    return ['estimate'=>$estimate, 'actual'=>$actual, 'assignment'=>$assignment, 'assignment_3rd'=>$assignment_3rd,'actual_3rd'=>$actual_3rd];
   }
   public function new_pm($value='')
   {

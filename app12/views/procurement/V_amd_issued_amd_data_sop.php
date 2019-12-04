@@ -64,7 +64,7 @@
                     $amendment_date_disabled = "";
                 }
             ?>
-            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" required="" value="<?= @$amendment_date ?>">
+            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" disabled required="" value="<?= @$amendment_date ?>">
         </div>
     </div>
     <?php else:?>
@@ -93,7 +93,8 @@
           <?php 
             $stt = $total;
           ?>
-            <input class="form-control" disabled value="<?=numIndo($total)?>">
+<!--            <input class="form-control" disabled value="--><?//=numIndo($total)?><!--">-->
+            <input class="form-control" disabled value="<?=numIndo($arf->estimated_value)?>">
         </div>
     </div>
     <div class="form-group row amendment_recommendation_tab">
@@ -101,6 +102,7 @@
         <div class="col-md-3">
             <input type="hidden" id="latest-agreement-value2" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
             <input id="latest-agreement-value" class="form-control" disabled value="<?=numIndo($arf->amount_po_arf)?>">
+            <input type="hidden" id="latest-agreement-value-origin" value="<?=$arf->amount_po_arf?>">
         </div>
         <label class="col-md-3">New Agreement Value</label>
         <div class="col-md-3">
@@ -542,8 +544,19 @@
           var new_agreement = $("#latest-agreement-value2").val();
           var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(<?= $stt ?>));
       }
-      $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
-      $("#new-agreement-value").val(new_agreement);
+      if (toFloat($('#latest-agreement-value-origin').val()) !== 0) {
+        $("#latest-agreement-value").val('<?= numIndo($arf->amount_po_arf) ?>');
+      } else {
+        $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
+      }
+      // $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
+      var nav_origin = toFloat('<?= $arf->estimated_new_value ?>');
+      if (nav_origin !== 0) {
+          $("#new-agreement-value").val('<?= numIndo($arf->estimated_new_value) ?>');
+      } else {
+          $("#new-agreement-value").val(new_agreement);
+      }
+      // $("#new-agreement-value").val(new_agreement);
     <?php endif;?>
   })
 </script>

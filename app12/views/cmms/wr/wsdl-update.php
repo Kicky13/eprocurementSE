@@ -15,7 +15,7 @@
          <classification>
             <categoryCodes>
                <categoryCode002>.</categoryCode002>             
-               <categoryCode003>.</categoryCode003>
+               <categoryCode003><?=$maintenance_activity_type?></categoryCode003>
                <phase>.</phase>
             </categoryCodes>
          </classification> 

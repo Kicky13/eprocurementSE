@@ -87,8 +87,17 @@ class M_equipment extends CI_Model {
       'EQCLAS' => 'Equipment Class',
       'EQTYPE' => 'Equipment Type',*/
     
+    if(isset($_POST['order']) and $this->input->post('reprentitive') == 1)
+    {
+      $columns = [];
+      $sql .= " order by JML ".$_POST['order']['0']['dir'];
+
+    } 
+    else
+    {
+      $sql .= " order by faaaid asc";
+    }
     
-    $sql .= " order by faaaid asc";
     if($_POST['length'] != -1)
     {
       $sql .= " OFFSET ".$_POST['start']." ROWS FETCH NEXT ".$_POST['length']." ROWS ONLY ";
@@ -100,13 +109,15 @@ class M_equipment extends CI_Model {
   public function sql($value='')
   {
 	  $addSql='';
-	  $addColumn='';
+    $addColumn='';
+	  $addWhere='';
 	  
 	if($this->input->post('reprentitive'))
 	{
 		$reprentitive = $this->reprentitive();
 		$addSql = $reprentitive['join'];
 		$addColumn = ", ".$reprentitive['column_db'];
+    $addWhere = " where JML > 1";
 	}
     $sql = "select * from (select a.fawoyn,a.faaaid,a.fanumb, concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01, faasid, (select faasid from f1201 where fanumb=a.faaaid ) parents, 
         (select concat(fadl01, ' ' || fadl02 || ' ' || fadl03) fadl01 from f1201 where fanumb=a.faaaid ) dsparents, 
@@ -121,7 +132,7 @@ class M_equipment extends CI_Model {
         (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C5' and trim(drky)=trim(a.faacl5) ) as usages $addColumn
         from f1201 a 
 		inner join f1217 b on a.fanumb=b.wrnumb 
-		$addSql
+		$addSql 
 		) x";
     return $sql;  
   }
@@ -173,7 +184,10 @@ class M_equipment extends CI_Model {
     /*$sql = "select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status
     from (select * from f4801 where  watyps not in ('M')  and wanumb='$id' ) a left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
     inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";*/
-	$sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,concat(trim(drky),concat(' - ',drdl01)) as status, (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE, a.KBDS01 FAILURE_DESC
+	$sql="select c.dta201 as wotype,a.wadoco,a.wadl01,a.wasrst,a.wanumb,upper(concat(trim(drky),concat(' - ',drdl01))) as status, 
+  (to_date(concat(to_char(to_number(substr(a.WATRDJ,1,3)+1900)),substr(a.WATRDJ,4,3)),'YYYYDDD')) WO_DATE,   
+  (case when WASTRX > 0 then (to_date(concat(to_char(to_number(substr(WASTRX,1,3)+1900)),substr(WASTRX,4,3)),'YYYYDDD')) else null end) ACTUAL_FINISH_DATE, 
+  a.KBDS01 FAILURE_DESC
 	from (select f4801.*,F48164.KBDS01 from f4801 left join (select * from F48164 where KBKNLT = 1) F48164 on F48164.KBDOCO = f4801.WADOCO where f4801.watyps not in ('M') and f4801.wanumb='$id') a 
 	left outer join f4801t b on a.wadoco=b.wadoco inner join f40039 c on a.wadcto = c.dtdct 
 	inner join CRPCTL.f0005 d on trim(d.drky) = trim(a.wasrst) and  d.drsy='00' and d.drrt='SS'";
@@ -189,7 +203,8 @@ class M_equipment extends CI_Model {
 
     $sql = "select a.watyps as wotype,a.washno as taskinstruction, a.*, f0101.ABALPH ORIGINATOR,a.WAPRTS,FAASID as EQ_NO, concat(FADL01,FADL02) eq_desc,
     (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='12' and drrt='C6' and trim(drky)=trim(equipment.faacl6) ) as loct,
-    concat(trim(drky),concat(' - ',drdl01)) as status
+    (select concat(trim(drky),concat(' - ',drdl01))  from CRPCTL.f0005 where drsy='00' and drrt='W3' and trim(drky)=trim(WAWR03) ) as main_act_type,
+    upper(concat(trim(drky),concat(' - ',drdl01))) as status
     from (select f4801.*,$f4801 from f4801 where  wadoco='$wo_no' ) a 
     left outer join f4801t b on a.wadoco=b.wadoco 
     inner join f40039 c on a.wadcto = c.dtdct 
@@ -238,6 +253,18 @@ class M_equipment extends CI_Model {
     $s = $this->db->query($q);
     return $s->result();
   }
+  public function eq_class()
+  {
+    $q = "select concat(trim(drky),concat(' - ',trim(drdl01))) EQ_CLASS  from CRPCTL.f0005 where drsy='17' and drrt='PM'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
+  public function eq_loct()
+  {
+    $q = "SELECT * FROM crpctl.F0005 WHERE DRSY='12' AND DRRT='C6'";
+    $s = $this->db->query($q);
+    return $s->result();
+  }
   function failure_wr($eq_class)
   {
 	  $sql = "select * from F48162 where KNKNLT = 1 and KNPRODM = '$eq_class'";
@@ -266,7 +293,7 @@ class M_equipment extends CI_Model {
   }
   public function reprentitive()
   {
-	  $addSql['join'] = "inner join (select WANUMB, count(*) jml from f4801 group by wanumb) c on a.FANUMB = c.WANUMB";
+	  $addSql['join'] = "inner join (select WANUMB, count(*) jml from f4801 group by wanumb) c on a.FANUMB = c.WANUMB and c.jml > 1  ";
 	  $addSql['column_db'] = "JML";
 	  $addSql['column_tb'] = "TOTAL";
 	  return $addSql;
@@ -337,5 +364,11 @@ class M_equipment extends CI_Model {
     $sql = "select WADOCO, WADL01, FAASID,FANUMB from f4801 left join f1201 on f1201.fanumb = f4801.wanumb where ((WASRST between '10' and '90') or WASRST = '99') and UPPER(WADOCO) = UPPER('$wo_no')";
     $result = $this->db->query($sql)->row();
     return $result;   
+  }
+  public function picture_equipment($eq_no='')
+  {
+    $sql = "select * from crpdta.f00165 where gdtxky='$eq_no' and GDOBNM='GT1701'";
+    $result = $this->db->query($sql);
+    return $result;
   }
 }

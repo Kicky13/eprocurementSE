@@ -17,21 +17,18 @@
 				$manhour = $r->MANHOUR;
 				$manpower = $r->MANPOWER;
 				$substr = substr($department, 0, 3);
-				
+
 				if($substr == '3RD')
 				{
-
-				}
-				else
-				{				
 					echo "<tr><td>$department</td><td>$manhour</td><td>$manpower</td></tr>";
 				}
+
 			}
 		?>
 	</tbody>
 </table>
 <?php endif;?>
-<?php if($labor_list['assignment']->num_rows() > 0): ?>
+<?php if($labor_list['assignment_3rd']->num_rows() > 0): ?>
 <table class="table">
 	<thead>
 		<tr bgcolor="#ccceee">
@@ -44,30 +41,17 @@
 	</thead>
 	<tbody>
 		<?php
-			foreach ($labor_list['assignment']->result() as $r) {
+			foreach ($labor_list['assignment_3rd']->result() as $r) {
 				$department = $r->WLDSC1;
 				$resource = $r->ABALPH;
 				
-				$substr = substr($department, 0, 3);
-
-				if($substr == '3RD')
-				{
-
-				}
-				else
-				{
-					
-					echo "<tr><td>$department</td><td>$resource</td></tr>";
-				}
+				echo "<tr><td>$department</td><td>$resource</td></tr>";
 			}
-			/*if($spec)
-				echo "<tr><td>SPECIALIST CONTRACTOR</td><td></td></tr>";*/
-
 		?>
 	</tbody>
 </table>
 <?php endif;?>
-<?php if($labor_list['actual']->num_rows() > 0): ?>
+<?php if($labor_list['actual_3rd']->num_rows() > 0): ?>
 <table class="table">
 	<thead>
 		<tr bgcolor="#ccceee">
@@ -80,7 +64,7 @@
 	</thead>
 	<tbody>
 		<?php
-			foreach ($labor_list['actual']->result() as $r) {
+			foreach ($labor_list['actual_3rd']->result() as $r) {
 				$name = $r->NAME;
 				$acthour = $r->ACTHOURS;
 				echo "<tr><td>$name</td><td>$acthour</td></tr>";

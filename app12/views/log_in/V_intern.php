@@ -65,7 +65,7 @@
                                                     </div>
                                                 </fieldset>
                                                 <?php 
-                                                  if($_SERVER['REQUEST_URI'] == '/dev_cmms/' or $_SERVER['REQUEST_URI'] == '/dev_cmms/in/')
+                                                  if($_SERVER['HTTP_HOST'] == 'cmms.supreme-energy.com')
                                                     echo "<input type='hidden' name='choose_application' value='cmms'>";
                                                   else
                                                     echo "<input type='hidden' name='choose_application' value='scm'>";

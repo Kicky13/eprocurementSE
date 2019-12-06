@@ -64,6 +64,12 @@
                                                         <i class="fa fa-key"></i>
                                                     </div>
                                                 </fieldset>
+                                                <?php 
+                                                  if($_SERVER['REQUEST_URI'] == '/dev_cmms/' or $_SERVER['REQUEST_URI'] == '/dev_cmms/in/')
+                                                    echo "<input type='hidden' name='choose_application' value='cmms'>";
+                                                  else
+                                                    echo "<input type='hidden' name='choose_application' value='scm'>";
+                                                ?>
                                                 <fieldset class="form-group position-relative has-icon-left mb-1">
                                                     <select id="bahasa" class="chosen-select form-control m-b" value="IDN">
                                                         <!-- <option value="IND"><a href="#">Bahasa Indonesia</a></option> -->
@@ -147,35 +153,50 @@
                 });
                 $('#login').on('submit', function (e) {
                     e.preventDefault();
-                    var obj = {};
-                    var xmodalx = modal_start($(".content-body").find(".card"));
-                    $.each($("#login").serializeArray(), function (i, field) {
-                        obj[field.name] = field.value;
-                    });
-                    obj.lang = $('#bahasa').val();
-                    $.ajax({
-                        type: 'POST',
-                        url: '<?= base_url('log_in_in/cek_login') ?>',
-                        data: obj,
-                        success: function (m) {
-                            console.log(m);
-                            if (m == 'sukses') {
-                                // modal_stop(xmodalx);
-                                document.location.href = '<?= base_url('home') ?>';
-                            } else {
-                                modal_stop(xmodalx);
-                                setTimeout(function () {
-                                    toastr.options = {
-                                        closeButton: true,
-                                        progressBar: true,
-                                        showMethod: 'slideDown',
-                                        timeOut: 4000
-                                    };
-                                    toastr.warning(m, 'Warning');
-                                }, 100);
+                    if($("#choose_application").val() == '0')
+                    {
+                        setTimeout(function () {
+                            toastr.options = {
+                                closeButton: true,
+                                progressBar: true,
+                                showMethod: 'slideDown',
+                                timeOut: 4000
+                            };
+                            toastr.warning('Please Select Application', 'Warning');
+                        }, 100);
+                    }
+                    else
+                    {
+                        var obj = {};
+                        var xmodalx = modal_start($(".content-body").find(".card"));
+                        $.each($("#login").serializeArray(), function (i, field) {
+                            obj[field.name] = field.value;
+                        });
+                        obj.lang = $('#bahasa').val();
+                        $.ajax({
+                            type: 'POST',
+                            url: '<?= base_url('log_in_in/cek_login') ?>',
+                            data: obj,
+                            success: function (m) {
+                                console.log(m);
+                                if (m == 'sukses') {
+                                    // modal_stop(xmodalx);
+                                    document.location.href = '<?= base_url('home') ?>';
+                                } else {
+                                    modal_stop(xmodalx);
+                                    setTimeout(function () {
+                                        toastr.options = {
+                                            closeButton: true,
+                                            progressBar: true,
+                                            showMethod: 'slideDown',
+                                            timeOut: 4000
+                                        };
+                                        toastr.warning(m, 'Warning');
+                                    }, 100);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 });
             });
         </script>

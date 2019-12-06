@@ -63,6 +63,12 @@ class Log_in_in extends CI_Controller {
             if ($login_ad != false && $login_ad == $cek_ad->id_external && $cek_ad->is_external == 1) {
               $roles = explode(",", $cek_ad->ROLES);
               $roles = array_values(array_filter($roles));
+              $roles = $this->check_choose_application($roles);
+              if(count($roles) == 0)
+              {
+                $this->output("You dont have the privillage to use this application");
+                exit();
+              }
               $get_menu = $this->M_log_in->get_menu_in($roles);
 			  $get_task = $this->M_log_in->get_task_in($roles);
 			  $new = array(
@@ -87,6 +93,12 @@ class Log_in_in extends CI_Controller {
             if ($cek) {
                 $roles = explode(",", $cek->ROLES);
                 $roles = array_values(array_filter($roles));
+                $roles = $this->check_choose_application($roles);
+                if(count($roles) == 0)
+                {
+                  $this->output("You dont have the privillage to use this application");
+                  exit();
+                }
                 $get_menu = $this->M_log_in->get_menu_in($roles);
 				$get_task = $this->M_log_in->get_task_in($roles);
                 $new = array(
@@ -182,5 +194,34 @@ class Log_in_in extends CI_Controller {
         return false;
       }
     }
+    public function check_choose_application($roles)
+    {
+      $arr = ['100007','100008','100009','100010','100011','100012','100013'];
+      $newRoles = [];
+      $choose_application = $this->input->post('choose_application');
 
+      if($choose_application == 'cmms')
+      {
+        foreach ($roles as $key => $value) {
+          if(in_array($value, $arr))
+          {
+            $newRoles[] = $value;
+          }
+        }
+      }
+      else
+      {
+          foreach ($roles as $key => $value) {
+            if(in_array($value, $arr))
+            {
+              
+            }
+            else
+            {
+              $newRoles[] = $value;
+            }
+          }
+      }
+      return $newRoles;
+    }
 }

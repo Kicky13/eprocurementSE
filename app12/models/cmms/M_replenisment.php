@@ -263,7 +263,7 @@ class M_replenisment extends CI_Model {
   public function updateToAvailabel($msr_no='')
   {
     $msr_items = $this->dbm->query("select * from t_msr_item where msr_no = '$msr_no' and semic_no in (select semic_no from cmms_replenishment)");
-    $semic = []
+    $semic = [];
     foreach ($msr_items->result() as $r) {
       $semic[] = "'".$r->semic_no."'";
     }

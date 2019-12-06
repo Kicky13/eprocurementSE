@@ -262,7 +262,7 @@ class M_replenisment extends CI_Model {
   }
   public function updateToAvailabel($msr_no='')
   {
-    $msr_items = $this->dbm->query("select * from t_msr_item where msr_no = '$msr_no' and semic_no in (select semic_no from t_replenishment)");
+    $msr_items = $this->dbm->query("select * from t_msr_item where msr_no = '$msr_no' and semic_no in (select semic_no from cmms_replenishment)");
     $semic = []
     foreach ($msr_items->result() as $r) {
       $semic[] = "'".$r->semic_no."'";
@@ -271,11 +271,11 @@ class M_replenisment extends CI_Model {
     {
       $semic_join = implode(',', $semic);
       $this->db->query("update F5743702 set RPEV01 = 1 where RPEV01 = 2 and RPUORG > 0 and RPLITM in ($semic_join)");
-      $this->dbm->query("delete from t_replenishment where semic_no in ($semic_join)");
+      $this->dbm->query("delete from cmms_replenishment where semic_no in ($semic_join)");
     }
   }
   public function msrReplenishment($data='')
   {
-    $this->dbm->insert('t_replenishment',$data);
+    $this->dbm->insert('cmms_replenishment',$data);
   }
 }

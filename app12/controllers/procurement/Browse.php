@@ -69,12 +69,19 @@ class Browse extends CI_Controller {
           $addAndWhere = "and t_arf.id < ".$this->input->post('doc_id');
         }
 
+//        $sql = "SELECT t_arf.id arf_id, t_arf_recommendation_preparation.doc_no doc_no_amd, t_arf.doc_no doc_no_arf,
+//        t_arf.amount_po, t_arf_recommendation_preparation.po_no po_no_amd,t_arf.po_no po_no_arf
+//        from t_arf_recommendation_preparation
+//        left join t_arf on t_arf.po_no = t_arf_recommendation_preparation.po_no and t_arf.doc_no = t_arf_recommendation_preparation.doc_no
+//        left JOIN t_arf_detail_revision on t_arf_detail_revision.doc_id = t_arf.id
+//        where t_arf_recommendation_preparation.po_no = '$po_no' and t_arf_detail_revision.type = 'value' and
+//        `t_arf_detail_revision`.`value` > 0  $addAndWhere order by t_arf.id desc";
         $sql = "SELECT t_arf.id arf_id, t_arf_recommendation_preparation.doc_no doc_no_amd, t_arf.doc_no doc_no_arf, 
         t_arf.amount_po, t_arf_recommendation_preparation.po_no po_no_amd,t_arf.po_no po_no_arf 
         from t_arf_recommendation_preparation 
         left join t_arf on t_arf.po_no = t_arf_recommendation_preparation.po_no and t_arf.doc_no = t_arf_recommendation_preparation.doc_no
         left JOIN t_arf_detail_revision on t_arf_detail_revision.doc_id = t_arf.id 
-        where t_arf_recommendation_preparation.po_no = '$po_no' and t_arf_detail_revision.type = 'value' and `t_arf_detail_revision`.`value` > 0  $addAndWhere order by t_arf.id desc";
+        where t_arf_recommendation_preparation.po_no = '$po_no' and t_arf_detail_revision.type = 'value' $addAndWhere order by t_arf.id desc";
         $q = $this->db->query($sql);
         // echo $sql;
         $num = $q->num_rows();

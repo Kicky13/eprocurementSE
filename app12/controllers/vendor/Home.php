@@ -71,7 +71,7 @@ class Home extends CI_Controller {
 
         $itp_approval = $this->M_itp_approval->list_itp_onprogress();
         $sr_approval = $this->db
-        ->from(
+            ->from(
                 '(SELECT id_ref, MIN(sequence) AS sequence FROM t_approval_service_receipt WHERE status = 0 OR status = 2 GROUP BY id_ref) approval'
             )
             ->join('t_approval_service_receipt', 't_approval_service_receipt.id_ref = approval.id_ref AND t_approval_service_receipt.sequence = approval.sequence')
@@ -117,7 +117,7 @@ class Home extends CI_Controller {
         $msrVerify['supp_verif'] = $this->M_approval_verification->show();
 
         $datas = $this->db->query(
-        "SELECT b.module,r.description as jabatan, a.id, a.supplier_id, b.user_roles, b.status_approve, b.sequence,
+            "SELECT b.module,r.description as jabatan, a.id, a.supplier_id, b.user_roles, b.status_approve, b.sequence,
             CASE WHEN count(j.id) > 0
                 THEN CONCAT(b.description, ' (DATA DITOLAK)')
                 ELSE b.description
@@ -142,7 +142,7 @@ class Home extends CI_Controller {
             $msrVerify['bid_proposal_clarification'] = $this->m_clarification->scope('unread_bid_proposal')->get();
             $msrVerify['arf_recom_issued'] = $this->T_approval_arf_recom->time_issued()->num_rows();
         }
-		if(in_array(assign_sp, $roles))
+        if(in_array(assign_sp, $roles))
         {
             $msrVerify['arf_recom_approval'] = $this->T_approval_arf_recom->greetings();
         }
@@ -165,9 +165,9 @@ class Home extends CI_Controller {
         {
             /*Negotiation Amendment Response*/
             $msrVerify['arf_nego_response'] = count($this->m_arf_response->view('arf_response')
-                        ->join('t_arf_nego','t_arf_nego.arf_response_id = t_arf_response.id','left')
-                        ->where('t_arf_nego.status',1)
-                        ->get());
+                ->join('t_arf_nego','t_arf_nego.arf_response_id = t_arf_response.id','left')
+                ->where('t_arf_nego.status',1)
+                ->get());
             $msrVerify['arf_nego'] = count($this->m_arf_response->view('arf_response')->scope(['not_amd'])->get());
             $msrVerify['amd_reject'] = count($this->m_arf_response->view('arf_response')->scope(array('procurement_specialist','reject'))->get());
         }
@@ -177,108 +177,108 @@ class Home extends CI_Controller {
         $msrVerify['arf_assignment'] = $this->m_arf->scope('assignment')->count_all_results();
         $msrVerify['amendment_recommendation_preparation'] = $this->m_arf_response->view('arf_response')->scope(array('recommendation_preparation', 'procurement_specialist'))->count_all_results();
         $msrVerify['amendment_acceptance'] = $this->db->select('t_arf_acceptance.doc_no,t_arf.po_title title, t_arf.department department_desc,t_arf_notification.response_date,t_arf_response.responsed_at,m_user.NAME,t_arf_response.id')
-                ->join('t_arf','t_arf.doc_no = t_arf_acceptance.doc_no', 'left')
-                ->join('t_arf_assignment','t_arf_assignment.doc_id = t_arf.id', 'left')
-                ->join('t_arf_response','t_arf_response.doc_no = t_arf.doc_no', 'left')
-                ->join('t_arf_notification','t_arf_notification.doc_no = t_arf.doc_no', 'left')
-                ->join('m_user','m_user.ID_USER = t_arf_assignment.user_id', 'left')
-                ->where(['t_arf_acceptance.accepted_user_at'=>null])
-                ->get('t_arf_acceptance')->num_rows();
+            ->join('t_arf','t_arf.doc_no = t_arf_acceptance.doc_no', 'left')
+            ->join('t_arf_assignment','t_arf_assignment.doc_id = t_arf.id', 'left')
+            ->join('t_arf_response','t_arf_response.doc_no = t_arf.doc_no', 'left')
+            ->join('t_arf_notification','t_arf_notification.doc_no = t_arf.doc_no', 'left')
+            ->join('m_user','m_user.ID_USER = t_arf_assignment.user_id', 'left')
+            ->where(['t_arf_acceptance.accepted_user_at'=>null])
+            ->get('t_arf_acceptance')->num_rows();
         $msrVerify['amendment_reject'] = $this->m_arf->scope(array('auth', 'on_creator'))->count_all_results();
         //$msrVerify['out'] = 'out';
 
-	    $msrVerify['out_nego'] = $this->db->select('t_eq_data.*, t_msr.title, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as requestor')
-			->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
-			->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
-			->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
-			->join('m_user', 'm_user.ID_USER = t_msr.create_by')
-			->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+        $msrVerify['out_nego'] = $this->db->select('t_eq_data.*, t_msr.title, m_msrtype.MSR_DESC as msr_type, m_company.DESCRIPTION as company, m_departement.DEPARTMENT_DESC as department, m_user.NAME as requestor')
+            ->join('t_msr', 't_msr.msr_no = t_eq_data.msr_no')
+            ->join('m_msrtype', 'm_msrtype.ID_MSR = t_msr.id_msr_type')
+            ->join('m_company', 'm_company.ID_COMPANY = t_msr.id_company')
+            ->join('m_user', 'm_user.ID_USER = t_msr.create_by')
+            ->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
             ->join('t_assignment', 't_assignment.msr_no = t_msr.msr_no')
-			->join('t_nego', 't_nego.msr_no = t_msr.msr_no')
+            ->join('t_nego', 't_nego.msr_no = t_msr.msr_no')
             ->where('t_nego.status', 1)
-			->where('t_nego.is_read', 0)
-			->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
-			->get('t_eq_data')
-			->result();
-		$msrVerify['out_nego'] = count($msrVerify['out_nego']);
+            ->where('t_nego.is_read', 0)
+            ->where('t_assignment.user_id', $this->session->userdata('ID_USER'))
+            ->get('t_eq_data')
+            ->result();
+        $msrVerify['out_nego'] = count($msrVerify['out_nego']);
 //      $msrVerify['out_nego'] = '10000000';
 
-		$msrVerify['po_reject'] = $this->M_purchase_order->reject_list()->where('create_by', $this->session->userdata('ID_USER'))->get()->num_rows();
-		$get_task = $this->M_vendor->task();
-		$get_task_baru = array();
-		foreach($get_task as $row){
-			array_push($get_task_baru,$row->id);
-		} 
+        $msrVerify['po_reject'] = $this->M_purchase_order->reject_list()->where('create_by', $this->session->userdata('ID_USER'))->get()->num_rows();
+        $get_task = $this->M_vendor->task();
+        $get_task_baru = array();
+        foreach($get_task as $row){
+            array_push($get_task_baru,$row->id);
+        }
         /*cmms tasks start*/
         $msrVerify['outstanding_wo_report'] = $this->wo->outstanding_wo_report()->num_rows();
         if(in_array(supervior_cmms, $roles))
         {
-          $msrVerify['suprevisor_task'] = $this->wr->suprevisor_task()->num_rows();
+            $msrVerify['suprevisor_task'] = $this->wr->suprevisor_task()->num_rows();
         }
         /*cmms tasks end*/
         $menu_task = array();
         foreach ($this->db->where('parent', 0)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_group_menu_task) {
-			if (in_array($r_group_menu_task->id, $get_task_baru)) {
-				$menu_task[$r_group_menu_task->id] = array(
-					'key' => $r_group_menu_task->key,
-					'icon' => $r_group_menu_task->icon,
-					'desc_ind' => $r_group_menu_task->desc_ind,
-					'desc_eng' => $r_group_menu_task->desc_eng,
-					'count' => 0,
-					'open_on_zero' => $r_group_menu_task->open_on_zero,
-					'menu_keys' => array(),
-					'menus' => array()
-				);
-				foreach ($this->db->where('parent', $r_group_menu_task->id)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_sub_group_menu_task) {
-					if (in_array($r_sub_group_menu_task->id, $get_task_baru)) {
-	
-						$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id] = array(
-							'key' => $r_sub_group_menu_task->key,
-							'icon' => $r_sub_group_menu_task->icon,
-							'desc_ind' => $r_sub_group_menu_task->desc_ind,
-							'desc_eng' => $r_sub_group_menu_task->desc_eng,
-							'count' => 0,
-							'open_on_zero' => $r_sub_group_menu_task->open_on_zero,
-							'menu_keys' => array(),
-							'menus' => array()
-						);
-				
-						foreach ($this->db->where('parent', $r_sub_group_menu_task->id)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_menu_task) {
-							if (in_array($r_menu_task->id, $get_task_baru)) {
+            if (in_array($r_group_menu_task->id, $get_task_baru)) {
+                $menu_task[$r_group_menu_task->id] = array(
+                    'key' => $r_group_menu_task->key,
+                    'icon' => $r_group_menu_task->icon,
+                    'desc_ind' => $r_group_menu_task->desc_ind,
+                    'desc_eng' => $r_group_menu_task->desc_eng,
+                    'count' => 0,
+                    'open_on_zero' => $r_group_menu_task->open_on_zero,
+                    'menu_keys' => array(),
+                    'menus' => array()
+                );
+                foreach ($this->db->where('parent', $r_group_menu_task->id)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_sub_group_menu_task) {
+                    if (in_array($r_sub_group_menu_task->id, $get_task_baru)) {
 
-								if ($r_menu_task->key) {
-									if (isset($msrVerify[$r_menu_task->key])) {
-										if ($r_menu_task->key == 'msr_draft') {
-											if (can_edit_msr_draft()) {
-												$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key]->num_rows();
-											}
-										} elseif ($r_menu_task->key == 'reject') {
-											$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
-										} else {
-											if (is_array($msrVerify[$r_menu_task->key])) {
-												$msrVerify[$r_menu_task->key] = count($msrVerify[$r_menu_task->key]);
-											} elseif(is_numeric($msrVerify[$r_menu_task->key])) {
-												$msrVerify[$r_menu_task->key] = $msrVerify[$r_menu_task->key];
-											} else {
-												$msrVerify[$r_menu_task->key] = $msrVerify[$r_menu_task->key]->num_rows();
-											}
-											$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
-											$menu_task[$r_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
-										}
-										$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
-									}else{
-										$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
-									}
-								} else {
-									$menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
-								}
+                        $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id] = array(
+                            'key' => $r_sub_group_menu_task->key,
+                            'icon' => $r_sub_group_menu_task->icon,
+                            'desc_ind' => $r_sub_group_menu_task->desc_ind,
+                            'desc_eng' => $r_sub_group_menu_task->desc_eng,
+                            'count' => 0,
+                            'open_on_zero' => $r_sub_group_menu_task->open_on_zero,
+                            'menu_keys' => array(),
+                            'menus' => array()
+                        );
 
-							
-							}
-						}
-					}
-				}
-			}
+                        foreach ($this->db->where('parent', $r_sub_group_menu_task->id)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_menu_task) {
+                            if (in_array($r_menu_task->id, $get_task_baru)) {
+
+                                if ($r_menu_task->key) {
+                                    if (isset($msrVerify[$r_menu_task->key])) {
+                                        if ($r_menu_task->key == 'msr_draft') {
+                                            if (can_edit_msr_draft()) {
+                                                $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key]->num_rows();
+                                            }
+                                        } elseif ($r_menu_task->key == 'reject') {
+                                            $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
+                                        } else {
+                                            if (is_array($msrVerify[$r_menu_task->key])) {
+                                                $msrVerify[$r_menu_task->key] = count($msrVerify[$r_menu_task->key]);
+                                            } elseif(is_numeric($msrVerify[$r_menu_task->key])) {
+                                                $msrVerify[$r_menu_task->key] = $msrVerify[$r_menu_task->key];
+                                            } else {
+                                                $msrVerify[$r_menu_task->key] = $msrVerify[$r_menu_task->key]->num_rows();
+                                            }
+                                            $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
+                                            $menu_task[$r_group_menu_task->id]['count'] += $msrVerify[$r_menu_task->key];
+                                        }
+                                        $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
+                                    }else{
+                                        $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
+                                    }
+                                } else {
+                                    $menu_task[$r_group_menu_task->id]['menus'][$r_sub_group_menu_task->id]['menus'][] = $r_menu_task;
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
         }
         /*foreach ($rs_menu_task as $row) {
             if ($row->parent == 0) {
@@ -319,7 +319,7 @@ class Home extends CI_Controller {
         }*/
         $data['msr_verify'] = $msrVerify;
         $data['menu_task'] = $menu_task;
-		
+
         $this->template->display('vendor/V_home', $data);
     }
 }

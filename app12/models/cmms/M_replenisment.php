@@ -5,6 +5,7 @@ class M_replenisment extends CI_Model {
   public function __construct() {
     parent::__construct();    
     $this->db = $this->load->database('oracle', true);
+    $this->dbm = $this->load->database('default', true);
     /* [RPLITM] => 14.10.005.002.1          
       [RPMCU] =>    10101WH02
       [RPUORG] => 30
@@ -258,5 +259,23 @@ class M_replenisment extends CI_Model {
   public function update($value='')
   {
     $this->db->query("update F5743702 set RPEV01 = 2 where RPEV01 = 1 and RPUORG > 0 and RPLITM = '$value'");
+  }
+  public function updateToAvailabel($msr_no='')
+  {
+    $msr_items = $this->dbm->query("select * from t_msr_item where msr_no = '$msr_no' and semic_no in (select semic_no from cmms_replenishment)");
+    $semic = [];
+    foreach ($msr_items->result() as $r) {
+      $semic[] = "'".$r->semic_no."'";
+    }
+    if(count($semic) > 0)
+    {
+      $semic_join = implode(',', $semic);
+      $this->db->query("update F5743702 set RPEV01 = 1 where RPEV01 = 2 and RPUORG > 0 and RPLITM in ($semic_join)");
+      $this->dbm->query("delete from cmms_replenishment where semic_no in ($semic_join)");
+    }
+  }
+  public function msrReplenishment($data='')
+  {
+    $this->dbm->insert('cmms_replenishment',$data);
   }
 }

@@ -94,7 +94,13 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
         $qid = $this->session->userdata('ID_USER');
         if($qdoa->num_rows() > 0)
         {
-          $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+          $arrd = [];
+          foreach ($qdoa->result() as $r) {
+            $arrd[] = $r->creator_id;
+          }
+          $impl = implode(',', $arrd);
+          $qid = $impl.','.$this->session->userdata('ID_USER');
+          // $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
         }
 
         $q = "select id from cmms_position where user_id in ($qid) ";
@@ -201,6 +207,32 @@ utl_raw.cast_to_raw('{".'\r'."tf1\ansi\ansicpg1252\deff0\deflang1057 deskripsi_l
     ->get($this->table);
   }
   public function update_and_approve($data='')
+  {
+    $this->db->trans_begin();
+    //unset($data['status'],$data['id'],$data['description']);
+    if(@$data['parent_id_old'])
+    {
+      @$data['parent_id'] = null;
+    }
+    if(@$data['photo_old'])
+    {
+      @$data['photo'] = null;
+    }
+    unset($data['parent_id_old'],$data['photo_old']);
+    $this->db->where('wr_no', $data['wr_no'])->update($this->table, $data);
+    //$this->approve($this->input->post());
+    if($this->db->trans_status() === true)
+    {
+      $this->db->trans_commit();
+      return true;
+    }
+    else
+    {
+      $this->db->trans_rollback();
+      return false;
+    }
+  }
+  public function update_and_approve_no_status($data='')
   {
     $this->db->trans_begin();
     //unset($data['status'],$data['id'],$data['description']);
@@ -366,7 +398,12 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
     $qid = $this->session->userdata('ID_USER');
     if($qdoa->num_rows() > 0)
     {
-      $qid = $qdoa->row()->creator_id.','.$this->session->userdata('ID_USER');
+      $arrd = [];
+      foreach ($qdoa->result() as $r) {
+        $arrd[] = $r->creator_id;
+      }
+      $impl = implode(',', $arrd);
+      $qid = $impl.','.$this->session->userdata('ID_USER');
     }
     $q = "select id from cmms_position where user_id in ($qid)";
     $q = "select user_id from cmms_position where parent_id in ($q) ";
@@ -412,5 +449,12 @@ utl_raw.cast_to_raw('{\rtf1\ansi\ansicpg1252\deff0\deflang1057{\fonttbl{\f0\fswi
       }
     }
     return $sql;
+  }
+  public function maintenance_activity_type()
+  {
+    /*Maintenance Activity Type*/
+    $q = "SELECT * FROM crpctl.F0005 WHERE DRSY='00' AND DRRT='W3'";
+    $return = $this->dbo->query($q);
+    return $return;;
   }
 }

@@ -176,7 +176,9 @@
     $.ajax({
       url:"<?= base_url('cmms/replenisment/save_draft_msr') ?>",
       success:function(e){
-        window.open("<?=base_url('procurement/msr/createFromDraft')?>/"+e,"_self");
+        swal('Done','Item has been created to Draft MSR, Please Login to SCM Portal Application','success');
+        location.reload();
+        // window.open("<?=base_url('procurement/msr/createFromDraft')?>/"+e,"_self");
       }
     })
   }

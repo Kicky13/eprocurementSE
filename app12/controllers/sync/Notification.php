@@ -52,7 +52,7 @@ class Notification extends CI_Controller {
             
             foreach ($result_check as $row) {
 
-                $this->email->from($mail['email'], '[SYSTEM] EPROC SUPREME ENERGY');
+                $this->email->from($mail['email'], '[SYSTEM] SUPREME ENERGY');
 				$this->email->to($row->recipient);
                 // $this->email->to('reza@abpersada.com');
                 $this->email->subject($row->subject);

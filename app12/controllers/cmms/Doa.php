@@ -33,29 +33,47 @@ class Doa extends CI_Controller {
 
   public function store()
   {
+    $msg = 'Fail, Please Try Again';
     $data = $this->input->post();
-    $store = $this->mod->store($data);
-    if($store)
+    if(strtotime($data['start_date']) > strtotime($data['end_date']))
     {
-      echo json_encode(['status'=>true, 'msg'=>'Stored']);
+      $msg = 'End date must > Start date';
+      echo json_encode(['status'=>false, 'msg'=>$msg]);
     }
     else
     {
-      echo json_encode(['status'=>false, 'msg'=>'Fail, Please Try Again']);
+      $store = $this->mod->store($data);
+      if($store)
+      {
+        echo json_encode(['status'=>true, 'msg'=>'Delegated']);
+      }
+      else
+      {
+        echo json_encode(['status'=>false, 'msg'=>$msg]);
+      }
     }
   }
 
   public function update()
   {
+    $msg = 'Fail, Please Try Again';
     $data = $this->input->post();
-    $update = $this->mod->update($data);
-    if($update)
+    if(strtotime($data['start_date']) > strtotime($data['end_date']) or strtotime($data['start_date']) == strtotime($data['end_date']))
     {
-      echo json_encode(['status'=>true, 'msg'=>'Updated']);
+      $msg = 'End date must > Start date';
+      echo json_encode(['status'=>false, 'msg'=>$msg]);
     }
     else
-    { 
-      echo json_encode(['status'=>false, 'msg'=>'Fail, Please Try Again']);
+    {
+      $update = $this->mod->update($data);
+      if($update)
+      {
+        echo json_encode(['status'=>true, 'msg'=>'Delegated']);
+      }
+      else
+      {
+        echo json_encode(['status'=>false, 'msg'=>$msg]);
+      }
     }
   }
 
@@ -65,7 +83,7 @@ class Doa extends CI_Controller {
     if($delete)
     {
 
-      echo json_encode(['status'=>true, 'msg'=>'Updated']);
+      echo json_encode(['status'=>true, 'msg'=>'Reset']);
     }
     else
     {

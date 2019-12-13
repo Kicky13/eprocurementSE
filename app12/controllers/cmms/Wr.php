@@ -46,7 +46,7 @@ class Wr extends CI_Controller {
 
   public function index()
   {
-    $thead = cmms_settings('wr_list')->get()->result();
+    $thead = cmms_settings('wr_list')->order_by('seq','asc')->get()->result();
     $filter = cmms_settings('wr_list')->where('desc2',1)->get()->result();
     $data['menu'] = $this->menu;
     $data['thead'] = $thead;
@@ -106,16 +106,16 @@ class Wr extends CI_Controller {
       $no++;
       $row = array();
       $row[] = $no;
-      foreach ($this->db->where('module','wr_list')->get('cmms_settings')->result() as $key => $value) {
+      foreach ($this->db->where('module','wr_list')->order_by('seq','asc')->get('cmms_settings')->result() as $key => $value) {
         $v = $value->desc1;
         $x = $rows->$v;
-        if($value->desc1 == 'req_finish_date')
+        if($value->desc1 == 'req_finish_date' or $value->desc1 == 'created_at')
         {
           $x = dateToIndo($x);
         }
         if($value->desc1 == 'wr_no')
         {
-          $x = "<a href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
+          $x = "<a target='_blank' href='".base_url('cmms/wr/show/'.$rows->wr_no)."$all'>$x</a>";
         }
         if($value->desc1 == 'status')
         {
@@ -152,6 +152,8 @@ class Wr extends CI_Controller {
     $data['optWoType'] = $this->optWoType();
     $data['optPriority'] = $this->optPriority();
     $data['optEqType'] = $this->optEqType('filter_EQTYPE');
+    $data['optEqClass'] = $this->optEqClass('eq_class', 'filter_EQCLAS');
+    $data['optMaintenanceActivityType'] = $this->optMaintenanceActivityType();
     $data['filter_FAASID'] = $FAASID;
     $this->template->display($this->view .'/create', $data);
   }
@@ -169,6 +171,7 @@ class Wr extends CI_Controller {
     $data['row'] = $wr;
     $data['optWoType'] = $this->optWoType($wr->wo_type_id);
     $data['optPriority'] = $this->optPriority($wr->priority);
+    $data['optMaintenanceActivityType'] = $this->optMaintenanceActivityType($wr->maintenance_activity_type);
     if(in_array(operator_cmms, $this->roles) or in_array(department_cmms, $this->roles))
     {
       $data['user_creator'] = true;
@@ -315,16 +318,16 @@ class Wr extends CI_Controller {
         $data['photo'] = $file_name;
       }
     }
-    $data['status'] = '05';
     if(isset($data['parent_id']))
     {
       unset($data['parent_id']);
     }
-    // $update = $this->wr->update_and_approve($data);
+    $update = $this->wr->update_and_approve_no_status($data);
     $send_wsdl = $this->send_wsdl_update($data);
     if($send_wsdl)
     {
       $msg = '';
+      $data['status'] = '05';
     	$update = $this->wr->update_and_approve($data);
       // $send_wsdl = $this->send_wsdl_update($data);
       if($update)
@@ -499,16 +502,54 @@ class Wr extends CI_Controller {
   public function optEqType($name_id='')
   {
     $crt = $this->mod->eq_type();
-    $opt = "<select name='$name_id' class='form-control' id='$name_id'>";
+    $opt = "<select name='$name_id' class='form-control select2' id='$name_id' style='width:100%'>";
     // $opt .= "<option value=''>--ALL TYPE--</option>";
     foreach ($crt as $key => $value) {
       if($value->EQ_TYPE == ' - .')
       {
-        $opt .= "<option value=''>ALL TYPE</option>";
+        $opt .= "<option value=''>--Equipment Class--</option>";
       }
       else
       {
         $opt .= "<option value='$value->EQ_TYPE'>$value->EQ_TYPE</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optEqClass($name='', $idtag = '')
+  {
+    $crt = $this->mod->eq_class();
+    $opt = "<select name='$name' class='form-control select2' id='$idtag' style='width:100%'>";
+    foreach ($crt as $key => $value) {
+      if($value->EQ_CLASS == ' - .')
+      {
+        $opt .= "<option value=''>--Equipment Type--</option>";
+      }
+      else
+      {
+        $opt .= "<option value='$value->EQ_CLASS'>$value->EQ_CLASS</option>";
+      }
+    }
+    $opt .= "</select>";
+    return $opt;
+  }
+  public function optMaintenanceActivityType($selected=1)
+  {
+    $name='maintenance_activity_type';
+    $crt = $this->wr->maintenance_activity_type();
+    $opt = "<select name='$name' class='form-control' id='$name' style='width:100%'>";
+    foreach ($crt->result() as $key => $value) {
+      if(empty(trim($value->DRKY)))
+      {
+        //$opt .= "<option value=''>----</option>";
+      }
+      else
+      {
+        $v= trim($value->DRKY);
+        $t= trim($value->DRDL01);
+        $s = $selected == $v ? "selected=''":'';
+        $opt .= "<option value='$v' $s>$t</option>";
       }
     }
     $opt .= "</select>";
@@ -560,6 +601,7 @@ class Wr extends CI_Controller {
         echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
         echo $xml;
       }
+    //echo $data_curl;
       return false;
     } else {
         // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");
@@ -579,7 +621,10 @@ class Wr extends CI_Controller {
     $r = $this->db->where('ID_USER',$id)->get('m_user')->row();
 	
     $data['originator'] = $r->USERNAME;
+    // print_r($data);
     $xml = $this->load->view('cmms/wr/wsdl-update', $data, true);
+      // echo $xml;
+    // exit();
     $headers = array(
       "Content-Type: text/xml",
       "charset:utf-8",
@@ -609,6 +654,7 @@ class Wr extends CI_Controller {
         echo "Failed Exec JDE at ".date("Y-m-d H:i:s");
         echo $xml;
       }
+      // echo $xml;
       return false;
     } else {
         // echo "Successfully Exec JDE ARF -  Doc No ".$arf->doc_no." at ".date("Y-m-d H:i:s");

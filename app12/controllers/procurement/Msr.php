@@ -2546,6 +2546,8 @@ class Msr extends CI_Controller {
           'attachment_cancel' => $data['file_name'],
           'deskripsi' => $this->input->post('deskripsi')
         ]);
+        $this->load->model('cmms/M_replenisment');
+        $this->M_replenisment->updateToAvailabel($msr_no);
       }
       if($this->db->trans_status() === TRUE)
       {

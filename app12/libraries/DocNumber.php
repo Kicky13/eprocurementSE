@@ -106,9 +106,9 @@ class DocNumber {
         if (!$sequence) {
             $sequence = 0;
         }
-        if ($year == '2019') {
-            if (intval($sequence) < 499) {
-                $sequence = 499;
+        if ($year == '2020') {
+            if (intval($sequence) < 199) {
+                $sequence = 199;
             }
         }
 

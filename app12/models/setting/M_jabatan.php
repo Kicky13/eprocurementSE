@@ -24,10 +24,17 @@ class M_jabatan extends MY_Model
         if (!in_array(@$user->user_role, [2,3])) {
             return [];
         }
-		if(@$user->user_role == t_jabatan_user_secondary)
+        /*
+        * skema kalaou apapun yang di save draft, boleh di edit oleh tim dalam satu user manager yang sama
+        * originalnya t_jabatan_primary tidak ada hanya secondary saja
+        * skema ini juga menghiraukan yang create primary atau secondary semua bisa melihat dan mengubah, bedanya kalau secondary hanya save draft saja
+        */
+		if(@$user->user_role == t_jabatan_user_secondary or @$user->user_role == t_jabatan_user_primary)
         {
 			return $this->db->where('parent_id', $user->parent_id)->or_where('user_id', $user->parent_id)->get($this->table)->result();
         }
+
+        /*bawah ini exit karena diatas sudah pasti return karena scrip ini adalah script lama yang membedaan primary dan secondary*/
         if(@$user->user_role == t_jabatan_user_primary)
         {
 			return $this->db->where('user_id', $user_id)->or_where('parent_id', @$user->id)->get($this->table)->result();

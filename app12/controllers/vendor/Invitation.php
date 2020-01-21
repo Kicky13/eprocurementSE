@@ -87,8 +87,8 @@ class Invitation extends CI_Controller {
         $dt['jam'] = substr($data, 0, 2);
         $dt['menit'] = substr($data, 2, 2);
         $dt['tahun'] = substr($data, 4, 4);
-        $dt['bulan'] = substr($data, 18, 2);
-        $dt['tgl'] = substr($data, 20, 2);
+        $dt['bulan'] = substr($data, 16, 2);
+        $dt['tgl'] = substr($data, 18, 2);
         $dt['pukul'] = $dt['jam'] . ":" . $dt['menit'];
         $dt['tgl_mulai'] = $dt['tahun'] . "-" . $dt['bulan'] . "-" . $dt['tgl'];
         $dt['tgl_mulai_min'] = str_replace("-", "", $dt['tgl_mulai']);
@@ -113,6 +113,10 @@ class Invitation extends CI_Controller {
           }
             $dt_note = $this->M_invitation->show_log_vendor_acc($v['ID_VENDOR']);
             // echopre($dt_note->NOTE);
+            $dt[$k]["URL"] = $v["URL"];
+            $dt[$k]["Month"] = substr($v['URL'], 16, 2);
+            $dt[$k]["Day"] = substr($v['URL'], 18, 2);
+            $dt[$k]["Year"] =substr($v['URL'], 4, 4);
             $dt[$k]["ID"] = $k + 1;
             $dt[$k]["NAMA"] = stripslashes($v['NAMA']);
             $dt[$k]["ID_VENDOR"] = stripslashes($v['ID_VENDOR']);

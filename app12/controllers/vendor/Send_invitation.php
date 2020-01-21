@@ -85,8 +85,8 @@ class Send_invitation extends CI_Controller {
         $dt['jam'] = substr($data, 0, 2);
         $dt['menit'] = substr($data, 2, 2);
         $dt['tahun'] = substr($data, 4, 4);
-        $dt['bulan'] = substr($data, 18, 2);
-        $dt['tgl'] = substr($data, 20, 2);
+        $dt['bulan'] = substr($data, 16, 2);
+        $dt['tgl'] = substr($data, 18, 2);
         $dt['pukul'] = $dt['jam'] . ":" . $dt['menit'];
         $dt['tgl_mulai'] = $dt['tahun'] . "-" . $dt['bulan'] . "-" . $dt['tgl'];
         $dt['tgl_mulai_min'] = str_replace("-", "", $dt['tgl_mulai']);

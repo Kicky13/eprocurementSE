@@ -2503,7 +2503,7 @@ class Msr extends CI_Controller {
 		if (!is_dir($config['upload_path'])) {
             mkdir($config['upload_path'],0755,TRUE);
         }
-		$config['allowed_types'] = 'jpg|jpeg|pdf|doc|docx';
+		$config['allowed_types'] = 'jpg|jpeg|pdf|doc|docx|xls|xlsx';
         //$config['allowed_types'] = 'jpg|jpeg|pdf';
         $config['max_size'] = '2048';
         //$config['encrypt_name'] = true;

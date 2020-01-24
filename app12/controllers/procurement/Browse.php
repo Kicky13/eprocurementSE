@@ -22,6 +22,7 @@ class Browse extends CI_Controller {
                 }
                 if ($creator = $this->input->get('creator')) {
                     $model->where('t_msr.create_by', $creator);
+                    $model->or_where('t_msr.id_department', $this->session->userdata('DEPARTMENT'));
                 }
             })
             ->edit_column('po_type', function($model) {

@@ -32,7 +32,8 @@ class Arf extends CI_Controller
         $this->load->model('procurement/arf/m_arf_attachment');
         $this->load->model('procurement/arf/m_arf_assignment');
         $this->load->model('M_sendmail');
-
+        $this->load->model('setting/M_jabatan');
+        
         $this->load->model('M_base_approval');
         $this->load->model('procurement/arf/m_arf_approval');
 
@@ -55,16 +56,25 @@ class Arf extends CI_Controller
     {
         $this->session->set_userdata('arf_recom_title', 'Amendment Recommendation');
         if ($this->input->is_ajax_request()) {
+            $status = $this->input->get('status');
             $this->load->library('m_datatable');
             if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
+                if($status == 'draft')
+                {
+
+                }
+                else
+                {
                 $this->m_datatable->scope('auth');
+                }
             }
             return $this->m_datatable->resource($this->m_arf)
                 ->view('arf')
                 ->filter(function ($model) {
                     if ($status = $this->input->get('status')) {
                         if ($status == 'draft') {
-                            $model->where('t_arf.status', 'draft');
+                            // $model->where('t_arf.status', 'draft');
+                            $model->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'draft'",null,false);
                         } elseif ($status == 'rejected') {
                             // $model->where('approval.sequence', 1);
                             $model->where('`t_arf`.`id` in (select `id_ref` from `t_approval_arf` where status = 2)', null, false);
@@ -108,6 +118,7 @@ class Arf extends CI_Controller
                 })
                 ->order_by('doc_date', 'DESC')
                 ->generate();
+                echo $this->db->last_query();
         }
         $data['menu'] = $this->menu;
         $data['url_data'] = base_url('procurement/arf?status=' . $this->input->get('status'));
@@ -786,21 +797,24 @@ class Arf extends CI_Controller
             $this->m_arf_approval->approve($allowed_approve->id, 1, $post['submit_note']);
 
             if (isset($post['budget'])) {
-                $this->m_arf_budget->where('doc_id', $arf->id)->delete();
-                foreach ($post['budget'] as $id_costcenter => $account_subsidiary) {
-                    foreach ($account_subsidiary as $id_account_subsidiary => $row) {
-                        $this->m_arf_budget->insert(array(
-                            'doc_id' => $arf->id,
-                            'id_costcenter' => $row['id_costcenter'],
-                            'costcenter' => $row['costcenter'],
-                            'id_account_subsidiary' => $row['id_account_subsidiary'],
-                            'account_subsidiary' => $row['account_subsidiary'],
-                            'id_currency' => $row['id_currency'],
-                            'booking_amount' => $row['booking_amount'],
-                            'costcenter_value' => $row['costcenter_amount'],
-                            'account_subsidiary_value' => $row['id_account_subsidiary'] ? $row['amount'] : null,
-                            'budget_value' => $row['amount']
-                        ));
+                if(is_array($post['budget']) and count($post['budget']) > 0)
+                {
+                    $this->m_arf_budget->where('doc_id', $arf->id)->delete();
+                    foreach ($post['budget'] as $id_costcenter => $account_subsidiary) {
+                        foreach ($account_subsidiary as $id_account_subsidiary => $row) {
+                            $this->m_arf_budget->insert(array(
+                                'doc_id' => $arf->id,
+                                'id_costcenter' => $row['id_costcenter'],
+                                'costcenter' => $row['costcenter'],
+                                'id_account_subsidiary' => $row['id_account_subsidiary'],
+                                'account_subsidiary' => $row['account_subsidiary'],
+                                'id_currency' => $row['id_currency'],
+                                'booking_amount' => $row['booking_amount'],
+                                'costcenter_value' => $row['costcenter_amount'],
+                                'account_subsidiary_value' => $row['id_account_subsidiary'] ? $row['amount'] : null,
+                                'budget_value' => $row['amount']
+                            ));
+                        }
                     }
                 }
             }

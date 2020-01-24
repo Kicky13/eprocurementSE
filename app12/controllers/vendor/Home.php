@@ -30,6 +30,7 @@ class Home extends CI_Controller {
             ->model('procurement/arf/m_arf_response')
             ->model('procurement/arf/m_arf_acceptance')
             ->model('procurement/arf/m_arf_nego')
+            ->model('setting/M_jabatan')
             ->model('vendor/M_approval_verification')
             ->model('cmms/M_wo_jde','wo')
             ->model('cmms/M_work_request','wr')
@@ -171,7 +172,16 @@ class Home extends CI_Controller {
             $msrVerify['arf_nego'] = count($this->m_arf_response->view('arf_response')->scope(['not_amd'])->get());
             $msrVerify['amd_reject'] = count($this->m_arf_response->view('arf_response')->scope(array('procurement_specialist','reject'))->get());
         }
-        $msrVerify['arf_draft'] = $this->m_arf->scope(array('auth', 'draft'))->count_all_results();
+        $jabatanUser = $this->M_jabatan->findByUser($this->session->userdata('ID_USER'));
+        if(@$jabatanUser->user_role == t_jabatan_user_secondary)
+        {
+            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditsecondary'))->count_all_results();
+        }
+        elseif(@$jabatanUser->user_role == t_jabatan_user_primary)
+        {
+            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditprimary'))->count_all_results();
+        }
+        // echo $this->db->last_query();
         $msrVerify['arf_approval'] = $this->m_arf->view('approval')->scope('approval')->count_all_results();
         $msrVerify['arf_verification'] = $this->m_arf->view('approval')->scope('verification')->count_all_results();
         $msrVerify['arf_assignment'] = $this->m_arf->scope('assignment')->count_all_results();

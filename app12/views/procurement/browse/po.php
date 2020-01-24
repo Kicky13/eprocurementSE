@@ -23,7 +23,7 @@
                     {data : 'po_no', render : function(data, type, row) {
                         return '<button type="button" data-action="select-po" class="btn btn-success btn-sm"><i class="fa fa-check"></i></button>';
                     }, orderable : false, searchable : false},
-                    {data : 'po_no'},
+                    {data : 'po_no', name : 't_purchase_order.po_no'},
                     {data : 'po_date'},
                     {data : 'company', name : 'm_company.DESCRIPTION'},
                     {data : 'vendor', name : 'm_vendor.NAMA'},

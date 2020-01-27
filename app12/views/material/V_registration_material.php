@@ -654,6 +654,31 @@
             buttonup_class: 'btn btn-white'
         });
 
+        $("#m_name").keypress(function(event){
+            var name = $("#m_name").val();
+            if (name.includes('<') || name.includes('>') || name.includes('&') || name.includes('"')) {
+                alert('> < & " is not Allowed');
+                if (name.includes('<')) {
+                    var replace = name.replace('<', '');
+                    $('#m_name').val(replace);
+                } else if (name.includes('>')) {
+                    var  replace = name.replace('>', '');
+                    $('#m_name').val(replace);
+                } else if (name.includes('&')) {
+                    var replace = name.replace('&', '');
+                    $('#m_name').val(replace);
+                } else if (name.includes('"')) {
+                    var replace = name.replace('"', '');
+                    $('#m_name').val(replace);
+                }
+            }
+            if (name.length >= 30) {
+                if(e.keyCode !== 8) {
+                    e.preventDefault();
+                }
+            }
+        });
+
         $('.i-checks').iCheck({
             checkboxClass: 'icheckbox_square-green',
             radioClass: 'iradio_square-green',

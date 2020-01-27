@@ -20,7 +20,12 @@
                 <?php $this->load->view('procurement/V_arf_form') ?>
                 <div class="form-group text-right">
                     <button type="button" id="btn-save-draft" class="btn btn-primary" style="display: none;">Save Draft</button>
+                    <?php 
+                        $jabtanUser = $this->M_jabatan->findByUser($this->session->userdata('ID_USER'));
+                        if($jabtanUser->user_role == t_jabatan_user_primary):
+                    ?>
                     <button type="button" id="btn-validate-submit" class="btn btn-success" style="display: none;">Submit</button>
+                    <?php endif;?>
                     <?php if (isset($allowed_approve)) { ?>
                         <?php if ($allowed_approve->sequence == 1) { ?>
                             <button type="button" id="btn-validate-resubmit" class="btn btn-success">Resubmit</button>

@@ -59,7 +59,7 @@ class Arf extends CI_Controller
             $status = $this->input->get('status');
             $this->load->library('m_datatable');
             if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
-                if($status == 'draft')
+                if($status == 'draft' or $status == 'submitted')
                 {
 
                 }
@@ -74,12 +74,24 @@ class Arf extends CI_Controller
                     if ($status = $this->input->get('status')) {
                         if ($status == 'draft') {
                             // $model->where('t_arf.status', 'draft');
-                            $model->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'draft'",null,false);
+                            if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
+                                $model->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'draft'",null,false);
+                            }
+                            else
+                            {
+
+                            }
                         } elseif ($status == 'rejected') {
                             // $model->where('approval.sequence', 1);
                             $model->where('`t_arf`.`id` in (select `id_ref` from `t_approval_arf` where status = 2)', null, false);
                         } elseif ($status == 'submitted') {
-                            $model->where('t_arf.status', 'submitted');
+                            if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
+                                $model->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'submitted'",null,false);
+                            }
+                            else
+                            {
+                                $model->where('t_arf.status', 'submitted');
+                            }
                         } elseif ($status == 'verified') {
                             $model->where('t_arf.status', 'submitted')
                                 ->where('approval_arf.description', null);

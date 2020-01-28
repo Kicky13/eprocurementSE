@@ -766,10 +766,12 @@ class Arf extends CI_Controller
                     'doc_id' => $arf->id,
                     'type' => $attachment['type'],
                     'file' => $attachment['file'],
-                    'file_name' => $attachment['file_name']
+                    'file_name' => $attachment['file_name'],
+                    'created_by' => $attachment['created_by'],
+                    'created_at' => date('Y-m-d H:i:s')
                 );
             }
-            $this->m_arf_attachment->insert_batch($record_attachment);
+            $this->db->insert_batch('t_arf_attachment', $record_attachment);
         }
 
         if ($arf->status == 'submitted') {

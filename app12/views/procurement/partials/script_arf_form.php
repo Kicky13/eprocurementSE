@@ -1052,6 +1052,7 @@
         formData.append('type', $('#attachment-modal-type').val());
         formData.append('file_name', $('#attachment-modal-file_name').val());
         formData.append('file', $('#attachment-modal-file')[0].files[0]);
+        formData.append('created_by', "<?= $this->session->userdata('ID_USER') ?>");
         $.ajax({
             type:'POST',
             enctype:'multipart/form-data',
@@ -1062,7 +1063,7 @@
             url : '<?= base_url('procurement/arf/attachment_upload') ?>',
             success : function(response) {
                 if (response.success) {
-                    add_attachment($('#attachment-modal-type').val(), $('#attachment-modal-file_name').val(), response.data.file_name, Localization.humanDatetime(new Date()), '<?= $_SESSION['NAME'] ?>')
+                    add_attachment($('#attachment-modal-type').val(), $('#attachment-modal-file_name').val(), response.data.file_name, Localization.humanDatetime(new Date()), '<?= $_SESSION['NAME'] ?>', "<?= $this->session->userdata('ID_USER') ?>")
                     $('#attachment-modal').modal('hide');
                 } else {
                     $('#attachment-modal .modal-body').prepend('<div id="error_message" class="alert alert-danger">'+response.message+'</div>');
@@ -1071,7 +1072,7 @@
         });
     }
 
-    function add_attachment(type, file_name, file, upload_at, upload_by) {
+    function add_attachment(type, file_name, file, upload_at, upload_by,creator_id) {
         var html_attachment_table = '<tr data-row-id="'+attachment_row+'">';
             html_attachment_table += '<td>';
                 html_attachment_table += '<input type="hidden" name="attachment['+attachment_row+'][type]" value="'+type+'">'+type;
@@ -1080,7 +1081,10 @@
                 html_attachment_table += '<input type="hidden" name="attachment['+attachment_row+'][file_name]" value="'+file_name+'"><input type="hidden" name="attachment['+attachment_row+'][file]" value="'+file+'"><a href="<?= base_url($document_path) ?>/'+file+'" target="_blank">'+file_name+'</a>';
             html_attachment_table += '</td>';
             html_attachment_table += '<td>'+upload_at+'</td>';
-            html_attachment_table += '<td>'+upload_by+'</td>';
+            /*creator_id*/
+            html_attachment_table += '<td>';
+            html_attachment_table += '<input type="hidden" name="attachment['+attachment_row+'][created_by]" value="'+creator_id+'">'+upload_by;
+            html_attachment_table += '</td>';
             html_attachment_table += '<td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="remove_attachment(\''+attachment_row+'\')">Delete</button></td>';
         html_attachment_table += '</tr>';
         $('#attachment-table tbody').append(html_attachment_table);

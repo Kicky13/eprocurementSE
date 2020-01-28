@@ -8,7 +8,7 @@ class Arf extends CI_Controller
     protected $procurement_head_id = '23';
     protected $procurement_specialist_id = '28';
     protected $document_path = 'upload/ARF';
-    protected $document_allowed_types = 'jpg|jpeg|pdf|doc|docx';
+    protected $document_allowed_types = 'jpg|jpeg|pdf|doc|docx|xls|xlsx';
     protected $document_max_size = '2048';
 
     public function __construct()

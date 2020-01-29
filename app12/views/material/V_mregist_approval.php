@@ -328,7 +328,7 @@
                                 <?= lang("No SEMIC*", "SEMIC Number*") ?>
                             </label>
                             <div class="col-md-4">
-                                <input type="text" id="semic_no" name="semic_no" class="form-control" minlength="14" maxlength="14" required/>
+                                <input type="text" id="semic_no" name="semic_no" class="form-control" minlength="15" maxlength="15" required/>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -1168,28 +1168,28 @@
         }
       });
 
-      $('#semic_no').keyup(function(e) {
-          var code = this.value.replace(/\D/g,'').substring(0,10);
+      $('#semic_no').keyup(function(e){
+          var code = this.value.replace(/\D/g,'').substring(0,11);
           var delKey = (e.keyCode == 8 || e.keyCode == 46);
           var len = code.length;
           if (len < 2) {
               code = code;
           } else if (len == 2) {
-              code = code.substring(0, 2) + (delKey ? '' : '.');
+              code = code.substring(0, 2);
           } else if (len < 4) {
               code = code.substring(0, 2) + '.' + code.substring(2, 4);
           } else if (len == 4) {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + (delKey ? '' : '.');
-          } else if (len < 6) {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 6);
-          } else if (len == 6) {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 6) + (delKey ? '' : '.');
-          } else if (len < 9) {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 6) + '.' + code.substring(6, 9);
-          } else if (len == 9) {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 6) + '.' + code.substring(6, 9) + (delKey ? '' : '.');
+              code = code.substring(0, 2) + '.' + code.substring(2, 4)
+          } else if (len < 7) {
+              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 7);
+          } else if (len == 7) {
+              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 7);
+          } else if (len < 10) {
+              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 7) + '.' + code.substring(7, 10);
+          } else if (len == 10) {
+              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 7) + '.' + code.substring(7, 10) + '.';
           } else {
-              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 6) + '.' + code.substring(6, 9) + '.' + code.substring(9, 10);
+              code = code.substring(0, 2) + '.' + code.substring(2, 4) + '.' + code.substring(4, 7) + '.' + code.substring(7, 10) + '.' + code.substring(10, 11);
           }
           this.value = code;
       });

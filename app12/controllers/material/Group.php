@@ -107,6 +107,8 @@ class Group extends CI_Controller {
       );
 
       if ($id_material != "") {
+        unset($data['MATERIAL_GROUP'],$data['CREATE_BY']);
+        $data['UPDATE_TIME'] = date("Y-m-d H:i:s");
         $query = $this->M_group->update_m_group($id_material, $data);
       } else {
         $query = $this->M_group->simpan_m_group($data);

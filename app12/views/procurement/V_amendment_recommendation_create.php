@@ -369,7 +369,6 @@
                                         </thead>
                                         <tbody id="devbled-attachment">
                                           <?php foreach ($doc as $key => $value) {
-                                            $createdName = user($value->created_by)->NAME;
                                             if(isset($issued))
                                             {
                                                 if($value->module_kode == 'arf-issued')
@@ -379,6 +378,8 @@
                                                     {
                                                         $vendor = $this->db->where(['ID'=>$value->created_by])->get('m_vendor')->row();
                                                         $createdName = $vendor->NAMA;
+                                                    } else if($value->tipe == 1) {
+                                                        $createdName = user($value->created_by)->NAME;
                                                     }
                                                 }
                                                 elseif($value->module_kode == 'arf-recom-prep')

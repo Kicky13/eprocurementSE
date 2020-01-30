@@ -33,7 +33,7 @@ class Arf extends CI_Controller
         $this->load->model('procurement/arf/m_arf_assignment');
         $this->load->model('M_sendmail');
         $this->load->model('setting/M_jabatan');
-        
+
         $this->load->model('M_base_approval');
         $this->load->model('procurement/arf/m_arf_approval');
 
@@ -1210,13 +1210,13 @@ class Arf extends CI_Controller
         $rc = $this->db->query("SELECT * FROM t_approval_arf WHERE id = " . $arfId)->row();
         $rn = $this->db->query("SELECT * FROM t_approval_arf WHERE id_ref = " . $rc->id_ref . " AND status = 0 ORDER BY sequence ASC")->row();
 
-        $approval = ($this->db->query("SELECT * FROM t_approval_arf WHERE id_ref = " . $rc->id_ref)->num_rows()) - 1;
-        $approved = $this->db->query("SELECT * FROM t_approval_arf WHERE id_ref = " . $rc->id_ref . " AND status = 1")->num_rows();
+        $approval = ($this->db->query("SELECT * FROM t_approval_arf WHERE sequence <> 7 AND id_ref = " . $rc->id_ref)->num_rows()) - 1;
+        $approved = $this->db->query("SELECT * FROM t_approval_arf WHERE sequence <> 7 id_ref = " . $rc->id_ref . " AND status = 1")->num_rows();
 
         if ($status == 1) {
             if ($approved < $approval) {
                 if ($rc->sequence != $rn->sequence) {
-                    if ($rn->sequence == 6) {
+                    if ($rn->sequence >= 5) {
                         $query = $this->db->query("SELECT aa.*, a.company_id, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
                         JOIN t_arf a ON aa.id_ref = a.id
                         JOIN m_notic n ON n.ID = aa.email_approve
@@ -1270,6 +1270,32 @@ class Arf extends CI_Controller
                                 $data['dest'][] = $item->recipient;
                             }
                         }
+                    }
+                }
+            } elseif ($approved == $approval) {
+                $query = $this->db->query("SELECT aa.*, u.NAME, u.EMAIL AS recipient, n.TITLE AS title, n.OPEN_VALUE AS open, n.CLOSE_VALUE AS close, a.doc_no, a.po_title FROM t_approval_arf aa
+                        JOIN t_arf a ON aa.id_ref = a.id
+                        LEFT JOIN m_user u ON u.USERNAME = '100088' AND u.USERNAME = '100052'   
+                        JOIN m_notic n ON n.ID = aa.email_approve
+                        WHERE aa.id_ref = " . $rn->id_ref . " AND aa.sequence = " . $rn->sequence);
+
+                $data_replace = $query->result();
+
+                if (count($data_replace) > 0) {
+                    $str = $data_replace[0]->open;
+                    $str = str_replace('no_arf', $data_replace[0]->doc_no, $str);
+                    $str = str_replace('title_agreement', $data_replace[0]->po_title, $str);
+
+                    $data = array(
+                        'img1' => $img1,
+                        'img2' => $img2,
+                        'title' => $data_replace[0]->title,
+                        'open' => $str,
+                        'close' => $data_replace[0]->close
+                    );
+
+                    foreach ($data_replace as $item) {
+                        $data['dest'][] = $item->recipient;
                     }
                 }
             }

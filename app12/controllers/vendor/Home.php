@@ -156,7 +156,7 @@ class Home extends CI_Controller {
         if(in_array(user_representative, $roles))
         {
             $msrVerify['arf_recom_approval'] = $this->T_approval_arf_recom->greetings();
-            $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','auth'])->count_all_results();
+            // $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','auth'])->count_all_results();
         }
         if(in_array(user_manager, $roles))
         {
@@ -175,12 +175,17 @@ class Home extends CI_Controller {
         $jabatanUser = $this->M_jabatan->findByUser($this->session->userdata('ID_USER'));
         if(@$jabatanUser->user_role == t_jabatan_user_secondary)
         {
-            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditsecondary'))->count_all_results();
+            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditsecondary','draft'))->count_all_results();
+            $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','roleeditsecondary','submitted'])->count_all_results();
+            // echo $this->db->last_query();
         }
         elseif(@$jabatanUser->user_role == t_jabatan_user_primary)
         {
-            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditprimary'))->count_all_results();
+            $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditprimary','draft'))->count_all_results();
+            $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','roleeditprimary','submitted'])->count_all_results();
+            // echo $this->db->last_query();
         }
+        // exit();
         // echo $this->db->last_query();
         $msrVerify['arf_approval'] = $this->m_arf->view('approval')->scope('approval')->count_all_results();
         $msrVerify['arf_verification'] = $this->m_arf->view('approval')->scope('verification')->count_all_results();

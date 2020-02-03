@@ -101,7 +101,7 @@
                             <div class="form-group vendor-select">
                               <label for="date2" style="display:block;">Supplier :</label>
                               <select class="form-control" id="bl_vendor" name="bl_vendor">
-                              <?php foreach ($this->db->where('LENGTH(no_slka)',4)->where('ID_EXTERNAL !=',"''")->order_by('nama','asc')->get('m_vendor')->result() as $v) : ?>
+                              <?php foreach ($this->db->where('LENGTH(no_slka) > ',0)->where('ID_EXTERNAL !=',"''")->order_by('nama','asc')->get('m_vendor')->result() as $v) : ?>
                                 <option value="<?=$v->ID?>"><?=$v->NAMA?></option>
                               <?php endforeach;?>
                               </select>

@@ -8,7 +8,7 @@ class Arf extends CI_Controller
     protected $procurement_head_id = '23';
     protected $procurement_specialist_id = '28';
     protected $document_path = 'upload/ARF';
-    protected $document_allowed_types = 'jpg|jpeg|pdf|doc|docx';
+    protected $document_allowed_types = 'jpg|jpeg|pdf|doc|docx|xls|xlsx';
     protected $document_max_size = '2048';
 
     public function __construct()
@@ -59,7 +59,7 @@ class Arf extends CI_Controller
             $status = $this->input->get('status');
             $this->load->library('m_datatable');
             if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
-                if($status == 'draft')
+                if($status == 'draft' or $status == 'submitted')
                 {
 
                 }
@@ -79,7 +79,13 @@ class Arf extends CI_Controller
                             // $model->where('approval.sequence', 1);
                             $model->where('`t_arf`.`id` in (select `id_ref` from `t_approval_arf` where status = 2)', null, false);
                         } elseif ($status == 'submitted') {
-                            $model->where('t_arf.status', 'submitted');
+                            if (strpos($this->session->userdata('ROLES'), ',' . $this->procurement_head_id . ',') === FALSE && strpos($this->session->userdata('ROLES'), ',' . $this->procurement_specialist_id . ',') === FALSE) {
+                                $model->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'submitted'",null,false);
+                            }
+                            else
+                            {
+                                $model->where('t_arf.status', 'submitted');
+                            }
                         } elseif ($status == 'verified') {
                             $model->where('t_arf.status', 'submitted')
                                 ->where('approval_arf.description', null);
@@ -766,10 +772,12 @@ class Arf extends CI_Controller
                     'doc_id' => $arf->id,
                     'type' => $attachment['type'],
                     'file' => $attachment['file'],
-                    'file_name' => $attachment['file_name']
+                    'file_name' => $attachment['file_name'],
+                    'created_by' => $attachment['created_by'],
+                    'created_at' => date('Y-m-d H:i:s')
                 );
             }
-            $this->m_arf_attachment->insert_batch($record_attachment);
+            $this->db->insert_batch('t_arf_attachment', $record_attachment);
         }
 
         if ($arf->status == 'submitted') {

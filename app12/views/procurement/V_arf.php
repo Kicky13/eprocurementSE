@@ -85,36 +85,45 @@
                 {data : 'status', name : 'approval_arf.description'},
                 {data : 'user_assignment_name', name : 'user_assignment_name'},
                 {data : 'id', name : 't_arf.id', render : function(data, type, row) {
-                    actionColumn.create('edit', {
-                        template : function() {
-                            if (row.original.status == 'draft' || row.sequence == 1) {
-                                return '<a href="<?= base_url('procurement/arf/edit') ?>/'+data+'" class="btn btn-warning btn-sm">Edit</a>';
-                            } else {
-                                return '';
-                            }
-                        }
-                    });
-                    actionColumn.create('amd', {
-                        template : function() {
-                            if (row.arf_response_id) {
-                                return '<a href="<?= base_url('procurement/amendment_recommendation/view') ?>/'+row.arf_response_id+'?back_url=1&amd_view=1" class="btn btn-primary btn-sm">AMD</a>';
-                            } else {
-                                return '';
-                            }
-                        }
-                    });
-                    actionColumn.create('notification', {
-                        template : function() {
-                            if (row.arf_notification_doc_no) {
-                                return '<a href="<?= base_url('procurement/arf_notif_preparation/view') ?>/'+row.arf_notification_doc_no+'" class="btn btn-warning btn-sm">NOTIFICATION</a>';
-                            } else {
-                                return '';
-                            }
-                        }
-                    });
-                    return actionColumn.create('view', {
-                        template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">ARF</a>'
-                    }).render('{view} {edit} {notification} {amd}', {url : '<?= base_url('procurement/arf') ?>', key : data});
+                    if(row.original.status == 'draft')
+                    {
+                     return actionColumn.create('view', {
+                          template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">ARF</a>'
+                      }).render('{edit}', {url : '<?= base_url('procurement/arf') ?>', key : data});
+                    }
+                    else
+                    {
+                      actionColumn.create('edit', {
+                          template : function() {
+                              if (row.original.status == 'draft' || row.sequence == 1) {
+                                  return '<a href="<?= base_url('procurement/arf/edit') ?>/'+data+'" class="btn btn-warning btn-sm">Edit</a>';
+                              } else {
+                                  return '';
+                              }
+                          }
+                      });
+                      actionColumn.create('amd', {
+                          template : function() {
+                              if (row.arf_response_id) {
+                                  return '<a href="<?= base_url('procurement/amendment_recommendation/view') ?>/'+row.arf_response_id+'?back_url=1&amd_view=1" class="btn btn-primary btn-sm">AMD</a>';
+                              } else {
+                                  return '';
+                              }
+                          }
+                      });
+                      actionColumn.create('notification', {
+                          template : function() {
+                              if (row.arf_notification_doc_no) {
+                                  return '<a href="<?= base_url('procurement/arf_notif_preparation/view') ?>/'+row.arf_notification_doc_no+'" class="btn btn-warning btn-sm">NOTIFICATION</a>';
+                              } else {
+                                  return '';
+                              }
+                          }
+                      });
+                      return actionColumn.create('view', {
+                          template : '<a href="<?= base_url('procurement/arf/view') ?>/'+data+'?vmod=1" class="btn btn-info btn-sm">ARF</a>'
+                      }).render('{view} {edit} {notification} {amd}', {url : '<?= base_url('procurement/arf') ?>', key : data});
+                    }
                 }, class : 'text-center', searchable : false, orderable : false}
             ],
             scrollX : true,

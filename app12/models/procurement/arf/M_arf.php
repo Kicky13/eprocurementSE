@@ -101,12 +101,15 @@ class M_arf extends M_base {
     }
 
     public function scope_roleeditsecondary() {
-     //   $this->db->where('t_arf.created_by IN (select user_id from t_jabatan WHERE parent_id = (SELECT parent_id FROM `t_jabatan` WHERE user_id = '. $this->session->userdata('ID_USER').')) or id = (SELECT parent_id FROM `t_jabatan` WHERE user_id = '.$this->session->userdata('ID_USER').')', NULL, FALSE);
-        $this->db->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'draft'",null,false);
+        $this->db->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3))",null,false);
     }
 
     public function scope_roleeditprimary() {
-        $this->db->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3)) and t_arf.status = 'draft'",null,false);
+        $this->db->where("t_arf.created_by IN (select user_id from t_jabatan where parent_id = (select parent_id from t_jabatan where user_id = ".$this->session->userdata('ID_USER').") and user_role in (2,3))",null,false);
+    }
+
+    public function scope_submitted() {
+        $this->db->where('t_arf.status', 'submitted');
     }
 
     public function scope_approval() {

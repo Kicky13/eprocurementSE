@@ -108,7 +108,7 @@
                 <div class="form-group">
                     <label class="form-label"><?= lang("Grup Material", "Material Group") ?></label>
                     <div class="controls">
-                        <input type="text" name="desc" id="desc" class="form-control" required>
+                        <input type="text" name="desc" id="desc" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">

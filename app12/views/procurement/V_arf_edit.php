@@ -199,8 +199,9 @@
                     } else {
                         $('#review_bod').prop('checked', false);
                     }
+                    console.log(arf.attachment)
                     $.each(arf.attachment, function(i, attachment) {
-                        add_attachment(attachment.type, attachment.file_name, attachment.file, Localization.humanDatetime(attachment.created_at), attachment.creator)
+                        add_attachment(attachment.type, attachment.file_name, attachment.file, Localization.humanDatetime(attachment.created_at), attachment.creator, attachment.created_by)
                     });
                     if (arf.status == 'draft') {
                         $('#btn-save-draft').show();

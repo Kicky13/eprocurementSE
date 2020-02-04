@@ -550,9 +550,9 @@ function langApproval($value='')
 function user($param=0) {
     $ci =& get_instance();
     $session = $ci->session->userdata('ID_USER');
-    if($param > 0)
+    if($param > 0) {
         return $ci->db->where(['ID_USER'=>$param])->get('m_user')->row();
-
+    }
     return $ci->db->where(['ID_USER'=>$session])->get('m_user')->row();
 }
 

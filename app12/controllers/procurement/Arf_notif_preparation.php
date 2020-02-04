@@ -372,7 +372,7 @@ class Arf_notif_preparation extends CI_Controller {
             $store_name = str_replace(' ', '', $store_name . '_' . Date("Ymd_His") . $img_ext);
             if ($img_ext != ".pdf" && $img_ext != ".xls" && $img_ext != ".xlsx" && $img_ext != ".doc" && $img_ext != ".docx")
                 return "failed";
-            if ($_FILES[$k]['size'] > 2000000)
+            if ($_FILES[$k]['size'] > 5120000)
                 return "size";
             if ($k == $data_file) {
                 $ret[$db_col] = $dest.'/'.$store_name;

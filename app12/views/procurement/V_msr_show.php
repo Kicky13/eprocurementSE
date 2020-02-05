@@ -784,7 +784,8 @@ function calculate_budget() {
         var msr_item_id = elem.data('msr_item_id');
         var costcenter_id = elem.data('costcenter_id');
         var accsub_id = elem.data('accsub_id');
-
+        var msr_booking_amount = elem.data('msr_booking_amount');
+        
         if (!msr_no) {
           // alert('Undefine MSR No data')
           swal('Ooopss','Undefine MSR No data','warning')
@@ -801,7 +802,8 @@ function calculate_budget() {
           costcenter_id: costcenter_id,
           accsub_id: accsub_id,
           msr_item_id: msr_item_id,
-          status_budget: elem.val()
+          status_budget: elem.val(),
+          msr_booking_amount: msr_booking_amount
         })
         .done(function(data) {
           console.log(data.message)

@@ -804,6 +804,7 @@ class Msr extends CI_Controller {
 
                 if (!empty($r['msr_no'])) {
                   $qq = $this->db->where('msr_no', $r['msr_no'])->where('msr_item_id', $r['material_id'])->get('t_msr_budget');
+                  // echo $this->db->last_query();
                   $sts_bdg = '';
                   foreach($qq->result_array() as $arr){
                     $t_msr_budget = $arr;
@@ -816,10 +817,11 @@ class Msr extends CI_Controller {
                       $_sts_bdg = '<select class="form-control status-budget required" '
                             .'name="'.$item_namespace.'[stat_budget]" '
                             .'id="items-budget-'.$i.'-stat_budget"'
-                            .'data-msr_no="'.@$t_msr_budget['msr_no'].'" '
-                            .'data-costcenter_id="'.@$t_msr_budget['costcenter_id'].'" '
-                            .'data-accsub_id="'.@$t_msr_budget['accsub_id'].'" '
-                            .'data-msr_item_id="'.@$t_msr_budget['msr_item_id'].'">';
+                            .'data-msr_no="'.$r['msr_no'].'" '
+                            .'data-costcenter_id="'.$r['cost_center_value'].'" '
+                            .'data-accsub_id="'.$r['account_subsidiary_value'].'" '
+                            .'data-msr_booking_amount="'.$r['msr_booking_amount'].'" '
+                            .'data-msr_item_id="'.$r['material_id'].'">';
                       foreach(array(
                           '' => 'Not determined yet',
                           'Sufficient' => 'Sufficient',
@@ -2323,12 +2325,34 @@ class Msr extends CI_Controller {
 
         if ($post['msr_no'] && $post['msr_item_id']) {
             // TODO: move to relevant model
-            $result = $this->db->set('status_budget', @$post['status_budget'] ?: '')
+
+            $t_msr_budget = $this->db->where([
+                'msr_no'        =>  $post['msr_no'], 
+                'msr_item_id'   =>  $post['msr_item_id'],
+                'costcenter_id'   =>  $post['costcenter_id'],
+                'accsub_id'   =>  $post['accsub_id'],
+            ])->get('t_msr_budget');
+            if($t_msr_budget->num_rows() > 0)
+            {
+                $result = $this->db->set('status_budget', @$post['status_budget'] ?: '')
                 ->where('msr_no', $post['msr_no'])
                 ->where('msr_item_id', $post['msr_item_id'])
                 ->update('t_msr_budget');
-
+            }
+            else
+            {
+                 $data_msrbudget = array(
+                          'msr_no' => $post['msr_no'],
+                          'msr_item_id' => $post['msr_item_id'],
+                          'costcenter_id' => @$post['costcenter_id'],
+                          'accsub_id' => @$post['accsub_id'],
+                          'status_budget' => @$post['status_budget'],
+                          'msr_booking_amount' => $post['msr_booking_amount'],
+                        );
+                        $result = $this->msr_item->addMsrBudget($data_msrbudget);
+            }
             $message = $result ? 'Ok' : 'Error';
+            
         } else {
             $message = 'Invalid';
         }

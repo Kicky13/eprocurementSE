@@ -358,7 +358,7 @@ class Arf_notif_preparation extends CI_Controller {
         else if ($res == "failed")
             $this->output(array('msg' => "Only PDF, Excel, or Word allowed!", 'status' => 'Failed'));
         else if ($res == "size")
-            $this->output(array('msg' => "Maximum File size is 2 MB!", 'status' => 'Failed'));
+            $this->output(array('msg' => "Maximum File size is 5 MB!", 'status' => 'Failed'));
     }
 
     public function uploads($po, $amd, $dest, $data_file, $db_col) {

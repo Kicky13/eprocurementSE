@@ -176,7 +176,7 @@ class Home extends CI_Controller {
         if(@$jabatanUser->user_role == t_jabatan_user_secondary)
         {
             $msrVerify['arf_draft'] = $this->m_arf->scope(array('roleeditsecondary','draft'))->count_all_results();
-            $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','roleeditsecondary','submitted'])->count_all_results();
+            // $msrVerify['arf_reject'] = $this->m_arf->view('arf')->scope(['reject','roleeditsecondary','submitted'])->count_all_results();
             // echo $this->db->last_query();
         }
         elseif(@$jabatanUser->user_role == t_jabatan_user_primary)

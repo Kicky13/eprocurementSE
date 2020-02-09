@@ -405,8 +405,9 @@ class Amendment_recommendation extends CI_Controller {
         $t_arf_notification = $this->db->where(['doc_no'=>$arf->doc_no])->get('t_arf_notification')->row();
         $arf->item = $this->m_arf_sop->view('response')->select('t_arf_nego_detail.unit_price new_price')
         ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)->get();
-
+        ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $t_arf_notification->id)
+        ->group_by('t_arf_sop.id, t_arf_sop.arf_item_id, t_arf_sop.doc_id, t_arf_sop.sop_type, t_arf_sop.item_material_id, t_arf_sop.item_semic_no_value, t_arf_sop.item, t_arf_sop.id_itemtype, t_arf_sop.id_itemtype_category, t_arf_sop.groupcat, t_arf_sop.groupcat_desc, t_arf_sop.sub_groupcat, t_arf_sop.sub_groupcat_desc, t_arf_sop.inv_type, t_arf_sop.item_modification, t_arf_sop.id_costcenter, t_arf_sop.costcenter_desc, t_arf_sop.id_accsub, t_arf_sop.accsub_desc, t_arf_sop.id_importation, t_arf_sop.id_delivery_point, t_arf_sop.delivery_point, t_arf_sop.qty1, t_arf_sop.uom1, t_arf_sop.qty2, t_arf_sop.uom2, t_arf_sop.tax, t_arf_sop.line_no, t_arf_sop.created_by, t_arf_sop.created_at, t_arf_sop.updated_by, t_arf_sop.updated_at, t_arf_detail.unit_price, t_arf_response_detail.qty1, t_arf_response_detail.qty2, t_arf_response_detail.unit_price, t_arf_response_detail.unit_price_base, m_itemtype.ITEMTYPE_DESC, m_msr_inventory_type.`code`, m_msr_inventory_type.description, t_purchase_order_detail.id, m_gl_class.vat, t_arf_nego_detail.unit_price, line_type_code')
+        ->get();
         $findAll = $this->db->where(['po_no'=>$t_arf_notification->po_no, 'id < '=> $t_arf_notification->id])->get('t_arf_notification');
         
         $findAllResult = [];
@@ -416,7 +417,9 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)
+                ->group_by('t_arf_sop.id, t_arf_sop.arf_item_id, t_arf_sop.doc_id, t_arf_sop.sop_type, t_arf_sop.item_material_id, t_arf_sop.item_semic_no_value, t_arf_sop.item, t_arf_sop.id_itemtype, t_arf_sop.id_itemtype_category, t_arf_sop.groupcat, t_arf_sop.groupcat_desc, t_arf_sop.sub_groupcat, t_arf_sop.sub_groupcat_desc, t_arf_sop.inv_type, t_arf_sop.item_modification, t_arf_sop.id_costcenter, t_arf_sop.costcenter_desc, t_arf_sop.id_accsub, t_arf_sop.accsub_desc, t_arf_sop.id_importation, t_arf_sop.id_delivery_point, t_arf_sop.delivery_point, t_arf_sop.qty1, t_arf_sop.uom1, t_arf_sop.qty2, t_arf_sop.uom2, t_arf_sop.tax, t_arf_sop.line_no, t_arf_sop.created_by, t_arf_sop.created_at, t_arf_sop.updated_by, t_arf_sop.updated_at, t_arf_detail.unit_price, t_arf_response_detail.qty1, t_arf_response_detail.qty2, t_arf_response_detail.unit_price, t_arf_response_detail.unit_price_base, m_itemtype.ITEMTYPE_DESC, m_msr_inventory_type.`code`, m_msr_inventory_type.description, t_purchase_order_detail.id, m_gl_class.vat, t_arf_nego_detail.unit_price, line_type_code')
+                ->get();
             }
         }
         
@@ -476,7 +479,9 @@ class Amendment_recommendation extends CI_Controller {
                 $findAllResult[$r->doc_no] = $this->m_arf_sop->view('response')
                 ->select('t_arf_nego_detail.unit_price new_price')
                 ->join('t_arf_nego_detail', 't_arf_sop.id = t_arf_nego_detail.arf_sop_id', 'left')
-                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)->get();
+                ->join('(select * from t_arf_nego where status = 2 order by id desc limit 1) t_arf_nego','t_arf_nego.id = t_arf_nego_detail.arf_nego_id', 'left')->where('t_arf_sop.doc_id', $r->id)
+                ->group_by('t_arf_sop.id, t_arf_sop.arf_item_id, t_arf_sop.doc_id, t_arf_sop.sop_type, t_arf_sop.item_material_id, t_arf_sop.item_semic_no_value, t_arf_sop.item, t_arf_sop.id_itemtype, t_arf_sop.id_itemtype_category, t_arf_sop.groupcat, t_arf_sop.groupcat_desc, t_arf_sop.sub_groupcat, t_arf_sop.sub_groupcat_desc, t_arf_sop.inv_type, t_arf_sop.item_modification, t_arf_sop.id_costcenter, t_arf_sop.costcenter_desc, t_arf_sop.id_accsub, t_arf_sop.accsub_desc, t_arf_sop.id_importation, t_arf_sop.id_delivery_point, t_arf_sop.delivery_point, t_arf_sop.qty1, t_arf_sop.uom1, t_arf_sop.qty2, t_arf_sop.uom2, t_arf_sop.tax, t_arf_sop.line_no, t_arf_sop.created_by, t_arf_sop.created_at, t_arf_sop.updated_by, t_arf_sop.updated_at, t_arf_detail.unit_price, t_arf_response_detail.qty1, t_arf_response_detail.qty2, t_arf_response_detail.unit_price, t_arf_response_detail.unit_price_base, m_itemtype.ITEMTYPE_DESC, m_msr_inventory_type.`code`, m_msr_inventory_type.description, t_purchase_order_detail.id, m_gl_class.vat, t_arf_nego_detail.unit_price, line_type_code')
+                ->get();
             }
         }
 

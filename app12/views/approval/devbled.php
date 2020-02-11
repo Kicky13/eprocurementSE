@@ -752,6 +752,7 @@
           <!-- <a href="#" class="btn btn-success" onclick="developeBlEdClick()">Develope BL & ED</a> -->
         <?php endif;?>
         <div class="form-group text-right">
+          <?php $this->load->view('approval/cancel_msr_modal_no_ed');?>
           <a href="#" class="btn btn-primary" onclick="saveDraft()">Save Draft</a>
           <a href="#" class="btn btn-success" onclick="submitBlEd()">Submit</a>
         </div>

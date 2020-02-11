@@ -707,7 +707,7 @@ class M_approval extends CI_Model {
         from t_approval
         left join m_approval on m_approval.id = t_approval.m_approval_id
         left join t_msr on t_msr.msr_no = t_approval.data_id
-        left join t_eq_data on t_eq_data.msr_no = t_eq_data.msr_no
+        left join t_eq_data on t_eq_data.msr_no = t_msr.msr_no
         where ".$this->msrActive(1)." and m_approval.module_kode = 'msr_spa' and m_approval.role_id in (8,25,18,23,27,26) and t_approval.status = 2  and t_eq_data.created_by = ".$this->session->userdata('ID_USER')."";
             return $this->db->query($sql);
     }

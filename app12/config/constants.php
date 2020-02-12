@@ -101,3 +101,4 @@ define('user', 41); // user as usual
 define('operator_cmms', 100008);
 define('department_cmms', 100010);
 define('supervior_cmms', 100009);
+define('all_msr', 101);

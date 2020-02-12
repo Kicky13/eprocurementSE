@@ -45,11 +45,25 @@ class M_Msr extends CI_Model {
         where user_id = '.$this->input->get('user').' and t_assignment.msr_no not in (select msr_no from t_purchase_order where issued = 1)) ');
     }
     $this->db->order_by('t_msr.msr_no', 'desc');
-    if($dept == '101013800'){
-      return @$this->db->get($this->table)->result();
-    } else {
-      return @$this->db->get_where($this->table,array('id_department =' => $dept))->result();
+    $roles = $this->session->userdata('ROLES');
+    $roles =  explode(",", $roles);
+    $roles = array_values(array_filter($roles));
+
+    if(in_array(all_msr, $roles))
+    {
+      $rs =  @$this->db->get($this->table)->result();
     }
+    else
+    {
+      if($dept == '101013800'){
+        $rs =  @$this->db->get($this->table)->result();
+      } else {
+        $rs = @$this->db->get_where($this->table,array('id_department =' => $dept))->result();
+      }
+    }
+        // echo  $this->db->last_query();
+        // echo $this->session->userdata('ROLES');
+    return $rs;
   }
 
   // do we need $company?

@@ -421,14 +421,14 @@
                 <div class="col-md-4">
                     <input class="form-control" disabled value="<?= $performanceBondOriginalValue ?>">
                 </div>
-                <div class="col-md-4"><input class="form-control" disabled value="<?=$latestPerformanceBondDate?>" ></div>
+                <div class="col-md-4"><input class="form-control" disabled value="<?=@$latestPerformanceBondDate?>" ></div>
             </div>
             <div class="row">
                 <div class="col-md-4">Insurance</div>
                 <div class="col-md-4">
                     <input class="form-control" disabled value="<?= $insuranceOriginalValue ?>">
                 </div>
-                <div class="col-md-4"><input class="form-control" disabled value="<?=$latestInsuranceDate?>"></div>
+                <div class="col-md-4"><input class="form-control" disabled value="<?=@$latestInsuranceDate?>"></div>
             </div>
         </div>
         <div class="col-md-6">

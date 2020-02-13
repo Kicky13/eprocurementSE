@@ -3257,4 +3257,15 @@ class Approval extends CI_Controller
             </tr>";
         }
     }
+    public function adabidder()
+    {
+        $data = $this->input->post();
+        $msrNo = $data['bl_msr_no'];
+        $mbl = $this->M_bl->findOneByMsr($msrNo);
+
+        if($mbl->num_rows() > 0)
+            echo json_encode(['status'=>true]);
+        else
+            echo json_encode(['status'=>false]);
+    }
 }

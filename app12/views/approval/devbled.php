@@ -947,8 +947,8 @@
         }
         else
         {
-          // alert('ED Fail, Bid Bond Must be Filled');
-          swal('<?= __('warning') ?>','Bid Bond Must be Filled','warning')
+          alert('Bid Bond Must be Filled');
+          // swal('<?= __('warning') ?>','Bid Bond Must be Filled','warning')
           return false;
         }
       }
@@ -1082,37 +1082,52 @@
       });
     }
     function submitBlEd() {
-      /*if(confirm('Are you sure to create Bidder List & Enquiry Document'))
-      {*/
-      swalConfirm('BL & ED', '<?= __('confirm_submit') ?>', function() {
-        url = "<?=base_url('approval/ed/submitbled/'.$msr_no.'/'.$idnya)?>";
-        $.ajax({
-          type:'post',
-          url:url,
-          data:$("#frm-bled").serialize(),
-          beforeSend:function(){
-            start($('#icon-tabs'));
-          },
-          success:function(e){
-            var r = eval("("+e+")")
-            if(r.status)
-            {
-              $("#result-validation").html(r.html)
-              $("#modal-validation").modal('show')
-            }
-            else
-            {
-              window.open('<?=base_url('home')?>','_self')
-            }
-            stop($('#icon-tabs'));
-          },
-          error: function () {
-            setTimeout(function() {
-              swal('<?= __('warning') ?>','Something went wrong!','warning')
-            }, swalDelay);
-            stop($('#icon-tabs'));
+      $.ajax({
+        type:'post',
+        data:$("#frm-bled").serialize(),
+        url : "<?=base_url('approval/approval/adabidder')?>",
+        success:function(r){
+          var s = eval("("+r+")");
+          if(s.status)
+          {
+            swalConfirm('BL & ED', '<?= __('confirm_submit') ?>', function() {
+              url = "<?=base_url('approval/ed/submitbled/'.$msr_no.'/'.$idnya)?>";
+              $.ajax({
+                type:'post',
+                url:url,
+                data:$("#frm-bled").serialize(),
+                beforeSend:function(){
+                  start($('#icon-tabs'));
+                },
+                success:function(e){
+                  var r = eval("("+e+")")
+                  if(r.status)
+                  {
+                    $("#result-validation").html(r.html)
+                    $("#modal-validation").modal('show')
+                  }
+                  else
+                  {
+                    window.open('<?=base_url('home')?>','_self')
+                  }
+                  stop($('#icon-tabs'));
+                },
+                error: function () {
+                  setTimeout(function() {
+                    swal('<?= __('warning') ?>','Something went wrong!','warning')
+                  }, swalDelay);
+                  stop($('#icon-tabs'));
+                }
+              });
+            });
           }
-        });
+          else
+          {
+            setTimeout(function() {
+              swal('<?= __('warning') ?>','Bidder List required','warning')
+            }, swalDelay);
+          }
+        }
       });
     }
     function devbledAttachmentClick() {

@@ -734,4 +734,8 @@ class M_bl extends CI_Model {
           return @$this->db->get_where('t_msr' ,array('id_department =' => $dept));
       }
   }
+  public function findOneByMsr($msrNo='')
+  {
+    return $this->db->where(['msr_no'=>$msrNo])->get($this->tbld);
+  }
 }

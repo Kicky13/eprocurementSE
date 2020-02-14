@@ -280,58 +280,48 @@ class Browse extends CI_Controller {
       $arf_response =$this->db->select('t_arf_response.*,t_arf.amount_po')->where(['t_arf_response.doc_no <'=>$amd_no, 't_arf.po_no'=>$po_no])->join('t_arf','t_arf.doc_no = t_arf_response.doc_no','left')->get('t_arf_response');
       $table = "<table width='100%' border='1' rules='all' cellpadding='2' cellspacing='2'>";
       $all_total = 0;
-      if($arf_response->num_rows() > 0)
-      {
-        foreach ($arf_response->result() as $key => $value) {
-          $total = 0;
-          $table .= "<tr bgcolor='#cccaaa'><td colspan='7'>$value->doc_no</td></tr>";
-          $table .= "<tr bgcolor='#ccceee'><td>QTY1</td><td>QTY2</td><td>QTY</td><td>UNIT PRICE</td><td>NEGO PRICE</td><td>SUB TOTAL</td><td>AFTER NEGO</td></tr>";
-          $arf_response_detail = $this->db->where('doc_no',$value->doc_no)->get('t_arf_response_detail');
-          foreach ($arf_response_detail->result() as $detail) {
-            $qty = $detail->qty2 > 0 ? $detail->qty1*$detail->qty2 : $detail->qty1;
-            $sub_total  = $qty * $detail->unit_price;
-            $sub_total_str = numIndo($sub_total);
-            $qty_str = numIndo($qty,0);
-            $unit_price_str = numIndo($detail->unit_price,0);
+      foreach ($arf_response->result() as $key => $value) {
+        $total = 0;
+        $table .= "<tr bgcolor='#cccaaa'><td colspan='7'>$value->doc_no</td></tr>";
+        $table .= "<tr bgcolor='#ccceee'><td>QTY1</td><td>QTY2</td><td>QTY</td><td>UNIT PRICE</td><td>NEGO PRICE</td><td>SUB TOTAL</td><td>AFTER NEGO</td></tr>";
+        $arf_response_detail = $this->db->where('doc_no',$value->doc_no)->get('t_arf_response_detail');
+        foreach ($arf_response_detail->result() as $detail) {
+          $qty = $detail->qty2 > 0 ? $detail->qty1*$detail->qty2 : $detail->qty1;
+          $sub_total  = $qty * $detail->unit_price;
+          $sub_total_str = numIndo($sub_total);
+          $qty_str = numIndo($qty,0);
+          $unit_price_str = numIndo($detail->unit_price,0);
 
-            // echo $this->db->last_query();
-            $arf_nego = $this->db->where(['arf_response_id'=>$value->id, 'is_nego'=>1, 'arf_sop_id'=>$detail->detail_id])->order_by('id','desc')->get('t_arf_nego_detail')->row();
-            if($arf_nego)
-            {
-              $nego_price = $arf_nego->unit_price;
-              $nego_price_str = numIndo($nego_price);
-              $sub_total_any_nego = $nego_price * $qty;
-              $sub_total_any_nego_str = numIndo($sub_total_any_nego);
-            }
-            else
-            {
-              $nego_price = 0;
-              $nego_price_str = numIndo($nego_price);
-              $sub_total_any_nego = $sub_total;  
-              $sub_total_any_nego_str = numIndo($sub_total_any_nego);
-            }
-            $total += $sub_total_any_nego;
-            $table .= "<tr><td>$detail->qty1</td><td>$detail->qty2</td><td align='center'>$qty_str</td><td align='right'>$unit_price_str</td><td align='right'>$nego_price_str</td><td align='right'>$sub_total_str</td><td align='right'>$sub_total_any_nego_str</td></tr>";
-            # code...
+          // echo $this->db->last_query();
+          $arf_nego = $this->db->where(['arf_response_id'=>$value->id, 'is_nego'=>1, 'arf_sop_id'=>$detail->detail_id])->order_by('id','desc')->get('t_arf_nego_detail')->row();
+          if($arf_nego)
+          {
+            $nego_price = $arf_nego->unit_price;
+            $nego_price_str = numIndo($nego_price);
+            $sub_total_any_nego = $nego_price * $qty;
+            $sub_total_any_nego_str = numIndo($sub_total_any_nego);
           }
-          $all_total += $total;
-          $total_str = numIndo($total);
-          $table .= "<tr bgcolor='#333'><td colspan='6'>&nbsp;</td><td align='right' bgcolor='#eee'>$total_str</td></tr>";
+          else
+          {
+            $nego_price = 0;
+            $nego_price_str = numIndo($nego_price);
+            $sub_total_any_nego = $sub_total;  
+            $sub_total_any_nego_str = numIndo($sub_total_any_nego);
+          }
+          $total += $sub_total_any_nego;
+          $table .= "<tr><td>$detail->qty1</td><td>$detail->qty2</td><td align='center'>$qty_str</td><td align='right'>$unit_price_str</td><td align='right'>$nego_price_str</td><td align='right'>$sub_total_str</td><td align='right'>$sub_total_any_nego_str</td></tr>";
+          # code...
         }
-      }
-      else
-      {
-        $po = $this->db->select('t_purchase_order.total_amount')->where(['po_no'=>$po_no])->get('t_purchase_order')->row();
-        $all_total = $po->total_amount;
+        $all_total += $total;
+        $total_str = numIndo($total);
+        $table .= "<tr bgcolor='#333'><td colspan='6'>&nbsp;</td><td align='right' bgcolor='#eee'>$total_str</td></tr>";
+
       }
       $all_total_str = numIndo($all_total);
       $table .= "<tr bgcolor='#ccc333'><td colspan='6'>TOTAL ALL </td><td align='right'>$all_total_str</td></tr>";
       $table .= "</table>";
       if($this->input->get('debug'))
       {
-        // echo "<pre>";
-        // print_r($arf_response->num_rows());
-        // print_r($po);
         echo $table;
       }
       else

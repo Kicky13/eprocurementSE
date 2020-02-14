@@ -677,8 +677,14 @@
             return n;
         }
         var new_agreement = $("#all-amd-<?= $arf->doc_no ?>").text();
+        if(!new_agreement)
+        {
+            new_agreement = "<?=numIndo($arf->amount_po)?>";
+        }
+        // alert('new_agreement = '+new_agreement)
+        // alert("doc_no = <?=$arf->doc_no?>")
         var latest_agreement_value = (toFloat(numberNormal(new_agreement)) - toFloat(numberNormal($("#additional-value").text())));
-        console.log(new_agreement);
+        // console.log(new_agreement);
         $("#latest-agreement-value").val(Localization.number(latest_agreement_value));
         $("#new-agreement-value").val(new_agreement)
         $('#new_date_1,#new_date_2').datepicker({

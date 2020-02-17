@@ -389,12 +389,26 @@ class Ed extends CI_Controller {
         if($this->db->trans_status() === true)
         {
             $this->db->trans_commit();
-            echo json_encode(['msg'=>$msg]);
+            if($this->input->post('withoutmsg'))
+            {
+
+            }
+            else
+            {
+                echo json_encode(['msg'=>$msg]);                
+            }
         }
         else
         {
             $this->db->trans_rollback();
-            echo json_encode(['msg'=>'Fail, Please Try Again']);
+            if($this->input->post('withoutmsg'))
+            {
+
+            }
+            else
+            {
+                echo json_encode(['msg'=>'Fail, Please Try Again']);
+            }
         }
     }
     public function submitbled($msr_no='', $t_approval_id=0)
@@ -512,7 +526,7 @@ class Ed extends CI_Controller {
             ], true);
         $data['status'] = $status;
         $ed_no = str_replace('OR', 'OQ', $msr_no);
-        $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
+        $img1 = "";
         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
         $query = $this->db->query("SELECT t_approval.*, t_msr.title as msr_title, (SELECT m_departement.DEPARTMENT_DESC FROM m_user JOIN m_departement ON m_user.ID_DEPARTMENT = m_departement.ID_DEPARTMENT WHERE m_user.ID_USER = t_msr.create_by ) AS departement, (SELECT m_user.NAME FROM m_user WHERE m_user.ID_USER = t_msr.create_by ) AS requestor, m_user_roles.DESCRIPTION role_name, m_user.NAME user_nama, m_user.EMAIL as email, m_notic.TITLE AS title_email, m_notic.OPEN_VALUE AS open, m_notic.CLOSE_VALUE AS close
@@ -546,6 +560,9 @@ class Ed extends CI_Controller {
 
         if($status === true)
         {
+            $_POST['msr_no'] = $_POST['bl_msr_no'];
+            $_POST['withoutmsg'] = true;
+            $this->savedraft(1, $t_approval_id);
             $this->session->set_flashdata('message', array(
                 'message' => __('success_submit_with_number', array('no' => $ed_no)),
                 'type' => 'success'

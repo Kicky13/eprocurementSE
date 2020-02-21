@@ -37,4 +37,20 @@ class M_arf_detail extends M_base {
     {
         $rs = $this->db->select('unit_price as total_price')->where('doc_id',$doc_id)->get($this->table)->result(); return $rs;
     }
+    /*
+    * doc_id as $docId as arf_id table t_arf
+    * functionaly find id_costcenter arf items with exclude costcenter user creator
+    */
+    public function getBudgetHolder($docId='')
+    {
+      $arfItems = $this->db->select('m_budget_holder.id_user')
+      ->join('t_arf','t_arf.id = t_arf_detail.doc_id')
+      ->join('m_user','m_user.ID_USER = t_arf.created_by')
+      ->join('m_budget_holder','m_budget_holder.cost_center = t_arf_detail.id_costcenter')
+      ->where(['doc_id'=>$docId])
+      ->where('t_arf_detail.id_costcenter != m_user.COST_CENTER')
+      ->group_by('m_budget_holder.id_user')
+      ->get('t_arf_detail');
+      return $arfItems;
+    }
 }

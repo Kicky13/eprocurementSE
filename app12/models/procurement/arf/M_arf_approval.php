@@ -98,20 +98,21 @@ class M_arf_approval extends M_base_approval {
             $this->table.'.approved_by',
             $this->table.'.approved_at',
             'm_user_roles.DESCRIPTION as role',
-            'GROUP_CONCAT(m_user.NAME SEPARATOR \', \') as name',
+            'GROUP_CONCAT(DISTINCT(m_user.NAME) SEPARATOR \', \') as name',
             'approver.NAME as approver',
             '(
                 SELECT COUNT(1) FROM m_user auth
                 WHERE auth.ID_USER = \''.$this->session->userdata('ID_USER').'\'
-                AND auth.ROLES LIKE CONCAT(\'%,\','.$this->table.'.id_user_role,\',%\')
+                AND case when t_approval_arf.id_user_role != 24 then auth.ROLES LIKE CONCAT(\'%,\','.$this->table.'.id_user_role,\',%\') else 1=1 end
                 AND auth.ID_USER LIKE '.$this->table.'.id_user
             ) as auth'
         ))
+        ->join('m_budget_holder', 'm_budget_holder.id_user = t_approval_arf.id_user and t_approval_arf.id_user_role = 24','left')
         ->join('t_arf', 't_arf.id = '.$this->table.'.id_ref')
         ->join('t_purchase_order', 't_purchase_order.po_no = t_arf.po_no')
         ->join('t_msr', 't_msr.msr_no = t_purchase_order.msr_no')
         ->join('m_user_roles', 'm_user_roles.ID_USER_ROLES = '.$this->table.'.id_user_role')
-        ->join('m_user', 'm_user.ROLES LIKE CONCAT(\'%,\',m_user_roles.ID_USER_ROLES,\',%\') AND m_user.ID_USER LIKE '.$this->table.'.id_user')
+        ->join('m_user', '(m_user.ROLES LIKE CONCAT(\'%,\',m_user_roles.ID_USER_ROLES,\',%\') AND m_user.ID_USER LIKE '.$this->table.'.id_user) or m_budget_holder.id_user = m_user.ID_USER')
         ->join('m_user approver', 'approver.ID_USER = '.$this->table.'.approved_by', 'left')
         ->where($this->table.'.id_ref', $id)
         ->where($this->table.'.id_user_role <> ', $this->scm_performance_support_id)

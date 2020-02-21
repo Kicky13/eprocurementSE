@@ -3,6 +3,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class M_base_approval extends CI_Model {
 
+
     protected $table = 't_approval';
     protected $table_detail = null;
     protected $module_kode = 'approval';
@@ -122,6 +123,37 @@ class M_base_approval extends CI_Model {
                 }
             }
         }
+
+        /*add on budget holder*/
+        $this->load->model('procurement/arf/M_arf_detail','arf_detail');
+        $budgetHolder = $this->arf_detail->getBudgetHolder($id);
+        if($budgetHolder->num_rows() > 0)
+        {
+          $i = 2;
+          foreach ($budgetHolder->result() as $budgetHolderUser) {
+            $i = $i+0.1;
+            $isiField = array(
+                'id_ref' => $id,
+                'id_user_role' => budget_holder_role,
+                'id_user' => $budgetHolderUser->id_user,
+                'sequence' => $i,
+                'description' => 'ARF BUDGET HOLDER',
+                'reject_step' => 2,
+                'email_approve' => 57,
+                'email_reject' => 58,
+                'edit_content' => 0,
+                'status' => 0
+            );
+            if($this->input->get('debug'))
+            {
+                $fieldDebug[] = $isiField;
+            }
+            else
+            {
+                $this->db->insert($this->table, $isiField);
+            }
+        }
+        }
         if($this->input->get('debug'))
         {
             return $fieldDebug;
@@ -137,8 +169,10 @@ class M_base_approval extends CI_Model {
         $user_roles = $this->session->userdata('ROLES');
         $user_roles = trim($user_roles, ',');
         $user_roles = explode(',', $user_roles);
+        $implode = implode(',', $user_roles);
         $approval = $this->db->where('id', $id)
-        ->where_in('id_user_role', $user_roles)
+        // ->where_in('id_user_role', $user_roles)
+        ->where("case when id_user_role != 24 then id_user_role in ($implode) else 1=1 end",false,false)
         ->where($this->session->userdata('ID_USER') .' LIKE id_user')
         ->get($this->table)
         ->row();
@@ -207,24 +241,6 @@ class M_base_approval extends CI_Model {
                         $this->on_reject($id, $approval);
                     }
                 }
-//                if ($next_approval) {
-//                    $users = $this->db->join('m_departement', 'm_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
-//                    ->like('ROLES', $next_approval->id_user_role)
-//                    ->where('\''.$next_approval->id_user.'\' LIKE m_user.ID_USER', null, false)
-//                    ->get('m_user')
-//                    ->result();
-//                    $content_template = $email->OPEN_VALUE.$email->CLOSE_VALUE;
-//                    foreach ($users as $user) {
-//                        $content = str_replace(array('_var1_', '_var2_'), array($user->NAME, $user->DEPARTMENT_DESC), $content_template);
-//                        $this->db->insert('i_notification', array(
-//                            'recipient' => $user->EMAIL,
-//                            'subject' => $email->TITLE,
-//                            'content' => $content,
-//                            'ismailed' => 0,
-//                            'create_date' => date('Y-m-d H:i:s')
-//                        ));
-//                    }
-//                }
             }
             if ($detail) {
                 $record_detail = array();
@@ -252,6 +268,23 @@ class M_base_approval extends CI_Model {
         ->join($this->table, $this->table.'.id_ref = approval.id_ref AND '.$this->table.'.sequence = approval.sequence')
         ->where('approval.id_ref', $id)
         ->where_in($this->table.'.id_user_role', $user_roles)
+        ->where($this->session->userdata('ID_USER') .' LIKE '.$this->table.'.id_user')
+        ->get()
+        ->row();
+        return $approval;
+    }
+
+    public function findArf($id) {
+        $user_roles = $this->session->userdata('ROLES');
+        $user_roles = trim($user_roles, ',');
+        $user_roles = explode(',', $user_roles);
+        $implode    = implode(',', $user_roles);
+        $approval = $this->db->select($this->table.'.*')
+        ->from('(SELECT id_ref, MIN(sequence) AS sequence FROM '.$this->table.' WHERE status = 0 OR status = 2 GROUP BY id_ref) approval')
+        ->join($this->table, $this->table.'.id_ref = approval.id_ref AND '.$this->table.'.sequence = approval.sequence')
+        ->where('approval.id_ref', $id)
+        ->where("case when t_approval_arf.id_user_role != 24 THEN ".$this->table.".id_user_role in ($implode) else 1=1 end",false,false)
+        // ->where_in($this->table.'.id_user_role', $user_roles)
         ->where($this->session->userdata('ID_USER') .' LIKE '.$this->table.'.id_user')
         ->get()
         ->row();

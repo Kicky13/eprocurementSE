@@ -121,8 +121,10 @@ class M_arf extends M_base {
         $user_roles = $this->session->userdata('ROLES');
         $user_roles = trim($user_roles, ',');
         $user_roles = explode(',', $user_roles);
+        $implode =   implode(',', $user_roles);
         $this->db->where('approval.sequence > ', 1)
-            ->where_in('t_approval_arf.id_user_role', $user_roles)
+            ->where("CASE WHEN t_approval_arf.id_user_role != 24 THEN  t_approval_arf.id_user_role IN ($implode) ELSE t_approval_arf.id_user_role IN (24) END", false, false)
+            // ->where_in('t_approval_arf.id_user_role', $user_roles)
             ->where('t_approval_arf.id_user_role <> ', $this->m_arf_approval->scm_performance_support_id)
             ->where($this->session->userdata('ID_USER') .' LIKE t_approval_arf.id_user and t_approval_arf.status in (0,2)')
             ->where_in('t_msr.id_company', $company)

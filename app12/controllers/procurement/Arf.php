@@ -238,7 +238,7 @@ class Arf extends CI_Controller
         $budget = $this->m_arf_budget->view('budget')
             ->where('doc_id', $id)
             ->get();
-        $allowed_approve = $this->m_arf_approval->find($id);
+        $allowed_approve = $this->m_arf_approval->findArf($id);
         $approval = $this->m_arf_approval->get($arf->id);
         $data['menu'] = $this->menu;
         $data['arf'] = $arf;

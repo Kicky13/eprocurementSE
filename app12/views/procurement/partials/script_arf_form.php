@@ -397,14 +397,14 @@
                     $('#po_vendor').val(response.data.vendor);
                     $('#po_id_company').val(response.data.id_company);
                     $('#po_company').val(response.data.company);
-                    $('#po_date').val(response.data.po_date);
+                    $('#po_date').val(Localization.humanDate(response.data.po_date));
                     $('#po_total').val(response.data.total_amount);
                     // $('#po_latest_value').val(response.data.latest_value);
                     // $('#po_latest_value_ori').val(response.data.latest_value);
                     // $('#po_spending_value').val(response.data.spending_value);
                     $('#po_remaining_value').val(response.data.remaining_value);
-                    $('#po_delivery_date').val(response.data.delivery_date);
-                    $('#po_amended_date').val(response.data.prev_date);
+                    $('#po_delivery_date').val(Localization.humanDate(response.data.delivery_date));
+                    $('#po_amended_date').val(Localization.humanDate(response.data.prev_date));
                     $('.label-po_type').html(response.data.po_type);
                     if (response.data.po_type == 'PO') {
                         $('.label-po_vendor_type').html('Vendor');

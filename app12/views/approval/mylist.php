@@ -37,6 +37,8 @@
                               <th>MSR No</th>
                               <th>MSR Type</th>
                               <th>Subject</th>
+                              <th>Currency</th>
+                              <th>MSR Value</th>
                               <th>Requested By</th>
                               <th>Department</th>
                               <th>Company</th>
@@ -47,21 +49,31 @@
                             <?php
                               $no=1;
                               foreach ($greetings->result() as $msr) :
-                                  $ori = $this->db->where(['msr_no'=>$msr->data_id])->get('t_msr')->row();
-                                  $type = $this->db->where(['ID_MSR'=>$ori->id_msr_type])->get('m_msrtype')->row();
-                                  $user = $this->db->where(['ID_USER'=>$ori->create_by])->get('m_user')->row();
-                                  $company = $this->db->where(['ID_COMPANY'=>$ori->id_company])->get('m_company')->row();
-                                  $department = $this->db->where(['ID_DEPARTMENT'=>$user->ID_DEPARTMENT])->get('m_departement')->row();
+                                $ori = $this->msr->approval_list($msr->data_id)->row();
+                                  /*$ori = $this->db->select('t_msr.*,m_currency.CURRENCY,m_msrtype.MSR_DESC,m_user.NAME,m_departement.DEPARTMENT_DESC,m_company.ABBREVIATION')
+                                  ->join('m_currency','m_currency.ID = t_msr.id_currency')
+                                  ->join('m_msrtype','m_msrtype.ID_MSR = t_msr.id_msr_type')
+                                  ->join('m_user','m_user.ID_USER = t_msr.create_by')
+                                  ->join('m_departement','m_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+                                  ->join('m_company','m_company.ID_COMPANY = t_msr.id_company')
+                                  ->where(['t_msr.msr_no'=>$msr->data_id])
+                                  ->get('t_msr')->row();*/
+                                  // $type = $this->db->where(['ID_MSR'=>$ori->id_msr_type])->get('m_msrtype')->row();
+                                  // $user = $this->db->where(['ID_USER'=>$ori->create_by])->get('m_user')->row();
+                                  // $company = $this->db->where(['ID_COMPANY'=>$ori->id_company])->get('m_company')->row();
+                                  // $department = $this->db->where(['ID_DEPARTMENT'=>$user->ID_DEPARTMENT])->get('m_departement')->row();
                             ?>
                             <tr>
                               <td><?=$no++?></td>
                               <td><?=dateToIndo($ori->create_on)?></td>
                               <td><?=$msr->data_id?></td>
-                              <td><?=$type->MSR_DESC?></td>
+                              <td><?=$ori->MSR_DESC?></td>
                               <td><?=$ori->title?></td>
-                              <td><?=$user->NAME?></td>
-                              <td><?=$department->DEPARTMENT_DESC?></td>
-                              <td><?=$company->ABBREVIATION?></td>
+                              <td><?=$ori->CURRENCY?></td>
+                              <td align="right"><?=@numIndo($ori->total_amount)?></td>
+                              <td><?=$ori->NAME?></td>
+                              <td><?=$ori->DEPARTMENT_DESC?></td>
+                              <td><?=$ori->ABBREVIATION?></td>
                               <td class="text-center">
                                 <a href="<?=base_url('procurement/msr/show/'.$msr->data_id)?>" class="btn btn-sm btn-success">GO</a>
                               </td>

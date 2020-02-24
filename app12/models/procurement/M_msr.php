@@ -630,7 +630,18 @@ join t_msr_item msr_item on msr_item.line_item = pod.msr_item_id
           ->join($m_user, "{$m_user}.id_user = {$this->table_t_assignment}.user_id", 'left')
           ->get()->result();
   }
-
+  public function approval_list($msrNo='')
+  {
+    $query = $this->db->select('t_msr.*,m_currency.CURRENCY,m_msrtype.MSR_DESC,m_user.NAME,m_departement.DEPARTMENT_DESC,m_company.ABBREVIATION')
+    ->join('m_currency','m_currency.ID = t_msr.id_currency')
+    ->join('m_msrtype','m_msrtype.ID_MSR = t_msr.id_msr_type')
+    ->join('m_user','m_user.ID_USER = t_msr.create_by')
+    ->join('m_departement','m_departement.ID_DEPARTMENT = m_user.ID_DEPARTMENT')
+    ->join('m_company','m_company.ID_COMPANY = t_msr.id_company')
+    ->where(['t_msr.msr_no'=>$msrNo])
+    ->get('t_msr');
+    return $query;
+  }
 }
 
 

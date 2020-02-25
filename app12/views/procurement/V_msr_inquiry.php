@@ -77,7 +77,7 @@ $page_title = isset($page_title) ? $page_title : ['IND' => 'MSR List', 'ENG' => 
                                 <td><?= @$msr->msr_no ?></td>
                                 <td><?= @$msr->title ?></td>
                                 <td><?= @$msr->ABBREVIATION ?></td>
-                                <td><?= @dateToIndo($msr->create_on, false, true) ?></td>
+                                <td data-sort="<?= $msr->create_on ?>"><?= @dateToIndo($msr->create_on, false, true) ?></td>
                                 <td><?= @$create_by->NAME ?></td>
                                 <td><?= @$msr->CURRENCY ?></td>
                                 <td class="text-right">

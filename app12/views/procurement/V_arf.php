@@ -69,9 +69,9 @@
                 {data : 'id', render : function(data, type, row, meta) {
                      return meta.row + meta.settings._iDisplayStart + 1;
                 }},
-                {data : 'doc_date', render : function(data) {
+                {data : 'doc_date', render : function(data, type) {
                     if (data) {
-                        return Localization.humanDate(data);
+                        return type == 'sort' ? data : Localization.humanDate(data);
                     } else {
                         return '';
                     }

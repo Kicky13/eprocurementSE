@@ -81,7 +81,7 @@
                                   else echo numIndo($ed->total_amount);
                                 ?>
                               </td>
-                              <td><?= dateToIndo($ed->closing_date, false, true) ?></td>
+                              <td data-sort="<?= $ed->closing_date ?>"><?= dateToIndo($ed->closing_date, false, true) ?></td>
                               <td>
                                 <?php if($log->num_rows() > 0): ?>
                                 <a href="#" class="text-primary" data-toggle="modal" data-target="#myModal<?=$ed->ed_no?>">

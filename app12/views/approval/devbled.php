@@ -1124,7 +1124,7 @@
           else
           {
             setTimeout(function() {
-              swal('<?= __('warning') ?>','Bidder List required','warning')
+              swal('<?= __('warning') ?>',s.msg,'warning')
             }, swalDelay);
           }
         }

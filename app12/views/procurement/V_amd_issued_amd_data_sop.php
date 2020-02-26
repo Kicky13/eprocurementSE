@@ -64,7 +64,7 @@
                     $amendment_date_disabled = "";
                 }
             ?>
-            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" disabled required="" value="<?= @$amendment_date ?>">
+            <input <?= $amendment_date_disabled ?> class="form-control" id="amendment_date" name="amendment_date" required="" value="<?= @$amendment_date ?>">
         </div>
     </div>
     <?php else:?>
@@ -94,7 +94,11 @@
             $stt = $total;
           ?>
 <!--            <input class="form-control" disabled value="--><?//=numIndo($total)?><!--">-->
+            <?php if(isset($issued)): ?>
+            <input class="form-control" disabled value="<?=numIndo($stt)?>">
+            <?php else:?>
             <input class="form-control" disabled value="<?=numIndo($arf->estimated_value)?>">
+            <?php endif;?>
         </div>
     </div>
     <div class="form-group row amendment_recommendation_tab">

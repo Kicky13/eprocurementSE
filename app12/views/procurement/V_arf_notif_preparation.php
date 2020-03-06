@@ -1532,8 +1532,14 @@
                 sop_arf[index]['status'] = 0;
             else
                 sop_arf[index]['status'] = 3;
+
+            sop_arf = sop_arf.slice(0, index).concat(sop_arf.slice(index + 1, sop_arf.length))
+
+            // console.log(sop_arf);
+            
             set_item_proc();
         });
+
         //stop(elm);
     }
 
@@ -2135,6 +2141,28 @@
     }
 
     function send_data(type) {
+        if($("#notif_value_check").is(':checked'))
+        {
+            if(sop_arf.length > 0)
+            {
+
+                /*alert('run it')
+                console.log(sop_arf)*/
+                send_data_old(type)
+            }
+            else
+            {
+            swal('<?= __('warning') ?>', 'Type Value, SOP is Required', 'warning');
+            }
+        }
+        else
+        {
+            /*alert('run it')
+            console.log(sop_arf)*/
+            send_data_old(type)
+        }
+    }
+    function send_data_old(type) {
         if ($('#notif_comdate_input').val() == '' && type != 1) {
             //msg_danger('Expected commendment date must be defined!', 'Error');
             swal('<?= __('warning') ?>', 'The Expected commendment date field is required', 'warning');
@@ -2163,7 +2191,6 @@
 
         }
     }
-
     function send_data_ajax(type, obj) {
         $.ajax({
             url: '<?= base_url('procurement/arf_notif_preparation/send_data/') ?>',

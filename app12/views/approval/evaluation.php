@@ -504,9 +504,9 @@
                               		$deskripsi = $r->status > 0 ? $r->deskripsi : '';
                               		$status = '';
                               		if($r->status == 1)
-                              			$status == 'Approve';
+                              			$status = 'Approve';
                               		if($r->status == 2)
-                              			$status == 'Reject';
+                              			$status = 'Reject';
 
                               		echo "<tr>
                                   <td>$no</td>

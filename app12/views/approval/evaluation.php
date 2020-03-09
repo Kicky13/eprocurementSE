@@ -485,12 +485,12 @@
                             <thead>
                               <tr>
                                 <th width="1">No</th>
+                                <th>Role</th>
                                 <th>User</th>
-                                <th>Description</th>
-                                <th>Transaction Date</th>
                                 <?php if($award): ?>
-                                <th>Status</th>
+                                <th>Approval Status</th>
                                 <?php endif;?>
+                                <th>Transaction Date</th>
                                 <th>Comment</th>
                               </tr>
                             </thead>
@@ -510,10 +510,10 @@
 
                               		echo "<tr>
                                   <td>$no</td>
-                                  <td>".$r->user_nama."</td>
                                   <td>".$r->role_name."</td>
-                                  <td>".$transction_date."</td>
+                                  <td>".$r->user_nama."</td>
                                   <td>".$status."</td>
+                                  <td>".$transction_date."</td>
                                   <td>".$deskripsi."</td>
                                   </tr>";
                                   $no++;
@@ -525,8 +525,8 @@
                                 foreach ($log_history->result() as $r) {
                                   echo "<tr>
                                   <td>$no</td>
-                                  <td>".user($r->created_by)->NAME."</td>
                                   <td>".$r->description."</td>
+                                  <td>".user($r->created_by)->NAME."</td>
                                   <td>".dateToIndo($r->created_at, false, true)."</td>
                                   <td>".$r->keterangan."</td>
                                   </tr>";

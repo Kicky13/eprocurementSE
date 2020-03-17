@@ -32,8 +32,8 @@ class Home extends CI_Controller {
             ->model('procurement/arf/m_arf_nego')
             ->model('setting/M_jabatan')
             ->model('vendor/M_approval_verification')
-            ->model('cmms/M_wo_jde','wo')
-            ->model('cmms/M_work_request','wr')
+//            ->model('cmms/M_wo_jde','wo')
+//            ->model('cmms/M_work_request','wr')
             ->helper(['permission', 'form']);
     }
 
@@ -225,11 +225,11 @@ class Home extends CI_Controller {
             array_push($get_task_baru,$row->id);
         }
         /*cmms tasks start*/
-        $msrVerify['outstanding_wo_report'] = $this->wo->outstanding_wo_report()->num_rows();
-        if(in_array(supervior_cmms, $roles))
-        {
-            $msrVerify['suprevisor_task'] = $this->wr->suprevisor_task()->num_rows();
-        }
+//        $msrVerify['outstanding_wo_report'] = $this->wo->outstanding_wo_report()->num_rows();
+//        if(in_array(supervior_cmms, $roles))
+//        {
+//            $msrVerify['suprevisor_task'] = $this->wr->suprevisor_task()->num_rows();
+//        }
         /*cmms tasks end*/
         $menu_task = array();
         foreach ($this->db->where('parent', 0)->order_by('sort', 'asc')->get('m_menu_task')->result() as $r_group_menu_task) {

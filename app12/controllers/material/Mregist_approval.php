@@ -700,7 +700,8 @@ class Mregist_approval extends CI_Controller {
         $img1 = "<img src='https://4.bp.blogspot.com/-X8zz844yLKg/Wky-66TMqvI/AAAAAAAABkM/kG0k_0kr5OYbrAZqyX31iUgROUcOClTwwCLcBGAs/s1600/logo2.jpg'>";
         $img2 = "<img src='https://4.bp.blogspot.com/-MrZ1XoToX2s/Wky-9lp42tI/AAAAAAAABkQ/fyL__l-Fkk0h5HnwvGzvCnFasi8a0GjiwCLcBGAs/s1600/foot.jpg'>";
 
-        $seq_now  = $sequence_id_rej - $reject_step_rej;
+//        $seq_now  = $sequence_id_rej - $reject_step_rej;
+          $seq_now = 1;
         if ($seq_now == 1) {
           $query = $this->db->query("select min(sequence) as sequence, u.ID_USER, u.NAME, u.EMAIL, v.email_approve, v.email_reject, m.material_id, m.approve_by
             FROM t_approval_material m

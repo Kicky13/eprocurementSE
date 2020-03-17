@@ -635,30 +635,30 @@ function optLocation($name='', $selected='',$class='')
 }
 function get_hari_all(){
     return array(
-        '1'=>'Senin',
-        '2'=>'Selasa',
-        '3'=>'Rabu',
-        '4'=>'Kamis',
-        '5'=>"Jum'at",
-        '6'=>'Sabtu',
-        '7'=>'Minggu'
+        '1'=>'Monday',
+        '2'=>'Tuesday',
+        '3'=>'Wednesday',
+        '4'=>'Thursday',
+        '5'=>"Friday",
+        '6'=>'Saturday',
+        '7'=>'Sunday'
         );
 }
 
 function get_bulan_all($getBulan=null){
     $bulan=array(
-        '01'=>'Januari',
-        '02'=>'Februari',
-        '03'=>'Maret',
+        '01'=>'January',
+        '02'=>'February',
+        '03'=>'March',
         '04'=>'April',
-        '05'=>'Mei',
-        '06'=>'Juni',
-        '07'=>'Juli',
-        '08'=>'Agustus',
+        '05'=>'May',
+        '06'=>'June',
+        '07'=>'July',
+        '08'=>'August',
         '09'=>'September',
-        '10'=>'Oktober',
+        '10'=>'October',
         '11'=>'November',
-        '12'=>'Desember'
+        '12'=>'December'
     );
   if($getBulan == null)
     return $bulan;
@@ -703,7 +703,7 @@ function get_bulan_mini($getBulan=null){
         '02'=>'Feb',
         '03'=>'Mar',
         '04'=>'Apr',
-        '05'=>'Mei',
+        '05'=>'May',
         '06'=>'Jun',
         '07'=>'Jul',
         '08'=>'Aug',
